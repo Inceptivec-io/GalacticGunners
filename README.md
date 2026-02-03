@@ -8,7 +8,7 @@ The game is responsive and incorporates a selector for those that are playing on
 
 ## Demo ##
 
-A deployed version of the game can be played [here](https://michael-leese.github.io/second_milestone_project/).
+A deployed version of the game can be played [here](https://michael-leese.github.io/GallacticGunners/).
 
 ![Gallactic Gunners Main Menu](assets/images/screenShots/galacticgunnersmenu.png)
 
