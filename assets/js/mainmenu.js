@@ -95,8 +95,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
     });
 
     this.btnPlay.on("pointerdown", function() { //this Play Button when on method, when mouse clicks
-      this.sfx.btn.play(); // set the sound to play             
-      this.scene.start("Level1"); // start level 1
+      this.startGame();
     }, this); //this state only
     //END play button
 
@@ -138,8 +137,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
     }, this); //this state only
 
     this.btnInfo.on("pointerdown", function() { //this Play Button when on method, when mouse clicks
-      this.sfx.btn.play(); // set the sound to play             
-      this.scene.start("Info"); // open Info screen
+      this.openInfo();
     }, this); //this state only
     //end info button     
 
@@ -198,7 +196,31 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
     }, this);
     //end point button  
 
+    this.time.addEvent({
+      delay: 100,
+      callback: function() {
+        if (controllerActionPressed("start")) {
+          this.startGame();
+        }
+        if (controllerActionPressed("info")) {
+          this.openInfo();
+        }
+      },
+      callbackScope: this,
+      loop: true
+    });
+
   }
   //END Create Function
+
+  startGame() {
+    this.sfx.btn.play(); // set the sound to play             
+    this.scene.start("Level1"); // start level 1
+  }
+
+  openInfo() {
+    this.sfx.btn.play(); // set the sound to play             
+    this.scene.start("Info"); // open Info screen
+  }
 }
 //END Scene

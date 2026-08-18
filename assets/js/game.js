@@ -17,6 +17,9 @@ var config = { //game configuration parameters
             debug: false, //used to debug, if true
         }
     },
+    input: {
+        gamepad: true
+    },
     scene: [ //load scene properties and their keys
         Preloader,
         MainMenu,
@@ -101,7 +104,7 @@ const TouchSelector = [ //set touch selector text
 
 const Controls = [ //set controls text variable
     "GAME CONTROLS - Press Q to Mute Sound",
-    "Use Cursors to FLY      Hold Space for LASERS      Press N for NUKES"
+    "Use Cursors/D-Pad to FLY      Hold Space/X for LASERS      Press N/Y for NUKES"
 ];
 const TouchControls = [ //set touch controls text variable
     "GAME CONTROLS - Tap Speaker Icon to Mute",

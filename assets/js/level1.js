@@ -77,9 +77,7 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
         this.keyEnter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER); //sets key ENTER as continue button on level win
 
         this.input.keyboard.on('keydown-P', function() { //on pressing Key P
-            isPaused = this.scene; //set isPasued to this.scene to get key
-            this.scene.pause(); //pause this scene
-            this.scene.launch('Paused'); //launch paused scene
+            this.pauseGame();
         }, this);
 
         //ADD MUTE FUNCTION
@@ -474,17 +472,20 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
         this.time.addEvent({ //add time event
             delay: 60, //set delay to 60
             callback: function() { //create call back function for time event
-                if (!touch) {
-                    if (cursors.left.isDown) { //if key A pressed down
+                if (controllerActionPressed("pause")) {
+                    this.pauseGame();
+                }
+                if (!touch || getController()) {
+                    if (cursors.left.isDown || controllerDirectionDown("left")) { //if key A pressed down
                         this.player.x -= this.game.config.height * 0.007; //Move left
                     }
-                    if (cursors.right.isDown) { //if key D pressed down
+                    if (cursors.right.isDown || controllerDirectionDown("right")) { //if key D pressed down
                         this.player.x += this.game.config.height * 0.007; //Move right
                     }
-                    if (cursors.up.isDown) { //if key W pressed down
+                    if (cursors.up.isDown || controllerDirectionDown("up")) { //if key W pressed down
                         this.player.y -= this.game.config.height * 0.007; //Move up   
                     }
-                    if (cursors.down.isDown) { //if key S pressed down
+                    if (cursors.down.isDown || controllerDirectionDown("down")) { //if key S pressed down
                         this.player.y += this.game.config.height * 0.007; //Move down
                     }
                 }
@@ -546,7 +547,10 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
         this.time.addEvent({ //add a time event on player shooting
             delay: 15, //set delay to 15
             callback: function() { //create a callback function 
-                if (this.keySpace.isDown && this.player.active) { //if SPACE is down && player is active still
+                var fireDown = this.keySpace.isDown || controllerActionDown("fire");
+                var nukeDown = this.keyN.isDown || controllerActionDown("nuke");
+
+                if (fireDown && this.player.active) { //if SPACE is down && player is active still
                     if (this.playerShootTick < this.playerShootDelay) { //if playerShootTick is less than the playerShootDelay
                         this.playerShootTick++; //add 1 to Tick count, which will repeat until it hits 30
                     }
@@ -557,7 +561,7 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
                         this.playerShootTick = 0; //set shootTick back to 0
                     }
                 }
-                if (this.keyN.isDown && this.player.active && currentNukes > 0) { //if N is down && player is active still && nukes available
+                if (nukeDown && this.player.active && currentNukes > 0) { //if N is down && player is active still && nukes available
                     if (this.playerNukeTick < this.playerNukeDelay) { //if playerNukeTick is less than the playernukeDelay
                         this.playerNukeTick++; //add 1 to Tick count, which will repeat until it hits 150
                         textNukesLoad.setText('ReArm: ' + this.playerNukeTick + '/' + this.playerNukeDelay); //set rearm text to count the nuke tick number
@@ -571,7 +575,7 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
                         textNukes.setText('Nukes: ' + currentNukes); //set nuke left text to current value
                     }
                 }
-                if (this.keyN.isDown && this.player.active && currentNukes == 0) { //if SPACE is down && no nukes left
+                if (nukeDown && this.player.active && currentNukes == 0) { //if SPACE is down && no nukes left
                     textNukesLoad.setText('ReArm: OUT'); //set nukes rearming text to out
                 }
             },
@@ -867,7 +871,7 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
         this.time.addEvent({ //add timed event
             delay: 100, //set delay to 100
             callback: function() { //create a callback function
-                if (this.keyEnter.isDown && levelWon && !touch) { //if the Space key is pressed and levelWon is true
+                if ((this.keyEnter.isDown || controllerActionPressed("start")) && levelWon && (!touch || getController())) { //if the Space key is pressed and levelWon is true
                     levelWon = false; //set variable
                     gameWinPrize = true; //set gameWinPrize true
                     this.addWinPrize(); //goto function
@@ -959,7 +963,7 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
         this.time.addEvent({ //add timed event
             delay: 100, //set delay to 100
             callback: function() { //create a callback function
-                if (this.keyR.isDown && RIP && !touch) { //if the R key is pressed and RIP is true
+                if ((this.keyR.isDown || controllerActionPressed("restart")) && RIP && (!touch || getController())) { //if the R key is pressed and RIP is true
                     enemyShips = 0; //set enemyShips to 0
                     enemyDeaths = 0; //set enemyDeaths to 0
                     totalEnemyShips = 0; //reset total enemyships
@@ -987,5 +991,11 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
         });
     }
     // end restart function
+
+    pauseGame() {
+        isPaused = this.scene; //set isPasued to this.scene to get key
+        this.scene.pause(); //pause this scene
+        this.scene.launch('Paused'); //launch paused scene
+    }
 }
 // END scene

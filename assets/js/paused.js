@@ -97,13 +97,28 @@ class Paused extends Phaser.Scene { //creates a scene in the Phaser Object calle
         });
 
         this.btnResume.once("pointerdown", function() { //this Resume Button when on method, when mouse clicks
-            this.sfx.btn.play(); // set the sound to play             
-            this.scene.resume(isPaused.key); // resume scene
-            this.scene.setVisible(false);
+            this.resumeGame();
         }, this); //this state only
         //END play button
 
+        this.time.addEvent({
+            delay: 100,
+            callback: function() {
+                if (controllerActionPressed("pause")) {
+                    this.resumeGame();
+                }
+            },
+            callbackScope: this,
+            loop: true
+        });
+
     }
     //END create function
+
+    resumeGame() {
+        this.sfx.btn.play(); // set the sound to play             
+        this.scene.resume(isPaused.key); // resume scene
+        this.scene.setVisible(false);
+    }
 }
 //END scene
