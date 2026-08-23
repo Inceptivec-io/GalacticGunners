@@ -6,11 +6,11 @@
 | Institutional Arm | Inceptivec Gamification |
 | Commercial Repository | `Inceptivec-io/GalacticGunners` |
 | Historical Repository | `michael-leese/GallacticGunners` READ-ONLY |
-| Current Programme | GG-COM |
-| Current Stage | GG-COM-001 COMPLETE / PENDING FOUNDER ACCEPTANCE |
-| Active Handoff | GALACTIC_GUNNERS_GG_COM_001_HANDOFF_IN_001_REV2_APP1 |
-| Current Feature HEAD | 25689020720b2909060c7c3ea7bd10008667df99 |
-| Closure State | PASS |
+| Current Programme | IP_FREEDOM_LICENSE_PROTECTION_ASSET_CREATION |
+| Current Stage | IP FREEDOM ASSET INTEGRATION COMPLETE / PENDING FOUNDER ACCEPTANCE |
+| Active Handoff | GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_002 |
+| Current Feature HEAD | reported in DEVTEAM_002 non-self-referential delivery envelope |
+| Closure State | PASS - RUNTIME REGRESSION VERIFIED / SAFE EXIT VERIFIED BY DELIVERY ENVELOPE |
 | Root Execution Contract | `AGENTS.md` |
 | External Boundary | `_EXTERNAL_GalacticGunners` |
 | Internal Governance Root | `docs/internal_governance` |

@@ -5,11 +5,11 @@ class Paused extends Phaser.Scene { //creates a scene in the Phaser Object calle
 
     //preload function
     preload() {
-        this.load.image("backgroundstars", "assets/images/darkstars.jpg") //preload background stars image
-        this.load.image("resume", "assets/images/resume.png"); //preload the Resume Button image
-        this.load.image("resumeHover", "assets/images/resumeHover.png"); //preload the Resume Button Hover image
-        this.load.image("comet", "assets/images/comet.png"); //preload the comet image
-        this.load.image("scifiwarriors", "assets/images/scifiwarriors.png"); //preload the scifi woman image
+        this.load.image("backgroundstars", "assets/images/owned/backgrounds/gg_starfield_16x9_v001.png") //preload background stars image
+        this.load.image("resume", "assets/images/owned/ui/gg_ui_resume_v001.png"); //preload the Resume Button image
+        this.load.image("resumeHover", "assets/images/owned/ui/gg_ui_pause_v001.png"); //preload the Resume Button Hover image
+        this.load.image("comet", "assets/images/owned/sprites/gg_comet_v001.png"); //preload the comet image
+        this.load.image("pauseIcon", "assets/images/owned/ui/gg_ui_pause_v001.png"); //preload owned pause image
         this.load.audio("sndBtn", "assets/audio/sndBtn.wav"); //preload the Button Sound
     }
     //END preload function
@@ -32,7 +32,7 @@ class Paused extends Phaser.Scene { //creates a scene in the Phaser Object calle
         this.planetImage = this.add.image(0, 0, 'comet'); //add pause image to bottom of screen
         this.aGrid.placeAtIndex(71, this.planetImage); //set position on the grid
         Align.scaleToGameW(this.planetImage, 0.9); //set scale
-        this.womanImage = this.add.image(0, 0, 'scifiwarriors'); //add pause image to bottom of screen
+        this.womanImage = this.add.image(0, 0, 'pauseIcon'); //add pause image to bottom of screen
         this.womanImage.setOrigin(0.5, 0.55); //set origin
         this.aGrid.placeAtIndex(82, this.womanImage); //set position on the grid
         Align.scaleToGameW(this.womanImage, 0.5); //set scale
@@ -45,7 +45,7 @@ class Paused extends Phaser.Scene { //creates a scene in the Phaser Object calle
             0, //set y axis position
             "PAUSED", //set text
             {
-                fontFamily: "Arcade", //set font style
+                fontFamily: "Arial, Helvetica, sans-serif", //set font style
                 fontSize: 120, //set font size
                 align: "center" //set alignment
             }
@@ -62,7 +62,7 @@ class Paused extends Phaser.Scene { //creates a scene in the Phaser Object calle
             0, //set y axis position
             "Come Back We Need You!", //set text
             {
-                fontFamily: "Arcadepix", //set font style
+                fontFamily: "Arial, Helvetica, sans-serif", //set font style
                 fontSize: 80, //set font size
                 align: "center" //set alignment
             }

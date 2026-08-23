@@ -40,6 +40,8 @@ Current commercial HEAD contains controller/gamepad support under commit 8792352
 | `assets/js/utils/align.js` | `8f9f895fbfab03741429977332edb66972a0118b` | Same utility/example-code provenance concern. | `UNKNOWN - REPLACE / RESOLVE` | Retain for current runtime only; replace later. |
 | `assets/js/utils/alignGrid.js` | `b28a06551fd4c970dcc7166de47d1145bf4c0643` | Same utility/example-code provenance concern. | `UNKNOWN - REPLACE / RESOLVE` | Retain for current runtime only; replace later. |
 
+DEVTEAM-002 currentness: these three files were superseded and removed under `GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_002`. Active runtime utility helpers are now `assets/js/utils/gg_align.js`, `assets/js/utils/gg_align_grid.js` and `assets/js/utils/gg_ui_group.js`, sourced from the Founder-supplied IP Freedom pack.
+
 ## Course PDF
 
 assets/images/ReadMeImages/Build-Arcade-Games-with-Phaser-3_-Saucer-Invaders-1.pdf is not needed to run the game and was removed from the commercial repository. Provenance is preserved by external reference only.

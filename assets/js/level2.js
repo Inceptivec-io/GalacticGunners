@@ -39,7 +39,7 @@ class Level2 extends Phaser.Scene { //creates a scene in the Phaser Object calle
         //END Mute Button
 
         //particles and emitter creation
-        particles = this.add.particles('yellow'); //load yellow image into particles 
+        particles = this.add.particles('nuke'); //load owned nuke image into particles
 
         emitter = particles.createEmitter({ // create emitter to be called and createEmitter object on particles
             on: false, //set on method to be property false, not showing on screen //on test with set to true as standard positioned in top left corner before action call
@@ -50,23 +50,23 @@ class Level2 extends Phaser.Scene { //creates a scene in the Phaser Object calle
         //END particles and emitter creation
 
         //SCORED POINTS  AND LIVES REMAINING METHODS 
-        textScore = this.add.text(0, 0, 'Score: ' + score, { font: '42px Arcade', fill: '#ffffff' }); //create score text, position x and y, set text with score variable and add font styling
+        textScore = this.add.text(0, 0, 'Score: ' + score, { font: '42px Arial', fill: '#ffffff' }); //create score text, position x and y, set text with score variable and add font styling
         textScore.setOrigin(0.2, 0.5); //set origin
         this.aGrid.placeAtIndex(0, textScore); //set position on the grid
         Align.scaleToGameW(textScore, 0.12); //set scale
-        textLives = this.add.text(0, 0, 'Lives: ' + currentLives, { font: '42px Arcade', fill: '#ffffff' }); //create lives text, position x and y, set text with currentLives variable and add font styling
+        textLives = this.add.text(0, 0, 'Lives: ' + currentLives, { font: '42px Arial', fill: '#ffffff' }); //create lives text, position x and y, set text with currentLives variable and add font styling
         textLives.setOrigin(0.2, 0.5); //set origin
         this.aGrid.placeAtIndex(110, textLives); //set position on the grid
         Align.scaleToGameW(textLives, 0.12); //set scale
-        textNukesLoad = this.add.text(0, 0, 'ReArm: 150/150', { font: '42px Arcade', fill: '#ffffff' }); //create ReArm text, position x and y, add font styling
+        textNukesLoad = this.add.text(0, 0, 'ReArm: 150/150', { font: '42px Arial', fill: '#ffffff' }); //create ReArm text, position x and y, add font styling
         textNukesLoad.setOrigin(0.85, 1); //set origin
         this.aGrid.placeAtIndex(120, textNukesLoad); //set position on the grid
         Align.scaleToGameW(textNukesLoad, 0.17); //set scale
-        textNukes = this.add.text(0, 0, 'Nukes: ' + currentNukes, { font: '42px Arcade', fill: '#ffffff' }); //create Nukes Left text, position x and y, set text with currentNukes variable and add font styling
+        textNukes = this.add.text(0, 0, 'Nukes: ' + currentNukes, { font: '42px Arial', fill: '#ffffff' }); //create Nukes Left text, position x and y, set text with currentNukes variable and add font styling
         textNukes.setOrigin(0.8, 0.4); //set origin
         this.aGrid.placeAtIndex(120, textNukes); //set position on the grid
         Align.scaleToGameW(textNukes, 0.12); //set scale
-        restartlevel = this.add.text(0, 0, 'Replay: ' + LevelRestart, { font: '42px Arcade', fill: '#ffffff' }); //show how times you can restart current level
+        restartlevel = this.add.text(0, 0, 'Replay: ' + LevelRestart, { font: '42px Arial', fill: '#ffffff' }); //show how times you can restart current level
         restartlevel.setOrigin(0.8, 0.5); //set origin
         this.aGrid.placeAtIndex(10, restartlevel); //set position on the grid
         Align.scaleToGameW(restartlevel, 0.12); //set scale
@@ -846,7 +846,7 @@ class Level2 extends Phaser.Scene { //creates a scene in the Phaser Object calle
             0, //set y axis position
             "Level 2 Complete!", //set text   
             {
-                fontFamily: "Arcadepix", //set font type
+                fontFamily: "Arial, Helvetica, sans-serif", //set font type
                 fontSize: 100, //set font size
                 align: "center" //set text alignment
             }
@@ -860,7 +860,7 @@ class Level2 extends Phaser.Scene { //creates a scene in the Phaser Object calle
             0, //set y axis position
             this.GameContinue, //set text   
             {
-                fontFamily: "Arcadepix", //set font type
+                fontFamily: "Arial, Helvetica, sans-serif", //set font type
                 fontSize: 70, //set font size
                 align: "center" //set text alignment
             }
@@ -930,7 +930,7 @@ class Level2 extends Phaser.Scene { //creates a scene in the Phaser Object calle
             0, //set y axis position
             GameOver, //set text to variable GameOver
             {
-                fontFamily: "Arcadepix", //set font type
+                fontFamily: "Arial, Helvetica, sans-serif", //set font type
                 fontSize: 100, //set font size
                 align: "center" //set text alignment
             }
@@ -945,7 +945,7 @@ class Level2 extends Phaser.Scene { //creates a scene in the Phaser Object calle
             0, //set y axis position
             this.Restart, //set text to variable Restart
             {
-                fontFamily: "Arcadepix", //set font type
+                fontFamily: "Arial, Helvetica, sans-serif", //set font type
                 fontSize: 70, //set font size
                 align: "center" //set text alignment
             }

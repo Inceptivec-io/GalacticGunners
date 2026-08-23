@@ -5,12 +5,14 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
 
   //preload function
   preload() {
-    this.load.image("backgroundstars", "assets/images/darkstars.jpg") //preload background stars image
-    this.load.image("BtnPlay", "assets/images/sprBtnPlay.png"); //preload the Play Button image
-    this.load.image("BtnPlayHover", "assets/images/sprBtnPlayHover.png"); //preload the Play Button Hover image
-    this.load.image("hero", "assets/images/spacesuit.png"); //preload the hero image
-    this.load.image("BtnInfo", "assets/images/InfoWhite.png"); //preload the Info Button image
-    this.load.image("BtnPoint", "assets/images/pointericon.png"); //preload the Pointer Button image
+    this.load.image("backgroundstars", "assets/images/owned/backgrounds/gg_starfield_16x9_v001.png") //preload background stars image
+    this.load.image("BtnPlay", "assets/images/owned/branding/gg_symbol_v001.png"); //preload the Play Button image
+    this.load.image("BtnPlayHover", "assets/images/owned/branding/gg_symbol_v001.png"); //preload the Play Button Hover image
+    this.load.image("logoPrimary", "assets/images/owned/branding/gg_logo_primary_v001.png");
+    this.load.image("menuTitlecard", "assets/images/owned/branding/gg_menu_titlecard_v001.png");
+    this.load.image("hero", "assets/images/owned/branding/gg_symbol_v001.png"); //preload the hero image
+    this.load.image("BtnInfo", "assets/images/owned/ui/gg_ui_info_v001.png"); //preload the Info Button image
+    this.load.image("BtnPoint", "assets/images/owned/ui/gg_ui_pointer_v001.png"); //preload the Pointer Button image
     this.load.audio("sndBtn", "assets/audio/sndBtn.wav"); //preload the Button Sound
   }
   //END preload function
@@ -31,6 +33,18 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
     };
     //END create sounds
 
+    this.menuCard = this.add.image(0, 0, "menuTitlecard");
+    this.menuCard.setAlpha(0.3);
+    this.menuCard.setDepth(-4);
+    this.aGrid.placeAtIndex(60, this.menuCard);
+    Align.scaleToGameW(this.menuCard, 1.0);
+
+    this.logoPrimary = this.add.image(0, 0, "logoPrimary");
+    this.logoPrimary.setOrigin(0.5);
+    this.aGrid.placeAtIndex(5, this.logoPrimary);
+    this.logoPrimary.y = this.game.config.height * 0.08;
+    Align.scaleToGameW(this.logoPrimary, 0.58);
+
     //ADD MAIN MENU TEXT
     //Game Title Text
     this.textTitle = this.add.text( //Add Game Title Text
@@ -38,7 +52,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
       0, //set y axis position
       "GALACTIC GUNNERS", //set text
       {
-        fontFamily: "Arcade", //set font style
+        fontFamily: "Arial, Helvetica, sans-serif", //set font style
         fontSize: 120, //set font size
         align: "center" //set alignment
       }
@@ -47,6 +61,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
     this.textTitle.setOrigin(0.5, 0.3); //set position on grid
     this.aGrid.placeAtIndex(5, this.textTitle); //set position on grid
     Align.scaleToGameW(this.textTitle, 0.6); //set scale
+    this.textTitle.setVisible(false);
     //END Game Title Text
 
     //Subheading text
@@ -55,7 +70,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
       0, //set y axis position
       "CAN YOU SAVE THE DAY?", //set text
       {
-        fontFamily: "Arcadepix", //set font style
+        fontFamily: "Arial, Helvetica, sans-serif", //set font style
         fontSize: 80, //set font size
         align: "center" //set alignment
       }
@@ -105,7 +120,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
       0, //set position on the y axis
       BestPlayedOn, //set text to variable
       {
-        fontFamily: "Arcadepix", //set font style
+        fontFamily: "Arial, Helvetica, sans-serif", //set font style
         fontSize: 80, //set font size
         align: "center" //set alignment
       }
@@ -147,7 +162,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
       0, //set position on the y axis
       TouchSelector, //set text to variable
       {
-        fontFamily: "Arcadepix", //set font style
+        fontFamily: "Arial, Helvetica, sans-serif", //set font style
         fontSize: 80, //set font size
         align: "center" //set alignment
       }

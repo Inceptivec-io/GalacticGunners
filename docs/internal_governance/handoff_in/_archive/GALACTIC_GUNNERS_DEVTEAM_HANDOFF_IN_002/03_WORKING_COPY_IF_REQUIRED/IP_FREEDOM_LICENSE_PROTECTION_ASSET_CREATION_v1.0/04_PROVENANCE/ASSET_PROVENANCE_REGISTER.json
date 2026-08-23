@@ -1,0 +1,234 @@
+[
+  {
+    "asset": "02_RUNTIME/audio/gg_nuke_v001.wav",
+    "creator": "Generated for Inceptivec Gamification under Founder/CTO direction",
+    "creation_method": "Original procedural/vector/raster synthesis created specifically for Galactic Gunners",
+    "third_party_source": "NONE",
+    "ownership_classification": "OWNED / PROJECT-CREATED",
+    "sha256": "00c74c6d722857babc9fe1ab2971d0539630143a57a11797871dff47cb45b3dd"
+  },
+  {
+    "asset": "02_RUNTIME/backgrounds/gg_starfield_16x9_v001.png",
+    "creator": "Generated for Inceptivec Gamification under Founder/CTO direction",
+    "creation_method": "Original procedural/vector/raster synthesis created specifically for Galactic Gunners",
+    "third_party_source": "NONE",
+    "ownership_classification": "OWNED / PROJECT-CREATED",
+    "sha256": "6449d506f4a52c43aa6871e7b0cfecfd1e0605d4e18f8ead180e8eb500318ca1"
+  },
+  {
+    "asset": "02_RUNTIME/backgrounds/gg_starfield_portrait_v001.png",
+    "creator": "Generated for Inceptivec Gamification under Founder/CTO direction",
+    "creation_method": "Original procedural/vector/raster synthesis created specifically for Galactic Gunners",
+    "third_party_source": "NONE",
+    "ownership_classification": "OWNED / PROJECT-CREATED",
+    "sha256": "b51eb01d32f90fd91372d4d37689ec52041ac3c4fd529cf359e44460b12fb0dd"
+  },
+  {
+    "asset": "02_RUNTIME/backgrounds/gg_starfield_square_v001.png",
+    "creator": "Generated for Inceptivec Gamification under Founder/CTO direction",
+    "creation_method": "Original procedural/vector/raster synthesis created specifically for Galactic Gunners",
+    "third_party_source": "NONE",
+    "ownership_classification": "OWNED / PROJECT-CREATED",
+    "sha256": "5edfd4acb7a5c8b104b2074ce5c60eaf1866903fb2c4b98ba29278510c2d85f5"
+  },
+  {
+    "asset": "02_RUNTIME/branding/gg_game_over_v001.png",
+    "creator": "Generated for Inceptivec Gamification under Founder/CTO direction",
+    "creation_method": "Original procedural/vector/raster synthesis created specifically for Galactic Gunners",
+    "third_party_source": "NONE",
+    "ownership_classification": "OWNED / PROJECT-CREATED",
+    "sha256": "8c4d0dc78e1be894d46d38e1a2d16c5f63ea49e5e68c03cecf578b10beb8e774"
+  },
+  {
+    "asset": "02_RUNTIME/branding/gg_logo_primary_v001.png",
+    "creator": "Generated for Inceptivec Gamification under Founder/CTO direction",
+    "creation_method": "Original procedural/vector/raster synthesis created specifically for Galactic Gunners",
+    "third_party_source": "NONE",
+    "ownership_classification": "OWNED / PROJECT-CREATED",
+    "sha256": "19b735a1a4a08c09706d5703a5aa6a4819d984e6a030e54f86972fd244594324"
+  },
+  {
+    "asset": "02_RUNTIME/branding/gg_menu_titlecard_v001.png",
+    "creator": "Generated for Inceptivec Gamification under Founder/CTO direction",
+    "creation_method": "Original procedural/vector/raster synthesis created specifically for Galactic Gunners",
+    "third_party_source": "NONE",
+    "ownership_classification": "OWNED / PROJECT-CREATED",
+    "sha256": "8e5d2d5ac9ac81c9867ef1322aa97b821a3a529be1e1b3382bc31f78ef029689"
+  },
+  {
+    "asset": "02_RUNTIME/branding/gg_symbol_v001.png",
+    "creator": "Generated for Inceptivec Gamification under Founder/CTO direction",
+    "creation_method": "Original procedural/vector/raster synthesis created specifically for Galactic Gunners",
+    "third_party_source": "NONE",
+    "ownership_classification": "OWNED / PROJECT-CREATED",
+    "sha256": "6bb4c74fb7ce44ad6cb296f1585cd46e18df6bbaaf740424c525a6f154118a3f"
+  },
+  {
+    "asset": "02_RUNTIME/branding/gg_victory_v001.png",
+    "creator": "Generated for Inceptivec Gamification under Founder/CTO direction",
+    "creation_method": "Original procedural/vector/raster synthesis created specifically for Galactic Gunners",
+    "third_party_source": "NONE",
+    "ownership_classification": "OWNED / PROJECT-CREATED",
+    "sha256": "e85afb9e6d8f745e1d5c926e6bd31780bdc93d55280bb8321de7bff18e17febd"
+  },
+  {
+    "asset": "02_RUNTIME/sprites/gg_asteroid_v001.png",
+    "creator": "Generated for Inceptivec Gamification under Founder/CTO direction",
+    "creation_method": "Original procedural/vector/raster synthesis created specifically for Galactic Gunners",
+    "third_party_source": "NONE",
+    "ownership_classification": "OWNED / PROJECT-CREATED",
+    "sha256": "b13a4d2fa191b0d713b1d7eaa57a6d4f1f70a2f299752bc3229fdf70a561d07d"
+  },
+  {
+    "asset": "02_RUNTIME/sprites/gg_boss_v001_sheet.png",
+    "creator": "Generated for Inceptivec Gamification under Founder/CTO direction",
+    "creation_method": "Original procedural/vector/raster synthesis created specifically for Galactic Gunners",
+    "third_party_source": "NONE",
+    "ownership_classification": "OWNED / PROJECT-CREATED",
+    "sha256": "610f806e2906c5d2bb1f7baeee8465d9b742eda6e22c8ff02e1768422f03c869"
+  },
+  {
+    "asset": "02_RUNTIME/sprites/gg_comet_v001.png",
+    "creator": "Generated for Inceptivec Gamification under Founder/CTO direction",
+    "creation_method": "Original procedural/vector/raster synthesis created specifically for Galactic Gunners",
+    "third_party_source": "NONE",
+    "ownership_classification": "OWNED / PROJECT-CREATED",
+    "sha256": "c65fe448f15cdcbfaa69c610f8eb6e02950aec766bb7abd36008a93ec418cfab"
+  },
+  {
+    "asset": "02_RUNTIME/sprites/gg_cruiser_v001_sheet.png",
+    "creator": "Generated for Inceptivec Gamification under Founder/CTO direction",
+    "creation_method": "Original procedural/vector/raster synthesis created specifically for Galactic Gunners",
+    "third_party_source": "NONE",
+    "ownership_classification": "OWNED / PROJECT-CREATED",
+    "sha256": "9448fbfc60ac0b769eebd0b9f21a7c356fc179c4b90e756fc1c6def827f75936"
+  },
+  {
+    "asset": "02_RUNTIME/sprites/gg_destroyer_v001_sheet.png",
+    "creator": "Generated for Inceptivec Gamification under Founder/CTO direction",
+    "creation_method": "Original procedural/vector/raster synthesis created specifically for Galactic Gunners",
+    "third_party_source": "NONE",
+    "ownership_classification": "OWNED / PROJECT-CREATED",
+    "sha256": "2337da8eb6d35db1d83a010ba0ae11c4b0d877717819c9fbdb6f74097f2c7941"
+  },
+  {
+    "asset": "02_RUNTIME/sprites/gg_explosion_v001_sheet.png",
+    "creator": "Generated for Inceptivec Gamification under Founder/CTO direction",
+    "creation_method": "Original procedural/vector/raster synthesis created specifically for Galactic Gunners",
+    "third_party_source": "NONE",
+    "ownership_classification": "OWNED / PROJECT-CREATED",
+    "sha256": "98f7efa077cd0417fc1fb435e7cec6f1683b72a18eaa2360c91675a1943971f2"
+  },
+  {
+    "asset": "02_RUNTIME/sprites/gg_nuke_v001_sheet.png",
+    "creator": "Generated for Inceptivec Gamification under Founder/CTO direction",
+    "creation_method": "Original procedural/vector/raster synthesis created specifically for Galactic Gunners",
+    "third_party_source": "NONE",
+    "ownership_classification": "OWNED / PROJECT-CREATED",
+    "sha256": "cb9e6b1e73faddb3d22c39808c26e9ae71856286cd1fcb573b68dad1669ba7f0"
+  },
+  {
+    "asset": "02_RUNTIME/sprites/gg_player_v001_sheet.png",
+    "creator": "Generated for Inceptivec Gamification under Founder/CTO direction",
+    "creation_method": "Original procedural/vector/raster synthesis created specifically for Galactic Gunners",
+    "third_party_source": "NONE",
+    "ownership_classification": "OWNED / PROJECT-CREATED",
+    "sha256": "9ba9037a0d8dcc126d9928eb159586b48ee8fe36e8ec8bcfdc7d397d07a7ca91"
+  },
+  {
+    "asset": "02_RUNTIME/sprites/gg_scout_v001_sheet.png",
+    "creator": "Generated for Inceptivec Gamification under Founder/CTO direction",
+    "creation_method": "Original procedural/vector/raster synthesis created specifically for Galactic Gunners",
+    "third_party_source": "NONE",
+    "ownership_classification": "OWNED / PROJECT-CREATED",
+    "sha256": "928ed04c657a72c93137aff40f12d868a49ee56eb488061036657a507324b23a"
+  },
+  {
+    "asset": "02_RUNTIME/ui/gg_ui_controller_v001.png",
+    "creator": "Generated for Inceptivec Gamification under Founder/CTO direction",
+    "creation_method": "Original procedural/vector/raster synthesis created specifically for Galactic Gunners",
+    "third_party_source": "NONE",
+    "ownership_classification": "OWNED / PROJECT-CREATED",
+    "sha256": "d8c960c8b8743b70cf515b93e3945a3f454433e905be3f824f9150735afb2f0d"
+  },
+  {
+    "asset": "02_RUNTIME/ui/gg_ui_info_v001.png",
+    "creator": "Generated for Inceptivec Gamification under Founder/CTO direction",
+    "creation_method": "Original procedural/vector/raster synthesis created specifically for Galactic Gunners",
+    "third_party_source": "NONE",
+    "ownership_classification": "OWNED / PROJECT-CREATED",
+    "sha256": "f672923663688805643f08d97979d7aa1277bda69efd95df0ea9d45953c89076"
+  },
+  {
+    "asset": "02_RUNTIME/ui/gg_ui_pause_v001.png",
+    "creator": "Generated for Inceptivec Gamification under Founder/CTO direction",
+    "creation_method": "Original procedural/vector/raster synthesis created specifically for Galactic Gunners",
+    "third_party_source": "NONE",
+    "ownership_classification": "OWNED / PROJECT-CREATED",
+    "sha256": "2840793b625aa37fdda16e74f72151e64eed052f43730bc0c1a5f51afbf0b6f2"
+  },
+  {
+    "asset": "02_RUNTIME/ui/gg_ui_pointer_v001.png",
+    "creator": "Generated for Inceptivec Gamification under Founder/CTO direction",
+    "creation_method": "Original procedural/vector/raster synthesis created specifically for Galactic Gunners",
+    "third_party_source": "NONE",
+    "ownership_classification": "OWNED / PROJECT-CREATED",
+    "sha256": "072dc24fe54a66f5d5e410d834c7138bec5c1f4912eb87231778f4625d85953f"
+  },
+  {
+    "asset": "02_RUNTIME/ui/gg_ui_restart_v001.png",
+    "creator": "Generated for Inceptivec Gamification under Founder/CTO direction",
+    "creation_method": "Original procedural/vector/raster synthesis created specifically for Galactic Gunners",
+    "third_party_source": "NONE",
+    "ownership_classification": "OWNED / PROJECT-CREATED",
+    "sha256": "d43ddf478347ddc07b96ae2b5c56d74a4a81c6ac5d4047a73d53c55524543a11"
+  },
+  {
+    "asset": "02_RUNTIME/ui/gg_ui_resume_v001.png",
+    "creator": "Generated for Inceptivec Gamification under Founder/CTO direction",
+    "creation_method": "Original procedural/vector/raster synthesis created specifically for Galactic Gunners",
+    "third_party_source": "NONE",
+    "ownership_classification": "OWNED / PROJECT-CREATED",
+    "sha256": "4fe6099df1dbdb1f48d77f589e9cb58f972b0b8c4c93a13e3cb2679f60782f5e"
+  },
+  {
+    "asset": "02_RUNTIME/ui/gg_ui_sound_off_v001.png",
+    "creator": "Generated for Inceptivec Gamification under Founder/CTO direction",
+    "creation_method": "Original procedural/vector/raster synthesis created specifically for Galactic Gunners",
+    "third_party_source": "NONE",
+    "ownership_classification": "OWNED / PROJECT-CREATED",
+    "sha256": "de1d76495cf4efe5d4bdec0bd8457c3f2ce6d072c08ce7633cd56d7081bf5d93"
+  },
+  {
+    "asset": "02_RUNTIME/ui/gg_ui_sound_on_v001.png",
+    "creator": "Generated for Inceptivec Gamification under Founder/CTO direction",
+    "creation_method": "Original procedural/vector/raster synthesis created specifically for Galactic Gunners",
+    "third_party_source": "NONE",
+    "ownership_classification": "OWNED / PROJECT-CREATED",
+    "sha256": "72b3b79fd8e734c18987b2a74b33bac49e16be0204dc1637488374811548bec4"
+  },
+  {
+    "asset": "03_CODE/utils/gg_align.js",
+    "creator": "Generated for Inceptivec Gamification under Founder/CTO direction",
+    "creation_method": "Original internally authored utility code",
+    "third_party_source": "NONE",
+    "ownership_classification": "OWNED / PROJECT-CREATED",
+    "sha256": "4f18c6f20f0bd947912c20db0607491b0b06de151c540cbf9ee2a749b31d1a31"
+  },
+  {
+    "asset": "03_CODE/utils/gg_align_grid.js",
+    "creator": "Generated for Inceptivec Gamification under Founder/CTO direction",
+    "creation_method": "Original internally authored utility code",
+    "third_party_source": "NONE",
+    "ownership_classification": "OWNED / PROJECT-CREATED",
+    "sha256": "acd63f59e48a348a78e9236d5b9be65a143e77f13c347f512f9024d0d50c31a7"
+  },
+  {
+    "asset": "03_CODE/utils/gg_ui_group.js",
+    "creator": "Generated for Inceptivec Gamification under Founder/CTO direction",
+    "creation_method": "Original internally authored utility code",
+    "third_party_source": "NONE",
+    "ownership_classification": "OWNED / PROJECT-CREATED",
+    "sha256": "5e123c2bea0950b7cf75dda3ddee6221a182db03f0a85206e76ae081bc3e45f0"
+  }
+]

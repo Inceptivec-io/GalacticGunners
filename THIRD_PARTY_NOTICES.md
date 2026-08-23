@@ -80,4 +80,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ## Utility / Example Code
 
-`assets/js/utils/UIBlock.js`, `assets/js/utils/align.js` and `assets/js/utils/alignGrid.js` are retained for current runtime continuity, but independent commercial provenance is not established in GG-COM-001. They are classified for later internally authored replacement under `IP_FREEDOM_LICENSE_PROTECTION_ASSET_CREATION`.
+The former utility/example files `assets/js/utils/UIBlock.js`, `assets/js/utils/align.js` and `assets/js/utils/alignGrid.js` were superseded and removed under `GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_002`.
+
+Current runtime utility helpers are the Founder-supplied owned replacements:
+
+- `assets/js/utils/gg_align.js`
+- `assets/js/utils/gg_align_grid.js`
+- `assets/js/utils/gg_ui_group.js`
