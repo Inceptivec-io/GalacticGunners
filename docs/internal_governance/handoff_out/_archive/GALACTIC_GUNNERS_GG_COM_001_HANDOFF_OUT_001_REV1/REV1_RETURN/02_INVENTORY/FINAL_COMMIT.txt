@@ -1,0 +1,7 @@
+﻿commit 686b9ed7f42876d32f856f28675120f8d478642f
+Author:     Michael Leese <michael-leese@outlook.com>
+AuthorDate: Sun Aug 23 11:54:05 2026 +0200
+Commit:     Michael Leese <michael-leese@outlook.com>
+CommitDate: Sun Aug 23 11:54:05 2026 +0200
+
+    Complete GG-COM-001 commercial authority baseline

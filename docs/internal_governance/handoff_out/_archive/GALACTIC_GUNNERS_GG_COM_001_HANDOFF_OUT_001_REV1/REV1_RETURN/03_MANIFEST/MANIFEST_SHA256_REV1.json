@@ -1,0 +1,47 @@
+﻿[
+    {
+        "file":  "00_HANDOFF_OUT_REV1.md",
+        "bytes":  3228,
+        "sha256":  "09c2ce822c904a860ccaf1c08eb1259db10fb24a42168b1b23c778c294182508"
+    },
+    {
+        "file":  "01_EVIDENCE/browser-smoke-result.json",
+        "bytes":  1806,
+        "sha256":  "993dcf2abb1e25392a61703014a2e0a074618b416f5635f994b52fbba8754cc2"
+    },
+    {
+        "file":  "01_EVIDENCE/browser-smoke.png",
+        "bytes":  323339,
+        "sha256":  "08e4a397e343998819322843a9de5b1b6e3f3a290d48528e7bac60b13fa50c26"
+    },
+    {
+        "file":  "02_INVENTORY/FINAL_COMMIT.txt",
+        "bytes":  307,
+        "sha256":  "0f23af0e6f90292996f72a14799bc1c46d0042da002213e6a44ff4718dd2bda5"
+    },
+    {
+        "file":  "02_INVENTORY/FINAL_COMMIT_STAT.txt",
+        "bytes":  17460,
+        "sha256":  "910f3bf222927ba938682c99354cb10e07407bcdbe3d637399b6e91ae9f1a8ca"
+    },
+    {
+        "file":  "02_INVENTORY/GIT_STATUS_SHORT_BRANCH_AFTER_PUSH.txt",
+        "bytes":  54,
+        "sha256":  "ed1ff63810289b9355f0edab29f1223158ad0bc1b67b775b0dc9e60ee83e0868"
+    },
+    {
+        "file":  "02_INVENTORY/LOCAL_HEAD.txt",
+        "bytes":  45,
+        "sha256":  "53913257288bdeca20a400dbbab5bf52eb95fdff28f2a9906c7baad11ee6e605"
+    },
+    {
+        "file":  "02_INVENTORY/REMOTE_FEATURE_HEAD.txt",
+        "bytes":  75,
+        "sha256":  "3c67f4f3283dae9cafae8769bed09e567badeee14a070351839c58ad7c9d0e13"
+    },
+    {
+        "file":  "03_MANIFEST/MANIFEST_SHA256_REV1.json",
+        "bytes":  1461,
+        "sha256":  "6998b7e249ecd4e54753044965d0778d23224827b767625841288f47caff8caa"
+    }
+]

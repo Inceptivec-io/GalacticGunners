@@ -2,8 +2,10 @@
 
 Boundary ID: _GalacticGunners_MAIN_POST_BOX
 Parent: _EXTERNAL_GalacticGunners
-Purpose: project-level handoff exchange, registers and evidence indexing for Galactic Gunners.
+Purpose: project-level transient handoff exchange boundary for Galactic Gunners.
 Repository: https://github.com/Inceptivec-io/GalacticGunners.git
-Mutation mode: boundary/register maintenance only, plus bounded repository execution through authorized work boxes.
+Mutation mode: boundary identity maintenance only, plus bounded repository execution through authorized work boxes.
 
-This MAIN POST BOX routes inbound commissions to work boxes and receives sealed handoff_out returns. It does not grant authority to redesign governance, commercial terms, product scope or repository branch rules.
+This MAIN POST BOX routes active inbound commissions to work boxes and may temporarily receive outbound handoff material during exchange. It is not an archive, evidence store, register location or working directory. Closed state is active payload zero.
+
+Durable governance, handoff history, evidence and registers are maintained under `docs/internal_governance/`.

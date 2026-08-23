@@ -11,9 +11,11 @@ Mutation mode: bounded repository execution for GG-COM-001 only.
 
 ## Direction
 
-- handoff_in/: receives and preserves inbound commissions and authorized working copies.
-- handoff_out/: contains the governed return package after work completion.
-- evidence/: contains durable execution evidence for this work box.
+- Active inbound payload may enter this work POST_BOX only for controlled receipt.
+- Consumed inbound payload must be preserved under `docs/internal_governance/handoff_in/_archive/` and removed from this POST_BOX.
+- Outbound handoff material must be preserved under `docs/internal_governance/handoff_out/_archive/` and removed from this POST_BOX after routing.
+- Durable evidence must be preserved under `docs/internal_governance/evidence/`.
+- Closed state is active payload zero.
 
 ## Stop/fail-closed conditions
 
