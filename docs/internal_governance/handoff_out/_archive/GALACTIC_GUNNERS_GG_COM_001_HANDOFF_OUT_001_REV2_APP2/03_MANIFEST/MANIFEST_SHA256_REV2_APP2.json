@@ -1,0 +1,32 @@
+﻿[
+    {
+        "path":  "docs\\internal_governance\\handoff_out\\_archive\\GALACTIC_GUNNERS_GG_COM_001_HANDOFF_OUT_001_REV2_APP2\\00_HANDOFF_OUT_REV2_APP2.md",
+        "sha256":  "15638AD6552BF7954B6994E97ABC1865AF83AB7EDACF8DD3099C9410B52E3889",
+        "bytes":  1500
+    },
+    {
+        "path":  "docs\\internal_governance\\handoff_out\\_archive\\GALACTIC_GUNNERS_GG_COM_001_HANDOFF_OUT_001_REV2_APP2\\02_INVENTORY\\APP2_INBOUND_HASH.txt",
+        "sha256":  "B47D85F68121C8A3029CD3504FD194647811AD9F0D36B2650E3DDED86784DF69",
+        "bytes":  312
+    },
+    {
+        "path":  "docs\\internal_governance\\handoff_out\\_archive\\GALACTIC_GUNNERS_GG_COM_001_HANDOFF_OUT_001_REV2_APP2\\02_INVENTORY\\GIT_STATUS_PRECOMMIT.txt",
+        "sha256":  "AA76FB194F7267AF99ACDA7E8E39D986762D85AD1D683281368618D4BD4BCD72",
+        "bytes":  553
+    },
+    {
+        "path":  "docs\\internal_governance\\handoff_out\\_archive\\GALACTIC_GUNNERS_GG_COM_001_HANDOFF_OUT_001_REV2_APP2\\02_INVENTORY\\LOCAL_HEAD_PRECOMMIT.txt",
+        "sha256":  "03C40AEE163F6D4A2308E477F789163259E410EA66B3444BBFF9E7E05E4B0A48",
+        "bytes":  45
+    },
+    {
+        "path":  "docs\\internal_governance\\handoff_out\\_archive\\GALACTIC_GUNNERS_GG_COM_001_HANDOFF_OUT_001_REV2_APP2\\02_INVENTORY\\POST_BOX_INVENTORY_APP2.txt",
+        "sha256":  "4FF1E8D7058DDD38F58DEB779DF6D08148559FB04C54626663B0671967AA363E",
+        "bytes":  512
+    },
+    {
+        "path":  "docs\\internal_governance\\handoff_out\\_archive\\GALACTIC_GUNNERS_GG_COM_001_HANDOFF_OUT_001_REV2_APP2\\02_INVENTORY\\REMOTE_HEAD_PRECOMMIT.txt",
+        "sha256":  "D0D2FD52F0FDB98B84971A454B9E09D390DBA957C4ABE918687548F7E581F3DA",
+        "bytes":  75
+    }
+]
