@@ -1,0 +1,57 @@
+﻿[
+    {
+        "file":  "00_HANDOFF_OUT.md",
+        "bytes":  18573,
+        "sha256":  "a47ebafefc5d132eaec99a186a6abc88ea94611fc73ef62b8887813466f5a8cc"
+    },
+    {
+        "file":  "01_EVIDENCE/browser-smoke-result.json",
+        "bytes":  1806,
+        "sha256":  "993dcf2abb1e25392a61703014a2e0a074618b416f5635f994b52fbba8754cc2"
+    },
+    {
+        "file":  "01_EVIDENCE/browser-smoke.png",
+        "bytes":  323339,
+        "sha256":  "08e4a397e343998819322843a9de5b1b6e3f3a290d48528e7bac60b13fa50c26"
+    },
+    {
+        "file":  "01_EVIDENCE/browser_smoke_test.js",
+        "bytes":  6914,
+        "sha256":  "480967688d3220c5cbe5096eb726d3f5e056e8604ff43d064ff934edd0b347bb"
+    },
+    {
+        "file":  "01_EVIDENCE/EVIDENCE_INDEX.md",
+        "bytes":  1973,
+        "sha256":  "9f24323b2d2b3d19580355cd4e71e599c0c5dda652ac8474e05699e5c3df36fa"
+    },
+    {
+        "file":  "02_INVENTORY/GIT_DIFF_NAME_STATUS_TRACKED.txt",
+        "bytes":  99,
+        "sha256":  "1f777963f8e04238d6441443fddc20af2ec33a744e3d20ea1d6826ecbcc308af"
+    },
+    {
+        "file":  "02_INVENTORY/GIT_DIFF_STAT_TRACKED.txt",
+        "bytes":  212,
+        "sha256":  "47ff5b6d77dbc3fee5f700eb527257430f8af8fb2d50176607d8756d0c507d45"
+    },
+    {
+        "file":  "02_INVENTORY/GIT_REMOTE_HEADS.txt",
+        "bytes":  58,
+        "sha256":  "0ccbc541c291c1aa983465e717f50c5612cf7fb70386691d903dbc53141e19d4"
+    },
+    {
+        "file":  "02_INVENTORY/GIT_STATUS_SHORT_BRANCH.txt",
+        "bytes":  218,
+        "sha256":  "7a29dd7788ea8078dc80e0a7a28892e0b24e9ac22ef7ab157d1922a3e5d0e909"
+    },
+    {
+        "file":  "02_INVENTORY/GIT_UNTRACKED_FILES.txt",
+        "bytes":  11172,
+        "sha256":  "420a4fc90f6b64d31beb7c6dfc9d55aeccdd70c18433545f64660da00d4f54ac"
+    },
+    {
+        "file":  "03_MANIFEST/MANIFEST_SHA256.json",
+        "bytes":  2012,
+        "sha256":  "2d36fd566237a3e03c8a2405f52653651c9ea948db11b8603c3a6243a19d3bf4"
+    }
+]

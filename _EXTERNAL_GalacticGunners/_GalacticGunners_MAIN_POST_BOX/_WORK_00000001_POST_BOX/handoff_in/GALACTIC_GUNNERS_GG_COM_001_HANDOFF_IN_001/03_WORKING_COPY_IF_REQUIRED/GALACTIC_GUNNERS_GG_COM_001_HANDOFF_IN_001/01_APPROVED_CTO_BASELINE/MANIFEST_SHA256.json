@@ -1,0 +1,72 @@
+[
+  {
+    "file": "00_GG_COM_001_CTO_EXECUTIVE_REVIEW_v1.1.md",
+    "bytes": 7683,
+    "sha256": "41e2cad3b034160f2c123999ba241a89b2020f546a5425525656972745eb1ffc"
+  },
+  {
+    "file": "01_GG_COM_001_INSTITUTIONAL_AUTHORITY_AND_PRODUCT_BOUNDARY_v1.1.md",
+    "bytes": 3204,
+    "sha256": "5e32ffa12e0a3eff89181461ed709fb577ba094b38594902d0c04e869b59c8e1"
+  },
+  {
+    "file": "02_GG_COM_001_COMMERCIAL_LICENSING_POSITION_v1.1.md",
+    "bytes": 6033,
+    "sha256": "aa812e82dc7dd4873f2ced6abb56615c2ee035b913ac1bd73ee991f2738b1bed"
+  },
+  {
+    "file": "03_GG_COM_001_CODE_PROVENANCE_RECORD_v1.1.md",
+    "bytes": 5029,
+    "sha256": "820570d03f7e7a2d81d76918ad7502b741446fdf115cff9a5b45f0885f6f086b"
+  },
+  {
+    "file": "04_GG_COM_001_ASSET_PROVENANCE_REGISTER_v1.1.md",
+    "bytes": 8277,
+    "sha256": "963b8e4f8ae375caba5335ccec4b7f30b7e9e3f11a2fbb40caba3a410d63bafe"
+  },
+  {
+    "file": "05_GG_COM_001_THIRD_PARTY_NOTICES_v1.1.md",
+    "bytes": 2922,
+    "sha256": "0ad99b9087700ffc9539ad78023db5448a691c4678b6d17477bc0d359e03f5ab"
+  },
+  {
+    "file": "06_GG_COM_001_AURORA_LEONARDI_CONTRIBUTION_AND_ROYALTY_FRAMEWORK_v1.1.md",
+    "bytes": 8075,
+    "sha256": "f6f7a7824fd1854ca35a0ecab9abb957356f28d36e34b776231c6e382c9d08eb"
+  },
+  {
+    "file": "07_GG_COM_001_PROPOSED_COMMERCIAL_README_v1.1.md",
+    "bytes": 5306,
+    "sha256": "3ae3664107df79d898328393e2fcf5368b979eec999576fb196127ab23bee4bc"
+  },
+  {
+    "file": "08_GG_COM_001_EXTERNAL_BOUNDARY_AND_REGISTER_SPECIFICATION_v1.1.md",
+    "bytes": 7257,
+    "sha256": "45ee2d97981e4bc347ad98fb3fa347c063f495866e773e575800510a34c731c8"
+  },
+  {
+    "file": "09_GG_COM_001_REMEDIATION_AND_CLOSURE_SPECIFICATION_v1.1.md",
+    "bytes": 3929,
+    "sha256": "4517d719019f8f579f31868d9a94c1fb6ea71e4c68b7e6bd43247f222e7fb14a"
+  },
+  {
+    "file": "10_GG_COM_001_SOURCE_EVIDENCE_REGISTER_v1.1.md",
+    "bytes": 3715,
+    "sha256": "3e9beec7a93667f4d59c1c1e22812f5bb07ed6ce9f253d77082c07c2961c0aa8"
+  },
+  {
+    "file": "11_GG_COM_001_FOUNDER_DECISION_REGISTER_v1.1.md",
+    "bytes": 2608,
+    "sha256": "047b54d3c82c33633cda3d098b9cf54936da4de855191db11e052e781ebcc973"
+  },
+  {
+    "file": "12_GG_COM_001_IP_FREEDOM_ASSET_CREATION_INTERFACE_v1.1.md",
+    "bytes": 3813,
+    "sha256": "2d5774ca70726ed0a47ef66af3c2071b04a807c8bf49083a12f5bdadb01f9188"
+  },
+  {
+    "file": "README_PACK.md",
+    "bytes": 1585,
+    "sha256": "03214bd056463e4eb27561f3a538b87e2ee2454512d73502501e0853a65d4947"
+  }
+]

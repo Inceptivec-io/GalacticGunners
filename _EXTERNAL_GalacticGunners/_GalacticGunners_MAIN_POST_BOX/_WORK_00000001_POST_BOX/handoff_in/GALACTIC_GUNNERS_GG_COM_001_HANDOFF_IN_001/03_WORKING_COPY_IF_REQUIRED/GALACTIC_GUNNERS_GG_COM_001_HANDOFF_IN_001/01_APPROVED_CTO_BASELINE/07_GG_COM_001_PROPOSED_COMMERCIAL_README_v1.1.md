@@ -6,15 +6,23 @@ Galactic Gunners is a fast-paced arcade space shooter being developed as the fou
 
 The current commercial product evolves from Michael Leese's original 2019 educational game project, preserving its development history while taking the game forward as a maintained, multi-platform commercial title.
 
+---
+
 ## Current Development Status
 
 Galactic Gunners is in active commercialisation.
 
-Current programme: `GG-COM`
+Current programme:
 
-Current stage: `GG-COM-001 - IP, Provenance & Commercial Authority`
+`GG-COM`
+
+Current stage:
+
+`GG-COM-001 — IP, Provenance & Commercial Authority`
 
 The immediate goal is to establish a commercially defensible code and asset baseline before leaderboard, packaging and store-release work proceeds.
+
+---
 
 ## The Game
 
@@ -34,6 +42,8 @@ Galactic Gunners is a responsive Phaser-powered arcade shooter featuring:
 
 The original project was designed to start accessibly and become progressively harder as the player advances.
 
+---
+
 ## Controller Support
 
 Commercial development has added browser gamepad/controller support.
@@ -45,18 +55,20 @@ Current real-device implementation/testing includes:
 
 Controller functionality currently covers key gameplay and navigation actions including movement, fire, nuke, pause/resume and restart.
 
-A standalone controller testing utility is also included at `tools/controller_button_tester.py` for development/testing.
+A standalone controller testing utility is also included for development/testing.
+
+---
 
 ## Platform Roadmap
 
-### Tier 1 - First Commercial Release
+### Tier 1 — First Commercial Release
 
 - Web browser
 - Windows
 - Android
 - iOS / iPadOS
 
-### Tier 2 - Extended Device Coverage
+### Tier 2 — Extended Device Coverage
 
 - macOS
 - tablets
@@ -65,7 +77,7 @@ A standalone controller testing utility is also included at `tools/controller_bu
 - expanded browser/device coverage
 - additional common controllers
 
-### Tier 3 - Console Feasibility
+### Tier 3 — Console Feasibility
 
 - Xbox
 - PlayStation
@@ -73,15 +85,32 @@ A standalone controller testing utility is also included at `tools/controller_bu
 
 Console support is a feasibility/traction-gated roadmap item and is not a blocker for first commercial release.
 
+---
+
 ## Commercialisation Roadmap
 
-- `GG-COM-001`: IP, provenance and commercial authority
-- `GG-COM-002`: Commercial code baseline and clean dependencies/assets
-- `GG-COM-003`: Player identity, score system and global leaderboard
-- `GG-COM-004`: Platform, input and device assurance
-- `GG-COM-005`: Commercial packaging, brand, stores, legal and credits
-- `GG-COM-006`: Release, launch and market validation
-- `GG-COM-007`: Evidence-led post-launch expansion
+### GG-COM-001
+IP, provenance and commercial authority
+
+### GG-COM-002
+Commercial code baseline and clean dependencies/assets
+
+### GG-COM-003
+Player identity, score system and global leaderboard
+
+### GG-COM-004
+Platform, input and device assurance
+
+### GG-COM-005
+Commercial packaging, brand, stores, legal and credits
+
+### GG-COM-006
+Release, launch and market validation
+
+### GG-COM-007
+Evidence-led post-launch expansion
+
+---
 
 ## Historical Provenance
 
@@ -97,24 +126,21 @@ The current commercial development repository is:
 
 `Inceptivec-io/GalacticGunners`
 
-The original game used Jared York's **CourseSaucerInvaders / Saucer Invaders** as an early code foundation. The bundled course PDF previously held in this repository has been removed from the commercial repository; provenance is preserved through external reference to the upstream project/course rather than by redistributing the document.
+---
 
 ## Open-Source / Third-Party Foundations
 
-Jared York's CourseSaucerInvaders upstream project is distributed under the MIT License.
+The original game used Jared York's **CourseSaucerInvaders / Saucer Invaders** as an early code foundation.
 
-Galactic Gunners also uses the Phaser game framework. The bundled file is `assets/js/phaser.js`, locally verified as Phaser `3.16.2`, and is distributed under the MIT License.
+That upstream project is distributed under the MIT License.
+
+Galactic Gunners also uses the **Phaser** game framework, which is distributed under the MIT License.
 
 Galactic Gunners contains substantial additional and modified game logic, levels, interface, controls, media and commercial-development work.
 
-Required third-party notices and provenance records are maintained as part of the commercialisation baseline:
+Required third-party notices and provenance records are maintained as part of the commercialisation baseline.
 
-- `LICENSE`
-- `THIRD_PARTY_NOTICES.md`
-- `docs/commercial/GG-COM-001/COMMERCIAL_LICENSING_POSITION.md`
-- `docs/commercial/GG-COM-001/THIRD_PARTY_NOTICES.md`
-- `docs/commercial/GG-COM-001/IP_PROVENANCE_RECORD.md`
-- `docs/commercial/GG-COM-001/ASSET_PROVENANCE_REGISTER.md`
+---
 
 ## Contributors
 
@@ -130,13 +156,19 @@ Current evidenced commercial work includes controller/gamepad implementation and
 
 The collaboration is also intended to provide genuine commercial-development experience, portfolio evidence and career support while Aurora studies gaming at university.
 
+---
+
 ## Commercial Model
 
-Initial commercial direction: **low-cost paid game / one purchase**
+Initial commercial direction:
+
+**low-cost paid game / one purchase**
 
 The product is being developed with a preference for straightforward paid ownership rather than intrusive advertising or artificial engagement mechanics.
 
 Final store pricing and platform-specific presentation will be confirmed as part of the commercial packaging/release stages.
+
+---
 
 ## Development Principles
 
@@ -148,10 +180,12 @@ Final store pricing and platform-specific presentation will be confirmed as part
 - build commercial capability only where it advances reliability, portability, engagement, distribution or maintainability;
 - use real product evidence to determine future investment.
 
+---
+
 ## Licensing and Notices
+
+See the commercial licensing and third-party notice documentation introduced through GG-COM-001.
 
 Third-party software remains subject to its respective licence terms.
 
 Galactic Gunners proprietary material remains subject to the applicable Inceptivec/product rights position.
-
-GG-COM-001 does not authorize commercial store release. Legacy non-core media/fonts/utility dependencies identified for replacement remain tracked into `IP_FREEDOM_LICENSE_PROTECTION_ASSET_CREATION` before commercial-release clearance.
