@@ -1,0 +1,218 @@
+{
+  "A": {
+    "visible_cap_height": 700,
+    "visible_width": 790,
+    "advance_width": 930,
+    "baseline": 0
+  },
+  "B": {
+    "visible_cap_height": 700,
+    "visible_width": 720,
+    "advance_width": 860,
+    "baseline": 0
+  },
+  "C": {
+    "visible_cap_height": 700,
+    "visible_width": 800,
+    "advance_width": 940,
+    "baseline": 0
+  },
+  "D": {
+    "visible_cap_height": 700,
+    "visible_width": 700,
+    "advance_width": 840,
+    "baseline": 0
+  },
+  "E": {
+    "visible_cap_height": 700,
+    "visible_width": 700,
+    "advance_width": 840,
+    "baseline": 0
+  },
+  "F": {
+    "visible_cap_height": 700,
+    "visible_width": 595,
+    "advance_width": 735,
+    "baseline": 0
+  },
+  "G": {
+    "visible_cap_height": 700,
+    "visible_width": 719,
+    "advance_width": 859,
+    "baseline": 0
+  },
+  "H": {
+    "visible_cap_height": 700,
+    "visible_width": 608,
+    "advance_width": 748,
+    "baseline": 0
+  },
+  "I": {
+    "visible_cap_height": 700,
+    "visible_width": 226,
+    "advance_width": 366,
+    "baseline": 0
+  },
+  "J": {
+    "visible_cap_height": 700,
+    "visible_width": 530,
+    "advance_width": 670,
+    "baseline": 0
+  },
+  "K": {
+    "visible_cap_height": 700,
+    "visible_width": 764,
+    "advance_width": 904,
+    "baseline": 0
+  },
+  "L": {
+    "visible_cap_height": 700,
+    "visible_width": 592,
+    "advance_width": 732,
+    "baseline": 0
+  },
+  "M": {
+    "visible_cap_height": 700,
+    "visible_width": 814,
+    "advance_width": 954,
+    "baseline": 0
+  },
+  "N": {
+    "visible_cap_height": 700,
+    "visible_width": 663,
+    "advance_width": 803,
+    "baseline": 0
+  },
+  "O": {
+    "visible_cap_height": 700,
+    "visible_width": 840,
+    "advance_width": 980,
+    "baseline": 0
+  },
+  "P": {
+    "visible_cap_height": 700,
+    "visible_width": 700,
+    "advance_width": 840,
+    "baseline": 0
+  },
+  "Q": {
+    "visible_cap_height": 700,
+    "visible_width": 617,
+    "advance_width": 757,
+    "baseline": 0
+  },
+  "R": {
+    "visible_cap_height": 700,
+    "visible_width": 681,
+    "advance_width": 821,
+    "baseline": 0
+  },
+  "S": {
+    "visible_cap_height": 700,
+    "visible_width": 740,
+    "advance_width": 880,
+    "baseline": 0
+  },
+  "T": {
+    "visible_cap_height": 700,
+    "visible_width": 595,
+    "advance_width": 735,
+    "baseline": 0
+  },
+  "U": {
+    "visible_cap_height": 700,
+    "visible_width": 636,
+    "advance_width": 776,
+    "baseline": 0
+  },
+  "V": {
+    "visible_cap_height": 700,
+    "visible_width": 824,
+    "advance_width": 964,
+    "baseline": 0
+  },
+  "W": {
+    "visible_cap_height": 700,
+    "visible_width": 1028,
+    "advance_width": 1168,
+    "baseline": 0
+  },
+  "X": {
+    "visible_cap_height": 700,
+    "visible_width": 744,
+    "advance_width": 884,
+    "baseline": 0
+  },
+  "Y": {
+    "visible_cap_height": 700,
+    "visible_width": 700,
+    "advance_width": 840,
+    "baseline": 0
+  },
+  "Z": {
+    "visible_cap_height": 700,
+    "visible_width": 679,
+    "advance_width": 819,
+    "baseline": 0
+  },
+  "0": {
+    "visible_cap_height": 700,
+    "visible_width": 717,
+    "advance_width": 857,
+    "baseline": 0
+  },
+  "1": {
+    "visible_cap_height": 700,
+    "visible_width": 510,
+    "advance_width": 650,
+    "baseline": 0
+  },
+  "2": {
+    "visible_cap_height": 700,
+    "visible_width": 682,
+    "advance_width": 822,
+    "baseline": 0
+  },
+  "3": {
+    "visible_cap_height": 700,
+    "visible_width": 665,
+    "advance_width": 805,
+    "baseline": 0
+  },
+  "4": {
+    "visible_cap_height": 700,
+    "visible_width": 718,
+    "advance_width": 858,
+    "baseline": 0
+  },
+  "5": {
+    "visible_cap_height": 700,
+    "visible_width": 682,
+    "advance_width": 822,
+    "baseline": 0
+  },
+  "6": {
+    "visible_cap_height": 700,
+    "visible_width": 700,
+    "advance_width": 840,
+    "baseline": 0
+  },
+  "7": {
+    "visible_cap_height": 700,
+    "visible_width": 718,
+    "advance_width": 858,
+    "baseline": 0
+  },
+  "8": {
+    "visible_cap_height": 700,
+    "visible_width": 717,
+    "advance_width": 857,
+    "baseline": 0
+  },
+  "9": {
+    "visible_cap_height": 700,
+    "visible_width": 774,
+    "advance_width": 914,
+    "baseline": 0
+  }
+}

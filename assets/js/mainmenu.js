@@ -5,14 +5,14 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
 
   //preload function
   preload() {
-    this.load.image("backgroundstars", "assets/images/owned/backgrounds/gg_starfield_16x9_v001.png") //preload background stars image
-    this.load.image("BtnPlay", "assets/images/owned/branding/gg_symbol_v001.png"); //preload the Play Button image
-    this.load.image("BtnPlayHover", "assets/images/owned/branding/gg_symbol_v001.png"); //preload the Play Button Hover image
-    this.load.image("logoPrimary", "assets/images/owned/branding/gg_logo_primary_v001.png");
-    this.load.image("menuTitlecard", "assets/images/owned/branding/gg_menu_titlecard_v001.png");
-    this.load.image("hero", "assets/images/owned/branding/gg_symbol_v001.png"); //preload the hero image
-    this.load.image("BtnInfo", "assets/images/owned/ui/gg_ui_info_v001.png"); //preload the Info Button image
-    this.load.image("BtnPoint", "assets/images/owned/ui/gg_ui_pointer_v001.png"); //preload the Pointer Button image
+    this.load.image("backgroundstars", "assets/images/owned/backgrounds/gg_bg_starfield_v002.png") //preload background stars image
+    this.load.image("BtnPlay", "assets/images/owned/branding/gg_logo_compact_v002.png"); //preload the Play Button image
+    this.load.image("BtnPlayHover", "assets/images/owned/branding/gg_logo_compact_v002.png"); //preload the Play Button Hover image
+    this.load.image("logoPrimary", "assets/images/owned/branding/gg_logo_primary_v002.png");
+    this.load.image("menuTitlecard", "assets/images/owned/branding/gg_logo_primary_words_v002.png");
+    this.load.image("hero", "assets/images/owned/branding/gg_logo_compact_v002.png"); //preload the hero image
+    this.load.image("BtnInfo", "assets/images/owned/ui/gg_ui_info_v002.png"); //preload the Info Button image
+    this.load.spritesheet("BtnPoint", "assets/images/owned/ui/gg_ui_pointer_v002_sheet.png", { frameWidth: 724, frameHeight: 724 }); //preload the Pointer Button image
     this.load.audio("sndBtn", "assets/audio/sndBtn.wav"); //preload the Button Sound
   }
   //END preload function
@@ -52,7 +52,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
       0, //set y axis position
       "GALACTIC GUNNERS", //set text
       {
-        fontFamily: "Arial, Helvetica, sans-serif", //set font style
+        fontFamily: GG_FONT_DISPLAY, //set font style
         fontSize: 120, //set font size
         align: "center" //set alignment
       }
@@ -70,7 +70,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
       0, //set y axis position
       "CAN YOU SAVE THE DAY?", //set text
       {
-        fontFamily: "Arial, Helvetica, sans-serif", //set font style
+        fontFamily: GG_FONT_DISPLAY, //set font style
         fontSize: 80, //set font size
         align: "center" //set alignment
       }
@@ -120,7 +120,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
       0, //set position on the y axis
       BestPlayedOn, //set text to variable
       {
-        fontFamily: "Arial, Helvetica, sans-serif", //set font style
+        fontFamily: GG_FONT_DISPLAY, //set font style
         fontSize: 80, //set font size
         align: "center" //set alignment
       }
@@ -162,7 +162,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
       0, //set position on the y axis
       TouchSelector, //set text to variable
       {
-        fontFamily: "Arial, Helvetica, sans-serif", //set font style
+        fontFamily: GG_FONT_DISPLAY, //set font style
         fontSize: 80, //set font size
         align: "center" //set alignment
       }
@@ -172,7 +172,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
     this.aGrid.placeAtIndex(67, this.textPoint); //set grid position of text
     Align.scaleToGameW(this.textPoint, 0.12); //scale the text
 
-    this.btnPoint = this.add.image( //create btnInfo and add it as image
+    this.btnPoint = this.add.sprite( //create animated pointer selector
       0, //set position on the x axis
       0, //set position on the y axis
       "BtnPoint" //add image key
@@ -181,6 +181,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
     this.btnPoint.setInteractive(); //set button to be interactive
     this.aGrid.placeAtIndex(68, this.btnPoint); //set grid position of button
     Align.scaleToGameW(this.btnPoint, 0.05); //scale the button
+    this.btnPoint.play("BtnPoint"); //animate supplied pointer sheet
 
     this.btnPoint.on("pointerover", function() { //this Point Button when in hover
       if (!touch) {
@@ -210,6 +211,8 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
       }
     }, this);
     //end point button  
+
+    this.btnMute = ggAddMuteButton(this, 98);
 
     this.time.addEvent({
       delay: 100,

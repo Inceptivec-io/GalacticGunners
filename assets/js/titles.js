@@ -5,9 +5,9 @@ class Titles extends Phaser.Scene { //creates a scene in the Phaser Object calle
 
   //preload function to load all assets
   preload() {
-    this.load.image("backgroundstars", "assets/images/owned/backgrounds/gg_starfield_16x9_v001.png") //preload background stars image
+    this.load.image("backgroundstars", "assets/images/owned/backgrounds/gg_bg_starfield_v002.png") //preload background stars image
     this.load.image('hero', "assets/images/owned/branding/gg_symbol_v001.png"); //preload heroin image
-    this.load.image('fireworks', "assets/images/owned/branding/gg_victory_v001.png"); //preload fireworks image
+    this.load.image('fireworks', "assets/images/owned/branding/gg_victory_panel_v002.png"); //preload fireworks image
   }
   //end preload function
 
@@ -38,7 +38,7 @@ class Titles extends Phaser.Scene { //creates a scene in the Phaser Object calle
       0, //set y axis position
       "TITLES", //set text
       {
-        fontFamily: "Arial, Helvetica, sans-serif", //set font type
+        fontFamily: GG_FONT_DISPLAY, //set font type
         fontSize: 120, //set font size
         align: "center" //set text alignment
       }
@@ -53,7 +53,7 @@ class Titles extends Phaser.Scene { //creates a scene in the Phaser Object calle
       this.game.config.height * 0.6, //set y axis position
       TitlesText, //set text
       {
-        fontFamily: "Arial, Helvetica, sans-serif", //set font type
+        fontFamily: GG_FONT_DISPLAY, //set font type
         fontSize: 55, //set font size
         align: "center" //set text alignment
       }

@@ -1,0 +1,8 @@
+@font-face {
+  font-family: "GalacticGunners Title Font";
+  src: url("../GalacticGunners_Title_Font-v1.0.woff2") format("woff2"),
+       url("../GalacticGunners_Title_Font-v1.0.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}

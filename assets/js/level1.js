@@ -50,19 +50,19 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
         //END particles and emitter creation
 
         //SCORED POINTS  AND LIVES REMAINING METHODS 
-        textScore = this.add.text(0, 0, 'Score: ' + score, { font: '42px Arial', fill: '#ffffff' }); //create score text, position x and y, set text with score variable and add font styling
+        textScore = this.add.text(0, 0, 'Score: ' + score, { font: '42px GalacticGunnersDisplay', fill: '#ffffff' }); //create score text, position x and y, set text with score variable and add font styling
         textScore.setOrigin(0.2, 0.5); //set origin
         this.aGrid.placeAtIndex(0, textScore); //set position on the grid
         Align.scaleToGameW(textScore, 0.12); //set scale
-        textLives = this.add.text(0, 0, 'Lives: ' + maxLives, { font: '42px Arial', fill: '#ffffff' }); //create lives text, position x and y, set text with currentLives variable and add font styling
+        textLives = this.add.text(0, 0, 'Lives: ' + maxLives, { font: '42px GalacticGunnersDisplay', fill: '#ffffff' }); //create lives text, position x and y, set text with currentLives variable and add font styling
         textLives.setOrigin(0.2, 0.5); //set origin
         this.aGrid.placeAtIndex(110, textLives); //set position on the grid
         Align.scaleToGameW(textLives, 0.12); //set scale
-        textNukesLoad = this.add.text(0, 0, 'ReArm: 150/150', { font: '42px Arial', fill: '#ffffff' }); //create ReArm text, position x and y, add font styling
+        textNukesLoad = this.add.text(0, 0, 'ReArm: 150/150', { font: '42px GalacticGunnersDisplay', fill: '#ffffff' }); //create ReArm text, position x and y, add font styling
         textNukesLoad.setOrigin(0.85, 1); //set origin
         this.aGrid.placeAtIndex(120, textNukesLoad); //set position on the grid
         Align.scaleToGameW(textNukesLoad, 0.17); //set scale
-        textNukes = this.add.text(0, 0, 'Nukes: ' + maxNukes, { font: '42px Arial', fill: '#ffffff' }); //create Nukes Left text, position x and y, set text with currentNukes variable and add font styling
+        textNukes = this.add.text(0, 0, 'Nukes: ' + maxNukes, { font: '42px GalacticGunnersDisplay', fill: '#ffffff' }); //create Nukes Left text, position x and y, set text with currentNukes variable and add font styling
         textNukes.setOrigin(0.8, 0.4); //set origin
         this.aGrid.placeAtIndex(120, textNukes); //set position on the grid
         Align.scaleToGameW(textNukes, 0.12); //set scale
@@ -188,6 +188,7 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
 
         //create classes on the this.Object to assign the grouping method to 
         this.asteroids = this.add.group(); //create asteroids group
+        this.comets = this.add.group(); //create comet group
         this.playerLasers = this.add.group(); //create playerLaser group
         this.starNukes = this.add.group(); //create starNukes group 
         this.enemyLasers = this.add.group(); //create enemyLaser group
@@ -200,6 +201,7 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
 
         // Create callback methods
         this.createAsteroids(); //create callback method for asteroids
+        ggCreateComets(this); //create supplied animated comet events
         this.createPlayer(); //create callback method for creating player
         this.updatePlayerMovement(); //create callback method for updating player movementadd cursors 
         this.updatePlayerTouchMovement(); //create callback method for updating player touch moving
@@ -248,6 +250,7 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
             //ALSO
             if (asteroid) { //if asteroid  
                 this.createExplosion(asteroid.x, asteroid.y); //call createExplosion method
+                ggScoreEvent(this, "ASTEROID_DESTROYED"); //locked asteroid score event
                 asteroid.destroy(); //destroy asteroid object
             }
         }, null, this);
@@ -261,6 +264,7 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
             //ALSO
             if (asteroid) { //if asteroid  
                 this.createNukeExplosion(asteroid.x, asteroid.y); //call createNukeExplosion method
+                ggScoreEvent(this, "ASTEROID_DESTROYED"); //locked asteroid score event
                 asteroid.destroy(); //destroy asteroid object
             }
         }, null, this);
@@ -288,7 +292,7 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
                 enemyShips--; //decrement enemyShips by 1 (used for testing)
                 enemyDeaths++; //increment enemyDeaths by 1 for game win logic
                 this.createNukeExplosion(enemy.x, enemy.y); //call createNukeExplosion method
-                this.addScore(nukeScore); //call add score function with nukeScore variable                 
+                ggScoreEvent(this, ggEnemyScoreEvent(enemy)); //locked score event for destroyed enemy                 
                 enemy.destroy(); //destroy enemy object
             }
         }, null, this);
@@ -299,7 +303,7 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
                 enemyShips--; //decrement enemyShips by 1 (used for testing)
                 enemyDeaths++; //increment enemyDeaths by 1 for game win logic
                 this.createExplosion(enemies.x, enemies.y); //call creatExplosion method on each object
-                this.addScore(enemyValue); //add score of enemyValue per enemy hit
+                ggScoreEvent(this, ggEnemyScoreEvent(enemies)); //locked score event for destroyed enemy
                 enemies.destroy(); //destroy enemies that are hit
             }
         }, null, this);
@@ -314,7 +318,7 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
                 enemyShips--; //decrement enemyShips by 1 (used for testing)
                 enemyDeaths++; //increment enemyDeaths by 1 for game win logic
                 this.createExplosion(enemy.x, enemy.y); //call creatExplosion method
-                this.addScore(enemyValue); //add score of enemyValue per enemy hit
+                ggScoreEvent(this, ggEnemyScoreEvent(enemy)); //locked score event for destroyed enemy
                 enemy.destroy(); //destroy enemy object
             }
         }, null, this); //processCallback set to null and context set to this
@@ -325,7 +329,7 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
                 laser.destroy(); //destroy laser object
             }
             //ALSO
-            this.destroyShieldTile(tile); //start destroy sheild function with parameter of this tile
+            this.destroyShieldTile(tile, false); //player fire destroys shield tile without score penalty
         }, null, this); //processCallback set to null and context set to this
 
         this.physics.add.overlap(this.player, this.enemies, function(player, enemy) { //create a physics overlap event between object1 and object2, followed by collideCallback function
@@ -348,9 +352,9 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
             }
         }, null, this);
 
-        this.physics.add.overlap(this.shieldTiles, this.enemies, function(tile) { //create a physics overlap event between object1 and object2, followed by collideCallback function
+        this.physics.add.overlap(this.shieldTiles, this.enemies, function(tile, enemy) { //create a physics overlap event between object1 and object2, followed by collideCallback function
             if (enemy) { //if enemy
-                tile.destroy(); //start destroy sheild function with parameter of this tile
+                this.destroyShieldTile(tile, true); //enemy contact destroys one shield tile
             }
         }, null, this); //processCallback set to null and context set to this
 
@@ -359,8 +363,10 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
                 laser.destroy(); //destroy laser object
             }
             //ALSO
-            this.destroyShieldTile(tile); //start destroy sheild function with parameter of this tile
+            this.destroyShieldTile(tile, true); //enemy fire destroys one shield tile
         }, null, this); //processCallback set to null and context set to this
+
+        ggInstallCometCollisions(this); //install supplied comet collision rules
 
         //END COLLISION DETECTION
 
@@ -390,8 +396,7 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
 
     //create addScore function
     addScore(amount) { //addScore method passed with parameter amount
-        score += amount; //raise score by amount                     
-        textScore.setText('Score: ' + score); //sets score 
+        ggApplyScore(this, amount); //raise score by locked/runtime amount
     }
     //END addScore function
 
@@ -782,8 +787,9 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
     //END addSheild function
 
     //create destroySheildTile function
-    destroyShieldTile(tile) {
+    destroyShieldTile(tile, enemyHit) {
         if (tile) { //if(tile)
+            if (enemyHit) ggScoreEvent(this, "SHIELD_TILE_ENEMY_HIT"); //locked shield penalty only for enemy hits
             this.createExplosion(tile.x, tile.y); //create explosion at x and y of tile
 
             for (var i = 0; i < Phaser.Math.Between(10, 20); i++) { //for loop to iterate through sheildtile array randomly
@@ -833,7 +839,7 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
             0, //set y axis position
             "Level 1 Complete!", //set text   
             {
-                fontFamily: "Arial, Helvetica, sans-serif", //set font type
+                fontFamily: GG_FONT_DISPLAY, //set font type
                 fontSize: 100, //set font size
                 align: "center" //set text alignment
             }
@@ -847,7 +853,7 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
             0, //set y axis position
             this.GameContinue, //set text   
             {
-                fontFamily: "Arial, Helvetica, sans-serif", //set font type
+                fontFamily: GG_FONT_DISPLAY, //set font type
                 fontSize: 70, //set font size
                 align: "center" //set text alignment
             }
@@ -916,45 +922,8 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
 
     //create gameover function
     gameOver() {
-        RIP = true; //set RIP to true
-        textScore.setText('Final Score: ' + score); //set score text to final score
-        textLives.setText('Lives: GAME OVER'); //set lives text to GAME OVER 
-        this.player.destroy(); //destroy player
-        this.gameOverExplosion = this.add.image(0, 0, 'gameOver'); //insert explosion image first to put behind alien and setting x and y position
-        this.aGrid.placeAtIndex(60, this.gameOverExplosion); //set position on the grid
-        Align.scaleToGameW(this.gameOverExplosion, 1.2); // set scale
-        this.textGameOver = this.add.text( //create game over text
-            0, //set x axis position
-            0, //set y axis position
-            GameOver, //set text to variable GameOver
-            {
-                fontFamily: "Arial, Helvetica, sans-serif", //set font type
-                fontSize: 100, //set font size
-                align: "center" //set text alignment
-            }
-        );
-        this.textGameOver.setOrigin(0.5, 0.4); //Set origin of gameover text to its center
-        this.textGameOver.setTint(0x008000); //set text color
-        this.aGrid.placeAtIndex(5, this.textGameOver); //set position on the grid
-        Align.scaleToGameW(this.textGameOver, 0.4); // set scale
-
-        this.textRestart = this.add.text( //create restart text
-            0, //set x axis position
-            0, //set y axis position
-            this.Restart, //set text to variable Restart
-            {
-                fontFamily: "Arial, Helvetica, sans-serif", //set font type
-                fontSize: 70, //set font size
-                align: "center" //set text alignment
-            }
-        );
-        this.textRestart.setTint(0x008000); //Set text colour
-        this.textRestart.setOrigin(0.5, 0.3); //Set origin of restart text to its center
-        this.aGrid.placeAtIndex(16, this.textRestart); //set position on the grid
-        Align.scaleToGameW(this.textRestart, 0.3); // set scale
-        this.alienWin = this.add.image(0, 0, 'alien'); //insert alien image last to for rendering in front setting x and y position
-        this.aGrid.placeAtIndex(71, this.alienWin); //set position on the grid
-        Align.scaleToGameW(this.alienWin, 0.2); // set scale
+        if (this.player) this.player.destroy(); //destroy player
+        ggRenderGameOver(this, function() { ggResetToMenu(this); }.bind(this), function() { ggResetToMenu(this); }.bind(this));
     }
     //END gameover function
 

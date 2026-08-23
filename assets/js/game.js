@@ -42,7 +42,7 @@ var playerHitstrength = 1; //declares playerHitStrength
 var maxNukes = 2; //declares maxNukes Global Variable
 var currentNukes = maxNukes; //set currentNukes = maxNukes Global Variable
 var nukeHitStrength = 5; //declares nukeHitStrength
-var nukeScore = 100; //set nukeScore Global Variable
+var nukeScore = GG_SCORE_EVENTS.SHIP_DESTROYED; //retained compatibility; enemy class scoring is authoritative
 var particles; //declares particles Global Variable			
 var emitter; //declares emitter Global Variable
 
@@ -50,10 +50,10 @@ var enemyShips = 0; //declares number of enemyShips Global Variable
 var totalEnemyShips = 0; //declares totalEnemyShips Global Variable
 var enemyDeaths = 0; //declares enemyDeaths Global Variable
 var enemyHitStrength = 1; //declares enemyHitStrength Global Variable
-var enemyValue = 10; //declares enemyValue as 10 Global Variable
+var enemyValue = GG_SCORE_EVENTS.SHIP_DESTROYED; //declares enemyValue Global Variable
 var maxMotherShipLives = 15; //add lives to mothership
 var motherShipLives; //declares mothership lives
-var mothershipHitValue = 20; //declares mothershipHitValue
+var mothershipHitValue = GG_SCORE_EVENTS.MOTHERSHIP_HIT; //declares mothershipHitValue
 var motherShipAlive = true; //add mothership alive variable
 
 var level1Shields = 8; //declares the number of sheilds in Level 1

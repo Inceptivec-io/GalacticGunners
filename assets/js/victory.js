@@ -5,9 +5,9 @@ class Victory extends Phaser.Scene {
 
   //preload function to load all assets
   preload() {
-    this.load.image("backgroundstars", "assets/images/owned/backgrounds/gg_starfield_16x9_v001.png") //preload background stars image
-    this.load.image('hero', "assets/images/owned/branding/gg_symbol_v001.png"); //preload heroin image
-    this.load.image('fireworks', "assets/images/owned/branding/gg_victory_v001.png"); //preload fireworks image
+    this.load.image("backgroundstars", "assets/images/owned/backgrounds/gg_bg_starfield_v002.png") //preload background stars image
+    this.load.image('hero', "assets/images/owned/branding/gg_logo_compact_v002.png"); //preload hero image
+    this.load.image('fireworks', "assets/images/owned/branding/gg_victory_panel_v002.png"); //preload victory panel image
   }
   //end preload function
 
@@ -22,7 +22,7 @@ class Victory extends Phaser.Scene {
     //END GRID
 
     //create final score announcement
-    textScore = this.add.text(0, 0, 'Final Score: ' + score, { font: '42px Arial', fill: '#00ff00' }); //create score text, position x and y, set text with score variable and add font styling
+    textScore = this.add.text(0, 0, 'Final Score: ' + score, { font: '42px GalacticGunnersDisplay', fill: '#00ff00' }); //create score text, position x and y, set text with score variable and add font styling
     textScore.setOrigin(0.5, 0.7); //set origin
     this.aGrid.placeAtIndex(27, textScore); //set position on the grid
     Align.scaleToGameW(textScore, 0.18); //set scale
@@ -45,7 +45,7 @@ class Victory extends Phaser.Scene {
       0, //set y axis position
       "CONGRATULATIONS!", //set text
       {
-        fontFamily: "Arial, Helvetica, sans-serif", //set font type
+        fontFamily: GG_FONT_DISPLAY, //set font type
         fontSize: 100, //set font size
         align: "center" //set text alignment
       }
@@ -60,7 +60,7 @@ class Victory extends Phaser.Scene {
       0, //set y axis position
       "YOU HAVE SAVED THE GALAXY FROM THE EVIL ALIENS!", //set text
       {
-        fontFamily: "Arial, Helvetica, sans-serif", //set font type
+        fontFamily: GG_FONT_DISPLAY, //set font type
         fontSize: 80, //set font size
         align: "center" //set text alignment
       }

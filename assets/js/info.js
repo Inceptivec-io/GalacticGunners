@@ -5,9 +5,9 @@ class Info extends Phaser.Scene { //creates a scene in the Phaser Object called 
 
   //preload function
   preload() {
-    this.load.image("backgroundstars", "assets/images/owned/backgrounds/gg_starfield_16x9_v001.png") //preload background stars image
-    this.load.image("hero", "assets/images/owned/branding/gg_symbol_v001.png"); //preload the hero image
-    this.load.image("BtnBack", "assets/images/owned/ui/gg_ui_restart_v001.png"); //preload the Info Button image
+    this.load.image("backgroundstars", "assets/images/owned/backgrounds/gg_bg_starfield_v002.png") //preload background stars image
+    this.load.image("hero", "assets/images/owned/branding/gg_logo_compact_v002.png"); //preload the hero image
+    this.load.image("BtnBack", "assets/images/owned/ui/gg_ui_back_v002.png"); //preload the Info Button image
     this.load.audio("sndBtn", "assets/audio/sndBtn.wav"); //preload the Button Sound
   }
   //END preload function
@@ -34,7 +34,7 @@ class Info extends Phaser.Scene { //creates a scene in the Phaser Object called 
       0, //set y axis position
       "GALACTIC GUNNERS", //set text
       {
-        fontFamily: "Arial, Helvetica, sans-serif", //set font style
+        fontFamily: GG_FONT_DISPLAY, //set font style
         fontSize: 120, //set font size
         align: "center" //set alignment
       }
@@ -51,7 +51,7 @@ class Info extends Phaser.Scene { //creates a scene in the Phaser Object called 
       0, //set y axis position
       "USER INFO", //set text
       {
-        fontFamily: "Arial, Helvetica, sans-serif", //set font style
+        fontFamily: GG_FONT_DISPLAY, //set font style
         fontSize: 85, //set font size
         align: "center" //set alignment
       }
@@ -68,7 +68,7 @@ class Info extends Phaser.Scene { //creates a scene in the Phaser Object called 
       0, //set y axis position
       StoryContent, //set the text to variable Story
       {
-        fontFamily: "Arial, Helvetica, sans-serif", //set font style
+        fontFamily: GG_FONT_DISPLAY, //set font style
         fontSize: 44, //set font size
         align: "center" //set alignment
       }
@@ -86,7 +86,7 @@ class Info extends Phaser.Scene { //creates a scene in the Phaser Object called 
         0, //set y axis position
         Controls, //set the text to variable Controls
         {
-          fontFamily: "Arial, Helvetica, sans-serif", //set font style
+          fontFamily: GG_FONT_DISPLAY, //set font style
           fontSize: 50, //set font size
           align: "center" //set alignment
         }
@@ -102,7 +102,7 @@ class Info extends Phaser.Scene { //creates a scene in the Phaser Object called 
         0, //set y axis position
         TouchControls, //set the text to variable Controls
         {
-          fontFamily: "Arial, Helvetica, sans-serif", //set font style
+          fontFamily: GG_FONT_DISPLAY, //set font style
           fontSize: 50, //set font size
           align: "center" //set alignment
         }
@@ -122,7 +122,7 @@ class Info extends Phaser.Scene { //creates a scene in the Phaser Object called 
       0, //set y axis position
       "EXIT", //set the text to variable Controls
       {
-        fontFamily: "Arial, Helvetica, sans-serif", //set font style
+        fontFamily: GG_FONT_DISPLAY, //set font style
         fontSize: 50, //set font size
         align: "center" //set alignment
       }

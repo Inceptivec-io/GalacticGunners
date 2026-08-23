@@ -1,0 +1,62 @@
+[
+  {
+    "file": "00_EXECUTIVE/GG_PROGRAMME_CHARTER_v1.0.md",
+    "bytes": 2071,
+    "sha256": "b30fc92d9f400346405d9155c49827adb8b33bca7252764bca49e85163c62a32"
+  },
+  {
+    "file": "01_CURRENT_STATE/GG_PROGRAMME_CURRENT_STATE_v1.0.md",
+    "bytes": 1640,
+    "sha256": "4f2c0ba74a8205381cd1b4c91acac5127daa338d0049001d0b7dccd996bf9299"
+  },
+  {
+    "file": "02_MASTER_ROADMAP/GALACTIC_GUNNERS_MASTER_ROADMAP_v1.0.md",
+    "bytes": 9321,
+    "sha256": "80cddee874e12e9058f52ad4c8420f53177ddff34a4a2c5a3557b75e982cb0b0"
+  },
+  {
+    "file": "03_MASTER_PLAYLIST/GALACTIC_GUNNERS_MASTER_PLAYLIST_v1.0.md",
+    "bytes": 13148,
+    "sha256": "612d49e895031928b4423fa852485bbc0e65a6c28852bb5897bc86eb76a98b36"
+  },
+  {
+    "file": "04_WORKSTREAMS/GG_WORKSTREAM_MODEL_v1.0.md",
+    "bytes": 1108,
+    "sha256": "4966756c1c6a78717d4aa7e2421602d150fbca14723e74904a5ef06e476a17a9"
+  },
+  {
+    "file": "05_PRODUCT_RULES/GG_LOCKED_SCORING_MODEL_v1.0.md",
+    "bytes": 814,
+    "sha256": "19b26537604f83e81d732f969cc31666b196832eed6a876a6b934302ca558395"
+  },
+  {
+    "file": "05_PRODUCT_RULES/GG_VISUAL_RECONSTRUCTION_RULES_v1.0.md",
+    "bytes": 585,
+    "sha256": "79340f5c9ab84371b4fd6e85b49d7ab8289680ff2ae7739ead6199f2cb0c897c"
+  },
+  {
+    "file": "06_BOARDING_MODE/GG_BOARDING_ASSET_SPECIFICATION_REQUIREMENTS_v1.0.md",
+    "bytes": 908,
+    "sha256": "d742b9e99ece0c39a5b7c8e3054f2682253a452e986cca263599695521ab2b2e"
+  },
+  {
+    "file": "06_BOARDING_MODE/GG_BOARDING_MODE_PRODUCT_DEFINITION_v1.0.md",
+    "bytes": 1677,
+    "sha256": "3251c4e5835ca20ddbbb05e6a4f954498af9e87708d4538c72dfd938d9cdc117"
+  },
+  {
+    "file": "07_GATES_ACCEPTANCE/GG_MASTER_GATE_MATRIX_v1.0.md",
+    "bytes": 869,
+    "sha256": "e252fed95f655c768b8c187969711c3ea8dec7245067b15eb231ce436180fd10"
+  },
+  {
+    "file": "08_GOVERNANCE_CURRENTNESS/GG_ROADMAP_PLAYLIST_CURRENTNESS_STANDARD_v1.0.md",
+    "bytes": 826,
+    "sha256": "00655a742a043a583b3d10b9007b864deca2bc0f5eefe642146aa645af4b8a21"
+  },
+  {
+    "file": "README.md",
+    "bytes": 611,
+    "sha256": "b8f003adfdc67b627b9317569764677ee810edf30c81c79c004e2ef7209cb322"
+  }
+]
