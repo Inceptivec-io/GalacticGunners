@@ -1,0 +1,13 @@
+.git
+.gitignore
+_EXTERNAL_GalacticGunners
+docs/internal_governance/handoff_in/_archive
+docs/internal_governance/handoff_out/_archive
+docs/internal_governance/evidence
+testing
+*.zip
+*.7z
+*.tar
+*.tar.gz
+*.log
+node_modules

@@ -16,5 +16,7 @@
 | Internal Governance Root | `docs/internal_governance` |
 | Living Registers | `docs/internal_governance/registers` |
 | POST_BOX Closed State | boundary/readme controls only; active payload zero |
+| Docker Local Founder Acceptance Runtime | AVAILABLE |
 | Founder Acceptance Authority | Michael Leese |
+| Founder Visual Acceptance | PENDING |
 | Founder Acceptance | PENDING |

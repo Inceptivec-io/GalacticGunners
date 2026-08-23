@@ -43,6 +43,12 @@ PASS
 Runtime Regression:
 PASS
 
+Docker Local Founder Acceptance Runtime:
+AVAILABLE
+
+Founder Visual Acceptance:
+PENDING
+
 Controller Hardware:
 NOT EXECUTED — no Xbox/Haute hardware attached; controller runtime paths verified and existing hardware baseline retained
 
