@@ -62,10 +62,12 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
         textNukesLoad.setOrigin(0.85, 1); //set origin
         this.aGrid.placeAtIndex(120, textNukesLoad); //set position on the grid
         Align.scaleToGameW(textNukesLoad, 0.17); //set scale
+        textNukesLoad.setPosition(this.game.config.width * 0.9, this.game.config.height * 0.91); //separate HUD labels
         textNukes = this.add.text(0, 0, 'Nukes: ' + maxNukes, { font: '42px GalacticGunnersDisplay', fill: '#ffffff' }); //create Nukes Left text, position x and y, set text with currentNukes variable and add font styling
         textNukes.setOrigin(0.8, 0.4); //set origin
         this.aGrid.placeAtIndex(120, textNukes); //set position on the grid
         Align.scaleToGameW(textNukes, 0.12); //set scale
+        textNukes.setPosition(this.game.config.width * 0.9, this.game.config.height * 0.97); //separate HUD labels
         //END score and lives
 
         //CREATE CONTROL METHODS
