@@ -5,12 +5,16 @@ info:
 servers:
   - url: /api/v1
 paths:
+  /health/:
+    get:
+      operationId: health
+      responses:
+        '200': { description: Backend healthy }
   /game-runs/:
     post:
       operationId: startGameRun
       responses:
-        '201':
-          description: Game run created
+        '201': { description: Game run created }
   /game-runs/{runId}/complete/:
     post:
       operationId: completeGameRun
