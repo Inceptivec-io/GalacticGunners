@@ -531,7 +531,7 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
     //create loseLives function
     loseLives(amount) { //loseLives method passed with parameter amount
         currentLives -= amount; // currentLives drop by amount
-        textLives.setText('Lives: ' + currentLives); //sets lives remaining
+        ggRefreshHud(this); //refresh authoritative HUD state
     }
     //END loseLives function
 
@@ -572,6 +572,7 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
             this.game.config.width * 0.5, //set playerShip to center of screen on x axis
             this.game.config.height - 50 //set playerShip to position 50 pixels up from bottom on y axis
         );
+        ggRefreshHud(this); //sync HUD after player creation
     }
     //END createPlayer function
 
@@ -846,7 +847,7 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
                 if (nukeDown && this.player.active && currentNukes > 0) { //if N is down && player is active still && nukes available
                     if (this.playerNukeTick < this.playerNukeDelay) { //if playerNukeTick is less than the playernukeDelay
                         this.playerNukeTick++; //add 1 to Tick count, which will repeat until it hits 150
-                        textNukesLoad.setText('ReArm: ' + this.playerNukeTick + '/' + this.playerNukeDelay); //set rearm text to count the nuke tick number
+                        ggRefreshHud(this); //refresh arm-nuke progress bar
                     }
                     else {
                         ggFirePlayerNuke(this);
@@ -854,7 +855,7 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
                     }
                 }
                 if (nukeDown && this.player.active && currentNukes == 0) { //if SPACE is down && no nukes left
-                    textNukesLoad.setText('ReArm: OUT'); //set nukes rearming text to out
+                    ggRefreshHud(this); //keep empty nuke state on the shared HUD
                 }
             },
             callbackScope: this, //set call back scope to this function
@@ -1043,8 +1044,7 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
         levelWon = true;
         this.player.destroy(); //destroy player if victory to stop losing any lives 
         var completionBonus = ggApplyCompletionBonusOnce(this);
-        textLives.setText('Lives: WINNER'); //set lives text to GAME OVER 
-        textScore.setText('Final Score: ' + score); //set score text to final score
+        ggRefreshHud(this); //keep final HUD state consistent before scene transition
         finalScore = score;
         window.ggFinalVictoryState = { score: score, wave: "FINAL", bonus: completionBonus };
         this.scene.start("Victory", window.ggFinalVictoryState);

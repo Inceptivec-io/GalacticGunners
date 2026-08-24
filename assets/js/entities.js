@@ -34,6 +34,7 @@ class PlayerLaser extends Entity { //Inherit PlayerLaser class to Entity
         this.setOrigin(0.5);
         Align.scaleToGameW(this, GG_SCALES.PLAYER_LASER); //set scale
         this.setAngle(-90);
+        this.ggProjectileSide = "player";
         ggSetVerticalProjectileBody(this, GG_BODY_CONTRACTS.PLAYER_LASER.w, GG_BODY_CONTRACTS.PLAYER_LASER.h);
         this.ggPreviousX = x;
         this.ggPreviousY = y;
@@ -47,6 +48,7 @@ class Nuke extends Phaser.Physics.Arcade.Sprite { //Inherit Nuke class to Phaser
         scene.add.existing(this); //add Nuke to this scene 
         scene.physics.add.existing(this); //add existing game objects to the physics world
         this.play("nuke");
+        this.ggProjectileSide = "player";
         Align.scaleToGameW(this, 0.052); //set scale
         this.setVelocity(0, -400); //create random x (left or right)value and fire up at -200
         this.setAngle(0); //set angle to 0
@@ -155,6 +157,7 @@ class EnemyLaser extends Entity { //Inherit EnemyLaser class to Entity
         this.setOrigin(0.5);
         Align.scaleToGameW(this, GG_SCALES.ENEMY_LASER); //set scale of enemy laser
         this.setAngle(90);
+        this.ggProjectileSide = "enemy";
         ggSetVerticalProjectileBody(this, GG_BODY_CONTRACTS.ENEMY_LASER.w, GG_BODY_CONTRACTS.ENEMY_LASER.h);
         this.ggPreviousX = x;
         this.ggPreviousY = y;
@@ -168,6 +171,7 @@ class EnemyMotherShipLaser extends Entity { //Inherit EnemyLaser class to Entity
         this.setOrigin(0.5);
         Align.scaleToGameW(this, GG_SCALES.MOTHERSHIP_LASER); //set scale
         this.setAngle(90);
+        this.ggProjectileSide = "enemy";
         ggSetVerticalProjectileBody(this, GG_BODY_CONTRACTS.ENEMY_LASER.w, GG_BODY_CONTRACTS.ENEMY_LASER.h);
         this.ggPreviousX = x;
         this.ggPreviousY = y;

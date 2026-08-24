@@ -364,7 +364,7 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
     //create loseLives function
     loseLives(amount) { //loseLives method passed with parameter amount
         currentLives -= amount; // currentLives drop by amount
-        textLives.setText('Lives: ' + currentLives); //sets lives remaining
+        ggRefreshHud(this); //refresh authoritative HUD state
     }
     //END loseLives function
 
@@ -438,6 +438,7 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
         );
         currentLives = maxLives; //set Lives to max lives
         currentNukes = maxNukes; //set nukes to max nukes
+        ggRefreshHud(this); //sync HUD after authoritative run state is initialized
     }
     //END createPlayer function
 
@@ -542,7 +543,7 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
                 if (nukeDown && this.player.active && currentNukes > 0) { //if N is down && player is active still && nukes available
                     if (this.playerNukeTick < this.playerNukeDelay) { //if playerNukeTick is less than the playernukeDelay
                         this.playerNukeTick++; //add 1 to Tick count, which will repeat until it hits 150
-                        textNukesLoad.setText('ReArm: ' + this.playerNukeTick + '/' + this.playerNukeDelay); //set rearm text to count the nuke tick number
+                        ggRefreshHud(this); //refresh arm-nuke progress bar
                     }
                     else {
                         ggFirePlayerNuke(this);
@@ -550,7 +551,7 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
                     }
                 }
                 if (nukeDown && this.player.active && currentNukes == 0) { //if SPACE is down && no nukes left
-                    textNukesLoad.setText('ReArm: OUT'); //set nukes rearming text to out
+                    ggRefreshHud(this); //keep empty nuke state on the shared HUD
                 }
             },
             callbackScope: this, //set call back scope to this function

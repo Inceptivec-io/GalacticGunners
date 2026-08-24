@@ -345,7 +345,7 @@ function ggAddPanelHit(scene, role, x, y, width, height, callback) {
 function ggApplyScore(scene, amount) {
     if (RIP && finalScore !== null) return;
     score = ggScoreValue(score + amount);
-    if (textScore && textScore.setText) textScore.setText("Score: " + score);
+    ggRefreshHud(scene);
 }
 
 function ggScoreEvent(scene, eventName) {
@@ -404,30 +404,33 @@ function ggEnemyScoreEvent(enemy) {
 
 function ggCreateHud(scene, options) {
     var showReplay = options && options.showReplay;
-    var topY = scene.game.config.height * 0.035;
-    var bottomY = scene.game.config.height * 0.955;
-    var rightX = scene.game.config.width * 0.965;
-    var nukeUnit = Math.max(32, Math.min(scene.game.config.width, scene.game.config.height) * 0.055);
-    var rearmY = scene.game.config.height * 0.875;
-    var nukeY = scene.game.config.height * 0.945;
-    var textStyle = ggDisplayStyle(34, "#ffffff");
+    var w = scene.game.config.width;
+    var h = scene.game.config.height;
+    var margin = Math.max(18, Math.min(w, h) * 0.025);
+    var topY = margin * 1.08;
+    var iconUnit = Math.max(28, Math.min(w, h) * 0.052);
+    var textStyle = ggGoldStyle(34, "#ffb43c");
 
-    textScore = scene.add.text(scene.game.config.width * 0.03, topY, "Score: " + score, textStyle).setOrigin(0, 0.5);
-    textLives = scene.add.text(scene.game.config.width * 0.03, bottomY, "Lives: " + currentLives, textStyle).setOrigin(0, 0.5);
-    textNukesLoad = scene.add.text(rightX, rearmY, "ReArm: 150/150", textStyle).setOrigin(1, 0.5);
-    textNukes = scene.add.text(rightX, nukeY, String(currentNukes), ggDisplayStyle(Math.round(nukeUnit), "#ffffff")).setOrigin(1, 0.5);
-    textNukes.ggHudRole = "nuke-count";
+    textScore = scene.add.text(margin, topY, "SCORE " + score, textStyle).setOrigin(0, 0.5);
+    textScore.ggHudRole = "score";
+    textLives = scene.add.text(w - margin, h - margin - iconUnit * 1.2, "LIVES", ggDisplayStyle(28, "#f6f7ff")).setOrigin(1, 0.5);
+    textLives.ggHudRole = "lives-label";
+    textNukes = scene.add.text(margin, h - margin - iconUnit * 1.55, "NUKES", ggDisplayStyle(28, "#f6f7ff")).setOrigin(0, 0.5);
+    textNukes.ggHudRole = "nukes-label";
+    textNukesLoad = scene.add.text(margin, h - margin - iconUnit * 0.18, "ARM NUKE", ggDisplayStyle(24, "#70fff2")).setOrigin(0, 0.5);
+    textNukesLoad.ggHudRole = "arm-nuke-label";
 
-    if (scene.textures.exists("hudLife")) {
-        scene.add.image(scene.game.config.width * 0.015, bottomY, "hudLife").setDisplaySize(28, 28).setOrigin(0, 0.5);
-    }
-    if (scene.textures.exists("hudNuke")) {
-        scene.ggHudNukeIcon = scene.add.image(rightX - textNukes.displayWidth - nukeUnit * 0.46, nukeY, "hudNuke").setDisplaySize(nukeUnit, nukeUnit).setOrigin(1, 0.5);
-        scene.ggHudNukeIcon.ggHudRole = "nuke-icon";
-    }
+    scene.ggHudLivesIcons = [];
+    scene.ggHudNukeIcons = [];
+    scene.ggHudArmBarBg = scene.add.rectangle(margin + iconUnit * 2.85, textNukesLoad.y, iconUnit * 3.4, Math.max(8, iconUnit * 0.18), 0x081226, 0.88).setOrigin(0, 0.5);
+    scene.ggHudArmBarBg.setStrokeStyle(2, 0x70fff2, 0.9);
+    scene.ggHudArmBarFill = scene.add.rectangle(scene.ggHudArmBarBg.x, scene.ggHudArmBarBg.y, 1, Math.max(6, iconUnit * 0.11), 0x70fff2, 0.92).setOrigin(0, 0.5);
+    scene.ggHudArmBarFill.ggHudRole = "arm-nuke-bar";
+    scene.ggHudNukeIcon = null;
     if (showReplay) {
         restartlevel = scene.add.text(scene.game.config.width * 0.5, topY, "Replay: " + LevelRestart, textStyle).setOrigin(0.5);
     }
+    ggRefreshHud(scene);
 }
 
 function ggDestroyIfLive(item) {
@@ -441,10 +444,11 @@ function ggCreateSharedHud(scene, options) {
     ggDestroyIfLive(textNukes);
     ggDestroyIfLive(restartlevel);
     if (scene.btnMute) ggDestroyIfLive(scene.btnMute);
+    ggDestroyHudCollections(scene);
 
     ggCreateHud(scene, options || {});
     scene.btnMute = ggAddMuteButton(scene, 99);
-    ggInstallNukeHud(scene);
+    ggRefreshHud(scene);
     return {
         score: textScore,
         lives: textLives,
@@ -456,23 +460,12 @@ function ggCreateSharedHud(scene, options) {
 }
 
 function ggInstallNukeHud(scene) {
-    if (!scene || !textNukes) return;
-    var rightX = scene.game.config.width * 0.965;
-    var nukeY = scene.game.config.height * 0.945;
-    var nukeUnit = Math.max(32, Math.min(scene.game.config.width, scene.game.config.height) * 0.055);
-    textNukes.removeAllListeners();
-    textNukes.setText(String(currentNukes));
-    textNukes.setOrigin(1, 0.5);
-    textNukes.setPosition(rightX, nukeY);
-    if (textNukes.setTint) textNukes.setTint(0xffffff);
-    if (scene.ggHudNukeIcon && scene.ggHudNukeIcon.destroy) scene.ggHudNukeIcon.destroy();
-    scene.ggHudNukeIcon = scene.add.image(rightX - textNukes.displayWidth - nukeUnit * 0.46, nukeY, "hudNuke").setDisplaySize(nukeUnit, nukeUnit).setOrigin(1, 0.5);
-    scene.ggHudNukeIcon.ggHudRole = "nuke-icon";
+    if (!scene) return;
     var fireNuke = function() {
         if (scene.playerNukeTick < scene.playerNukeDelay || currentNukes <= 0) return;
         if (ggFirePlayerNuke(scene)) scene.playerNukeTick = 0;
     };
-    [textNukes, scene.ggHudNukeIcon].forEach(function(target) {
+    ggGroupChildren({ getChildren: function() { return scene.ggHudNukeIcons || []; } }).forEach(function(target) {
         target.setInteractive({ useHandCursor: true });
         target.on("pointerdown", fireNuke);
     });
@@ -482,6 +475,80 @@ function ggSetHudVisible(visible) {
     [textScore, textLives, textNukesLoad, textNukes, restartlevel].forEach(function(item) {
         if (item && item.setVisible) item.setVisible(visible);
     });
+    [window.ggActiveHudScene].forEach(function(scene) {
+        if (!scene) return;
+        (scene.ggHudLivesIcons || []).forEach(function(item) { if (item && item.setVisible) item.setVisible(visible); });
+        (scene.ggHudNukeIcons || []).forEach(function(item) { if (item && item.setVisible) item.setVisible(visible); });
+        [scene.ggHudArmBarBg, scene.ggHudArmBarFill, scene.btnMute].forEach(function(item) {
+            if (item && item.setVisible) item.setVisible(visible);
+        });
+    });
+}
+
+function ggDestroyHudCollections(scene) {
+    if (!scene) return;
+    (scene.ggHudLivesIcons || []).forEach(ggDestroyIfLive);
+    (scene.ggHudNukeIcons || []).forEach(ggDestroyIfLive);
+    ggDestroyIfLive(scene.ggHudArmBarBg);
+    ggDestroyIfLive(scene.ggHudArmBarFill);
+    ggDestroyIfLive(scene.ggHudNukeIcon);
+    scene.ggHudLivesIcons = [];
+    scene.ggHudNukeIcons = [];
+    scene.ggHudArmBarBg = null;
+    scene.ggHudArmBarFill = null;
+    scene.ggHudNukeIcon = null;
+}
+
+function ggRefreshHud(scene) {
+    scene = scene || window.ggActiveHudScene;
+    if (!scene || !scene.game) return;
+    window.ggActiveHudScene = scene;
+    var w = scene.game.config.width;
+    var h = scene.game.config.height;
+    var margin = Math.max(18, Math.min(w, h) * 0.025);
+    var iconUnit = Math.max(28, Math.min(w, h) * 0.052);
+    if (textScore && textScore.setText) {
+        textScore.setText("SCORE " + ggScoreValue(score));
+        if (textScore.setFontFamily) textScore.setFontFamily(GG_FONT_GOLD);
+        if (textScore.setPosition) textScore.setPosition(margin, margin * 1.08);
+    }
+    if (textLives && textLives.setText) textLives.setText("LIVES");
+    if (textNukes && textNukes.setText) textNukes.setText("NUKES");
+    if (textNukesLoad && textNukesLoad.setText) textNukesLoad.setText("ARM NUKE");
+
+    function renderIcons(listName, textureKey, count, startX, y, dir) {
+        scene[listName] = scene[listName] || [];
+        scene[listName].forEach(ggDestroyIfLive);
+        scene[listName] = [];
+        for (var i = 0; i < Math.max(0, count); i++) {
+            var icon = scene.add.image(startX + (dir * i * iconUnit * 0.72), y, textureKey).setDisplaySize(iconUnit, iconUnit).setOrigin(0.5);
+            icon.ggHudRole = listName === "ggHudLivesIcons" ? "life-icon" : "nuke-icon";
+            scene[listName].push(icon);
+        }
+    }
+
+    var livesY = h - margin - iconUnit * 0.42;
+    if (textLives) textLives.setPosition(w - margin, h - margin - iconUnit * 1.2);
+    renderIcons("ggHudLivesIcons", "hudLife", currentLives, w - margin - iconUnit * 0.5, livesY, -1);
+
+    var nukeLabelY = h - margin - iconUnit * 1.55;
+    var nukeIconY = h - margin - iconUnit * 0.92;
+    if (textNukes) textNukes.setPosition(margin, nukeLabelY);
+    renderIcons("ggHudNukeIcons", "hudNuke", currentNukes, margin + iconUnit * 0.5, nukeIconY, 1);
+    scene.ggHudNukeIcon = scene.ggHudNukeIcons[0] || null;
+    ggInstallNukeHud(scene);
+
+    var barW = iconUnit * 3.4;
+    var progress = scene.playerNukeDelay ? Math.min(1, Math.max(0, scene.playerNukeTick / scene.playerNukeDelay)) : 1;
+    if (textNukesLoad) textNukesLoad.setPosition(margin, h - margin - iconUnit * 0.18);
+    if (scene.ggHudArmBarBg) {
+        scene.ggHudArmBarBg.setPosition(margin + iconUnit * 2.85, textNukesLoad.y);
+        scene.ggHudArmBarBg.setSize(barW, Math.max(8, iconUnit * 0.18));
+    }
+    if (scene.ggHudArmBarFill) {
+        scene.ggHudArmBarFill.setPosition(margin + iconUnit * 2.85, textNukesLoad.y);
+        scene.ggHudArmBarFill.setSize(Math.max(1, barW * progress), Math.max(6, iconUnit * 0.11));
+    }
 }
 
 function ggToggleMute(scene, button) {
@@ -495,8 +562,13 @@ function ggToggleMute(scene, button) {
 
 function ggAddMuteButton(scene, gridIndex) {
     var button = scene.add.image(0, 0, isMuted ? "mute" : "sound").setInteractive();
-    if (scene.aGrid) scene.aGrid.placeAtIndex(gridIndex || 99, button);
-    Align.scaleToGameW(button, 0.045);
+    var w = scene.game.config.width;
+    var h = scene.game.config.height;
+    var margin = Math.max(18, Math.min(w, h) * 0.025);
+    var size = Math.max(32, Math.min(w, h) * 0.07);
+    button.setDisplaySize(size, size);
+    button.setPosition(w - margin - size * 0.5, margin + size * 0.5);
+    button.ggHudRole = "sound-toggle";
     button.setTint(isMuted ? 0xff4b5c : 0x70fff2);
     button.on("pointerdown", function() { ggToggleMute(scene, button); });
     return button;
@@ -586,7 +658,7 @@ function ggFirePlayerNuke(scene) {
     scene.starNukes.add(nuke);
     if (scene.sfx && scene.sfx.nukeFiring) scene.sfx.nukeFiring.play();
     currentNukes--;
-    if (textNukes && textNukes.setText) textNukes.setText(String(currentNukes));
+    ggRefreshHud(scene);
     return true;
 }
 
@@ -618,7 +690,7 @@ function ggAwardComet(scene, comet, nukeBurst) {
     }
     ggScoreEvent(scene, "COMET_DESTROYED");
     currentNukes++;
-    if (textNukes && textNukes.setText) textNukes.setText(String(currentNukes));
+    ggRefreshHud(scene);
     comet.destroy();
 }
 
@@ -695,7 +767,7 @@ function ggMarkSweepPositions(group) {
 }
 
 function ggDestroyEnemyTarget(scene, projectile, target, nuke) {
-    if (!scene || !projectile || !target || !projectile.active || !target.active || target.ggSweptResolved) return false;
+    if (!scene || !projectile || projectile.ggProjectileSide !== "player" || !target || !projectile.active || !target.active || target.ggSweptResolved) return false;
     target.ggSweptResolved = true;
     projectile.destroy();
     if (nuke && emitter && emitter.stop) emitter.stop();
@@ -709,7 +781,7 @@ function ggDestroyEnemyTarget(scene, projectile, target, nuke) {
 }
 
 function ggDestroyAsteroidTarget(scene, projectile, asteroid, nuke) {
-    if (!scene || !projectile || !asteroid || !projectile.active || !asteroid.active || asteroid.ggSweptResolved) return false;
+    if (!scene || !projectile || projectile.ggProjectileSide !== "player" || !asteroid || !projectile.active || !asteroid.active || asteroid.ggSweptResolved) return false;
     asteroid.ggSweptResolved = true;
     projectile.destroy();
     if (nuke && emitter && emitter.stop) emitter.stop();
@@ -721,7 +793,7 @@ function ggDestroyAsteroidTarget(scene, projectile, asteroid, nuke) {
 }
 
 function ggHitMothershipTarget(scene, projectile, mothership, nuke) {
-    if (!scene || !projectile || !mothership || !projectile.active || !mothership.active) return false;
+    if (!scene || !projectile || projectile.ggProjectileSide !== "player" || !mothership || !projectile.active || !mothership.active) return false;
     projectile.destroy();
     if (nuke && emitter && emitter.stop) emitter.stop();
     if (nuke) {
@@ -738,7 +810,7 @@ function ggHitMothershipTarget(scene, projectile, mothership, nuke) {
 }
 
 function ggHitPlayerTarget(scene, laser, player) {
-    if (!scene || !laser || !player || !laser.active || !player.active || laser.ggSweptResolved) return false;
+    if (!scene || !laser || laser.ggProjectileSide !== "enemy" || !player || !laser.active || !player.active || laser.ggSweptResolved) return false;
     laser.ggSweptResolved = true;
     scene.createExplosion(player.x, player.y, "playerHit");
     player.body.reset(scene.game.config.width * 0.5, scene.game.config.height - 50);
@@ -823,6 +895,7 @@ function ggResetToMenu(scene) {
     levelWon = false;
     score = 0;
     finalScore = null;
+    ggResumeGameplayWorld(scene);
     scene.scene.start("MainMenu");
 }
 
@@ -840,6 +913,27 @@ function ggResetRun() {
     finalScore = null;
 }
 
+function ggResumeGameplayWorld(scene) {
+    if (scene && scene.physics && scene.physics.world && scene.physics.world.resume) scene.physics.world.resume();
+    window.ggGameplayFrozenForResult = false;
+}
+
+function ggFreezeGameplayForResult(scene) {
+    if (!scene || scene.ggGameplayFrozenForResult) return;
+    scene.ggGameplayFrozenForResult = true;
+    if (scene.time && scene.time.removeAllEvents) scene.time.removeAllEvents();
+    if (scene.tweens && scene.tweens.killAll) scene.tweens.killAll();
+    ["enemies", "alienscouts", "enemyLasers", "playerLasers", "starNukes", "asteroids", "comets"].forEach(function(groupName) {
+        ggGroupChildren(scene[groupName]).forEach(function(item) {
+            if (item && item.body) item.body.setVelocity(0, 0);
+            if (item && item.anims && item.anims.pause) item.anims.pause();
+        });
+    });
+    if (scene.player && scene.player.body) scene.player.body.setVelocity(0, 0);
+    if (scene.physics && scene.physics.world && scene.physics.world.pause) scene.physics.world.pause();
+    window.ggGameplayFrozenForResult = true;
+}
+
 function ggRestartGameplay(scene, sceneKey) {
     enemyShips = 0;
     enemyDeaths = 0;
@@ -852,6 +946,7 @@ function ggRestartGameplay(scene, sceneKey) {
     levelWon = false;
     finalScore = null;
     score = 0;
+    ggResumeGameplayWorld(scene);
     scene.scene.start(sceneKey);
 }
 
@@ -859,16 +954,14 @@ function ggRenderGameOver(scene, menuCallback, replayCallback, tryAgainCallback)
     RIP = true;
     finalScore = ggScoreValue(score);
     score = finalScore;
+    ggFreezeGameplayForResult(scene);
     ggSetHudVisible(false);
     ggPlayAudioOnce(scene, "game-over-entry", GG_AUDIO.GAME_OVER_STINGER);
-    if (textScore) textScore.setText("Final Score: " + finalScore);
-    if (textLives) textLives.setText("Lives: GAME OVER");
     var panel = scene.add.image(scene.game.config.width * 0.5, scene.game.config.height * 0.52, "gameOver").setOrigin(0.5);
     Align.scaleToGameW(panel, 0.78);
     panel.setDepth(20);
 
-    ggMakeText(scene, scene.game.config.width * 0.5, scene.game.config.height * 0.185, "GAME OVER", ggGoldStyle(86, "#ffb43c")).setDepth(21);
-    ggMakeText(scene, scene.game.config.width * 0.5, scene.game.config.height * 0.36, "SCORE  " + finalScore, ggDisplayStyle(42, "#ffffff")).setDepth(21);
+    ggMakeText(scene, scene.game.config.width * 0.5, scene.game.config.height * 0.86, "SCORE  " + finalScore, ggGoldStyle(42, "#ffb43c")).setDepth(27);
 
     var buttonY = scene.game.config.height * 0.742;
     var runOnce = ggInstallResultInputControls(scene, {

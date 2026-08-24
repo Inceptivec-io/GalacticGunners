@@ -427,8 +427,8 @@ async function main() {
       report.browser.level1.playerScale === 0.036 &&
       Math.abs(Math.abs(report.browser.level1.enemyAngle) - 180) < 0.01 && report.browser.level1.enemyBounds.minLeft >= -1 &&
       report.browser.level1.enemyBounds.maxRight <= 1367 && report.browser.level1.nukeHud.iconTexture === "hudNuke" &&
-      report.browser.level1.hudContract.scoreText.indexOf("Score:") === 0 &&
-      report.browser.level1.hudContract.livesText.indexOf("Lives:") === 0 &&
+      report.browser.level1.hudContract.scoreText.indexOf("SCORE") === 0 &&
+      report.browser.level1.hudContract.livesText === "LIVES" &&
       report.browser.level1.hudContract.hasMute &&
       !report.browser.level1.hudContract.hasReplay &&
       report.browser.level1.playerAnimation.idleFrame === "0" &&

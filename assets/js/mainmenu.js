@@ -18,6 +18,8 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
 
   //create function
   create() {
+    this.heroBacking = this.add.image(this.game.config.width * 0.5, this.game.config.height * 0.5, "backgroundstars").setOrigin(0.5);
+    this.heroBacking.setDepth(-11);
     this.background = this.add.image(this.game.config.width * 0.5, this.game.config.height * 0.5, "hero").setOrigin(0.5);
     this.background.setDepth(-10);
 
@@ -234,8 +236,12 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
     }
 
     if (this.background) {
+      if (this.heroBacking) {
+        this.heroBacking.setPosition(w * 0.5, h * 0.5);
+        this.heroBacking.setScale(Math.max(w / this.heroBacking.width, h / this.heroBacking.height));
+      }
       this.background.setPosition(w * 0.5, h * 0.5);
-      var bgScale = Math.max(w / this.background.width, h / this.background.height);
+      var bgScale = Math.min(w / this.background.width, h / this.background.height) * 0.98;
       this.background.setScale(bgScale);
     }
 
