@@ -7,6 +7,7 @@ const path = require("path");
 const port = 9231;
 const runtimeUrl = "http://localhost:8027/";
 const viewport = { width: 1366, height: 665 };
+const writeEvidence = process.env.GG_VERIFY_NO_WRITE !== "1";
 const evidenceDir = path.resolve(
   __dirname,
   "../docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP2/small_surface",
@@ -193,10 +194,12 @@ async function main() {
       format: "png",
       captureBeyondViewport: false,
     });
-    fs.writeFileSync(
-      path.join(evidenceDir, "FOUNDER_REVIEW_MENU_FONT_FAVICON_CHECK.png"),
-      Buffer.from(screenshot.result.data, "base64"),
-    );
+    if (writeEvidence) {
+      fs.writeFileSync(
+        path.join(evidenceDir, "FOUNDER_REVIEW_MENU_FONT_FAVICON_CHECK.png"),
+        Buffer.from(screenshot.result.data, "base64"),
+      );
+    }
 
     const report = {
       runtimeUrl,
@@ -227,10 +230,12 @@ async function main() {
         networkFailures.length === 0,
     };
 
-    fs.writeFileSync(
-      path.join(evidenceDir, "FOUNDER_REVIEW_MENU_FONT_FAVICON_CHECK.json"),
-      `${JSON.stringify(report, null, 2)}\n`,
-    );
+    if (writeEvidence) {
+      fs.writeFileSync(
+        path.join(evidenceDir, "FOUNDER_REVIEW_MENU_FONT_FAVICON_CHECK.json"),
+        `${JSON.stringify(report, null, 2)}\n`,
+      );
+    }
     await send("Browser.close");
     console.log(JSON.stringify(report, null, 2));
     if (!report.pass) {
