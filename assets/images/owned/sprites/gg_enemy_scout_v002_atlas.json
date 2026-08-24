@@ -1,0 +1,14 @@
+{
+  "frames": {
+    "0": { "frame": { "x": 11, "y": 18, "w": 474, "h": 444 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 474, "h": 444 }, "sourceSize": { "w": 474, "h": 444 } },
+    "1": { "frame": { "x": 508, "y": 26, "w": 473, "h": 492 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 473, "h": 492 }, "sourceSize": { "w": 473, "h": 492 } },
+    "2": { "frame": { "x": 1002, "y": 20, "w": 475, "h": 773 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 475, "h": 773 }, "sourceSize": { "w": 475, "h": 773 } },
+    "3": { "frame": { "x": 1498, "y": 23, "w": 474, "h": 559 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 474, "h": 559 }, "sourceSize": { "w": 474, "h": 559 } }
+  },
+  "meta": {
+    "image": "gg_enemy_scout_v002_sheet.png",
+    "format": "RGBA8888",
+    "size": { "w": 1983, "h": 793 },
+    "scale": "1"
+  }
+}

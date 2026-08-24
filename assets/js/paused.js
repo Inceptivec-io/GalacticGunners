@@ -8,7 +8,7 @@ class Paused extends Phaser.Scene { //creates a scene in the Phaser Object calle
         this.load.image("backgroundstars", "assets/images/owned/backgrounds/gg_bg_starfield_v002.png") //preload background stars image
         this.load.image("resume", "assets/images/owned/ui/gg_ui_resume_v002.png"); //preload the Resume Button image
         this.load.image("resumeHover", "assets/images/owned/ui/gg_ui_pause_v002.png"); //preload the Resume Button Hover image
-        this.load.spritesheet("comet", "assets/images/owned/sprites/gg_comet_v002_sheet.png", { frameWidth: 836, frameHeight: 940 }); //preload the comet image
+        this.load.spritesheet("comet", "assets/images/owned/sprites/gg_comet_v002_sheet.png", { frameWidth: 837, frameHeight: 470 }); //preload the comet image
         this.load.image("pauseIcon", "assets/images/owned/ui/gg_ui_pause_v002.png"); //preload owned pause image
     }
     //END preload function
@@ -24,6 +24,8 @@ class Paused extends Phaser.Scene { //creates a scene in the Phaser Object calle
         //END GRID
 
         this.sfx = ggCreateUiSfx(this);
+        this.keyEnter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+        this.keyP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
 
         //pause Image
         this.planetImage = this.add.sprite(0, 0, 'comet'); //add animated comet image to bottom of screen
@@ -103,7 +105,7 @@ class Paused extends Phaser.Scene { //creates a scene in the Phaser Object calle
         this.time.addEvent({
             delay: 100,
             callback: function() {
-                if (controllerActionPressed("pause")) {
+                if (this.keyEnter.isDown || this.keyP.isDown || controllerActionPressed("pause") || controllerActionPressed("resume")) {
                     this.resumeGame();
                 }
             },

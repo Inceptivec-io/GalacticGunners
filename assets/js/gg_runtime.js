@@ -1,5 +1,5 @@
-const GG_FONT_SILVER = "'GalacticGunnersSilverProduction', 'GalacticGunnersTitle', 'GalacticGunnersDisplay', Arial, sans-serif";
-const GG_FONT_GOLD = "'GalacticGunnersGoldProduction', 'GalacticGunnersTitle', 'GalacticGunnersDisplay', Arial, sans-serif";
+const GG_FONT_SILVER = "'Galactic Gunners Silver Display', 'GalacticGunnersDisplay', Arial, sans-serif";
+const GG_FONT_GOLD = "'Galactic Gunners Gold Display', 'GalacticGunnersDisplay', Arial, sans-serif";
 const GG_FONT_TITLE = GG_FONT_SILVER;
 const GG_FONT_DISPLAY = GG_FONT_SILVER;
 
@@ -301,7 +301,39 @@ function ggCreateComets(scene) {
                 fromLeft ? Phaser.Math.RND.integerInRange(140, 240) : Phaser.Math.RND.integerInRange(-240, -140),
                 Phaser.Math.RND.integerInRange(40, 160)
             );
+            ggOrientCometToVelocity(comet);
             scene.comets.add(comet);
+        },
+        callbackScope: scene,
+        loop: true
+    });
+}
+
+function ggNullEmitter() {
+    return {
+        start: function() {},
+        startFollow: function() {},
+        stop: function() {}
+    };
+}
+
+function ggOrientCometToVelocity(comet) {
+    if (!comet || !comet.body || !comet.body.velocity) return;
+    var vx = comet.body.velocity.x;
+    var vy = comet.body.velocity.y;
+    if (vx === 0 && vy === 0) return;
+    comet.setRotation(Math.atan2(vy, vx) + Math.PI);
+    comet.body.angularVelocity = 0;
+}
+
+function ggInstallResultInputControls(scene, controls) {
+    scene.time.addEvent({
+        delay: 100,
+        callback: function() {
+            if (!levelWon && !RIP) return;
+            if (controls.next && (this.keyEnter && this.keyEnter.isDown || controllerActionPressed("start"))) controls.next();
+            if (controls.replay && (this.keyR && this.keyR.isDown || controllerActionPressed("restart"))) controls.replay();
+            if (controls.menu && (this.keyM && this.keyM.isDown || controllerActionPressed("info"))) controls.menu();
         },
         callbackScope: scene,
         loop: true
@@ -410,6 +442,11 @@ function ggRenderGameOver(scene, menuCallback, replayCallback, tryAgainCallback)
     ggAddImageButton(scene, scene.game.config.width * 0.34, buttonY, "buttonMenuOff", "buttonMenuOn", menuCallback, 0.17);
     ggAddImageButton(scene, scene.game.config.width * 0.5, buttonY, "buttonReplayOff", "buttonReplayOn", replayCallback, 0.17);
     ggAddImageButton(scene, scene.game.config.width * 0.66, buttonY, "buttonTryAgainOff", "buttonTryAgainOn", tryAgainCallback, 0.17);
+    ggInstallResultInputControls(scene, {
+        next: tryAgainCallback || null,
+        replay: replayCallback || null,
+        menu: menuCallback || null
+    });
 }
 
 function ggRenderVictory(scene, title, body, nextLabel, nextCallback, options) {
@@ -437,4 +474,9 @@ function ggRenderVictory(scene, title, body, nextLabel, nextCallback, options) {
     if (options && options.replayCallback) {
         ggAddPanelHit(scene, "REPLAY", scene.game.config.width * 0.5, buttonY, buttonW, buttonH, options.replayCallback);
     }
+    ggInstallResultInputControls(scene, {
+        next: nextCallback || null,
+        replay: options && options.replayCallback ? options.replayCallback : null,
+        menu: options && options.menuCallback ? options.menuCallback : null
+    });
 }

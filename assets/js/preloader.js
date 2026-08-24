@@ -19,26 +19,14 @@ class Preloader extends Phaser.Scene {
             frameHeight: 724
         });
         ggPreloadAudio(this);
-        this.load.spritesheet("playerShip", "assets/images/owned/sprites/gg_player_ship_v002_sheet.png", {
-            frameWidth: 724,
-            frameHeight: 724
-        });
-        this.load.spritesheet("motherShip", "assets/images/owned/sprites/gg_boss_mothership_v002_sheet.png", { //preload Alien Mothership spritesheet to the game, assign key name and src, object frameWidth and frameheight
-            frameWidth: 724,
-            frameHeight: 724
-        });
-        this.load.spritesheet("alienscout", "assets/images/owned/sprites/gg_enemy_scout_v002_sheet.png", { //preload alienscout spritesheet to the game, assign key name and src, object frameWidth and frameheight
-            frameWidth: 661,
-            frameHeight: 793
-        });
+        this.load.atlas("playerShip", "assets/images/owned/sprites/gg_player_ship_v002_sheet.png", "assets/images/owned/sprites/gg_player_ship_v002_atlas.json");
+        this.load.atlas("motherShip", "assets/images/owned/sprites/gg_boss_mothership_v002_sheet.png", "assets/images/owned/sprites/gg_boss_mothership_v002_atlas.json");
+        this.load.atlas("alienscout", "assets/images/owned/sprites/gg_enemy_scout_v002_sheet.png", "assets/images/owned/sprites/gg_enemy_scout_v002_atlas.json");
         this.load.spritesheet("enemyCruiser", "assets/images/owned/sprites/gg_enemy_cruiser_v002_sheet.png", { //preload enemyCruiser spritesheet to the game, assign key name and src, object frameWidth and frameheight
             frameWidth: 836,
             frameHeight: 941
         });
-        this.load.spritesheet("enemyShip", "assets/images/owned/sprites/gg_enemy_destroyer_v002_sheet.png", { //preload enemyShip spritesheet to the game, assign key name and src, object frameWidth and frameheight
-            frameWidth: 724,
-            frameHeight: 724
-        });
+        this.load.atlas("enemyShip", "assets/images/owned/sprites/gg_enemy_destroyer_v002_sheet.png", "assets/images/owned/sprites/gg_enemy_destroyer_v002_atlas.json");
         this.load.image("sprShieldTile", "assets/images/owned/sprites/gg_shield_tile_v002.png"); //preload shield image to the game, assign key name and src
         this.load.image("sprLaserEnemy", "assets/images/owned/sprites/gg_enemy_laser_v002.png"); //preload enemyLaser image to the game, assign key name and src
         this.load.image("sprLaserPlayer", "assets/images/owned/sprites/gg_player_laser_v002.png"); //preload playerLaser image to the game, assign key name and src
@@ -84,13 +72,13 @@ class Preloader extends Phaser.Scene {
         //create animations
         this.anims.create({ //animation object create
             key: "playerShip",
-            frames: this.anims.generateFrameNumbers("playerShip", { frames: [0] }),
+            frames: [{ key: "playerShip", frame: "0" }],
             frameRate: 1,
             repeat: -1
         });
         this.anims.create({ //animation object create
             key: "enemyShip", //set the image key name to be used
-            frames: this.anims.generateFrameNumbers("enemyShip"), //set image to be used to generate frames
+            frames: this.anims.generateFrameNames("enemyShip", { frames: ["0", "1", "2"] }), //set image to be used to generate frames
             frameRate: 5, //set frame rate speed
             repeat: -1 //set to -1, continuous
         });
@@ -102,13 +90,13 @@ class Preloader extends Phaser.Scene {
         });
         this.anims.create({ //animation object create
             key: "motherShip", //set the image key name to be used
-            frames: this.anims.generateFrameNumbers("motherShip"), //set image to be used to generate frames
+            frames: this.anims.generateFrameNames("motherShip", { frames: ["0", "1", "2", "3", "4", "5"] }), //set image to be used to generate frames
             frameRate: 5, //set frame rate speed
             repeat: -1 //set to -1, continuous
         });
         this.anims.create({ //animation object create
             key: "alienscout", //set the image key name to be used
-            frames: this.anims.generateFrameNumbers("alienscout"), //set image to be used to generate frames
+            frames: this.anims.generateFrameNames("alienscout", { frames: ["0", "1", "3", "1"] }), //set image to be used to generate frames
             frameRate: 5, //set frame rate speed
             repeat: -1 //set to -1, continuous
         });
@@ -168,8 +156,8 @@ class Preloader extends Phaser.Scene {
             Promise.all([
                 document.fonts.load("96px GalacticGunnersTitle"),
                 document.fonts.load("80px GalacticGunnersDisplay"),
-                document.fonts.load("80px GalacticGunnersSilverProduction"),
-                document.fonts.load("80px GalacticGunnersGoldProduction"),
+                document.fonts.load("80px 'Galactic Gunners Silver Display'"),
+                document.fonts.load("80px 'Galactic Gunners Gold Display'"),
                 document.fonts.ready
             ]).then(startMainMenu).catch(startMainMenu);
             return;

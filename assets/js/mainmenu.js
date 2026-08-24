@@ -248,7 +248,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
     }
 
     if (this.logoPrimary) {
-      fitImage(this.logoPrimary, w * 0.62, h * 0.27);
+      fitImage(this.logoPrimary, w * 0.56, h * 0.22);
       this.logoPrimary.setPosition(w * 0.5, margin + this.logoPrimary.displayHeight * 0.5);
       this.logoPrimary.clearTint();
     }
@@ -256,25 +256,25 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
     if (this.textTitle2) {
       this.textTitle2.setTint(0xffb43c);
       this.textTitle2.setOrigin(0.5);
-      fitText(this.textTitle2, w * 0.54, h * 0.075);
-      var subtitleY = this.logoPrimary ? this.logoPrimary.y + this.logoPrimary.displayHeight * 0.5 + margin + this.textTitle2.displayHeight * 0.5 : h * 0.31;
+      fitText(this.textTitle2, w * 0.50, h * 0.072);
+      var subtitleY = this.logoPrimary ? this.logoPrimary.y + this.logoPrimary.displayHeight * 0.5 + (margin * 0.55) + this.textTitle2.displayHeight * 0.5 : h * 0.28;
       this.textTitle2.setPosition(
         w * 0.5,
-        Math.min(h * 0.34, subtitleY)
+        Math.min(h * 0.315, subtitleY)
       );
     }
 
     if (this.heroImage) {
-      fitImage(this.heroImage, w * 0.16, h * 0.24);
-      this.heroImage.setPosition(w * 0.5, h * 0.55);
+      fitImage(this.heroImage, w * 0.15, h * 0.22);
+      this.heroImage.setPosition(w * 0.5, h * 0.565);
       this.heroImage.clearTint();
     }
 
     if (this.textPoint) {
       this.textPoint.setTint(0xffb43c);
       this.textPoint.setOrigin(0.5);
-      fitText(this.textPoint, w * 0.16, h * 0.105);
-      this.textPoint.setPosition(w * 0.12, h * 0.58);
+      fitText(this.textPoint, w * 0.17, h * 0.09);
+      this.textPoint.setPosition(w * 0.12, h * 0.565);
     }
 
     if (this.btnPoint) {
@@ -289,11 +289,11 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
     if (this.textBest) {
       this.textBest.setTint(0xffb43c);
       this.textBest.setOrigin(0.5);
-      fitText(this.textBest, w * 0.20, h * 0.095);
-      this.textBest.setPosition(w * 0.84, h * 0.58);
+      fitText(this.textBest, w * 0.20, h * 0.085);
+      this.textBest.setPosition(w * 0.84, h * 0.565);
     }
 
-    var iconSize = Math.min(w, h) * 0.085;
+    var iconSize = Math.min(w, h) * 0.078;
     if (this.btnInfo) {
       fitImage(this.btnInfo, iconSize, iconSize);
       this.btnInfo.setPosition(w - margin - iconSize * 0.5, h - margin - iconSize * 0.5);

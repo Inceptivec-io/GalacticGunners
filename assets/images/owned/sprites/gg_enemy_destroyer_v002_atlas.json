@@ -1,0 +1,13 @@
+{
+  "frames": {
+    "0": { "frame": { "x": 6, "y": 0, "w": 710, "h": 677 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 710, "h": 677 }, "sourceSize": { "w": 710, "h": 677 } },
+    "1": { "frame": { "x": 731, "y": 0, "w": 710, "h": 724 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 710, "h": 724 }, "sourceSize": { "w": 710, "h": 724 } },
+    "2": { "frame": { "x": 1456, "y": 0, "w": 709, "h": 681 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 709, "h": 681 }, "sourceSize": { "w": 709, "h": 681 } }
+  },
+  "meta": {
+    "image": "gg_enemy_destroyer_v002_sheet.png",
+    "format": "RGBA8888",
+    "size": { "w": 2172, "h": 724 },
+    "scale": "1"
+  }
+}

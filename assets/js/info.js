@@ -22,6 +22,8 @@ class Info extends Phaser.Scene { //creates a scene in the Phaser Object called 
     //END GRID
 
     this.sfx = ggCreateUiSfx(this);
+    this.keyEnter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+    this.keyEsc = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
     //END create function
 
     //Title, story and controls text
@@ -156,7 +158,7 @@ class Info extends Phaser.Scene { //creates a scene in the Phaser Object called 
     this.time.addEvent({
       delay: 100,
       callback: function() {
-        if (controllerActionPressed("start") || controllerActionPressed("info")) {
+        if (this.keyEnter.isDown || this.keyEsc.isDown || controllerActionPressed("start") || controllerActionPressed("info")) {
           this.backToMenu();
         }
       },

@@ -1,26 +1,26 @@
 Active Handoff:
-GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1
+GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP4
 
 Programme:
 IP_FREEDOM_LICENSE_PROTECTION_ASSET_CREATION
 
 Stage:
-APP3 ACCEPTANCE-BLOCKING PRODUCTION-SURFACE CORRECTION COMPLETE / PENDING FOUNDER ACCEPTANCE
+APP4 ACCEPTANCE-BLOCKING PRODUCTION-SURFACE CORRECTION COMPLETE / PENDING FOUNDER ACCEPTANCE
 
 Branch:
 feature/GG-COM-001
 
-DEVTEAM_003_APP3_REV1 Entry SHA:
-5ccd915ab9e11ff53ad1ae247fbe5a0c87710d43
+DEVTEAM_003_APP4 Entry SHA:
+3c9f566cf2a7043569bee3aad74eadf437c257c6
 
 Current Repository Head Authority:
 origin/feature/GG-COM-001
 
 Local/Remote Reconciliation At Return:
-RECORDED IN EXTERNAL DEVTEAM-003 APP3 REV1 HANDOFF-OUT AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
+RECORDED IN EXTERNAL DEVTEAM-003 APP4 HANDOFF-OUT AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
 
 Worktree At Return:
-RECORDED IN EXTERNAL DEVTEAM-003 APP3 REV1 HANDOFF-OUT AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
+RECORDED IN EXTERNAL DEVTEAM-003 APP4 HANDOFF-OUT AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
 
 POST_BOX:
 CLEAN AT CLOSURE - boundary controls only / active payload zero
@@ -38,7 +38,7 @@ IP Freedom Integration:
 PASS
 
 DEVTEAM-003 Visual Reconstruction:
-PASS - corrected through APP3 REV1
+PASS - corrected through APP4
 
 Owned Audio Integration:
 PASS - 16/16 accepted WAV files integrated under APP1
@@ -46,29 +46,29 @@ PASS - 16/16 accepted WAV files integrated under APP1
 Duplicate Transport Verification:
 PASS under APP1
 
-APP3 Production Surface Correction:
+APP4 Production Surface Correction:
 PASS
 
 Favicon:
-PASS - settled HUD life icon favicon retained and not revisited
+PASS - HUD life icon favicon served with APP4 cache-bust version and HTTP 200 verification
 
 Main Menu Layout / Font:
-PASS - production gold/silver font surfaces and visible bounds verified
+PASS - exact Founder production gold/silver WOFF2 font faces loaded/rendered and visible bounds verified
 
 Sprite / FX Runtime:
-PASS - player/scout frame extraction, FX strips, nuke projectile and nuke burst verified
+PASS - player/scout/destroyer/mothership atlas extraction, FX strips, nuke projectile and nuke burst verified
 
 Projectile Orientation:
-PASS - player laser -90 degrees, enemy laser 90 degrees, readable sizing verified
+PASS - player laser -90 degrees, enemy/mothership laser 90 degrees, 2x+ readable sizing and core-aligned bodies verified
 
 Result Panels:
-PASS - game-over button states active; victory values dynamic; panel-aligned NEXT/REPLAY/MENU controls verified
+PASS - game-over button states active; victory values dynamic; discrete NEXT/REPLAY/MENU controls and touch paths verified
 
 Runtime Regression:
-PASS - APP3 semantic browser verifier; runtime exceptions 0; network failures 0
+PASS - APP4 semantic browser verifier; runtime exceptions 0; network failures 0
 
 Docker Local Founder Acceptance Runtime:
-AVAILABLE - rebuilt for APP3 preview at http://localhost:8027/
+AVAILABLE - rebuilt for APP4 preview at http://localhost:8027/
 
 Founder Visual Acceptance:
 PENDING

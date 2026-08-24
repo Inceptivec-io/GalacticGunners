@@ -1,0 +1,16 @@
+{
+  "frames": {
+    "0": { "frame": { "x": 31, "y": 0, "w": 331, "h": 724 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 331, "h": 724 }, "sourceSize": { "w": 331, "h": 724 } },
+    "1": { "frame": { "x": 397, "y": 0, "w": 327, "h": 724 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 327, "h": 724 }, "sourceSize": { "w": 327, "h": 724 } },
+    "2": { "frame": { "x": 754, "y": 0, "w": 332, "h": 724 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 332, "h": 724 }, "sourceSize": { "w": 332, "h": 724 } },
+    "3": { "frame": { "x": 1099, "y": 0, "w": 336, "h": 724 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 336, "h": 724 }, "sourceSize": { "w": 336, "h": 724 } },
+    "4": { "frame": { "x": 1448, "y": 0, "w": 334, "h": 724 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 334, "h": 724 }, "sourceSize": { "w": 334, "h": 724 } },
+    "5": { "frame": { "x": 1810, "y": 0, "w": 346, "h": 724 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 346, "h": 724 }, "sourceSize": { "w": 346, "h": 724 } }
+  },
+  "meta": {
+    "image": "gg_boss_mothership_v002_sheet.png",
+    "format": "RGBA8888",
+    "size": { "w": 2172, "h": 724 },
+    "scale": "1"
+  }
+}

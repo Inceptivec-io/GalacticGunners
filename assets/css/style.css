@@ -12,7 +12,7 @@ body {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    font-family: "GalacticGunnersSilverProduction", "GalacticGunnersDisplay", Arial, Helvetica, sans-serif;
+    font-family: "Galactic Gunners Silver Display", "GalacticGunnersDisplay", Arial, Helvetica, sans-serif;
     background: #020817 url("../images/owned/backgrounds/gg_bg_starfield_v002.png") center center / cover no-repeat fixed;
 }
 
@@ -21,7 +21,7 @@ canvas {
 }
 
 @font-face {
-    font-family: "GalacticGunnersSilverProduction";
+    font-family: "Galactic Gunners Silver Display";
     src: url("../fonts/production/silver/GalacticGunnersSilverDisplay-Regular.woff2") format("woff2"),
          url("../fonts/production/silver/GalacticGunnersSilverDisplay-Regular.woff") format("woff");
     font-weight: normal;
@@ -30,7 +30,7 @@ canvas {
 }
 
 @font-face {
-    font-family: "GalacticGunnersGoldProduction";
+    font-family: "Galactic Gunners Gold Display";
     src: url("../fonts/production/gold/GalacticGunnersGoldDisplay-Regular.woff2") format("woff2"),
          url("../fonts/production/gold/GalacticGunnersGoldDisplay-Regular.woff") format("woff");
     font-weight: normal;

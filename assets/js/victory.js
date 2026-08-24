@@ -24,7 +24,7 @@ class Victory extends Phaser.Scene {
     //END GRID
 
     //create final score announcement
-    textScore = this.add.text(0, 0, 'Final Score: ' + score, { font: '42px GalacticGunnersDisplay', fill: '#00ff00' }); //create score text, position x and y, set text with score variable and add font styling
+    textScore = this.add.text(0, 0, 'Final Score: ' + score, { fontFamily: GG_FONT_DISPLAY, fontSize: 42, fill: '#00ff00' }); //create score text, position x and y, set text with score variable and add font styling
     textScore.setOrigin(0.5, 0.7); //set origin
     this.aGrid.placeAtIndex(27, textScore); //set position on the grid
     Align.scaleToGameW(textScore, 0.18); //set scale

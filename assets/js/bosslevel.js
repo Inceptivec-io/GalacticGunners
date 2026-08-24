@@ -33,37 +33,29 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
         Align.scaleToGameW(this.btnMute, 0.04); //set scale
         //END Mute Button
 
-        //particles and emitter creation
-        particles = this.add.particles('nuke'); //load owned nuke image into particles
-
-        emitter = particles.createEmitter({ // create emitter to be called and createEmitter object on particles
-            on: false, //set on method to be property false, not showing on screen //on test with set to true as standard positioned in top left corner before action call
-            speed: 100, //set property to the speed the particles emit higher number = faster
-            scale: { start: 0.5, end: 0 }, //set the scale of your particles from starting size to finishing size
-            blendMode: "ADD", //set BlendMode method of ADD so as to keep richer colours
-        });
-        //END particles and emitter creation
+        particles = null;
+        emitter = ggNullEmitter();
 
         //SCORED POINTS  AND LIVES REMAINING METHODS 
-        textScore = this.add.text(0, 0, 'Score: ' + score, { font: '42px GalacticGunnersDisplay', fill: '#ffffff' }); //create score text, position x and y, set text with score variable and add font styling
+        textScore = this.add.text(0, 0, 'Score: ' + score, { fontFamily: GG_FONT_DISPLAY, fontSize: 42, fill: '#ffffff' }); //create score text, position x and y, set text with score variable and add font styling
         textScore.setOrigin(0.2, 0.5); //set origin
         this.aGrid.placeAtIndex(0, textScore); //set position on the grid
         Align.scaleToGameW(textScore, 0.12); //set scale
-        textLives = this.add.text(0, 0, 'Lives: ' + currentLives, { font: '42px GalacticGunnersDisplay', fill: '#ffffff' }); //create lives text, position x and y, set text with currentLives variable and add font styling
+        textLives = this.add.text(0, 0, 'Lives: ' + currentLives, { fontFamily: GG_FONT_DISPLAY, fontSize: 42, fill: '#ffffff' }); //create lives text, position x and y, set text with currentLives variable and add font styling
         textLives.setOrigin(0.2, 0.5); //set origin
         this.aGrid.placeAtIndex(110, textLives); //set position on the grid
         Align.scaleToGameW(textLives, 0.12); //set scale
-        textNukesLoad = this.add.text(0, 0, 'ReArm: 150/150', { font: '42px GalacticGunnersDisplay', fill: '#ffffff' }); //create ReArm text, position x and y, add font styling
+        textNukesLoad = this.add.text(0, 0, 'ReArm: 150/150', { fontFamily: GG_FONT_DISPLAY, fontSize: 42, fill: '#ffffff' }); //create ReArm text, position x and y, add font styling
         textNukesLoad.setOrigin(0.85, 1); //set origin
         this.aGrid.placeAtIndex(120, textNukesLoad); //set position on the grid
         Align.scaleToGameW(textNukesLoad, 0.17); //set scale
         textNukesLoad.setPosition(this.game.config.width * 0.9, this.game.config.height * 0.91); //separate HUD labels
-        textNukes = this.add.text(0, 0, 'Nukes: ' + currentNukes, { font: '42px GalacticGunnersDisplay', fill: '#ffffff' }); //create Nukes Left text, position x and y, set text with currentNukes variable and add font styling
+        textNukes = this.add.text(0, 0, 'Nukes: ' + currentNukes, { fontFamily: GG_FONT_DISPLAY, fontSize: 42, fill: '#ffffff' }); //create Nukes Left text, position x and y, set text with currentNukes variable and add font styling
         textNukes.setOrigin(0.8, 0.4); //set origin
         this.aGrid.placeAtIndex(120, textNukes); //set position on the grid
         Align.scaleToGameW(textNukes, 0.12); //set scale
         textNukes.setPosition(this.game.config.width * 0.9, this.game.config.height * 0.97); //separate HUD labels
-        restartlevel = this.add.text(0, 0, 'Replay: ' + LevelRestart, { font: '42px GalacticGunnersDisplay', fill: '#ffffff' }); //show how times you can restart current level
+        restartlevel = this.add.text(0, 0, 'Replay: ' + LevelRestart, { fontFamily: GG_FONT_DISPLAY, fontSize: 42, fill: '#ffffff' }); //show how times you can restart current level
         restartlevel.setOrigin(0.8, 0.5); //set origin
         this.aGrid.placeAtIndex(10, restartlevel); //set position on the grid
         Align.scaleToGameW(restartlevel, 0.12); //set scale
@@ -75,6 +67,8 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
         this.keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE); //sets SPACE as FIRE key
         this.keyN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.N); //sets key N as NUKE key
         this.keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R); //sets key R as Restart Key on GAME OVER
+        this.keyEnter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+        this.keyM = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M);
 
         this.input.keyboard.on('keydown-P', function() { //on pressing Key P
             this.pauseGame();
@@ -538,9 +532,14 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
         this.time.addEvent({
             delay: 10,
             callback: function() {
-                for (var x = 5; x < 26; x += 2) { //create a readable centered formation without crowding the playfield
-                    for (var y = 0; y < 3; y++) { //create 3 additional rows by iterating through x
-                        var enemy = new EnemyCruiser(this, x * (this.game.config.width * 0.04), (this.game.config.height * 0.27) + (y * (this.game.config.height * 0.12)), "enemyCruiser"); //set coordinates for image with spacing on x and y and assign a key from preloaded images to add the enemyship image sprite
+                var cols = 24;
+                var rows = 3;
+                var minX = this.game.config.width * 0.12;
+                var maxX = this.game.config.width * 0.88;
+                for (var col = 0; col < cols; col++) {
+                    for (var y = 0; y < rows; y++) { //restore full population and reflow it inside the playfield
+                        var x = minX + ((maxX - minX) * (col / (cols - 1)));
+                        var enemy = new EnemyCruiser(this, x, (this.game.config.height * 0.29) + (y * (this.game.config.height * 0.092)), "enemyCruiser"); //set coordinates for image with spacing on x and y and assign a key from preloaded images to add the enemyship image sprite
                         enemy.play("enemyCruiser"); //start animation of the enemyShip
                         enemyShips++; //add a ship to total enemy ships created
                         this.enemies.add(enemy); //draw an enemy ship on the screen at x and y
