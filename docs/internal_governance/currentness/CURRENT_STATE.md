@@ -59,7 +59,7 @@ Favicon / Small-Surface Completeness:
 PASS
 
 Founder Review Correction:
-PASS - crest favicon delivered with cache-refreshing links; MainMenu viewport layout corrected; CTA uses owned title font with preload font readiness gate
+PASS - tight ship/crest favicon delivered with cache-refreshing links; MainMenu viewport layout corrected; CTA uses owned title font with preload font readiness gate
 
 Founder Visual Acceptance:
 PENDING
