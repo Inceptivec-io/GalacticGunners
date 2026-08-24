@@ -1,0 +1,14 @@
+export const SCORE_EVENTS = Object.freeze({
+  LASER_TARGET: 5,
+  ASTEROID_DESTROYED: 10,
+  SCOUT_DESTROYED: 25,
+  SHIP_DESTROYED: 50,
+  MOTHERSHIP_HIT: 50,
+  MOTHERSHIP_DESTROYED: 1000,
+  COMET_DESTROYED: 500,
+  SHIELD_TILE_ENEMY_HIT: -1
+} as const);
+
+export const MINIMUM_SCORE = 0;
+
+export type ScoreEventName = keyof typeof SCORE_EVENTS;

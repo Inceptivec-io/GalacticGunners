@@ -1,9 +1,42 @@
 services:
-  galactic-gunners:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-galactic_gunners}
+      POSTGRES_USER: ${POSTGRES_USER:-galactic_gunners}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local-development-only}
+    volumes:
+      - galactic_gunners_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-galactic_gunners} -d ${POSTGRES_DB:-galactic_gunners}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://galactic_gunners:local-development-only@db:5432/galactic_gunners}
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE:-config.settings.local}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-local-development-placeholder-change-me}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1,backend}
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: galactic-gunners-founder-local
+      dockerfile: apps/web/Dockerfile
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8000/api/v1}
     ports:
-      - "8027:80"
-    restart: unless-stopped
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  galactic_gunners_postgres:

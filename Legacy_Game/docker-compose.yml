@@ -1,0 +1,9 @@
+services:
+  galactic-gunners:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: galactic-gunners-founder-local
+    ports:
+      - "8027:80"
+    restart: unless-stopped

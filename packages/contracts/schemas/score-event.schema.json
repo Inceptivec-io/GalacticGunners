@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://galacticgunners.inceptivec.com/contracts/score-event.schema.json",
+  "title": "ScoreEventSummary",
+  "type": "object",
+  "properties": {
+    "laserTargets": { "type": "integer", "minimum": 0 },
+    "asteroids": { "type": "integer", "minimum": 0 },
+    "scouts": { "type": "integer", "minimum": 0 },
+    "ships": { "type": "integer", "minimum": 0 },
+    "mothershipHits": { "type": "integer", "minimum": 0 },
+    "mothershipDestroyed": { "type": "integer", "minimum": 0, "maximum": 1 },
+    "comets": { "type": "integer", "minimum": 0 },
+    "shieldEnemyHits": { "type": "integer", "minimum": 0 }
+  },
+  "additionalProperties": false
+}

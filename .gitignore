@@ -1,4 +1,37 @@
+# Node / Next
+node_modules/
+.next/
+out/
+dist/
+coverage/
+playwright-report/
+test-results/
+
+# Python / Django
+.venv/
+venv/
 __pycache__/
 *.py[cod]
-tools/controller_profiles.json
-node_modules/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+staticfiles/
+media/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Runtime / logs
+*.log
+
+# Transport archives
+*.zip
+*.zip.part*

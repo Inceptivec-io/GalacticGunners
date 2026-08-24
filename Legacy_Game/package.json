@@ -1,0 +1,39 @@
+{
+  "name": "galacticgunners",
+  "version": "1.0.0",
+  "description": "Development-only QA tooling for the Galactic Gunners static Phaser game.",
+  "private": true,
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "qa:syntax": "node tools/qa_syntax_check.js",
+    "qa:lint": "eslint assets/js tools/*.js",
+    "qa:images": "node tools/verify_sprite_atlases.js --images-only",
+    "qa:sprites": "node tools/verify_sprite_atlases.js",
+    "qa:collision": "node tools/verify_handoff_004_gameplay_and_surface.js --mode=collision",
+    "qa:browser": "node tools/verify_handoff_004_gameplay_and_surface.js --mode=browser",
+    "qa:visual": "node tools/verify_handoff_004_gameplay_and_surface.js --mode=visual",
+    "qa:all": "node tools/qa_all.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Inceptivec-io/GalacticGunners.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "UNLICENSED",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Inceptivec-io/GalacticGunners/issues"
+  },
+  "homepage": "https://github.com/Inceptivec-io/GalacticGunners#readme",
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "eslint": "10.9.0",
+    "pixelmatch": "7.2.0",
+    "playwright": "1.62.1",
+    "pngjs": "7.0.0",
+    "sharp": "0.35.3"
+  }
+}

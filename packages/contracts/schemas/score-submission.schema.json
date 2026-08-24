@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://galacticgunners.inceptivec.com/contracts/score-submission.schema.json",
+  "title": "ScoreSubmission",
+  "type": "object",
+  "required": ["score", "levelReached", "victory", "eventSummary"],
+  "properties": {
+    "score": { "type": "integer", "minimum": 0 },
+    "levelReached": { "type": "string" },
+    "victory": { "type": "boolean" },
+    "eventSummary": { "type": "object" }
+  },
+  "additionalProperties": false
+}

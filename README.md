@@ -1,157 +1,42 @@
 # Galactic Gunners
 
-**An Inceptivec Gamification product**
+Galactic Gunners is an Inceptivec Gamification product developed under Secuvara technical governance.
 
-Galactic Gunners is a fast-paced arcade space shooter being developed as the founding commercial product of **Inceptivec Gamification**, the interactive and gamification arm of Inceptivec.
+## Production architecture
 
-The current commercial product evolves from Michael Leese's original 2019 educational game project, preserving its development history while taking the game forward as a maintained, multi-platform commercial title.
+The repository is being formed as a production-grade multi-client game platform:
 
-## Current Development Status
+```text
+apps/web        Next.js product client
+    ↓
+game            Phaser + TypeScript game core
+    ↓
+backend         Django + Django REST Framework authoritative backend
+    ↓
+PostgreSQL      authoritative application data
 
-Galactic Gunners is in active commercialisation.
+packages/contracts
+                versioned machine-readable contracts
 
-Current programme: `GG-COM`
+Legacy_Game     temporary accepted/provisional legacy behavioural reference
+```
 
-Current stage: `GG-COM-001 - IP, Provenance & Commercial Authority`
+## Governing rule
 
-The immediate goal is to establish a commercially defensible code and asset baseline before leaderboard, packaging and store-release work proceeds.
+The browser is an untrusted client. Phaser owns moment-to-moment gameplay. Next.js owns the web product shell. Django owns identity, player authority, game-run authority, score validation and future entitlement authority.
 
-## The Game
+## Branch promotion
 
-Galactic Gunners is a responsive Phaser-powered arcade shooter featuring:
+```text
+feature/* → dev → stage → main
+```
 
-- main menu and game information;
-- three progressive levels;
-- boss encounter;
-- keyboard controls;
-- touchscreen controls;
-- controller/gamepad support;
-- laser and nuke weapons;
-- pause/resume;
-- audio;
-- game-over/restart flow;
-- victory/title flow.
+Promotion is explicit and separately accepted. Merge is not deployment and deployment is not Founder acceptance.
 
-The original project was designed to start accessibly and become progressively harder as the player advances.
+## Legacy migration
 
-## Controller Support
+`Legacy_Game/` is temporary. It exists so the new implementation can reproduce accepted game behaviour without destructive in-place rewriting. It is removed only after production behavioural coverage is complete and Founder / Secuvara CTAIO retirement authority is given.
 
-Commercial development has added browser gamepad/controller support.
+## Planning
 
-Current real-device implementation/testing includes:
-
-- Xbox controller;
-- Haute M-series controller.
-
-Controller functionality currently covers key gameplay and navigation actions including movement, fire, nuke, pause/resume and restart.
-
-A standalone controller testing utility is also included at `tools/controller_button_tester.py` for development/testing.
-
-## Platform Roadmap
-
-### Tier 1 - First Commercial Release
-
-- Web browser
-- Windows
-- Android
-- iOS / iPadOS
-
-### Tier 2 - Extended Device Coverage
-
-- macOS
-- tablets
-- touchscreen laptops
-- desktop towers
-- expanded browser/device coverage
-- additional common controllers
-
-### Tier 3 - Console Feasibility
-
-- Xbox
-- PlayStation
-- other commercially justified channels
-
-Console support is a feasibility/traction-gated roadmap item and is not a blocker for first commercial release.
-
-## Commercialisation Roadmap
-
-- `GG-COM-001`: IP, provenance and commercial authority
-- `GG-COM-002`: Commercial code baseline and clean dependencies/assets
-- `GG-COM-003`: Player identity, score system and global leaderboard
-- `GG-COM-004`: Platform, input and device assurance
-- `GG-COM-005`: Commercial packaging, brand, stores, legal and credits
-- `GG-COM-006`: Release, launch and market validation
-- `GG-COM-007`: Evidence-led post-launch expansion
-
-## Historical Provenance
-
-Galactic Gunners originated as Michael Leese's interactive frontend development milestone project during his transition into software engineering.
-
-The historical project is preserved separately at:
-
-`michael-leese/GallacticGunners`
-
-That repository remains important development/provenance evidence and is not being rewritten to pretend it was originally a commercial product.
-
-The current commercial development repository is:
-
-`Inceptivec-io/GalacticGunners`
-
-The original game used Jared York's **CourseSaucerInvaders / Saucer Invaders** as an early code foundation. The bundled course PDF previously held in this repository has been removed from the commercial repository; provenance is preserved through external reference to the upstream project/course rather than by redistributing the document.
-
-## Open-Source / Third-Party Foundations
-
-Jared York's CourseSaucerInvaders upstream project is distributed under the MIT License.
-
-Galactic Gunners also uses the Phaser game framework. The bundled file is `assets/js/phaser.js`, locally verified as Phaser `3.16.2`, and is distributed under the MIT License.
-
-Galactic Gunners contains substantial additional and modified game logic, levels, interface, controls, media and commercial-development work.
-
-Required third-party notices and provenance records are maintained as part of the commercialisation baseline:
-
-- `LICENSE`
-- `THIRD_PARTY_NOTICES.md`
-- `docs/commercial/GG-COM-001/COMMERCIAL_LICENSING_POSITION.md`
-- `docs/commercial/GG-COM-001/THIRD_PARTY_NOTICES.md`
-- `docs/commercial/GG-COM-001/IP_PROVENANCE_RECORD.md`
-- `docs/commercial/GG-COM-001/ASSET_PROVENANCE_REGISTER.md`
-
-## Contributors
-
-### Michael Leese
-
-Original Galactic Gunners developer and commercialisation/product lead.
-
-### Aurora Leonardi
-
-Collaborating game-development contributor.
-
-Current evidenced commercial work includes controller/gamepad implementation and testing, including Xbox and Haute M-series controller validation.
-
-The collaboration is also intended to provide genuine commercial-development experience, portfolio evidence and career support while Aurora studies gaming at university.
-
-## Commercial Model
-
-Initial commercial direction: **low-cost paid game / one purchase**
-
-The product is being developed with a preference for straightforward paid ownership rather than intrusive advertising or artificial engagement mechanics.
-
-Final store pricing and platform-specific presentation will be confirmed as part of the commercial packaging/release stages.
-
-## Development Principles
-
-- preserve legitimate historical engineering;
-- clean uncertain IP before release;
-- one primary game runtime where practical;
-- multi-device testing;
-- no unnecessary rewrite for technology fashion;
-- build commercial capability only where it advances reliability, portability, engagement, distribution or maintainability;
-- use real product evidence to determine future investment.
-
-## Licensing and Notices
-
-Third-party software remains subject to its respective licence terms.
-
-Galactic Gunners proprietary material remains subject to the applicable Inceptivec/product rights position.
-
-GG-COM-001 does not authorize commercial store release. Legacy non-core media/fonts/utility dependencies identified for replacement remain tracked into `IP_FREEDOM_LICENSE_PROTECTION_ASSET_CREATION` before commercial-release clearance.
+The only live programme steering documents under `docs/internal_governance/planning/` are the current Roadmap and Playlist. Supporting/historical planning material belongs in `_archive/`.

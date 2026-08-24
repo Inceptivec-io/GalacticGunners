@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://galacticgunners.inceptivec.com/contracts/game-run.schema.json",
+  "title": "GameRun",
+  "type": "object",
+  "required": ["runId", "gameVersion", "startedAt"],
+  "properties": {
+    "runId": { "type": "string", "format": "uuid" },
+    "gameVersion": { "type": "string" },
+    "startedAt": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

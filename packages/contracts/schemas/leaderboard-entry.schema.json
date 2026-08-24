@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://galacticgunners.inceptivec.com/contracts/leaderboard-entry.schema.json",
+  "title": "LeaderboardEntry",
+  "type": "object",
+  "required": ["displayName", "score"],
+  "properties": {
+    "displayName": { "type": "string", "minLength": 1, "maxLength": 64 },
+    "score": { "type": "integer", "minimum": 0 }
+  },
+  "additionalProperties": false
+}
