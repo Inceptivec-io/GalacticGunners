@@ -3,7 +3,7 @@ const path = require("path");
 const { chromium } = require("playwright");
 
 const url = process.env.GG_RUNTIME_URL || "http://localhost:8027/";
-const handoffId = process.env.GG_HANDOFF_ID || "GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV4";
+const handoffId = process.env.GG_HANDOFF_ID || "GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV5";
 const evidenceRoot = path.resolve(`docs/internal_governance/evidence/${handoffId}`);
 const runtimeDir = path.join(evidenceRoot, "runtime_playwright");
 
@@ -41,6 +41,7 @@ async function main() {
 
   await page.goto(url, { waitUntil: "networkidle" });
   await page.waitForFunction(() => window.game && game.scene && game.scene.keys && game.scene.keys.MainMenu, null, { timeout: 15000 });
+  await page.waitForFunction(() => game.scene.keys.MainMenu && game.scene.keys.MainMenu.background, null, { timeout: 15000 });
   await page.waitForTimeout(500);
 
   const report = {

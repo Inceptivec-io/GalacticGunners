@@ -10,7 +10,7 @@ const mode = modeArg ? modeArg.split("=")[1] : "all";
 const url = process.env.GG_RUNTIME_URL || "http://localhost:8027/";
 const evidenceRoot = path.resolve(process.env.GG_HANDOFF_ID
   ? `docs/internal_governance/evidence/${process.env.GG_HANDOFF_ID}`
-  : "docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV2");
+  : "docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV5");
 const runtimeDir = path.join(evidenceRoot, "runtime_playwright");
 
 function ensureDir(dir) {

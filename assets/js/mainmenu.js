@@ -10,7 +10,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
     this.load.image("BtnPlayHover", "assets/images/owned/branding/gg_logo_compact_v002.png"); //preload the Play Button Hover image
     this.load.image("logoPrimary", "assets/images/owned/branding/gg_logo_primary_v002.png");
     this.load.image("menuTitlecard", "assets/images/owned/branding/gg_logo_primary_words_v002.png");
-    this.load.image("hero", "assets/images/owned/branding/gg_hero_image_player_fighting.png"); //preload the Founder landing hero
+    this.load.image("hero", "assets/images/owned/branding/gg_hero_image_player_fighting_v002_4k_uhd_master.png"); //preload the Founder REV5 4K landing hero
     this.load.image("BtnInfo", "assets/images/owned/ui/gg_ui_info_v002.png"); //preload the Info Button image
     this.load.spritesheet("BtnPoint", "assets/images/owned/ui/gg_ui_pointer_v002_sheet.png", { frameWidth: 724, frameHeight: 724 }); //preload the Pointer Button image
   }
@@ -241,7 +241,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
         this.heroBacking.setScale(Math.max(w / this.heroBacking.width, h / this.heroBacking.height));
       }
       this.background.setPosition(w * 0.5, h * 0.5);
-      var bgScale = Math.min(w / this.background.width, h / this.background.height) * 0.98;
+      var bgScale = Math.min(w / this.background.width, h / this.background.height);
       this.background.setScale(bgScale);
     }
 

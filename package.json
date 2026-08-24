@@ -16,6 +16,7 @@
     "qa:visual": "node tools/verify_handoff_004_gameplay_and_surface.js --mode=visual",
     "qa:rev3": "node tools/verify_handoff_004_rev3.js",
     "qa:rev4": "node tools/verify_handoff_004_rev4.js",
+    "qa:rev5": "node tools/verify_handoff_004_rev5.js",
     "qa:all": "node tools/qa_all.js"
   },
   "repository": {

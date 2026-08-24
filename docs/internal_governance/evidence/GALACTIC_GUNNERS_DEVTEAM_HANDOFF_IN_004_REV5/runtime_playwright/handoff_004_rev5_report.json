@@ -1,0 +1,79 @@
+{
+  "generatedAt": "2026-08-24T22:02:38.386Z",
+  "handoffId": "GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV5",
+  "source": {
+    "pass": true,
+    "failures": []
+  },
+  "runtime": {
+    "url": "http://localhost:8027/",
+    "runtimeExceptions": [],
+    "failedRequests": [],
+    "screenshots": {
+      "mainMenu": "C:\\Users\\Michael\\dev\\GalacticGunners\\docs\\internal_governance\\evidence\\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV5\\runtime_playwright\\REV5_main_menu_hero_fit.png",
+      "level1": "C:\\Users\\Michael\\dev\\GalacticGunners\\docs\\internal_governance\\evidence\\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV5\\runtime_playwright\\REV5_level1_runtime_contracts.png"
+    },
+    "mainMenu": {
+      "heroSource": "",
+      "scaleX": 0.30787037037037035,
+      "scaleY": 0.30787037037037035,
+      "containScale": 0.30787037037037035,
+      "coverScale": 0.35572916666666665,
+      "fitsEntireHero": true,
+      "notDistorted": true,
+      "futureVictoryLoaded": false
+    },
+    "level1": {
+      "bodyOverlap": {
+        "livesBefore": 3,
+        "livesAfter": 3,
+        "playerActive": true,
+        "explosions": 0
+      },
+      "firstKeyboardShot": {
+        "before": 0,
+        "after": 1
+      },
+      "heldFire": {
+        "projectileCount": 26,
+        "livesAfter": 3
+      },
+      "silentCull": {
+        "playerLaserActive": false,
+        "enemyLaserActive": false,
+        "explosions": 0
+      },
+      "playerLaserShieldPass": {
+        "shieldActive": true,
+        "laserSide": "player",
+        "scoreAfter": 0
+      },
+      "enemyLaserShieldDamage": {
+        "shieldActive": false,
+        "laserActive": false,
+        "scoreAfter": 0
+      },
+      "enemyLaserPlayerDamage": {
+        "livesBefore": 3,
+        "livesAfter": 2,
+        "laserActive": false,
+        "playerHitExplosions": 1
+      },
+      "playerClamp": {
+        "left": -3.552713678800501e-15,
+        "right": 16.75553225806451,
+        "top": 627.3248387096775,
+        "bottom": 665,
+        "worldWidth": 1366,
+        "worldHeight": 665
+      },
+      "pause": {
+        "active": true,
+        "texture": "pauseScreen",
+        "source": ""
+      }
+    }
+  },
+  "pass": true,
+  "failures": []
+}

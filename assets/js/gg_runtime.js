@@ -646,7 +646,12 @@ function ggPointerHitsInteractiveUi(scene, pointer) {
 
 function ggFirePlayerLaser(scene) {
     if (!scene || !scene.player || !scene.player.active || levelWon || RIP) return false;
-    var laser = new PlayerLaser(scene, scene.player.x, scene.player.y);
+    var spawnY = scene.player.body ? scene.player.body.y - 8 : scene.player.y - scene.player.displayHeight * 0.5 - 8;
+    var laser = new PlayerLaser(scene, scene.player.x, spawnY);
+    if (scene.player.body && laser.body) {
+        laser.y = scene.player.body.y - (laser.body.height * 0.62);
+        laser.body.reset(laser.x, laser.y);
+    }
     scene.playerLasers.add(laser);
     if (scene.sfx && scene.sfx.laserPlayer) scene.sfx.laserPlayer.play();
     return true;
@@ -654,12 +659,48 @@ function ggFirePlayerLaser(scene) {
 
 function ggFirePlayerNuke(scene) {
     if (!scene || !scene.player || !scene.player.active || levelWon || RIP || currentNukes <= 0) return false;
-    var nuke = new Nuke(scene, scene.player.x, scene.player.y);
+    var spawnY = scene.player.body ? scene.player.body.y - 14 : scene.player.y - scene.player.displayHeight * 0.5 - 14;
+    var nuke = new Nuke(scene, scene.player.x, spawnY);
+    if (scene.player.body && nuke.body) {
+        nuke.y = scene.player.body.y - (nuke.body.height * 0.62);
+        nuke.body.reset(nuke.x, nuke.y);
+    }
     scene.starNukes.add(nuke);
     if (scene.sfx && scene.sfx.nukeFiring) scene.sfx.nukeFiring.play();
     currentNukes--;
     ggRefreshHud(scene);
     return true;
+}
+
+function ggHandlePlayerFiring(scene, fireDown, nukeDown) {
+    if (!scene || !scene.player || !scene.player.active) return;
+    if (fireDown) {
+        if (!scene.ggFireHeld) {
+            ggFirePlayerLaser(scene);
+            scene.playerShootTick = 0;
+        }
+        else if (scene.playerShootTick < scene.playerShootDelay) {
+            scene.playerShootTick++;
+        }
+        else if (ggFirePlayerLaser(scene)) {
+            scene.playerShootTick = 0;
+        }
+    }
+    else {
+        scene.playerShootTick = scene.playerShootDelay;
+    }
+    scene.ggFireHeld = !!fireDown;
+
+    if (nukeDown && currentNukes > 0) {
+        if (scene.playerNukeTick < scene.playerNukeDelay) {
+            scene.playerNukeTick++;
+            ggRefreshHud(scene);
+        }
+        else if (ggFirePlayerNuke(scene)) {
+            scene.playerNukeTick = 0;
+        }
+    }
+    if (nukeDown && currentNukes === 0) ggRefreshHud(scene);
 }
 
 function ggInstallTouchFire(scene) {
@@ -709,13 +750,34 @@ function ggInstallCometCollisions(scene) {
     }, null, scene);
 
     scene.physics.add.overlap(scene.player, scene.comets, function(player, comet) {
-        if (comet) comet.destroy();
-        if (player) {
-            scene.createExplosion(player.x, player.y, "playerHit");
-            player.body.reset(scene.game.config.width * 0.5, scene.game.config.height - 50);
-            scene.onLifeDown();
-        }
+        if (player && comet) comet.ggPlayerBodyPass = true;
     }, null, scene);
+}
+
+function ggResolveEnemyLaserPlayerHit(scene, laser, player) {
+    if (!scene || !laser || laser.ggProjectileSide !== "enemy" || !player || !laser.active || !player.active || laser.ggResolved) return false;
+    laser.ggResolved = true;
+    scene.createExplosion(player.x, player.y, "playerHit");
+    player.body.reset(scene.game.config.width * 0.5, scene.game.config.height - 50);
+    scene.onLifeDown();
+    laser.destroy();
+    return true;
+}
+
+function ggClampPlayerToWorld(scene) {
+    if (!scene || !scene.player || !scene.player.body) return;
+    var body = scene.player.body;
+    var dx = 0;
+    var dy = 0;
+    if (body.x < 0) dx = -body.x;
+    if (body.x + body.width > scene.game.config.width) dx = scene.game.config.width - (body.x + body.width);
+    if (body.y < 0) dy = -body.y;
+    if (body.y + body.height > scene.game.config.height) dy = scene.game.config.height - (body.y + body.height);
+    if (dx || dy) {
+        scene.player.x += dx;
+        scene.player.y += dy;
+        body.reset(scene.player.x, scene.player.y);
+    }
 }
 
 function ggGroupChildren(group) {
@@ -793,7 +855,8 @@ function ggDestroyAsteroidTarget(scene, projectile, asteroid, nuke) {
 }
 
 function ggHitMothershipTarget(scene, projectile, mothership, nuke) {
-    if (!scene || !projectile || projectile.ggProjectileSide !== "player" || !mothership || !projectile.active || !mothership.active) return false;
+    if (!scene || !projectile || projectile.ggProjectileSide !== "player" || !mothership || !projectile.active || !mothership.active || projectile.ggResolved) return false;
+    projectile.ggResolved = true;
     projectile.destroy();
     if (nuke && emitter && emitter.stop) emitter.stop();
     if (nuke) {
@@ -810,13 +873,9 @@ function ggHitMothershipTarget(scene, projectile, mothership, nuke) {
 }
 
 function ggHitPlayerTarget(scene, laser, player) {
-    if (!scene || !laser || laser.ggProjectileSide !== "enemy" || !player || !laser.active || !player.active || laser.ggSweptResolved) return false;
+    if (!scene || !laser || laser.ggSweptResolved) return false;
     laser.ggSweptResolved = true;
-    scene.createExplosion(player.x, player.y, "playerHit");
-    player.body.reset(scene.game.config.width * 0.5, scene.game.config.height - 50);
-    scene.onLifeDown();
-    laser.destroy();
-    return true;
+    return ggResolveEnemyLaserPlayerHit(scene, laser, player);
 }
 
 function ggSweepProjectilesAgainst(scene, projectileGroup, targetGroup, hitCallback) {

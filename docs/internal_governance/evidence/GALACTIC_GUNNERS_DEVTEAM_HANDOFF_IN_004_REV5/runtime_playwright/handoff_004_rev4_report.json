@@ -1,0 +1,250 @@
+{
+  "generatedAt": "2026-08-24T22:02:17.010Z",
+  "url": "http://localhost:8027/",
+  "runtimeExceptions": [],
+  "failedRequests": [],
+  "screenshots": {
+    "mainMenu": "C:\\Users\\Michael\\dev\\GalacticGunners\\docs\\internal_governance\\evidence\\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV5\\runtime_playwright\\REV4_LANDING_HERO_COMPOSITION.png",
+    "hud": "C:\\Users\\Michael\\dev\\GalacticGunners\\docs\\internal_governance\\evidence\\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV5\\runtime_playwright\\REV4_FINAL_HUD_LAYOUT.png",
+    "laserLogic": "C:\\Users\\Michael\\dev\\GalacticGunners\\docs\\internal_governance\\evidence\\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV5\\runtime_playwright\\REV4_LASER_LOGIC_FIXTURES.png",
+    "gameOver": "C:\\Users\\Michael\\dev\\GalacticGunners\\docs\\internal_governance\\evidence\\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV5\\runtime_playwright\\REV4_GAME_OVER_FREEZE_AND_SCORE.png"
+  },
+  "mainMenu": {
+    "backgroundTexture": "hero",
+    "backingTexture": "backgroundstars",
+    "scale": 0.30787037037037035,
+    "coverScale": 0.35572916666666665,
+    "containScale": 0.30787037037037035,
+    "moreCompositionThanCover": true,
+    "notDistorted": true,
+    "visibleWidth": 1182.2222222222222,
+    "visibleHeight": 665,
+    "controlsInteractive": true
+  },
+  "hud": {
+    "scoreText": "SCORE 0",
+    "scoreFont": "'Galactic Gunners Gold Display', 'GalacticGunnersDisplay', Arial, sans-serif",
+    "livesText": "LIVES",
+    "nukesText": "NUKES",
+    "armText": "ARM NUKE",
+    "currentLives": 3,
+    "currentNukes": 2,
+    "liveIconCount": 3,
+    "nukeIconCount": 2,
+    "muteBounds": {
+      "left": 1301.4499999999998,
+      "right": 1347.9999999999998,
+      "top": 18.000000000000004,
+      "bottom": 64.55000000000001,
+      "width": 46.549999999999955,
+      "height": 46.55000000000001
+    },
+    "lives": [
+      {
+        "left": 1313.42,
+        "right": 1348,
+        "top": 615.1864,
+        "bottom": 649.7664000000001,
+        "width": 34.57999999999993,
+        "height": 34.58000000000004
+      },
+      {
+        "left": 1288.5224,
+        "right": 1323.1024,
+        "top": 615.1864,
+        "bottom": 649.7664000000001,
+        "width": 34.57999999999993,
+        "height": 34.58000000000004
+      },
+      {
+        "left": 1263.6248,
+        "right": 1298.2048,
+        "top": 615.1864,
+        "bottom": 649.7664000000001,
+        "width": 34.57999999999993,
+        "height": 34.58000000000004
+      }
+    ],
+    "nukes": [
+      {
+        "left": 18,
+        "right": 52.58,
+        "top": 597.8964000000001,
+        "bottom": 632.4764000000001,
+        "width": 34.58,
+        "height": 34.58000000000004
+      },
+      {
+        "left": 42.8976,
+        "right": 77.4776,
+        "top": 597.8964000000001,
+        "bottom": 632.4764000000001,
+        "width": 34.58,
+        "height": 34.58000000000004
+      }
+    ],
+    "bar": {
+      "left": 116.553,
+      "right": 234.125,
+      "top": 637.7756,
+      "bottom": 643.7756,
+      "width": 117.572,
+      "height": 6
+    },
+    "barBg": {
+      "left": 116.553,
+      "right": 234.125,
+      "top": 636.7756,
+      "bottom": 644.7756,
+      "width": 117.572,
+      "height": 8
+    },
+    "texts": [
+      {
+        "text": "SCORE 0",
+        "fontFamily": "'Galactic Gunners Gold Display', 'GalacticGunnersDisplay', Arial, sans-serif",
+        "role": "score",
+        "bounds": {
+          "left": 18,
+          "right": 152,
+          "top": -0.05999999999999872,
+          "bottom": 38.94,
+          "width": 134,
+          "height": 39
+        }
+      },
+      {
+        "text": "LIVES",
+        "fontFamily": "'Galactic Gunners Silver Display', 'GalacticGunnersDisplay', Arial, sans-serif",
+        "role": "lives-label",
+        "bounds": {
+          "left": 1262,
+          "right": 1348,
+          "top": 589.504,
+          "bottom": 621.504,
+          "width": 86,
+          "height": 32
+        }
+      },
+      {
+        "text": "NUKES",
+        "fontFamily": "'Galactic Gunners Silver Display', 'GalacticGunnersDisplay', Arial, sans-serif",
+        "role": "nukes-label",
+        "bounds": {
+          "left": 18,
+          "right": 104,
+          "top": 577.401,
+          "bottom": 609.401,
+          "width": 86,
+          "height": 32
+        }
+      },
+      {
+        "text": "ARM NUKE",
+        "fontFamily": "'Galactic Gunners Silver Display', 'GalacticGunnersDisplay', Arial, sans-serif",
+        "role": "arm-nuke-label",
+        "bounds": {
+          "left": 18,
+          "right": 128,
+          "top": 626.7756,
+          "bottom": 654.7756,
+          "width": 110,
+          "height": 28
+        }
+      }
+    ],
+    "topRightSoundOnly": true,
+    "livesBottomRight": true,
+    "nukesBottomLeft": true,
+    "noNumericLives": true,
+    "noNumericNukes": true,
+    "noRearmNumbers": true,
+    "barInside": true
+  },
+  "laserLogic": {
+    "playerContinuousCannotSelfHit": {
+      "startingLives": 3,
+      "endingLives": 3,
+      "playerActive": true,
+      "rip": false
+    },
+    "alienLaserCanHitPlayer": {
+      "livesAfter": 2,
+      "laserDestroyed": true,
+      "rip": false
+    },
+    "alienLaserCanHitShield": {
+      "shieldDestroyed": true,
+      "laserDestroyed": true,
+      "scoreAfter": 0
+    },
+    "playerLaserCanHitEnemy": {
+      "enemyDestroyed": true,
+      "laserDestroyed": true,
+      "scoreAfter": 50
+    },
+    "alienLaserCannotHitAlien": {
+      "enemyActive": true,
+      "laserSide": "enemy",
+      "scoreAfter": 0
+    }
+  },
+  "gameOver": {
+    "worldPaused": true,
+    "frozenFlag": true,
+    "before": {
+      "enemyX": 683,
+      "laserY": 299.25
+    },
+    "after": {
+      "enemyX": 683,
+      "laserY": 299.25
+    },
+    "enemyStopped": true,
+    "laserStopped": true,
+    "buttons": [
+      {
+        "off": "buttonMenuOff",
+        "on": "buttonMenuOn",
+        "x": 430.29,
+        "y": 493.43,
+        "width": 218.56,
+        "height": 89.99529411764705,
+        "hasInput": true
+      },
+      {
+        "off": "buttonReplayOff",
+        "on": "buttonReplayOn",
+        "x": 683,
+        "y": 493.43,
+        "width": 232.22000000000006,
+        "height": 77.40666666666668,
+        "hasInput": true
+      },
+      {
+        "off": "buttonTryAgainOff",
+        "on": "buttonTryAgainOn",
+        "x": 935.71,
+        "y": 493.43,
+        "width": 218.55999999999997,
+        "height": 87.42399999999999,
+        "hasInput": true
+      }
+    ],
+    "scoreTexts": [
+      {
+        "text": "SCORE 50",
+        "y": 19.44,
+        "fontFamily": "'Galactic Gunners Gold Display', 'GalacticGunnersDisplay', Arial, sans-serif"
+      },
+      {
+        "text": "SCORE  777",
+        "y": 571.9,
+        "fontFamily": "'Galactic Gunners Gold Display', 'GalacticGunnersDisplay', Arial, sans-serif"
+      }
+    ],
+    "scoreBottom": true
+  },
+  "pass": true,
+  "failures": []
+}
