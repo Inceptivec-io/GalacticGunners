@@ -82,35 +82,18 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
     this.heroImage.setOrigin(0.5, 0.45); //set origin point of image
     this.aGrid.placeAtIndex(71, this.heroImage); //set position on grid
     Align.scaleToGameW(this.heroImage, 0.2); //set scale
-    //END Hero Image
-
-    //ADD PLAY BUTTON AND INTERACTIVITY
-    //play button
-    this.btnPlay = this.add.image( //create btnPlay and add it as image
-      0, //set position on the x axis
-      0, //set position on the y axis
-      "BtnPlay" //add image key
-    );
-    this.btnPlay.setTint(0x00ff00); // set the play button to green
-    this.btnPlay.setInteractive(); //set button to be interactive
-    this.aGrid.placeAtIndex(100, this.btnPlay); //set position on the grid
-    Align.scaleToGameW(this.btnPlay, 0.1); //set scale
-
-    this.btnPlay.on("pointerover", function() { //this Play Button when on method, in hover
+    this.heroImage.setInteractive(); //center crest is the primary play action
+    this.heroImage.on("pointerover", function() {
       this.sfx.select.play();
-      this.btnPlay.setTexture("BtnPlayHover"); //change the image to Play Button without box
-      this.btnPlay.setTint(0xff0000); // set the play button to red on hover
-    }, this); //this state only
-
-    this.btnPlay.on("pointerout", function() { //this Play Button when on method, in hover
-      this.setTexture("BtnPlay"); //change the image to Play Button with box
-      this.setTint(0x00ff00); // set the play button back to green when not hovering
-    });
-
-    this.btnPlay.on("pointerdown", function() { //this Play Button when on method, when mouse clicks
+      this.heroImage.setScale(this.heroImage.scaleX * 1.04, this.heroImage.scaleY * 1.04);
+    }, this);
+    this.heroImage.on("pointerout", function() {
+      this.layoutMenu();
+    }, this);
+    this.heroImage.on("pointerdown", function() {
       this.startGame();
-    }, this); //this state only
-    //END play button
+    }, this);
+    //END Hero Image
 
     // BEST Played on text
     this.textBest = this.add.text( //create Best Played on text
@@ -214,6 +197,9 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
 
     this.btnMute = ggAddMuteButton(this, 98);
 
+    this.layoutMenu();
+    this.scale.on("resize", this.layoutMenu, this);
+
     this.time.addEvent({
       delay: 100,
       callback: function() {
@@ -230,6 +216,98 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
 
   }
   //END Create Function
+
+  layoutMenu() {
+    var w = this.scale.width || this.game.config.width;
+    var h = this.scale.height || this.game.config.height;
+    var margin = Math.max(18, Math.min(w, h) * 0.025);
+    var green = 0x00ff66;
+    var cyan = 0x70fff2;
+
+    function fitImage(image, maxW, maxH) {
+      var scale = Math.min(maxW / image.width, maxH / image.height);
+      image.setScale(scale);
+    }
+
+    function fitText(text, maxW, maxH) {
+      text.setScale(1);
+      var scale = Math.min(1, maxW / text.width, maxH / text.height);
+      text.setScale(scale);
+    }
+
+    if (this.background) {
+      this.background.setPosition(w * 0.5, h * 0.5);
+      this.background.setDisplaySize(w, h);
+    }
+
+    if (this.menuCard) {
+      this.menuCard.setPosition(w * 0.5, h * 0.5);
+      fitImage(this.menuCard, w * 1.08, h * 0.78);
+      this.menuCard.setAlpha(0.3);
+      this.menuCard.setDepth(-4);
+    }
+
+    if (this.logoPrimary) {
+      fitImage(this.logoPrimary, w * 0.62, h * 0.27);
+      this.logoPrimary.setPosition(w * 0.5, margin + this.logoPrimary.displayHeight * 0.5);
+      this.logoPrimary.clearTint();
+    }
+
+    if (this.textTitle2) {
+      this.textTitle2.setTint(green);
+      this.textTitle2.setOrigin(0.5);
+      fitText(this.textTitle2, w * 0.56, h * 0.085);
+      this.textTitle2.setPosition(
+        w * 0.5,
+        Math.min(h * 0.36, this.logoPrimary.y + this.logoPrimary.displayHeight * 0.58 + margin * 0.5)
+      );
+    }
+
+    if (this.heroImage) {
+      fitImage(this.heroImage, w * 0.18, h * 0.28);
+      this.heroImage.setPosition(w * 0.5, h * 0.54);
+      this.heroImage.clearTint();
+    }
+
+    if (this.textPoint) {
+      this.textPoint.setTint(green);
+      this.textPoint.setOrigin(0.5);
+      fitText(this.textPoint, w * 0.16, h * 0.105);
+      this.textPoint.setPosition(w * 0.12, h * 0.58);
+    }
+
+    if (this.btnPoint) {
+      fitImage(this.btnPoint, w * 0.055, h * 0.09);
+      this.btnPoint.setPosition(
+        this.textPoint.x + this.textPoint.displayWidth * 0.5 + this.btnPoint.displayWidth * 0.62,
+        this.textPoint.y
+      );
+      this.btnPoint.setTint(touch ? 0xff4b5c : green);
+    }
+
+    if (this.textBest) {
+      this.textBest.setTint(green);
+      this.textBest.setOrigin(0.5);
+      fitText(this.textBest, w * 0.20, h * 0.095);
+      this.textBest.setPosition(w * 0.84, h * 0.58);
+    }
+
+    var iconSize = Math.min(w, h) * 0.085;
+    if (this.btnInfo) {
+      fitImage(this.btnInfo, iconSize, iconSize);
+      this.btnInfo.setPosition(w - margin - iconSize * 0.5, h - margin - iconSize * 0.5);
+      this.btnInfo.setTint(green);
+    }
+
+    if (this.btnMute) {
+      fitImage(this.btnMute, iconSize, iconSize);
+      this.btnMute.setPosition(
+        w - margin - iconSize * 1.8,
+        h - margin - iconSize * 0.5
+      );
+      this.btnMute.setTint(isMuted ? 0xff4b5c : cyan);
+    }
+  }
 
   startGame() {
     this.sfx.confirm.play(); // set the sound to play

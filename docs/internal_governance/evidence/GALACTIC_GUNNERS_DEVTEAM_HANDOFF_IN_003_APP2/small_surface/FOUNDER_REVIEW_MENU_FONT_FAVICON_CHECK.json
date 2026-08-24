@@ -1,33 +1,33 @@
 {
   "runtimeUrl": "http://localhost:8027/",
-  "checkedAtUtc": "2026-08-24T00:30:57.818Z",
+  "checkedAtUtc": "2026-08-24T00:44:36.141Z",
   "result": {
     "documentTitle": "Galactic Gunners",
     "readyState": "complete",
     "canvasCount": 1,
     "faviconLinks": [
       {
-        "href": "/favicon.ico",
+        "href": "/favicon.ico?v=gg-crest-v002",
         "type": "",
         "sizes": "any"
       },
       {
-        "href": "assets/images/owned/branding/favicons/favicon.ico",
+        "href": "assets/images/owned/branding/favicons/favicon.ico?v=gg-crest-v002",
         "type": "image/x-icon",
         "sizes": ""
       },
       {
-        "href": "assets/images/owned/branding/favicons/favicon-16.png",
+        "href": "assets/images/owned/branding/favicons/favicon-16.png?v=gg-crest-v002",
         "type": "image/png",
         "sizes": "16x16"
       },
       {
-        "href": "assets/images/owned/branding/favicons/favicon-32.png",
+        "href": "assets/images/owned/branding/favicons/favicon-32.png?v=gg-crest-v002",
         "type": "image/png",
         "sizes": "32x32"
       },
       {
-        "href": "assets/images/owned/branding/favicons/favicon-48.png",
+        "href": "assets/images/owned/branding/favicons/favicon-48.png?v=gg-crest-v002",
         "type": "image/png",
         "sizes": "48x48"
       }
@@ -40,7 +40,77 @@
     "ctaText": "CAN YOU SAVE THE DAY?",
     "ctaFontFamily": "'GalacticGunnersTitle', 'GalacticGunnersDisplay', Arial, sans-serif",
     "mainMenuActive": true,
-    "bodyTextLength": 0
+    "bodyTextLength": 0,
+    "bounds": {
+      "logoPrimary": {
+        "x": 413.79899861878454,
+        "y": 18,
+        "width": 538.402002762431,
+        "height": 179.55,
+        "right": 952.2010013812155,
+        "bottom": 197.55
+      },
+      "textTitle2": {
+        "x": 300.52,
+        "y": 194.42056050955412,
+        "width": 764.96,
+        "height": 52.98687898089173,
+        "right": 1065.48,
+        "bottom": 247.40743949044585
+      },
+      "heroImage": {
+        "x": 589.9,
+        "y": 275.31,
+        "width": 186.20000000000005,
+        "height": 186.2,
+        "right": 776.1,
+        "bottom": 461.51
+      },
+      "textPoint": {
+        "x": 54.639999999999986,
+        "y": 353.58054054054054,
+        "width": 218.56,
+        "height": 64.23891891891896,
+        "right": 273.2,
+        "bottom": 417.8194594594595
+      },
+      "btnPoint": {
+        "x": 280.382,
+        "y": 355.775,
+        "width": 59.849999999999966,
+        "height": 59.85000000000002,
+        "right": 340.23199999999997,
+        "bottom": 415.625
+      },
+      "textBest": {
+        "x": 1010.84,
+        "y": 360.0875,
+        "width": 273.19999999999993,
+        "height": 51.22500000000002,
+        "right": 1284.04,
+        "bottom": 411.3125
+      },
+      "btnInfo": {
+        "x": 1291.475,
+        "y": 590.4749999999999,
+        "width": 56.52500000000009,
+        "height": 56.52499999999998,
+        "right": 1348,
+        "bottom": 646.9999999999999
+      },
+      "btnMute": {
+        "x": 1217.9924999999998,
+        "y": 599.8958333333333,
+        "width": 56.52500000000009,
+        "height": 37.683333333333394,
+        "right": 1274.5175,
+        "bottom": 637.5791666666667
+      }
+    }
+  },
+  "viewport": {
+    "width": 1366,
+    "height": 665
   },
   "runtimeExceptions": [],
   "networkFailures": [],

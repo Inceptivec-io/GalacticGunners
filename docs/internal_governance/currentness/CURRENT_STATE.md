@@ -59,7 +59,7 @@ Favicon / Small-Surface Completeness:
 PASS
 
 Founder Review Correction:
-PASS - root favicon delivered; MainMenu CTA uses owned title font with preload font readiness gate
+PASS - crest favicon delivered with cache-refreshing links; MainMenu viewport layout corrected; CTA uses owned title font with preload font readiness gate
 
 Founder Visual Acceptance:
 PENDING

@@ -6,6 +6,7 @@ const path = require("path");
 
 const port = 9231;
 const runtimeUrl = "http://localhost:8027/";
+const viewport = { width: 1366, height: 665 };
 const evidenceDir = path.resolve(
   __dirname,
   "../docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP2/small_surface",
@@ -134,8 +135,8 @@ async function main() {
     await send("Network.enable");
     await send("Page.enable");
     await send("Emulation.setDeviceMetricsOverride", {
-      width: 1366,
-      height: 768,
+      width: viewport.width,
+      height: viewport.height,
       deviceScaleFactor: 1,
       mobile: false,
     });
@@ -146,6 +147,24 @@ async function main() {
       await document.fonts.ready;
       const mainMenu = window.game && game.scene.keys.MainMenu;
       const title = mainMenu && mainMenu.textTitle2;
+      const names = ["logoPrimary", "textTitle2", "heroImage", "textPoint", "btnPoint", "textBest", "btnInfo", "btnMute"];
+      const bounds = {};
+      for (const name of names) {
+        const item = mainMenu && mainMenu[name];
+        if (item && item.getBounds) {
+          const rect = item.getBounds();
+          bounds[name] = {
+            x: rect.x,
+            y: rect.y,
+            width: rect.width,
+            height: rect.height,
+            right: rect.x + rect.width,
+            bottom: rect.y + rect.height
+          };
+        } else {
+          bounds[name] = null;
+        }
+      }
       return JSON.stringify({
         documentTitle: document.title,
         readyState: document.readyState,
@@ -156,14 +175,17 @@ async function main() {
           sizes: link.getAttribute("sizes") || ""
         })),
         appleTouchIconLinked: !!document.querySelector("link[rel='apple-touch-icon']"),
-        rootFaviconIcoLinked: !!document.querySelector("link[href='/favicon.ico']"),
+        rootFaviconIcoLinked: Array.from(document.querySelectorAll("link[rel~=icon]")).some((link) =>
+          (link.getAttribute("href") || "").startsWith("/favicon.ico")
+        ),
         fontsReady: document.fonts.status,
         titleFontLoaded: document.fonts.check("96px GalacticGunnersTitle"),
         displayFontLoaded: document.fonts.check("80px GalacticGunnersDisplay"),
         ctaText: title ? title.text : null,
         ctaFontFamily: title && title.style ? title.style.fontFamily : null,
         mainMenuActive: !!(mainMenu && mainMenu.scene.isActive()),
-        bodyTextLength: document.body.innerText.trim().length
+        bodyTextLength: document.body.innerText.trim().length,
+        bounds
       });
     })()`);
     const result = typeof rawResult === "string" ? JSON.parse(rawResult) : rawResult;
@@ -180,6 +202,7 @@ async function main() {
       runtimeUrl,
       checkedAtUtc: new Date().toISOString(),
       result,
+      viewport,
       runtimeExceptions,
       networkFailures,
       pass:
@@ -193,6 +216,13 @@ async function main() {
         String(result.ctaFontFamily).includes("GalacticGunnersTitle") &&
         result.mainMenuActive === true &&
         result.canvasCount >= 1 &&
+        Object.values(result.bounds).every((bounds) =>
+          bounds &&
+          bounds.x >= -1 &&
+          bounds.y >= -1 &&
+          bounds.right <= viewport.width + 1 &&
+          bounds.bottom <= viewport.height + 1
+        ) &&
         runtimeExceptions.length === 0 &&
         networkFailures.length === 0,
     };
