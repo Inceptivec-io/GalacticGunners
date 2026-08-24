@@ -9,7 +9,8 @@ const commands = [
   [process.execPath, [npmCli, "run", "qa:sprites"]],
   [process.execPath, [npmCli, "run", "qa:collision"]],
   [process.execPath, [npmCli, "run", "qa:browser"]],
-  [process.execPath, [npmCli, "run", "qa:visual"]]
+  [process.execPath, [npmCli, "run", "qa:visual"]],
+  [process.execPath, [npmCli, "run", "qa:rev3"]]
 ];
 
 for (const [cmd, args] of commands) {

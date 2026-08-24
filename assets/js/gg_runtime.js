@@ -97,10 +97,10 @@ function ggCullProjectiles(scene) {
         });
     }
     cull(scene.playerLasers, -24, scene.game.config.height + 24, function(projectile) {
-        scene.createExplosion(projectile.x, projectile.y, false);
+        projectile.ggDestructionReason = "OUT_OF_BOUNDS_QUIET_CULL";
     });
     cull(scene.enemyLasers, -24, scene.game.config.height + 24, function(projectile) {
-        scene.createExplosion(projectile.x, projectile.y, false);
+        projectile.ggDestructionReason = "OUT_OF_BOUNDS_QUIET_CULL";
     });
 }
 
@@ -352,6 +352,52 @@ function ggScoreEvent(scene, eventName) {
     ggApplyScore(scene, GG_SCORE_EVENTS[eventName]);
 }
 
+function ggExplosionAudioEvent(audioEvent) {
+    if (audioEvent && typeof audioEvent === "object") return audioEvent.audioEvent;
+    return audioEvent;
+}
+
+function ggExplosionSourceEvent(audioEvent) {
+    if (audioEvent && typeof audioEvent === "object" && audioEvent.eventSource) return audioEvent.eventSource;
+    if (audioEvent === "playerHit") return "PLAYER_HIT_BY_REAL_COLLISION";
+    if (audioEvent === "mothershipHit") return "MOTHERSHIP_HIT_BY_REAL_COLLISION";
+    if (audioEvent === "large") return "MOTHERSHIP_DESTROYED_REAL_COLLISION";
+    if (audioEvent === false) return "OTHER_REAL_COLLISION";
+    return "OTHER_REAL_COLLISION";
+}
+
+function ggRecordExplosionEvent(scene, x, y, audioEvent, targetDestroyed, scoreBefore) {
+    if (!window.ggExplosionTrace) window.ggExplosionTrace = [];
+    var before = audioEvent && typeof audioEvent.scoreBefore === "number" ? audioEvent.scoreBefore : scoreBefore;
+    var inShieldRegion = !!(scene && scene.game && y >= scene.game.config.height * 0.68);
+    var eventSource = ggExplosionSourceEvent(audioEvent);
+    var row = {
+        timestamp: Date.now(),
+        scene: scene && scene.scene && scene.scene.key ? scene.scene.key : "UNKNOWN",
+        x: Math.round(x),
+        y: Math.round(y),
+        inShieldRegion: inShieldRegion,
+        sourceObject: audioEvent && audioEvent.sourceObject ? audioEvent.sourceObject : null,
+        targetObject: audioEvent && audioEvent.targetObject ? audioEvent.targetObject : null,
+        eventSource: eventSource,
+        targetDestroyed: !!targetDestroyed,
+        scoreDelta: score - before
+    };
+    window.ggExplosionTrace.push(row);
+    if (inShieldRegion && !eventSource) row.eventSource = "UNEXPLAINED";
+    return row;
+}
+
+function ggShieldExplosionEvent(sourceObject, targetObject, eventSource) {
+    return {
+        audioEvent: "shieldHit",
+        eventSource: eventSource,
+        sourceObject: sourceObject,
+        targetObject: targetObject,
+        scoreBefore: typeof score === "number" ? score : 0
+    };
+}
+
 function ggEnemyScoreEvent(enemy) {
     return enemy && enemy.ggScoreEvent ? enemy.ggScoreEvent : "SHIP_DESTROYED";
 }
@@ -360,18 +406,24 @@ function ggCreateHud(scene, options) {
     var showReplay = options && options.showReplay;
     var topY = scene.game.config.height * 0.035;
     var bottomY = scene.game.config.height * 0.955;
+    var rightX = scene.game.config.width * 0.965;
+    var nukeUnit = Math.max(32, Math.min(scene.game.config.width, scene.game.config.height) * 0.055);
+    var rearmY = scene.game.config.height * 0.875;
+    var nukeY = scene.game.config.height * 0.945;
     var textStyle = ggDisplayStyle(34, "#ffffff");
 
     textScore = scene.add.text(scene.game.config.width * 0.03, topY, "Score: " + score, textStyle).setOrigin(0, 0.5);
     textLives = scene.add.text(scene.game.config.width * 0.03, bottomY, "Lives: " + currentLives, textStyle).setOrigin(0, 0.5);
-    textNukesLoad = scene.add.text(scene.game.config.width * 0.97, bottomY, "ReArm: 150/150", textStyle).setOrigin(1, 0.5);
-    textNukes = scene.add.text(scene.game.config.width * 0.965, topY, String(currentNukes), textStyle).setOrigin(1, 0.5);
+    textNukesLoad = scene.add.text(rightX, rearmY, "ReArm: 150/150", textStyle).setOrigin(1, 0.5);
+    textNukes = scene.add.text(rightX, nukeY, String(currentNukes), ggDisplayStyle(Math.round(nukeUnit), "#ffffff")).setOrigin(1, 0.5);
+    textNukes.ggHudRole = "nuke-count";
 
     if (scene.textures.exists("hudLife")) {
         scene.add.image(scene.game.config.width * 0.015, bottomY, "hudLife").setDisplaySize(28, 28).setOrigin(0, 0.5);
     }
     if (scene.textures.exists("hudNuke")) {
-        scene.ggHudNukeIcon = scene.add.image(scene.game.config.width * 0.985, topY, "hudNuke").setDisplaySize(32, 32).setOrigin(1, 0.5);
+        scene.ggHudNukeIcon = scene.add.image(rightX - textNukes.displayWidth - nukeUnit * 0.46, nukeY, "hudNuke").setDisplaySize(nukeUnit, nukeUnit).setOrigin(1, 0.5);
+        scene.ggHudNukeIcon.ggHudRole = "nuke-icon";
     }
     if (showReplay) {
         restartlevel = scene.add.text(scene.game.config.width * 0.5, topY, "Replay: " + LevelRestart, textStyle).setOrigin(0.5);
@@ -405,14 +457,17 @@ function ggCreateSharedHud(scene, options) {
 
 function ggInstallNukeHud(scene) {
     if (!scene || !textNukes) return;
-    var topY = scene.game.config.height * 0.035;
+    var rightX = scene.game.config.width * 0.965;
+    var nukeY = scene.game.config.height * 0.945;
+    var nukeUnit = Math.max(32, Math.min(scene.game.config.width, scene.game.config.height) * 0.055);
     textNukes.removeAllListeners();
     textNukes.setText(String(currentNukes));
     textNukes.setOrigin(1, 0.5);
-    textNukes.setPosition(scene.game.config.width * 0.965, topY);
+    textNukes.setPosition(rightX, nukeY);
     if (textNukes.setTint) textNukes.setTint(0xffffff);
     if (scene.ggHudNukeIcon && scene.ggHudNukeIcon.destroy) scene.ggHudNukeIcon.destroy();
-    scene.ggHudNukeIcon = scene.add.image(scene.game.config.width * 0.985, topY, "hudNuke").setDisplaySize(32, 32).setOrigin(1, 0.5);
+    scene.ggHudNukeIcon = scene.add.image(rightX - textNukes.displayWidth - nukeUnit * 0.46, nukeY, "hudNuke").setDisplaySize(nukeUnit, nukeUnit).setOrigin(1, 0.5);
+    scene.ggHudNukeIcon.ggHudRole = "nuke-icon";
     var fireNuke = function() {
         if (scene.playerNukeTick < scene.playerNukeDelay || currentNukes <= 0) return;
         if (ggFirePlayerNuke(scene)) scene.playerNukeTick = 0;

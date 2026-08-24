@@ -1,0 +1,15 @@
+{
+  "generatedAt": "2026-08-24T19:40:07.794Z",
+  "mode": "visual",
+  "url": "http://localhost:8027/",
+  "pass": true,
+  "runtimeExceptions": [],
+  "failedRequests": [],
+  "visual": {
+    "screenshotA": "C:\\Users\\Michael\\dev\\GalacticGunners\\docs\\internal_governance\\evidence\\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV3\\runtime_playwright\\visual_stability_a.png",
+    "screenshotB": "C:\\Users\\Michael\\dev\\GalacticGunners\\docs\\internal_governance\\evidence\\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV3\\runtime_playwright\\visual_stability_b.png",
+    "diffFile": "C:\\Users\\Michael\\dev\\GalacticGunners\\docs\\internal_governance\\evidence\\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV3\\runtime_playwright\\visual_stability_diff.png",
+    "differingPixels": 0,
+    "pass": true
+  }
+}

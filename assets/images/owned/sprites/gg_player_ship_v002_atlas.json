@@ -1,9 +1,9 @@
 {
   "frames": {
-    "0": { "frame": { "x": 25, "y": 21, "w": 494, "h": 536 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 494, "h": 536 }, "sourceSize": { "w": 494, "h": 536 } },
-    "1": { "frame": { "x": 568, "y": 22, "w": 494, "h": 618 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 494, "h": 618 }, "sourceSize": { "w": 494, "h": 618 } },
+    "0": { "frame": { "x": 25, "y": 21, "w": 496, "h": 703 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 496, "h": 703 }, "sourceSize": { "w": 496, "h": 703 } },
+    "1": { "frame": { "x": 568, "y": 21, "w": 496, "h": 703 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 496, "h": 703 }, "sourceSize": { "w": 496, "h": 703 } },
     "2": { "frame": { "x": 1110, "y": 21, "w": 496, "h": 703 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 496, "h": 703 }, "sourceSize": { "w": 496, "h": 703 } },
-    "3": { "frame": { "x": 1652, "y": 22, "w": 496, "h": 612 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 496, "h": 612 }, "sourceSize": { "w": 496, "h": 612 } }
+    "3": { "frame": { "x": 1652, "y": 21, "w": 496, "h": 703 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 496, "h": 703 }, "sourceSize": { "w": 496, "h": 703 } }
   },
   "meta": {
     "image": "gg_player_ship_v002_sheet.png",

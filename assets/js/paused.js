@@ -16,19 +16,9 @@ class Paused extends Phaser.Scene {
         this.background.setScale(scale);
         this.background.setDepth(0);
 
-        this.btnResume = this.add.image(w * 0.5, h * 0.72, "resume").setOrigin(0.5).setInteractive({ useHandCursor: true });
-        this.btnResume.setDepth(2);
-        this.btnResume.clearTint();
-        Align.scaleToGameW(this.btnResume, 0.18);
-        this.btnResume.on("pointerover", function() {
-            this.sfx.select.play();
-            this.btnResume.setAlpha(0.82).setScale(this.btnResume.scaleX * 1.04, this.btnResume.scaleY * 1.04);
-        }, this);
-        this.btnResume.on("pointerout", function() {
-            this.btnResume.setAlpha(1);
-            Align.scaleToGameW(this.btnResume, 0.18);
-        }, this);
-        this.btnResume.on("pointerdown", function() {
+        this.resumeZone = this.add.zone(w * 0.5, h * 0.5, w, h).setOrigin(0.5).setInteractive({ useHandCursor: true });
+        this.resumeZone.setDepth(3);
+        this.resumeZone.on("pointerdown", function() {
             this.resumeGame();
         }, this);
 

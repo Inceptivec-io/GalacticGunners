@@ -14,6 +14,7 @@
     "qa:collision": "node tools/verify_handoff_004_gameplay_and_surface.js --mode=collision",
     "qa:browser": "node tools/verify_handoff_004_gameplay_and_surface.js --mode=browser",
     "qa:visual": "node tools/verify_handoff_004_gameplay_and_surface.js --mode=visual",
+    "qa:rev3": "node tools/verify_handoff_004_rev3.js",
     "qa:all": "node tools/qa_all.js"
   },
   "repository": {

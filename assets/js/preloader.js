@@ -12,7 +12,7 @@ class Preloader extends Phaser.Scene {
         this.load.image("BtnPlayHover", "assets/images/owned/branding/gg_logo_compact_v002.png"); //preload the Play Button Hover image
         this.load.image("logoPrimary", "assets/images/owned/branding/gg_logo_primary_v002.png");
         this.load.image("menuTitlecard", "assets/images/owned/branding/gg_logo_primary_words_v002.png");
-        this.load.image("hero", "assets/images/owned/branding/gg_logo_compact_v002.png"); //preload the hero image
+        this.load.image("hero", "assets/images/owned/branding/gg_hero_image_player_fighting.png"); //preload the Founder landing hero
         this.load.image("BtnInfo", "assets/images/owned/ui/gg_ui_info_v002.png"); //preload the Info Button image
         this.load.spritesheet("BtnPoint", "assets/images/owned/ui/gg_ui_pointer_v002_sheet.png", {
             frameWidth: 724,

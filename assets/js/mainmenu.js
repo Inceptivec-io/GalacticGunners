@@ -10,7 +10,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
     this.load.image("BtnPlayHover", "assets/images/owned/branding/gg_logo_compact_v002.png"); //preload the Play Button Hover image
     this.load.image("logoPrimary", "assets/images/owned/branding/gg_logo_primary_v002.png");
     this.load.image("menuTitlecard", "assets/images/owned/branding/gg_logo_primary_words_v002.png");
-    this.load.image("hero", "assets/images/owned/branding/gg_logo_compact_v002.png"); //preload the hero image
+    this.load.image("hero", "assets/images/owned/branding/gg_hero_image_player_fighting.png"); //preload the Founder landing hero
     this.load.image("BtnInfo", "assets/images/owned/ui/gg_ui_info_v002.png"); //preload the Info Button image
     this.load.spritesheet("BtnPoint", "assets/images/owned/ui/gg_ui_pointer_v002_sheet.png", { frameWidth: 724, frameHeight: 724 }); //preload the Pointer Button image
   }
@@ -18,9 +18,8 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
 
   //create function
   create() {
-    //add background
-    this.background = new Background(this, this.game.config.width * 0.5, this.game.config.height * 0.5, "backgroundstars"); // add background image first
-    //END background image
+    this.background = this.add.image(this.game.config.width * 0.5, this.game.config.height * 0.5, "hero").setOrigin(0.5);
+    this.background.setDepth(-10);
 
     //Create Grid
     this.aGrid = new AlignGrid({ scene: this, rows: 11, cols: 11 }); //create grid for positioning
@@ -31,8 +30,8 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
     //END create sounds
 
     this.menuCard = this.add.image(0, 0, "menuTitlecard");
-    this.menuCard.setAlpha(0.3);
-    this.menuCard.setDepth(-4);
+    this.menuCard.setAlpha(0.82);
+    this.menuCard.setDepth(2);
     this.aGrid.placeAtIndex(60, this.menuCard);
     Align.scaleToGameW(this.menuCard, 1.0);
 
@@ -78,7 +77,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
     Align.scaleToGameW(this.textTitle2, 0.4); //set scale
     //END Subheading text
     //Hero Image
-    this.heroImage = this.add.image(0, 0, 'hero'); //add hero image to bottom of screen
+    this.heroImage = this.add.image(0, 0, 'BtnPlay'); //use compact crest as the live play action
     this.heroImage.setOrigin(0.5, 0.45); //set origin point of image
     this.aGrid.placeAtIndex(71, this.heroImage); //set position on grid
     Align.scaleToGameW(this.heroImage, 0.2); //set scale
@@ -236,26 +235,28 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
 
     if (this.background) {
       this.background.setPosition(w * 0.5, h * 0.5);
-      this.background.setDisplaySize(w, h);
+      var bgScale = Math.max(w / this.background.width, h / this.background.height);
+      this.background.setScale(bgScale);
     }
 
     if (this.menuCard) {
-      this.menuCard.setPosition(w * 0.5, h * 0.5);
-      fitImage(this.menuCard, w * 1.08, h * 0.78);
-      this.menuCard.setAlpha(0.3);
-      this.menuCard.setDepth(-4);
+      fitImage(this.menuCard, w * 0.40, h * 0.14);
+      this.menuCard.setPosition(w * 0.5, margin + this.menuCard.displayHeight * 0.54);
+      this.menuCard.setAlpha(0.82);
+      this.menuCard.setDepth(2);
     }
 
     if (this.logoPrimary) {
-      fitImage(this.logoPrimary, w * 0.56, h * 0.22);
+      fitImage(this.logoPrimary, w * 0.50, h * 0.16);
       this.logoPrimary.setPosition(w * 0.5, margin + this.logoPrimary.displayHeight * 0.5);
       this.logoPrimary.clearTint();
+      this.logoPrimary.setDepth(3);
     }
 
     if (this.textTitle2) {
       this.textTitle2.setTint(0xffb43c);
       this.textTitle2.setOrigin(0.5);
-      fitText(this.textTitle2, w * 0.50, h * 0.072);
+      fitText(this.textTitle2, w * 0.42, h * 0.064);
       var subtitleY = this.logoPrimary ? this.logoPrimary.y + this.logoPrimary.displayHeight * 0.5 + (margin * 0.55) + this.textTitle2.displayHeight * 0.5 : h * 0.28;
       this.textTitle2.setPosition(
         w * 0.5,
@@ -264,9 +265,10 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
     }
 
     if (this.heroImage) {
-      fitImage(this.heroImage, w * 0.15, h * 0.22);
-      this.heroImage.setPosition(w * 0.5, h * 0.565);
+      fitImage(this.heroImage, w * 0.11, h * 0.16);
+      this.heroImage.setPosition(w * 0.5, h * 0.78);
       this.heroImage.clearTint();
+      this.heroImage.setDepth(4);
     }
 
     if (this.textPoint) {

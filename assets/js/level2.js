@@ -294,12 +294,12 @@ class Level2 extends Phaser.Scene { //creates a scene in the Phaser Object calle
                 laser.destroy(); //destroy laser object
             }
             //ALSO
-            this.destroyShieldTile(tile, false); //player fire destroys shield tile without score penalty
+            this.destroyShieldTile(tile, "PLAYER_LASER_HIT_SHIELD"); //player fire destroys shield tile without score penalty
         }, null, this); //processCallback set to null and context set to this
 
         this.physics.add.overlap(this.shieldTiles, this.enemies, function(tile, enemy) { //create a physics overlap event between object1 and object2, followed by collideCallback function
             if (enemy) { //if enemy
-                this.destroyShieldTile(tile, true); //enemy contact destroys one shield tile
+                this.destroyShieldTile(tile, "ENEMY_BODY_HIT_SHIELD"); //enemy contact destroys one shield tile
             }
         }, null, this); //processCallback set to null and context set to this
 
@@ -308,7 +308,7 @@ class Level2 extends Phaser.Scene { //creates a scene in the Phaser Object calle
                 laser.destroy(); //destroy laser object
             }
             //ALSO
-            this.destroyShieldTile(tile, true); //enemy fire destroys one shield tile
+            this.destroyShieldTile(tile, "ENEMY_LASER_HIT_SHIELD"); //enemy fire destroys one shield tile
         }, null, this); //processCallback set to null and context set to this
 
         this.physics.add.overlap(this.player, this.enemies, function(player, enemy) { //create a physics overlap event between object1 and object2, followed by collideCallback function
@@ -728,10 +728,13 @@ class Level2 extends Phaser.Scene { //creates a scene in the Phaser Object calle
     //END addSheild function
 
     //create destroySheildTile function
-    destroyShieldTile(tile, enemyHit) {
+    destroyShieldTile(tile, eventSource) {
         if (tile) { //if(tile)
+            var source = eventSource === true ? "ENEMY_LASER_HIT_SHIELD" : eventSource;
+            var enemyHit = source !== "PLAYER_LASER_HIT_SHIELD";
+            var shieldEvent = ggShieldExplosionEvent(source, "ShieldTile", source);
             if (enemyHit) ggScoreEvent(this, "SHIELD_TILE_ENEMY_HIT"); //locked shield penalty only for enemy hits
-            this.createExplosion(tile.x, tile.y, "shieldHit"); //create explosion at x and y of tile
+            this.createExplosion(tile.x, tile.y, shieldEvent); //create explosion at x and y of tile
 
             for (var i = 0; i < Phaser.Math.Between(10, 20); i++) { //for loop to iterate through sheildtile array randomly
                 var shieldHole = this.add.graphics({ //create sheildhole var and add graphics
@@ -771,14 +774,17 @@ class Level2 extends Phaser.Scene { //creates a scene in the Phaser Object calle
 
     //create Explosion function
     createExplosion(x, y, audioEvent) {
-        if (audioEvent !== false) {
-            if (audioEvent == "playerHit") this.sfx.playerHit.play();
-            else if (audioEvent == "shieldHit") this.sfx.shieldHit.play();
-            else if (audioEvent == "large") this.sfx.explosionLarge.play();
+        var scoreBefore = score;
+        var resolvedAudioEvent = ggExplosionAudioEvent(audioEvent);
+        if (resolvedAudioEvent !== false) {
+            if (resolvedAudioEvent == "playerHit") this.sfx.playerHit.play();
+            else if (resolvedAudioEvent == "shieldHit") this.sfx.shieldHit.play();
+            else if (resolvedAudioEvent == "large") this.sfx.explosionLarge.play();
             else this.sfx.explosionSmall.play();
         }
-        var explosion = new Explosion(this, x, y, audioEvent == "large" || audioEvent == "mothershipHit"); //create a new instance of explosion
+        var explosion = new Explosion(this, x, y, resolvedAudioEvent == "large" || resolvedAudioEvent == "mothershipHit"); //create a new instance of explosion
         this.explosions.add(explosion); //add it to the explosions group
+        ggRecordExplosionEvent(this, x, y, audioEvent, true, scoreBefore);
         if (totalEnemyShips == enemyDeaths) { //if totalEnemyShips is same as totalDeaths
             this.win(); //start win method
             levelWon = true;

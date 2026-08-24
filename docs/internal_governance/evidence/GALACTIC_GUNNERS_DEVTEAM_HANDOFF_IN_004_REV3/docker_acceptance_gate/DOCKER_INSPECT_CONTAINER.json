@@ -1,0 +1,292 @@
+[
+    {
+        "Id": "18eb7a94be611fc2ce0bf7a22c0fbb753fdb47b9b169455024605ffad24e9680",
+        "Created": "2026-08-24T19:38:51.427168707Z",
+        "Path": "/docker-entrypoint.sh",
+        "Args": [
+            "nginx",
+            "-g",
+            "daemon off;"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 64499,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2026-08-24T19:38:51.872017361Z",
+            "FinishedAt": "0001-01-01T00:00:00Z",
+            "Health": {
+                "Status": "healthy",
+                "FailingStreak": 0,
+                "Log": [
+                    {
+                        "Start": "2026-08-24T19:41:29.377979893Z",
+                        "End": "2026-08-24T19:41:29.464927638Z",
+                        "ExitCode": 0,
+                        "Output": ""
+                    },
+                    {
+                        "Start": "2026-08-24T19:41:39.465867435Z",
+                        "End": "2026-08-24T19:41:39.535400233Z",
+                        "ExitCode": 0,
+                        "Output": ""
+                    },
+                    {
+                        "Start": "2026-08-24T19:41:49.536659422Z",
+                        "End": "2026-08-24T19:41:49.617074766Z",
+                        "ExitCode": 0,
+                        "Output": ""
+                    },
+                    {
+                        "Start": "2026-08-24T19:41:59.616270614Z",
+                        "End": "2026-08-24T19:41:59.69501602Z",
+                        "ExitCode": 0,
+                        "Output": ""
+                    },
+                    {
+                        "Start": "2026-08-24T19:42:09.696635101Z",
+                        "End": "2026-08-24T19:42:09.762733302Z",
+                        "ExitCode": 0,
+                        "Output": ""
+                    }
+                ]
+            }
+        },
+        "Image": "sha256:a1afc3e8beaf67851e3e3c8460bba2988d8ef58026b2f508a709966d5dda2036",
+        "ResolvConfPath": "/var/lib/docker/containers/18eb7a94be611fc2ce0bf7a22c0fbb753fdb47b9b169455024605ffad24e9680/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/18eb7a94be611fc2ce0bf7a22c0fbb753fdb47b9b169455024605ffad24e9680/hostname",
+        "HostsPath": "/var/lib/docker/containers/18eb7a94be611fc2ce0bf7a22c0fbb753fdb47b9b169455024605ffad24e9680/hosts",
+        "LogPath": "/var/lib/docker/containers/18eb7a94be611fc2ce0bf7a22c0fbb753fdb47b9b169455024605ffad24e9680/18eb7a94be611fc2ce0bf7a22c0fbb753fdb47b9b169455024605ffad24e9680-json.log",
+        "Name": "/galactic-gunners-founder-local",
+        "RestartCount": 0,
+        "Driver": "overlayfs",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": [
+            "f559952c92df5954f293d53b5e593a7f7b2a3c70b132cdb648a62a5469a88f6e"
+        ],
+        "HostConfig": {
+            "Binds": null,
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "galacticgunners_default",
+            "PortBindings": {
+                "80/tcp": [
+                    {
+                        "HostIp": "",
+                        "HostPort": "8027"
+                    }
+                ]
+            },
+            "RestartPolicy": {
+                "Name": "unless-stopped",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "private",
+            "Dns": null,
+            "DnsOptions": null,
+            "DnsSearch": null,
+            "ExtraHosts": [],
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": null,
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": null,
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/acpi",
+                "/proc/asound",
+                "/proc/interrupts",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/sys/devices/virtual/powercap",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "Storage": {
+            "RootFS": {
+                "Snapshot": {
+                    "Name": "overlayfs"
+                }
+            }
+        },
+        "Mounts": [],
+        "Config": {
+            "Hostname": "18eb7a94be61",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "ExposedPorts": {
+                "80/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "NGINX_VERSION=1.27.5",
+                "PKG_RELEASE=1",
+                "DYNPKG_RELEASE=1",
+                "NJS_VERSION=0.8.10",
+                "NJS_RELEASE=1"
+            ],
+            "Cmd": [
+                "nginx",
+                "-g",
+                "daemon off;"
+            ],
+            "Healthcheck": {
+                "Test": [
+                    "CMD-SHELL",
+                    "wget -q --spider http://127.0.0.1/ || exit 1"
+                ],
+                "Interval": 10000000000,
+                "Timeout": 3000000000,
+                "StartPeriod": 5000000000,
+                "Retries": 3
+            },
+            "Image": "galacticgunners-galactic-gunners",
+            "Volumes": null,
+            "WorkingDir": "/",
+            "Entrypoint": [
+                "/docker-entrypoint.sh"
+            ],
+            "Labels": {
+                "com.docker.compose.config-hash": "44c7463cf43a7990f86271ac61967414c92c73e32dfe9dd0a3e077c79747a254",
+                "com.docker.compose.container-number": "1",
+                "com.docker.compose.depends_on": "",
+                "com.docker.compose.image": "sha256:a1afc3e8beaf67851e3e3c8460bba2988d8ef58026b2f508a709966d5dda2036",
+                "com.docker.compose.oneoff": "False",
+                "com.docker.compose.project": "galacticgunners",
+                "com.docker.compose.project.config_files": "C:\\Users\\Michael\\dev\\GalacticGunners\\docker-compose.yml",
+                "com.docker.compose.project.working_dir": "C:\\Users\\Michael\\dev\\GalacticGunners",
+                "com.docker.compose.service": "galactic-gunners",
+                "com.docker.compose.version": "5.3.1",
+                "maintainer": "NGINX Docker Maintainers \u003cdocker-maint@nginx.com\u003e"
+            },
+            "StopSignal": "SIGQUIT"
+        },
+        "NetworkSettings": {
+            "SandboxID": "d40e6ee1c7e43906a8d20b3ffc1cf81d4a552901e07ea28ea433dc986894f665",
+            "SandboxKey": "/var/run/docker/netns/d40e6ee1c7e4",
+            "Ports": {
+                "80/tcp": [
+                    {
+                        "HostIp": "0.0.0.0",
+                        "HostPort": "8027"
+                    },
+                    {
+                        "HostIp": "::",
+                        "HostPort": "8027"
+                    }
+                ]
+            },
+            "Networks": {
+                "galacticgunners_default": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": [
+                        "galactic-gunners-founder-local",
+                        "galactic-gunners"
+                    ],
+                    "DriverOpts": null,
+                    "GwPriority": 0,
+                    "NetworkID": "a8d545df1e554fd7f5d03db05e4ab016377494444d5d72ce814c9cc07151be62",
+                    "EndpointID": "05c5155df25aeda2945adc18ed92fa794e02960ba538b5f327e96c71d09a8cdb",
+                    "Gateway": "192.168.0.1",
+                    "IPAddress": "192.168.0.2",
+                    "MacAddress": "4e:cb:50:cc:f8:4f",
+                    "IPPrefixLen": 20,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "DNSNames": [
+                        "galactic-gunners-founder-local",
+                        "galactic-gunners",
+                        "18eb7a94be61"
+                    ]
+                }
+            }
+        },
+        "ImageManifestDescriptor": {
+            "mediaType": "application/vnd.oci.image.manifest.v1+json",
+            "digest": "sha256:2c8f4cba0e77a63e03a57fda3a636845e7c0b15d82b44a176f757aae566b426a",
+            "size": 3133,
+            "platform": {
+                "architecture": "amd64",
+                "os": "linux"
+            }
+        }
+    }
+]
