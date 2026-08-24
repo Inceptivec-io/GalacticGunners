@@ -1,0 +1,16 @@
+﻿## feature/GG-COM-001...origin/feature/GG-COM-001
+ M assets/js/bosslevel.js
+ M assets/js/entities.js
+ M assets/js/gg_runtime.js
+ M assets/js/level1.js
+ M assets/js/level2.js
+ M docs/internal_governance/currentness/CURRENT_STATE.md
+ M docs/internal_governance/registers/GG_REGISTER_CURRENTNESS_AND_GOVERNANCE_DEBT.md
+ M docs/internal_governance/registers/GG_REGISTER_EVIDENCE.md
+ M docs/internal_governance/registers/GG_REGISTER_HANDOFF_COMMISSION.md
+ M docs/internal_governance/registers/GG_REGISTER_PROJECT_STATE.md
+ M package.json
+ M tools/qa_all.js
+?? docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_005/
+?? docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_005/
+?? tools/qa_gameplay_runtime.js

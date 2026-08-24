@@ -7,11 +7,9 @@ const commands = [
   [process.execPath, [npmCli, "run", "qa:lint"]],
   [process.execPath, [npmCli, "run", "qa:images"]],
   [process.execPath, [npmCli, "run", "qa:sprites"]],
-  [process.execPath, [npmCli, "run", "qa:collision"]],
-  [process.execPath, [npmCli, "run", "qa:browser"]],
-  [process.execPath, [npmCli, "run", "qa:visual"]],
-  [process.execPath, [npmCli, "run", "qa:rev4"]],
-  [process.execPath, [npmCli, "run", "qa:rev5"]]
+  [process.execPath, [npmCli, "run", "qa:gameplay"]],
+  [process.execPath, [npmCli, "run", "qa:gameplay:visual"]],
+  [process.execPath, [npmCli, "run", "qa:gameplay:debug"]]
 ];
 
 for (const [cmd, args] of commands) {

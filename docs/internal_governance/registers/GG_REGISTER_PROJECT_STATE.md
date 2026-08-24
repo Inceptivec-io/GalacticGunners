@@ -7,10 +7,10 @@
 | Commercial Repository | `Inceptivec-io/GalacticGunners` |
 | Historical Repository | `michael-leese/GallacticGunners` READ-ONLY |
 | Current Programme | IP_FREEDOM_LICENSE_PROTECTION_ASSET_CREATION |
-| Current Stage | GGF-1 FINAL LEGACY BASELINE CONVERGENCE COMPLETE / PENDING FOUNDER ACCEPTANCE |
-| Active Handoff | GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV5 |
-| Current Feature HEAD | final pushed SHA recorded in external DEVTEAM-004 REV5 handoff-out |
-| Closure State | PASS TARGET - FINAL PUSH / SAFE EXIT PROOF RECORDED IN EXTERNAL DEVTEAM-004 REV5 HANDOFF-OUT |
+| Current Stage | P0 GAMEPLAY RUNTIME RECOVERY COMPLETE / PENDING FOUNDER AND CTAIO ACCEPTANCE |
+| Active Handoff | GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_005 |
+| Current Feature HEAD | final pushed SHA recorded in external DEVTEAM-005 handoff-out |
+| Closure State | PASS TARGET - FINAL PUSH / SAFE EXIT PROOF RECORDED IN EXTERNAL DEVTEAM-005 HANDOFF-OUT |
 | Root Execution Contract | `AGENTS.md` |
 | External Boundary | `_EXTERNAL_GalacticGunners` |
 | Internal Governance Root | `docs/internal_governance` |
@@ -26,6 +26,7 @@
 | Handoff 004 REV4 QA Gate | PASS - npm run qa:all |
 | Handoff 004 REV5 QA Gate | PASS - npm run qa:all |
 | GGF-1 Final Docker Candidate | PASS TARGET - Founder / CTAIO acceptance pending after REV5 bounded corrections |
+| Handoff 005 Gameplay Runtime Recovery | PASS - normal swept collision loop disabled; Phaser Arcade overlap restored; projectile lifecycle/spawn order recovered; enemy laser-only player damage traced; comet +500/+1 reward verified; qa:gameplay, qa:gameplay:visual and qa:gameplay:debug PASS |
 | Physics Debug URL | `http://localhost:8027/?ggPhysicsDebug=1` |
 | Favicon / Small-Surface Completeness | PASS - HUD life icon favicon served with APP4 cache-bust version and HTTP 200 verification |
 | APP4 Production Surface Correction | PASS - semantic runtime verifier passed |

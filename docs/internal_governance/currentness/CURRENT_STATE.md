@@ -1,26 +1,26 @@
 Active Handoff:
-GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV5
+GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_005
 
 Programme:
 IP_FREEDOM_LICENSE_PROTECTION_ASSET_CREATION
 
 Stage:
-GGF-1 FINAL LEGACY BASELINE CONVERGENCE COMPLETE / PENDING FOUNDER ACCEPTANCE
+P0 GAMEPLAY RUNTIME RECOVERY COMPLETE / PENDING FOUNDER AND CTAIO ACCEPTANCE
 
 Branch:
 feature/GG-COM-001
 
-DEVTEAM_004_REV5 Entry SHA:
-10c228c1108921e8545eedbcfadbcb57afbd7694
+DEVTEAM_005 Entry SHA:
+47787b303abf674536a7d4bb16413aa19291b216
 
 Current Repository Head Authority:
 origin/feature/GG-COM-001
 
 Local/Remote Reconciliation At Return:
-RECORDED IN EXTERNAL DEVTEAM-004 REV5 HANDOFF-OUT AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
+RECORDED IN EXTERNAL DEVTEAM-005 HANDOFF-OUT AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
 
 Worktree At Return:
-RECORDED IN EXTERNAL DEVTEAM-004 REV5 HANDOFF-OUT AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
+RECORDED IN EXTERNAL DEVTEAM-005 HANDOFF-OUT AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
 
 POST_BOX:
 CLEAN AT CLOSURE - boundary controls only / active payload zero
@@ -35,24 +35,21 @@ Evidence:
 DURABLE
 
 Docker Local Founder Acceptance Runtime:
-AVAILABLE - rebuilt for Handoff 004 REV5 preview at http://localhost:8027/
+AVAILABLE - rebuilt for Handoff 005 preview at http://localhost:8027/
 
 Physics Debug URL:
 http://localhost:8027/?ggPhysicsDebug=1
 
 QA Toolchain:
-AVAILABLE - pinned npm development-only QA layer with REV5 semantic verifier
+AVAILABLE - permanent npm gameplay QA commands: qa:gameplay, qa:gameplay:visual, qa:gameplay:debug
 
-Handoff 004 REV5 QA Gate:
+Handoff 005 QA Gate:
 PASS - npm run qa:all
 
-Playability Stabilisation:
-PASS - REV5 verifies full landing hero containment, active pause v2.1 authority, player body-overlap immunity for asteroid/comet/enemy contacts, enemy projectile damage-only player harm, player laser shield pass-through, enemy shield damage, immediate first shot, sustained fire stability, silent projectile culling, and in-bounds player clamp.
+Gameplay Runtime Recovery:
+PASS - normal runtime swept collision loop disabled; Arcade overlap restored as collision authority; player/enemy projectile lifecycle recovered; player body-contact damage remains zero; enemy laser is the only player life-damage source; comet reward is +500 score and +1 nuke; projectile culling is silent; explosion and damage traces are semantic.
 
-Foundation Closure Intent:
-PASS TARGET - legacy runtime ready for Founder GGF-1 acceptance review; Founder acceptance remains required before GGF-1 is accepted behavioural baseline.
-
-Founder / CTAIO GGF-1 Acceptance:
+Founder / CTAIO Acceptance:
 PENDING
 
 Founder Visual Acceptance:
@@ -65,7 +62,7 @@ Founder Audio-In-Context Acceptance:
 PENDING
 
 Closure:
-PASS TARGET - FINAL PUSH / SAFE EXIT PROOF RECORDED IN EXTERNAL DEVTEAM-004 REV5 HANDOFF-OUT
+PASS TARGET - FINAL PUSH / SAFE EXIT PROOF RECORDED IN EXTERNAL DEVTEAM-005 HANDOFF-OUT
 
 Founder Acceptance:
 PENDING

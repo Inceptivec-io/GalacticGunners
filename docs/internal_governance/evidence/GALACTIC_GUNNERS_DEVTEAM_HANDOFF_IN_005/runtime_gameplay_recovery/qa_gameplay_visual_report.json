@@ -1,0 +1,15 @@
+{
+  "mode": "visual",
+  "runtimeExceptions": [],
+  "failedRequests": [],
+  "checks": {
+    "PLAYER_LASER_VISIBLE": true,
+    "ENEMY_LASER_VISIBLE": true,
+    "PHYSICS_DEBUG_VISUAL": "N/A"
+  },
+  "screenshots": {
+    "visual": "C:\\Users\\Michael\\dev\\GalacticGunners\\docs\\internal_governance\\evidence\\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_005\\runtime_gameplay_recovery\\gameplay_visual_runtime.png"
+  },
+  "pass": true,
+  "failures": []
+}

@@ -47,8 +47,10 @@ function ggSetVerticalProjectileBody(sprite, sourceLengthRatio, sourceThicknessR
     if (!sprite || !sprite.body) return;
     var frameW = sprite.width || 1;
     var frameH = sprite.height || 1;
-    var bodyW = Math.max(1, Math.round(frameH * sourceThicknessRatio));
-    var bodyH = Math.max(1, Math.round(frameW * sourceLengthRatio));
+    var scaleX = Math.max(0.001, Math.abs(sprite.scaleX || 1));
+    var scaleY = Math.max(0.001, Math.abs(sprite.scaleY || 1));
+    var bodyW = Math.max(1, Math.round((sprite.displayWidth || frameW) * sourceLengthRatio * scaleX));
+    var bodyH = Math.max(1, Math.round((sprite.displayHeight || frameH) * sourceThicknessRatio * scaleY));
     sprite.body.setSize(bodyW, bodyH, false);
     sprite.body.setOffset(Math.round((frameW - bodyW) * 0.5), Math.round((frameH - bodyH) * 0.5));
 }
@@ -357,13 +359,50 @@ function ggExplosionAudioEvent(audioEvent) {
     return audioEvent;
 }
 
+function ggRuntimeEventId(scene, prefix) {
+    if (!scene) return prefix + "-UNKNOWN-" + Date.now();
+    scene.ggRuntimeEventSerial = (scene.ggRuntimeEventSerial || 0) + 1;
+    var sceneKey = scene.scene && scene.scene.key ? scene.scene.key : "UNKNOWN";
+    return prefix + "-" + sceneKey + "-" + scene.ggRuntimeEventSerial;
+}
+
+function ggAssignEntityId(scene, entity, type) {
+    if (!entity) return null;
+    if (!entity.ggEntityId) entity.ggEntityId = ggRuntimeEventId(scene, type || "ENTITY");
+    if (type && !entity.ggEntityType) entity.ggEntityType = type;
+    return entity.ggEntityId;
+}
+
+function ggBodyTrace(entity) {
+    if (!entity || !entity.body) return null;
+    return {
+        x: Math.round(entity.body.x),
+        y: Math.round(entity.body.y),
+        width: Math.round(entity.body.width),
+        height: Math.round(entity.body.height)
+    };
+}
+
+function ggCombatEvent(scene, eventSource, sourceEntity, targetEntity, audioEvent) {
+    return {
+        eventId: ggRuntimeEventId(scene, eventSource || "COMBAT"),
+        audioEvent: audioEvent,
+        eventSource: eventSource,
+        sourceObject: sourceEntity && sourceEntity.ggEntityType ? sourceEntity.ggEntityType : (sourceEntity && sourceEntity.constructor ? sourceEntity.constructor.name : null),
+        targetObject: targetEntity && targetEntity.ggEntityType ? targetEntity.ggEntityType : (targetEntity && targetEntity.constructor ? targetEntity.constructor.name : null),
+        sourceEntityId: ggAssignEntityId(scene, sourceEntity, sourceEntity && sourceEntity.ggEntityType),
+        targetEntityId: ggAssignEntityId(scene, targetEntity, targetEntity && targetEntity.ggEntityType),
+        scoreBefore: typeof score === "number" ? score : 0,
+        livesBefore: typeof currentLives === "number" ? currentLives : null
+    };
+}
+
 function ggExplosionSourceEvent(audioEvent) {
     if (audioEvent && typeof audioEvent === "object" && audioEvent.eventSource) return audioEvent.eventSource;
-    if (audioEvent === "playerHit") return "PLAYER_HIT_BY_REAL_COLLISION";
+    if (audioEvent === "playerHit") return "ENEMY_LASER_PLAYER_HIT";
     if (audioEvent === "mothershipHit") return "MOTHERSHIP_HIT_BY_REAL_COLLISION";
     if (audioEvent === "large") return "MOTHERSHIP_DESTROYED_REAL_COLLISION";
-    if (audioEvent === false) return "OTHER_REAL_COLLISION";
-    return "OTHER_REAL_COLLISION";
+    return "UNATTRIBUTED_EXPLOSION";
 }
 
 function ggRecordExplosionEvent(scene, x, y, audioEvent, targetDestroyed, scoreBefore) {
@@ -372,6 +411,7 @@ function ggRecordExplosionEvent(scene, x, y, audioEvent, targetDestroyed, scoreB
     var inShieldRegion = !!(scene && scene.game && y >= scene.game.config.height * 0.68);
     var eventSource = ggExplosionSourceEvent(audioEvent);
     var row = {
+        eventId: audioEvent && audioEvent.eventId ? audioEvent.eventId : ggRuntimeEventId(scene, "EXPLOSION"),
         timestamp: Date.now(),
         scene: scene && scene.scene && scene.scene.key ? scene.scene.key : "UNKNOWN",
         x: Math.round(x),
@@ -379,9 +419,15 @@ function ggRecordExplosionEvent(scene, x, y, audioEvent, targetDestroyed, scoreB
         inShieldRegion: inShieldRegion,
         sourceObject: audioEvent && audioEvent.sourceObject ? audioEvent.sourceObject : null,
         targetObject: audioEvent && audioEvent.targetObject ? audioEvent.targetObject : null,
+        sourceEntityId: audioEvent && audioEvent.sourceEntityId ? audioEvent.sourceEntityId : null,
+        targetEntityId: audioEvent && audioEvent.targetEntityId ? audioEvent.targetEntityId : null,
         eventSource: eventSource,
         targetDestroyed: !!targetDestroyed,
-        scoreDelta: score - before
+        scoreBefore: before,
+        scoreAfter: audioEvent && typeof audioEvent.scoreAfter === "number" ? audioEvent.scoreAfter : (typeof score === "number" ? score : before),
+        scoreDelta: (audioEvent && typeof audioEvent.scoreAfter === "number" ? audioEvent.scoreAfter : score) - before,
+        livesBefore: audioEvent && typeof audioEvent.livesBefore === "number" ? audioEvent.livesBefore : (typeof currentLives === "number" ? currentLives : null),
+        livesAfter: audioEvent && typeof audioEvent.livesAfter === "number" ? audioEvent.livesAfter : (typeof currentLives === "number" ? currentLives : null)
     };
     window.ggExplosionTrace.push(row);
     if (inShieldRegion && !eventSource) row.eventSource = "UNEXPLAINED";
@@ -390,10 +436,13 @@ function ggRecordExplosionEvent(scene, x, y, audioEvent, targetDestroyed, scoreB
 
 function ggShieldExplosionEvent(sourceObject, targetObject, eventSource) {
     return {
+        eventId: ggRuntimeEventId(window.ggActiveHudScene, eventSource || "SHIELD_EXPLOSION"),
         audioEvent: "shieldHit",
         eventSource: eventSource,
         sourceObject: sourceObject,
         targetObject: targetObject,
+        sourceEntityId: sourceObject,
+        targetEntityId: targetObject,
         scoreBefore: typeof score === "number" ? score : 0
     };
 }
@@ -644,28 +693,85 @@ function ggPointerHitsInteractiveUi(scene, pointer) {
     });
 }
 
+function ggSetProjectileIdentity(scene, projectile, side, type, sourceEntity) {
+    if (!projectile) return;
+    projectile.ggProjectileSide = side;
+    projectile.ggProjectileType = type;
+    projectile.ggSourceEntityId = ggAssignEntityId(scene, sourceEntity, sourceEntity && sourceEntity.ggEntityType ? sourceEntity.ggEntityType : "SOURCE");
+    ggAssignEntityId(scene, projectile, type);
+    if (!window.ggProjectileSpawnTrace) window.ggProjectileSpawnTrace = [];
+    window.ggProjectileSpawnTrace.push({
+        eventId: ggRuntimeEventId(scene, "PROJECTILE_SPAWN"),
+        projectileId: projectile.ggEntityId,
+        projectileSide: side,
+        projectileType: type,
+        sourceEntityId: projectile.ggSourceEntityId,
+        scene: scene && scene.scene && scene.scene.key ? scene.scene.key : "UNKNOWN",
+        timestamp: Date.now()
+    });
+}
+
+function ggPlaceProjectile(projectile, x, y) {
+    projectile.setPosition(x, y);
+    if (projectile.body) projectile.body.reset(x, y);
+    projectile.ggPreviousX = x;
+    projectile.ggPreviousY = y;
+}
+
+function ggSpawnPlayerLaser(scene) {
+    if (!scene || !scene.player || !scene.player.active) return null;
+    ggAssignEntityId(scene, scene.player, "PLAYER");
+    var laser = new PlayerLaser(scene, scene.player.x, scene.player.y);
+    ggSetProjectileIdentity(scene, laser, "player", "PLAYER_LASER", scene.player);
+    var laserVisualHalf = Math.max(4, (laser.displayHeight || laser.height || 8) * 0.5);
+    var spawnY = scene.player.body ? scene.player.body.y - laserVisualHalf - 2 : scene.player.y - scene.player.displayHeight * 0.5 - 8;
+    ggPlaceProjectile(laser, scene.player.x, spawnY);
+    scene.playerLasers.add(laser);
+    laser.body.setVelocityY(ggPlayerLaserVelocity(scene));
+    return laser;
+}
+
+function ggSpawnPlayerNuke(scene) {
+    if (!scene || !scene.player || !scene.player.active) return null;
+    ggAssignEntityId(scene, scene.player, "PLAYER");
+    var nuke = new Nuke(scene, scene.player.x, scene.player.y);
+    ggSetProjectileIdentity(scene, nuke, "player", "PLAYER_NUKE", scene.player);
+    var nukeVisualHalf = Math.max(6, (nuke.displayHeight || nuke.height || 12) * 0.5);
+    var spawnY = scene.player.body ? scene.player.body.y - nukeVisualHalf - 2 : scene.player.y - scene.player.displayHeight * 0.5 - 14;
+    ggPlaceProjectile(nuke, scene.player.x, spawnY);
+    scene.starNukes.add(nuke);
+    nuke.body.setVelocityY(-400);
+    return nuke;
+}
+
+function ggSpawnEnemyLaser(scene, sourceEntity, LaserClass, offsetX) {
+    if (!scene || !sourceEntity || !sourceEntity.active && !sourceEntity.body) return null;
+    var type = LaserClass === EnemyMotherShipLaser ? "MOTHERSHIP_LASER" : "ENEMY_LASER";
+    ggAssignEntityId(scene, sourceEntity, sourceEntity.ggEntityType || (LaserClass === EnemyMotherShipLaser ? "MOTHERSHIP" : "ENEMY"));
+    var laser = new (LaserClass || EnemyLaser)(scene, sourceEntity.x, sourceEntity.y);
+    ggSetProjectileIdentity(scene, laser, "enemy", type, sourceEntity);
+    var x = sourceEntity.x + (offsetX || 0);
+    var laserVisualHalf = Math.max(4, (laser.displayHeight || laser.height || 8) * 0.5);
+    var sourceVisualHalf = Math.max(8, (sourceEntity.displayHeight || sourceEntity.height || 16) * 0.5);
+    var y = sourceEntity.y + sourceVisualHalf + laserVisualHalf + 2;
+    ggPlaceProjectile(laser, x, y);
+    scene.enemyLasers.add(laser);
+    laser.body.setVelocityY(ggEnemyLaserVelocity(scene));
+    return laser;
+}
+
 function ggFirePlayerLaser(scene) {
     if (!scene || !scene.player || !scene.player.active || levelWon || RIP) return false;
-    var spawnY = scene.player.body ? scene.player.body.y - 8 : scene.player.y - scene.player.displayHeight * 0.5 - 8;
-    var laser = new PlayerLaser(scene, scene.player.x, spawnY);
-    if (scene.player.body && laser.body) {
-        laser.y = scene.player.body.y - (laser.body.height * 0.62);
-        laser.body.reset(laser.x, laser.y);
-    }
-    scene.playerLasers.add(laser);
+    var laser = ggSpawnPlayerLaser(scene);
+    if (!laser) return false;
     if (scene.sfx && scene.sfx.laserPlayer) scene.sfx.laserPlayer.play();
     return true;
 }
 
 function ggFirePlayerNuke(scene) {
     if (!scene || !scene.player || !scene.player.active || levelWon || RIP || currentNukes <= 0) return false;
-    var spawnY = scene.player.body ? scene.player.body.y - 14 : scene.player.y - scene.player.displayHeight * 0.5 - 14;
-    var nuke = new Nuke(scene, scene.player.x, spawnY);
-    if (scene.player.body && nuke.body) {
-        nuke.y = scene.player.body.y - (nuke.body.height * 0.62);
-        nuke.body.reset(nuke.x, nuke.y);
-    }
-    scene.starNukes.add(nuke);
+    var nuke = ggSpawnPlayerNuke(scene);
+    if (!nuke) return false;
     if (scene.sfx && scene.sfx.nukeFiring) scene.sfx.nukeFiring.play();
     currentNukes--;
     ggRefreshHud(scene);
@@ -723,43 +829,67 @@ function ggAwardComet(scene, comet, nukeBurst) {
     if (RIP) return;
     if (!comet || !comet.active) return;
     ggPlayAudio(scene, GG_AUDIO.COMET_DESTROYED);
-    if (nukeBurst) {
-        scene.createNukeExplosion(comet.x, comet.y, false);
-    }
-    else {
-        scene.createExplosion(comet.x, comet.y, false);
-    }
+    var eventSource = nukeBurst ? "PLAYER_NUKE_COMET_HIT" : "PLAYER_LASER_COMET_HIT";
+    var projectile = comet.ggHitByProjectile || null;
+    var event = ggCombatEvent(scene, eventSource, projectile, comet, false);
     ggScoreEvent(scene, "COMET_DESTROYED");
     currentNukes++;
     ggRefreshHud(scene);
+    event.scoreAfter = score;
+    if (nukeBurst) {
+        scene.createNukeExplosion(comet.x, comet.y, event);
+    }
+    else {
+        scene.createExplosion(comet.x, comet.y, event);
+    }
     comet.destroy();
 }
 
 function ggInstallCometCollisions(scene) {
     scene.physics.add.overlap(scene.playerLasers, scene.comets, function(laser, comet) {
-        if (laser) laser.destroy();
+        if (laser) {
+            laser.ggResolved = true;
+            comet.ggHitByProjectile = laser;
+            laser.destroy();
+        }
         ggAwardComet(scene, comet, false);
     }, null, scene);
 
     scene.physics.add.overlap(scene.starNukes, scene.comets, function(nuke, comet) {
         if (nuke) {
+            nuke.ggResolved = true;
+            comet.ggHitByProjectile = nuke;
             nuke.destroy();
             emitter.stop();
         }
         ggAwardComet(scene, comet, true);
-    }, null, scene);
-
-    scene.physics.add.overlap(scene.player, scene.comets, function(player, comet) {
-        if (player && comet) comet.ggPlayerBodyPass = true;
     }, null, scene);
 }
 
 function ggResolveEnemyLaserPlayerHit(scene, laser, player) {
     if (!scene || !laser || laser.ggProjectileSide !== "enemy" || !player || !laser.active || !player.active || laser.ggResolved) return false;
     laser.ggResolved = true;
-    scene.createExplosion(player.x, player.y, "playerHit");
-    player.body.reset(scene.game.config.width * 0.5, scene.game.config.height - 50);
+    var damage = {
+        eventId: ggRuntimeEventId(scene, "PLAYER_DAMAGE"),
+        scene: scene && scene.scene && scene.scene.key ? scene.scene.key : "UNKNOWN",
+        timestamp: Date.now(),
+        damageSource: laser.ggProjectileType || "ENEMY_LASER",
+        projectileId: ggAssignEntityId(scene, laser, laser.ggProjectileType || "ENEMY_LASER"),
+        projectileSide: laser.ggProjectileSide,
+        playerBodyBounds: ggBodyTrace(player),
+        projectileBodyBounds: ggBodyTrace(laser),
+        livesBefore: typeof currentLives === "number" ? currentLives : null
+    };
+    if (!window.ggPlayerDamageTrace) window.ggPlayerDamageTrace = [];
+    var hitX = player.x;
+    var hitY = player.y;
+    var explosionEvent = ggCombatEvent(scene, "ENEMY_LASER_PLAYER_HIT", laser, player, "playerHit");
     scene.onLifeDown();
+    damage.livesAfter = typeof currentLives === "number" ? currentLives : null;
+    explosionEvent.livesAfter = damage.livesAfter;
+    window.ggPlayerDamageTrace.push(damage);
+    scene.createExplosion(hitX, hitY, explosionEvent);
+    if (player.body) player.body.reset(scene.game.config.width * 0.5, scene.game.config.height - 50);
     laser.destroy();
     return true;
 }
@@ -835,9 +965,11 @@ function ggDestroyEnemyTarget(scene, projectile, target, nuke) {
     if (nuke && emitter && emitter.stop) emitter.stop();
     enemyShips--;
     enemyDeaths++;
-    if (nuke) scene.createNukeExplosion(target.x, target.y);
-    else scene.createExplosion(target.x, target.y);
+    var event = ggCombatEvent(scene, nuke ? "PLAYER_NUKE_HOSTILE_HIT" : "PLAYER_LASER_HOSTILE_HIT", projectile, target, nuke ? false : undefined);
     ggScoreEvent(scene, ggEnemyScoreEvent(target));
+    event.scoreAfter = score;
+    if (nuke) scene.createNukeExplosion(target.x, target.y, event);
+    else scene.createExplosion(target.x, target.y, event);
     target.destroy();
     return true;
 }
@@ -847,9 +979,11 @@ function ggDestroyAsteroidTarget(scene, projectile, asteroid, nuke) {
     asteroid.ggSweptResolved = true;
     projectile.destroy();
     if (nuke && emitter && emitter.stop) emitter.stop();
-    if (nuke) scene.createNukeExplosion(asteroid.x, asteroid.y);
-    else scene.createExplosion(asteroid.x, asteroid.y);
+    var event = ggCombatEvent(scene, nuke ? "PLAYER_NUKE_ASTEROID_HIT" : "PLAYER_LASER_ASTEROID_HIT", projectile, asteroid, nuke ? false : undefined);
     ggScoreEvent(scene, "ASTEROID_DESTROYED");
+    event.scoreAfter = score;
+    if (nuke) scene.createNukeExplosion(asteroid.x, asteroid.y, event);
+    else scene.createExplosion(asteroid.x, asteroid.y, event);
     asteroid.destroy();
     return true;
 }
@@ -860,13 +994,17 @@ function ggHitMothershipTarget(scene, projectile, mothership, nuke) {
     projectile.destroy();
     if (nuke && emitter && emitter.stop) emitter.stop();
     if (nuke) {
-        scene.createNukeExplosion(mothership.x, mothership.y, "mothershipHit");
+        var nukeEvent = ggCombatEvent(scene, "PLAYER_NUKE_MOTHERSHIP_HIT", projectile, mothership, "mothershipHit");
         ggScoreEvent(scene, "MOTHERSHIP_HIT");
+        nukeEvent.scoreAfter = score;
+        scene.createNukeExplosion(mothership.x, mothership.y, nukeEvent);
         scene.motherShipHit(2);
     }
     else {
-        scene.createExplosion(mothership.x, mothership.y, "mothershipHit");
+        var laserEvent = ggCombatEvent(scene, "PLAYER_LASER_MOTHERSHIP_HIT", projectile, mothership, "mothershipHit");
         ggScoreEvent(scene, "MOTHERSHIP_HIT");
+        laserEvent.scoreAfter = score;
+        scene.createExplosion(mothership.x, mothership.y, laserEvent);
         scene.motherShipHit(1);
     }
     return true;
@@ -891,6 +1029,7 @@ function ggSweepProjectilesAgainst(scene, projectileGroup, targetGroup, hitCallb
 }
 
 function ggRunSweptCollisionContracts(scene) {
+    if (!scene || !scene.ggEnableSweptCollision) return;
     if (!scene || RIP || levelWon) return;
     ggSweepProjectilesAgainst(scene, scene.playerLasers, scene.enemies, function(laser, enemy) {
         return ggDestroyEnemyTarget(scene, laser, enemy, false);
@@ -928,6 +1067,7 @@ function ggRunSweptCollisionContracts(scene) {
 }
 
 function ggInstallSweptCollisionContracts(scene) {
+    if (!scene || !scene.ggEnableSweptCollision) return;
     if (!scene || !scene.time || scene.ggSweptCollisionEvent) return;
     ggMarkSweepPositions(scene.playerLasers);
     ggMarkSweepPositions(scene.starNukes);
@@ -940,6 +1080,117 @@ function ggInstallSweptCollisionContracts(scene) {
         callbackScope: scene,
         loop: true
     });
+}
+
+function ggGameplayTestModeEnabled() {
+    if (!window || !window.location || !window.location.search) return false;
+    return new URLSearchParams(window.location.search).get("ggGameplayTest") === "1";
+}
+
+function ggInstallGameplayTestControls(scene) {
+    if (!ggGameplayTestModeEnabled() || !scene || !scene.scene || !scene.scene.key) return;
+    if (!window.ggGameplayTestControls) window.ggGameplayTestControls = {};
+    scene.ggSuppressEnemyFire = true;
+    var sceneKey = scene.scene.key;
+
+    function addFixture(entity, group, type) {
+        entity.ggTestFixture = true;
+        ggAssignEntityId(scene, entity, type);
+        if (entity.body) {
+            entity.body.setVelocity(0, 0);
+            entity.body.angularVelocity = 0;
+        }
+        if (group) group.add(entity);
+        return entity;
+    }
+
+    function abovePlayer(offset) {
+        var playerBody = scene.player && scene.player.body;
+        return playerBody ? playerBody.y - offset : scene.player.y - offset;
+    }
+
+    window.ggGameplayTestControls[sceneKey] = {
+        suppressEnemyFire: function(value) {
+            scene.ggSuppressEnemyFire = value !== false;
+            return scene.ggSuppressEnemyFire;
+        },
+        cleanupFixtures: function() {
+            ["enemies", "alienscouts", "enemyLasers", "playerLasers", "starNukes", "asteroids", "comets", "shieldTiles"].forEach(function(groupName) {
+                var group = scene[groupName];
+                if (!group || !group.getChildren) return;
+                group.getChildren().slice().forEach(function(child) {
+                    if (child && child.ggTestFixture) child.destroy();
+                });
+            });
+            return true;
+        },
+        spawnEnemyInPlayerShotPath: function() {
+            var enemy = new Enemy(scene, scene.player.x, abovePlayer(150), "enemyShip");
+            if (enemy.play) enemy.play("enemyShip");
+            return addFixture(enemy, scene.enemies, "ENEMY").ggEntityId;
+        },
+        spawnAsteroidInPlayerShotPath: function() {
+            var asteroid = new Asteroid(scene, scene.player.x, abovePlayer(150));
+            return addFixture(asteroid, scene.asteroids, "ASTEROID").ggEntityId;
+        },
+        spawnCometInPlayerShotPath: function() {
+            var comet = new Comet(scene, scene.player.x, abovePlayer(150));
+            return addFixture(comet, scene.comets, "COMET").ggEntityId;
+        },
+        spawnShieldInPlayerShotPath: function() {
+            var tile = new ShieldTile(scene, scene.player.x, abovePlayer(115));
+            return addFixture(tile, scene.shieldTiles, "SHIELD_TILE").ggEntityId;
+        },
+        spawnEnemyLaserAtPlayer: function() {
+            var enemy = new Enemy(scene, scene.player.x, abovePlayer(90), "enemyShip");
+            addFixture(enemy, scene.enemies, "ENEMY");
+            var laser = ggSpawnEnemyLaser(scene, enemy, EnemyLaser);
+            laser.ggTestFixture = true;
+            return laser.ggEntityId;
+        },
+        placePlayerClearOfShields: function() {
+            var x = scene.game.config.width * 0.08;
+            var y = scene.game.config.height - 50;
+            scene.player.setPosition(x, y);
+            if (scene.player.body) scene.player.body.reset(x, y);
+            return { x: x, y: y };
+        },
+        spawnEnemyLaserAtShield: function() {
+            var tile = new ShieldTile(scene, scene.player.x, abovePlayer(55));
+            addFixture(tile, scene.shieldTiles, "SHIELD_TILE");
+            var enemy = new Enemy(scene, scene.player.x, abovePlayer(130), "enemyShip");
+            addFixture(enemy, scene.enemies, "ENEMY");
+            var laser = ggSpawnEnemyLaser(scene, enemy, EnemyLaser);
+            laser.ggTestFixture = true;
+            return { laserId: laser.ggEntityId, shieldId: tile.ggEntityId };
+        },
+        spawnPlayerBodyContacts: function() {
+            addFixture(new Enemy(scene, scene.player.x, scene.player.y, "enemyShip"), scene.enemies, "ENEMY_BODY_CONTACT_FIXTURE");
+            addFixture(new Asteroid(scene, scene.player.x, scene.player.y), scene.asteroids, "ASTEROID_BODY_CONTACT_FIXTURE");
+            addFixture(new Comet(scene, scene.player.x, scene.player.y), scene.comets, "COMET_BODY_CONTACT_FIXTURE");
+            return true;
+        },
+        state: function() {
+            return {
+                scene: sceneKey,
+                score: score,
+                currentLives: currentLives,
+                currentNukes: currentNukes,
+                sweptCollisionLoopInstalled: !!scene.ggSweptCollisionEvent,
+                playerLasers: ggGroupChildren(scene.playerLasers).filter(function(item) { return item && item.active; }).map(function(item) {
+                    return { id: item.ggEntityId, x: item.x, y: item.y, velocityY: item.body ? item.body.velocity.y : null, side: item.ggProjectileSide, type: item.ggProjectileType, active: item.active };
+                }),
+                enemyLasers: ggGroupChildren(scene.enemyLasers).filter(function(item) { return item && item.active; }).map(function(item) {
+                    return { id: item.ggEntityId, x: item.x, y: item.y, velocityY: item.body ? item.body.velocity.y : null, side: item.ggProjectileSide, type: item.ggProjectileType, active: item.active };
+                }),
+                traces: {
+                    explosions: window.ggExplosionTrace || [],
+                    damage: window.ggPlayerDamageTrace || [],
+                    projectileSpawns: window.ggProjectileSpawnTrace || []
+                }
+            };
+        }
+    };
 }
 
 function ggResetToMenu(scene) {
