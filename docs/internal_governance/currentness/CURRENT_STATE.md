@@ -5,7 +5,7 @@ Programme:
 IP_FREEDOM_LICENSE_PROTECTION_ASSET_CREATION
 
 Stage:
-APP2 VISUAL/RUNTIME CORRECTION COMPLETE / PENDING FOUNDER ACCEPTANCE
+APP2 VISUAL/RUNTIME AND SMALL-SURFACE CORRECTION COMPLETE / PENDING FOUNDER ACCEPTANCE
 
 Branch:
 feature/GG-COM-001
@@ -57,6 +57,9 @@ AVAILABLE - final rebuild proof recorded externally at APP2 pushed HEAD
 
 Favicon / Small-Surface Completeness:
 PASS
+
+Founder Review Correction:
+PASS - root favicon delivered; MainMenu CTA uses owned title font with preload font readiness gate
 
 Founder Visual Acceptance:
 PENDING

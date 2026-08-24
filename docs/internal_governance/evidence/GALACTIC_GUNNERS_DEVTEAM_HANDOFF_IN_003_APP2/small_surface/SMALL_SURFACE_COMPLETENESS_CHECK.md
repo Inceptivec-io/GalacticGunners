@@ -2,7 +2,7 @@
 
 | Surface | Result | Evidence |
 |---|---|---|
-| Favicon | PASS | `index.html` favicon links and HTTP 200 verifier |
+| Favicon | PASS | `index.html` favicon links include `/favicon.ico`; Docker HTTP verifier covers root ICO and owned favicon derivatives |
 | Page/browser title | PASS | `Galactic Gunners` captured in browser regression JSON |
 | Logo/wordmark references | PASS | owned branding paths HTTP 200 |
 | Sound icon state | PASS | owned sound/mute UI preserved; runtime sound manager toggle preserved |
@@ -11,11 +11,11 @@
 | HUD icons | PASS | owned HUD life/nuke icons preserved |
 | Touch/controller selector assets | PASS | owned pointer spritesheet preserved |
 | Game Over/Victory button hit areas | PASS | Game Over has 3 invisible hit zones over embedded buttons; no duplicate RESTART/MENU text |
-| Font loading | PASS | title/display WOFF2 HTTP 200 |
+| Font loading | PASS | title/display WOFF2 HTTP 200; Preloader waits for `GalacticGunnersTitle` and `GalacticGunnersDisplay` before MainMenu starts |
 | Stale legacy branding | PASS | no obvious stale/default browser assets in active small surfaces |
 | Broken/404 asset references | PASS | HTTP verifier and browser network check: 0 failures |
 | Duplicated controls | PASS | duplicate text controls removed from Game Over overlay |
-| Visible placeholder/default browser assets | PASS | favicon derivatives use owned symbol |
+| Visible placeholder/default browser assets | PASS | root ICO and favicon derivatives use owned symbol |
 
 Target results:
 

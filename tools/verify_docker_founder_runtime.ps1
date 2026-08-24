@@ -5,6 +5,7 @@ $service = "galactic-gunners"
 $container = "galactic-gunners-founder-local"
 $assetPaths = @(
   "/",
+  "/favicon.ico",
   "/index.html",
   "/assets/js/phaser.js",
   "/assets/js/game.js",
@@ -13,6 +14,7 @@ $assetPaths = @(
   "/assets/images/owned/branding/gg_logo_primary_words_v002.png",
   "/assets/images/owned/branding/gg_logo_compact_v002.png",
   "/assets/images/owned/branding/gg_symbol_v001.png",
+  "/assets/images/owned/branding/favicons/favicon.ico",
   "/assets/images/owned/branding/favicons/favicon-16.png",
   "/assets/images/owned/branding/favicons/favicon-32.png",
   "/assets/images/owned/branding/favicons/favicon-48.png",

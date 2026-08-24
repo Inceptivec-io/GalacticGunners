@@ -144,7 +144,20 @@ class Preloader extends Phaser.Scene {
     }
 
     startGame() {
-        this.scene.start('MainMenu'); //start this scene on completion of loading assets.
+        var startMainMenu = function() {
+            this.scene.start('MainMenu'); //start this scene on completion of loading assets.
+        }.bind(this);
+
+        if (document.fonts && document.fonts.load) {
+            Promise.all([
+                document.fonts.load("96px GalacticGunnersTitle"),
+                document.fonts.load("80px GalacticGunnersDisplay"),
+                document.fonts.ready
+            ]).then(startMainMenu).catch(startMainMenu);
+            return;
+        }
+
+        startMainMenu();
     }
 
 }

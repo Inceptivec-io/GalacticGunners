@@ -67,7 +67,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
       0, //set y axis position
       "CAN YOU SAVE THE DAY?", //set text
       {
-        fontFamily: GG_FONT_DISPLAY, //set font style
+        fontFamily: GG_FONT_TITLE, //set font style
         fontSize: 80, //set font size
         align: "center" //set alignment
       }

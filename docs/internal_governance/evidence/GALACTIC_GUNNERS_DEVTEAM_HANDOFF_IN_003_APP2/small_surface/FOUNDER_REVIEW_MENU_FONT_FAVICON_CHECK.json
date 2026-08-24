@@ -1,0 +1,48 @@
+{
+  "runtimeUrl": "http://localhost:8027/",
+  "checkedAtUtc": "2026-08-24T00:30:57.818Z",
+  "result": {
+    "documentTitle": "Galactic Gunners",
+    "readyState": "complete",
+    "canvasCount": 1,
+    "faviconLinks": [
+      {
+        "href": "/favicon.ico",
+        "type": "",
+        "sizes": "any"
+      },
+      {
+        "href": "assets/images/owned/branding/favicons/favicon.ico",
+        "type": "image/x-icon",
+        "sizes": ""
+      },
+      {
+        "href": "assets/images/owned/branding/favicons/favicon-16.png",
+        "type": "image/png",
+        "sizes": "16x16"
+      },
+      {
+        "href": "assets/images/owned/branding/favicons/favicon-32.png",
+        "type": "image/png",
+        "sizes": "32x32"
+      },
+      {
+        "href": "assets/images/owned/branding/favicons/favicon-48.png",
+        "type": "image/png",
+        "sizes": "48x48"
+      }
+    ],
+    "appleTouchIconLinked": true,
+    "rootFaviconIcoLinked": true,
+    "fontsReady": "loaded",
+    "titleFontLoaded": true,
+    "displayFontLoaded": true,
+    "ctaText": "CAN YOU SAVE THE DAY?",
+    "ctaFontFamily": "'GalacticGunnersTitle', 'GalacticGunnersDisplay', Arial, sans-serif",
+    "mainMenuActive": true,
+    "bodyTextLength": 0
+  },
+  "runtimeExceptions": [],
+  "networkFailures": [],
+  "pass": true
+}

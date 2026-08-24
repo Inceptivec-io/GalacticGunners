@@ -1,6 +1,7 @@
 FROM nginx:1.27-alpine
 
 COPY index.html /usr/share/nginx/html/index.html
+COPY favicon.ico /usr/share/nginx/html/favicon.ico
 COPY assets /usr/share/nginx/html/assets
 COPY LICENSE /usr/share/nginx/html/LICENSE
 COPY README.md /usr/share/nginx/html/README.md
