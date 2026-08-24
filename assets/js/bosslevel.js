@@ -139,7 +139,7 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
         else {
             this.Restart = ["Press R to Restart"];
         }
-        ggInstallNukeHud(this);
+        ggCreateSharedHud(this, { showReplay: true });
         //END TOUCH CONTROLS
         //END CONTROL METHODS
 
@@ -174,7 +174,7 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
         enemyShips++; //add mothership to enemyship count
         motherShipLives = maxMotherShipLives; //set mothership lives
         Align.scaleToGameW(this.alienMothership, 0.1); //set the scale of the motherShip
-        ggSetBodyLocal(this.alienMothership, 0.48, 0.52, 0.5, 0.22);
+        ggSetBodyEnvelope(this.alienMothership, GG_BODY_CONTRACTS.MOTHERSHIP);
         this.alienMothership.play("motherShip"); //play normal mothership animation
         this.tweens.add({ //add a tween(movement state)
             targets: this.alienMothership, //target the mothership
@@ -443,6 +443,7 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
             }
         }, null, this); //processCallback set to null and context set to this
         ggInstallCometCollisions(this); //install supplied comet collision rules
+        ggInstallSweptCollisionContracts(this); //install stable swept projectile collision contracts
         // END COLLISION DETECTION
 
 

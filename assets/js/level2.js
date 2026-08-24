@@ -141,7 +141,7 @@ class Level2 extends Phaser.Scene { //creates a scene in the Phaser Object calle
             this.GameContinue = ["Press ENTER to Continue"];
             this.Restart = ["Press R to Restart"];
         }
-        ggInstallNukeHud(this);
+        ggCreateSharedHud(this, { showReplay: true });
         //END TOUCH CONTROLS
         //END CONTROL METHODS
 
@@ -331,6 +331,7 @@ class Level2 extends Phaser.Scene { //creates a scene in the Phaser Object calle
             }
         }, null, this); //processCallback set to null and context set to this
         ggInstallCometCollisions(this); //install supplied comet collision rules
+        ggInstallSweptCollisionContracts(this); //install stable swept projectile collision contracts
         // END COLLISION DETECTION
 
 

@@ -23,7 +23,7 @@ class Player extends Phaser.Physics.Arcade.Sprite { //Inherit Player class to Ph
         this.setCollideWorldBounds(true); //set collide world bounds to true
         this.setOrigin(0.5, 0.5); //keep player hitbox stable through animation
         Align.scaleToGameW(this, GG_SCALES.PLAYER); //set scale
-        ggSetBodyLocal(this, 0.34, 0.54, 0.5, 0.36);
+        ggSetBodyEnvelope(this, GG_BODY_CONTRACTS.PLAYER);
         this.setFrame("0");
     }
 }
@@ -34,7 +34,9 @@ class PlayerLaser extends Entity { //Inherit PlayerLaser class to Entity
         this.setOrigin(0.5);
         Align.scaleToGameW(this, GG_SCALES.PLAYER_LASER); //set scale
         this.setAngle(-90);
-        ggSetVerticalProjectileBody(this, 0.62, 0.22);
+        ggSetVerticalProjectileBody(this, GG_BODY_CONTRACTS.PLAYER_LASER.w, GG_BODY_CONTRACTS.PLAYER_LASER.h);
+        this.ggPreviousX = x;
+        this.ggPreviousY = y;
         this.body.setVelocityY(ggPlayerLaserVelocity(scene));
     }
 }
@@ -48,7 +50,9 @@ class Nuke extends Phaser.Physics.Arcade.Sprite { //Inherit Nuke class to Phaser
         Align.scaleToGameW(this, 0.052); //set scale
         this.setVelocity(0, -400); //create random x (left or right)value and fire up at -200
         this.setAngle(0); //set angle to 0
-        ggSetBodyLocal(this, 0.24, 0.72, 0.5, 0.18);
+        ggSetBodyEnvelope(this, GG_BODY_CONTRACTS.NUKE);
+        this.ggPreviousX = x;
+        this.ggPreviousY = y;
     }
 }
 
@@ -118,7 +122,7 @@ class AlienScout extends Entity { //Inherit alienscout class to Entity
         super(scene, x, y, "alienscout"); // call super class constructor
         this.setOrigin(0.5); //set origin of AlienScout to center
         Align.scaleToGameW(this, GG_SCALES.SCOUT); //set scale
-        ggSetBodyLocal(this, 0.42, 0.48, 0.5, 0.32);
+        ggSetBodyEnvelope(this, GG_BODY_CONTRACTS.SCOUT);
         this.setAngle(180);
         this.ggScoreEvent = "SCOUT_DESTROYED";
     }
@@ -139,7 +143,7 @@ class EnemyCruiser extends Entity { //Inherit Enemy class to Entity
         super(scene, x, y, key); // call super class constructor
         this.setOrigin(0.5); //set origin of enemy to center
         Align.scaleToGameW(this, GG_SCALES.CRUISER); //set scale
-        ggSetBodyLocal(this, 0.46, 0.54, 0.5, 0.22);
+        ggSetBodyEnvelope(this, GG_BODY_CONTRACTS.CRUISER);
         this.setAngle(180);
         this.ggScoreEvent = "SHIP_DESTROYED";
     }
@@ -151,7 +155,9 @@ class EnemyLaser extends Entity { //Inherit EnemyLaser class to Entity
         this.setOrigin(0.5);
         Align.scaleToGameW(this, GG_SCALES.ENEMY_LASER); //set scale of enemy laser
         this.setAngle(90);
-        ggSetVerticalProjectileBody(this, 0.62, 0.22);
+        ggSetVerticalProjectileBody(this, GG_BODY_CONTRACTS.ENEMY_LASER.w, GG_BODY_CONTRACTS.ENEMY_LASER.h);
+        this.ggPreviousX = x;
+        this.ggPreviousY = y;
         this.body.setVelocityY(ggEnemyLaserVelocity(scene));
     }
 }
@@ -162,7 +168,9 @@ class EnemyMotherShipLaser extends Entity { //Inherit EnemyLaser class to Entity
         this.setOrigin(0.5);
         Align.scaleToGameW(this, GG_SCALES.MOTHERSHIP_LASER); //set scale
         this.setAngle(90);
-        ggSetVerticalProjectileBody(this, 0.62, 0.22);
+        ggSetVerticalProjectileBody(this, GG_BODY_CONTRACTS.ENEMY_LASER.w, GG_BODY_CONTRACTS.ENEMY_LASER.h);
+        this.ggPreviousX = x;
+        this.ggPreviousY = y;
         this.body.setVelocityY(ggEnemyLaserVelocity(scene));
     }
 }
@@ -191,7 +199,7 @@ class Comet extends Phaser.Physics.Arcade.Sprite {
         this.setFrame(this.ggVariant);
         this.ggScoreEvent = "COMET_DESTROYED";
         Align.scaleToGameW(this, 0.062);
-        ggSetBodyLocal(this, 0.52, 0.48, 0.5, 0.28);
+        ggSetBodyEnvelope(this, GG_BODY_CONTRACTS.COMET);
         this.setVelocity(Phaser.Math.RND.integerInRange(180, -180), Phaser.Math.RND.integerInRange(180, -180));
         ggOrientCometToVelocity(this);
     }

@@ -10,7 +10,7 @@ const mode = modeArg ? modeArg.split("=")[1] : "all";
 const url = process.env.GG_RUNTIME_URL || "http://localhost:8027/";
 const evidenceRoot = path.resolve(process.env.GG_HANDOFF_ID
   ? `docs/internal_governance/evidence/${process.env.GG_HANDOFF_ID}`
-  : "docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV1");
+  : "docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV2");
 const runtimeDir = path.join(evidenceRoot, "runtime_playwright");
 
 function ensureDir(dir) {
@@ -65,7 +65,24 @@ async function runCollisionSuite(page) {
     function step(scene, frames) {
       for (let i = 0; i < frames; i++) {
         scene.physics.world.update(i * 16, 16);
+        if (typeof ggRunSweptCollisionContracts === "function") ggRunSweptCollisionContracts(scene);
       }
+    }
+
+    function scoreClampCheck() {
+      const previousText = textScore;
+      textScore = { setText() {} };
+      score = 0;
+      ggApplyScore(null, -1);
+      const zeroMinusOne = score;
+      score = 1;
+      ggApplyScore(null, -1);
+      const oneMinusOne = score;
+      score = 5;
+      ggApplyScore(null, -1);
+      const fiveMinusOne = score;
+      textScore = previousText;
+      return { zeroMinusOne, oneMinusOne, fiveMinusOne };
     }
 
     async function playerLaserTrials(sceneKey, EnemyClass, textureKey, trials) {
@@ -174,7 +191,7 @@ async function runCollisionSuite(page) {
     const enemyToPlayer = await enemyLaserPlayerTrials("Level1", 100);
     const specials = await specialPaths();
 
-    return { level1, level2, bossCruiser, enemyToPlayer, specials };
+    return { level1, level2, bossCruiser, enemyToPlayer, specials, scoreClamp: scoreClampCheck() };
   });
 }
 
@@ -229,7 +246,13 @@ async function runSurfaceSuite(page) {
       return { idleFrame, movingAnim, returnAnim };
     })(),
     playerLaserScale: GG_SCALES.PLAYER_LASER,
-    enemyLaserScale: GG_SCALES.ENEMY_LASER
+    enemyLaserScale: GG_SCALES.ENEMY_LASER,
+    hudContract: {
+      scoreText: textScore.text,
+      livesText: textLives.text,
+      hasMute: !!game.scene.keys.Level1.btnMute,
+      hasReplay: !!restartlevel
+    }
   }));
 
   report.pauseCycles = await page.evaluate(async () => {
@@ -240,7 +263,7 @@ async function runSurfaceSuite(page) {
       scene.pauseGame();
       await wait(60);
       const paused = game.scene.keys.Paused;
-      if (!paused.scene.isActive()) clean = false;
+      if (!paused.scene.isActive() || !paused.background || paused.background.texture.key !== "pauseScreen") clean = false;
       paused.resumeGame();
       await wait(60);
       if (paused.scene.isActive() || !scene.scene.isActive()) clean = false;
@@ -391,15 +414,23 @@ async function main() {
       collision.specials.nukeLifecycle.projectilesBefore === 1 &&
       collision.specials.nukeLifecycle.projectilesAfter === 0 &&
       collision.specials.nukeLifecycle.burstCount >= 1 &&
-      collision.specials.nukeLifecycle.particleManagers === 0;
+      collision.specials.nukeLifecycle.particleManagers === 0 &&
+      collision.scoreClamp.zeroMinusOne === 0 &&
+      collision.scoreClamp.oneMinusOne === 0 &&
+      collision.scoreClamp.fiveMinusOne === 4;
     if (!ok) report.pass = false;
   }
   if (report.browser) {
     const ok = report.browser.fonts.goldWoff2 === 200 && report.browser.fonts.silverWoff2 === 200 &&
       report.browser.fonts.goldCheck && report.browser.fonts.silverCheck &&
       report.browser.level1.population === 58 && report.browser.level1.enemyScale > report.browser.level1.baselineEnemyScale &&
+      report.browser.level1.playerScale === 0.036 &&
       Math.abs(Math.abs(report.browser.level1.enemyAngle) - 180) < 0.01 && report.browser.level1.enemyBounds.minLeft >= -1 &&
       report.browser.level1.enemyBounds.maxRight <= 1367 && report.browser.level1.nukeHud.iconTexture === "hudNuke" &&
+      report.browser.level1.hudContract.scoreText.indexOf("Score:") === 0 &&
+      report.browser.level1.hudContract.livesText.indexOf("Lives:") === 0 &&
+      report.browser.level1.hudContract.hasMute &&
+      !report.browser.level1.hudContract.hasReplay &&
       report.browser.level1.playerAnimation.idleFrame === "0" &&
       report.browser.level1.playerAnimation.movingAnim === "playerShipThrust" &&
       report.browser.level1.playerAnimation.returnAnim === "playerShipReturn" &&

@@ -4,7 +4,6 @@ class Paused extends Phaser.Scene {
     }
 
     create() {
-        this.background = new Background(this, this.game.config.width * 0.5, this.game.config.height * 0.5, "backgroundstars");
         this.sfx = ggCreateUiSfx(this);
         this.keyEnter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
         this.keyP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
@@ -12,14 +11,13 @@ class Paused extends Phaser.Scene {
 
         var w = this.game.config.width;
         var h = this.game.config.height;
-        var icon = this.add.image(w * 0.5, h * 0.32, "pauseIcon").setOrigin(0.5);
-        icon.clearTint();
-        Align.scaleToGameW(icon, 0.16);
+        this.background = this.add.image(w * 0.5, h * 0.5, "pauseScreen").setOrigin(0.5);
+        var scale = Math.max(w / this.background.width, h / this.background.height);
+        this.background.setScale(scale);
+        this.background.setDepth(0);
 
-        ggMakeText(this, w * 0.5, h * 0.18, "PAUSED", ggGoldStyle(82, "#ffb43c"));
-        ggMakeText(this, w * 0.5, h * 0.47, "Resume when ready", ggDisplayStyle(36, "#70fff2"));
-
-        this.btnResume = this.add.image(w * 0.5, h * 0.66, "resume").setOrigin(0.5).setInteractive({ useHandCursor: true });
+        this.btnResume = this.add.image(w * 0.5, h * 0.72, "resume").setOrigin(0.5).setInteractive({ useHandCursor: true });
+        this.btnResume.setDepth(2);
         this.btnResume.clearTint();
         Align.scaleToGameW(this.btnResume, 0.18);
         this.btnResume.on("pointerover", function() {

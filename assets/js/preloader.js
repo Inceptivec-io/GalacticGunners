@@ -47,6 +47,7 @@ class Preloader extends Phaser.Scene {
         this.load.image('alien', "assets/images/owned/branding/gg_game_over_panel_v002.png"); //preload alien image
         this.load.image('mute', "assets/images/owned/ui/gg_ui_sound_off_v002.png"); //preload mute image
         this.load.image('sound', "assets/images/owned/ui/gg_ui_sound_on_v002.png"); //preload sound image
+        this.load.image("pauseScreen", "assets/images/owned/ui/gg_pause_screen_v2.0.png");
         this.load.image('gameOver', "assets/images/owned/branding/gg_game_over_panel_v002.png"); //preload gameover shell image
         this.load.image('fireworks', "assets/images/owned/branding/gg_victory_panel_v002.png"); //preload victory panel image
         this.load.image("buttonMenuOff", "assets/images/owned/ui/gg_button_main_menu_v002_off.png");

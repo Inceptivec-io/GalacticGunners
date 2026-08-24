@@ -5,7 +5,7 @@ const sharp = require("sharp");
 
 const evidenceRoot = path.resolve(process.env.GG_HANDOFF_ID
   ? `docs/internal_governance/evidence/${process.env.GG_HANDOFF_ID}/toolchain`
-  : "docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV1/toolchain");
+  : "docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV2/toolchain");
 const outFile = path.join(evidenceRoot, "sprite_atlas_report.json");
 const sprites = [
   { key: "player", source: "assets/images/owned/sprites/gg_player_ship_v002_sheet.png", atlas: "assets/images/owned/sprites/gg_player_ship_v002_atlas.json" },

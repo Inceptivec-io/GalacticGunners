@@ -4,7 +4,7 @@ const GG_FONT_TITLE = GG_FONT_SILVER;
 const GG_FONT_DISPLAY = GG_FONT_SILVER;
 
 const GG_SCALES = Object.freeze({
-    PLAYER: 0.040,
+    PLAYER: 0.036,
     ENEMY_LEVEL1: 0.029,
     ENEMY: 0.024,
     SCOUT: 0.025,
@@ -12,6 +12,18 @@ const GG_SCALES = Object.freeze({
     PLAYER_LASER: 0.026,
     ENEMY_LASER: 0.023,
     MOTHERSHIP_LASER: 0.027
+});
+
+const GG_BODY_CONTRACTS = Object.freeze({
+    PLAYER: { w: 0.34, h: 0.54, ox: 0.5, oy: 0.36 },
+    PLAYER_LASER: { w: 0.62, h: 0.22 },
+    NUKE: { w: 0.24, h: 0.72, ox: 0.5, oy: 0.18 },
+    SCOUT: { w: 0.42, h: 0.48, ox: 0.5, oy: 0.32 },
+    ENEMY: { w: 0.45, h: 0.52, ox: 0.5, oy: 0.32 },
+    CRUISER: { w: 0.46, h: 0.54, ox: 0.5, oy: 0.22 },
+    MOTHERSHIP: { w: 0.48, h: 0.52, ox: 0.5, oy: 0.22 },
+    ENEMY_LASER: { w: 0.62, h: 0.22 },
+    COMET: { w: 0.52, h: 0.48, ox: 0.5, oy: 0.28 }
 });
 
 function ggSetBodyLocal(sprite, widthRatio, heightRatio, offsetXRatio, offsetYRatio) {
@@ -24,6 +36,11 @@ function ggSetBodyLocal(sprite, widthRatio, heightRatio, offsetXRatio, offsetYRa
     var offsetY = Math.round((frameH - bodyH) * (typeof offsetYRatio === "number" ? offsetYRatio : 0.5));
     sprite.body.setSize(bodyW, bodyH, false);
     sprite.body.setOffset(offsetX, offsetY);
+}
+
+function ggSetBodyEnvelope(sprite, contract) {
+    if (!sprite || !sprite.body || !contract) return;
+    ggSetBodyLocal(sprite, contract.w, contract.h, contract.ox, contract.oy);
 }
 
 function ggSetVerticalProjectileBody(sprite, sourceLengthRatio, sourceThicknessRatio) {
@@ -47,7 +64,7 @@ function ggEnemyLaserVelocity(scene) {
 function ggSetEnemyScale(enemy, scale) {
     if (!enemy) return;
     Align.scaleToGameW(enemy, scale || GG_SCALES.ENEMY);
-    ggSetBodyLocal(enemy, 0.45, 0.52, 0.5, 0.32);
+    ggSetBodyEnvelope(enemy, GG_BODY_CONTRACTS.ENEMY);
 }
 
 function ggSetPlayerMovementState(scene, moving) {
@@ -95,6 +112,10 @@ function ggApplyCompletionBonusOnce(scene) {
     scene.ggCompletionBonusAmount = bonus;
     ggApplyScore(scene, bonus);
     return bonus;
+}
+
+function ggScoreValue(value) {
+    return Math.max(0, value || 0);
 }
 
 const GG_SCORE_EVENTS = Object.freeze({
@@ -323,7 +344,7 @@ function ggAddPanelHit(scene, role, x, y, width, height, callback) {
 
 function ggApplyScore(scene, amount) {
     if (RIP && finalScore !== null) return;
-    score += amount;
+    score = ggScoreValue(score + amount);
     if (textScore && textScore.setText) textScore.setText("Score: " + score);
 }
 
@@ -355,6 +376,31 @@ function ggCreateHud(scene, options) {
     if (showReplay) {
         restartlevel = scene.add.text(scene.game.config.width * 0.5, topY, "Replay: " + LevelRestart, textStyle).setOrigin(0.5);
     }
+}
+
+function ggDestroyIfLive(item) {
+    if (item && item.destroy) item.destroy();
+}
+
+function ggCreateSharedHud(scene, options) {
+    ggDestroyIfLive(textScore);
+    ggDestroyIfLive(textLives);
+    ggDestroyIfLive(textNukesLoad);
+    ggDestroyIfLive(textNukes);
+    ggDestroyIfLive(restartlevel);
+    if (scene.btnMute) ggDestroyIfLive(scene.btnMute);
+
+    ggCreateHud(scene, options || {});
+    scene.btnMute = ggAddMuteButton(scene, 99);
+    ggInstallNukeHud(scene);
+    return {
+        score: textScore,
+        lives: textLives,
+        rearm: textNukesLoad,
+        nukes: textNukes,
+        replay: restartlevel,
+        mute: scene.btnMute
+    };
 }
 
 function ggInstallNukeHud(scene) {
@@ -545,6 +591,171 @@ function ggInstallCometCollisions(scene) {
     }, null, scene);
 }
 
+function ggGroupChildren(group) {
+    return group && group.getChildren ? group.getChildren() : [];
+}
+
+function ggBoundsFor(item) {
+    if (!item || !item.active) return null;
+    if (item.body) {
+        return {
+            left: item.body.x,
+            top: item.body.y,
+            right: item.body.x + item.body.width,
+            bottom: item.body.y + item.body.height
+        };
+    }
+    if (item.getBounds) {
+        var bounds = item.getBounds();
+        return { left: bounds.left, top: bounds.top, right: bounds.right, bottom: bounds.bottom };
+    }
+    return null;
+}
+
+function ggSweptBoundsFor(projectile) {
+    var current = ggBoundsFor(projectile);
+    if (!current) return null;
+    var previousX = typeof projectile.ggPreviousX === "number" ? projectile.ggPreviousX : projectile.x;
+    var previousY = typeof projectile.ggPreviousY === "number" ? projectile.ggPreviousY : projectile.y;
+    var dx = projectile.x - previousX;
+    var dy = projectile.y - previousY;
+    return {
+        left: Math.min(current.left, current.left - dx),
+        top: Math.min(current.top, current.top - dy),
+        right: Math.max(current.right, current.right - dx),
+        bottom: Math.max(current.bottom, current.bottom - dy)
+    };
+}
+
+function ggBoundsOverlap(a, b) {
+    return !!(a && b && a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top);
+}
+
+function ggMarkSweepPositions(group) {
+    ggGroupChildren(group).forEach(function(projectile) {
+        if (!projectile || !projectile.active) return;
+        projectile.ggPreviousX = projectile.x;
+        projectile.ggPreviousY = projectile.y;
+    });
+}
+
+function ggDestroyEnemyTarget(scene, projectile, target, nuke) {
+    if (!scene || !projectile || !target || !projectile.active || !target.active || target.ggSweptResolved) return false;
+    target.ggSweptResolved = true;
+    projectile.destroy();
+    if (nuke && emitter && emitter.stop) emitter.stop();
+    enemyShips--;
+    enemyDeaths++;
+    if (nuke) scene.createNukeExplosion(target.x, target.y);
+    else scene.createExplosion(target.x, target.y);
+    ggScoreEvent(scene, ggEnemyScoreEvent(target));
+    target.destroy();
+    return true;
+}
+
+function ggDestroyAsteroidTarget(scene, projectile, asteroid, nuke) {
+    if (!scene || !projectile || !asteroid || !projectile.active || !asteroid.active || asteroid.ggSweptResolved) return false;
+    asteroid.ggSweptResolved = true;
+    projectile.destroy();
+    if (nuke && emitter && emitter.stop) emitter.stop();
+    if (nuke) scene.createNukeExplosion(asteroid.x, asteroid.y);
+    else scene.createExplosion(asteroid.x, asteroid.y);
+    ggScoreEvent(scene, "ASTEROID_DESTROYED");
+    asteroid.destroy();
+    return true;
+}
+
+function ggHitMothershipTarget(scene, projectile, mothership, nuke) {
+    if (!scene || !projectile || !mothership || !projectile.active || !mothership.active) return false;
+    projectile.destroy();
+    if (nuke && emitter && emitter.stop) emitter.stop();
+    if (nuke) {
+        scene.createNukeExplosion(mothership.x, mothership.y, "mothershipHit");
+        ggScoreEvent(scene, "MOTHERSHIP_HIT");
+        scene.motherShipHit(2);
+    }
+    else {
+        scene.createExplosion(mothership.x, mothership.y, "mothershipHit");
+        ggScoreEvent(scene, "MOTHERSHIP_HIT");
+        scene.motherShipHit(1);
+    }
+    return true;
+}
+
+function ggHitPlayerTarget(scene, laser, player) {
+    if (!scene || !laser || !player || !laser.active || !player.active || laser.ggSweptResolved) return false;
+    laser.ggSweptResolved = true;
+    scene.createExplosion(player.x, player.y, "playerHit");
+    player.body.reset(scene.game.config.width * 0.5, scene.game.config.height - 50);
+    scene.onLifeDown();
+    laser.destroy();
+    return true;
+}
+
+function ggSweepProjectilesAgainst(scene, projectileGroup, targetGroup, hitCallback) {
+    ggGroupChildren(projectileGroup).slice().forEach(function(projectile) {
+        if (!projectile || !projectile.active) return;
+        var swept = ggSweptBoundsFor(projectile);
+        ggGroupChildren(targetGroup).slice().some(function(target) {
+            if (!target || !target.active) return false;
+            if (!ggBoundsOverlap(swept, ggBoundsFor(target))) return false;
+            return hitCallback(projectile, target) === true;
+        });
+    });
+}
+
+function ggRunSweptCollisionContracts(scene) {
+    if (!scene || RIP || levelWon) return;
+    ggSweepProjectilesAgainst(scene, scene.playerLasers, scene.enemies, function(laser, enemy) {
+        return ggDestroyEnemyTarget(scene, laser, enemy, false);
+    });
+    ggSweepProjectilesAgainst(scene, scene.starNukes, scene.enemies, function(nuke, enemy) {
+        return ggDestroyEnemyTarget(scene, nuke, enemy, true);
+    });
+    ggSweepProjectilesAgainst(scene, scene.playerLasers, scene.alienscouts, function(laser, scout) {
+        return ggDestroyEnemyTarget(scene, laser, scout, false);
+    });
+    ggSweepProjectilesAgainst(scene, scene.starNukes, scene.alienscouts, function(nuke, scout) {
+        return ggDestroyEnemyTarget(scene, nuke, scout, true);
+    });
+    if (scene.alienMothership && scene.alienMothership.active) {
+        var mothershipGroup = { getChildren: function() { return [scene.alienMothership]; } };
+        ggSweepProjectilesAgainst(scene, scene.playerLasers, mothershipGroup, function(laser, mothership) {
+            return ggHitMothershipTarget(scene, laser, mothership, false);
+        });
+        ggSweepProjectilesAgainst(scene, scene.starNukes, mothershipGroup, function(nuke, mothership) {
+            return ggHitMothershipTarget(scene, nuke, mothership, true);
+        });
+    }
+    ggSweepProjectilesAgainst(scene, scene.playerLasers, scene.asteroids, function(laser, asteroid) {
+        return ggDestroyAsteroidTarget(scene, laser, asteroid, false);
+    });
+    ggSweepProjectilesAgainst(scene, scene.starNukes, scene.asteroids, function(nuke, asteroid) {
+        return ggDestroyAsteroidTarget(scene, nuke, asteroid, true);
+    });
+    ggSweepProjectilesAgainst(scene, scene.enemyLasers, { getChildren: function() { return scene.player && scene.player.active ? [scene.player] : []; } }, function(laser, player) {
+        return ggHitPlayerTarget(scene, laser, player);
+    });
+    ggMarkSweepPositions(scene.playerLasers);
+    ggMarkSweepPositions(scene.starNukes);
+    ggMarkSweepPositions(scene.enemyLasers);
+}
+
+function ggInstallSweptCollisionContracts(scene) {
+    if (!scene || !scene.time || scene.ggSweptCollisionEvent) return;
+    ggMarkSweepPositions(scene.playerLasers);
+    ggMarkSweepPositions(scene.starNukes);
+    ggMarkSweepPositions(scene.enemyLasers);
+    scene.ggSweptCollisionEvent = scene.time.addEvent({
+        delay: 16,
+        callback: function() {
+            ggRunSweptCollisionContracts(scene);
+        },
+        callbackScope: scene,
+        loop: true
+    });
+}
+
 function ggResetToMenu(scene) {
     enemyShips = 0;
     enemyDeaths = 0;
@@ -591,7 +802,8 @@ function ggRestartGameplay(scene, sceneKey) {
 
 function ggRenderGameOver(scene, menuCallback, replayCallback, tryAgainCallback) {
     RIP = true;
-    finalScore = score;
+    finalScore = ggScoreValue(score);
+    score = finalScore;
     ggSetHudVisible(false);
     ggPlayAudioOnce(scene, "game-over-entry", GG_AUDIO.GAME_OVER_STINGER);
     if (textScore) textScore.setText("Final Score: " + finalScore);
@@ -615,6 +827,8 @@ function ggRenderGameOver(scene, menuCallback, replayCallback, tryAgainCallback)
 }
 
 function ggRenderVictory(scene, title, body, nextLabel, nextCallback, options) {
+    finalScore = ggScoreValue(score);
+    score = finalScore;
     ggPlayAudioOnce(scene, "victory-entry", GG_AUDIO.VICTORY_STINGER);
     ggSetHudVisible(false);
     var panel = scene.add.image(scene.game.config.width * 0.5, scene.game.config.height * 0.54, "fireworks").setOrigin(0.5);
@@ -623,7 +837,7 @@ function ggRenderVictory(scene, title, body, nextLabel, nextCallback, options) {
     var bonus = options && typeof options.bonus === "number" ? options.bonus : 0;
     var wave = options && options.wave ? options.wave : ggSceneWaveLabel(scene);
     ggMakeText(scene, scene.game.config.width * 0.5, scene.game.config.height * 0.19, title, ggGoldStyle(74, "#ffb43c")).setDepth(21);
-    ggMakeText(scene, scene.game.config.width * 0.31, scene.game.config.height * 0.66, String(score), ggDisplayStyle(42, "#ffffff")).setDepth(21);
+    ggMakeText(scene, scene.game.config.width * 0.31, scene.game.config.height * 0.66, String(finalScore), ggDisplayStyle(42, "#ffffff")).setDepth(21);
     ggMakeText(scene, scene.game.config.width * 0.50, scene.game.config.height * 0.66, String(wave), ggDisplayStyle(36, "#f6f7ff")).setDepth(21);
     ggMakeText(scene, scene.game.config.width * 0.69, scene.game.config.height * 0.66, String(bonus), ggDisplayStyle(36, "#f6f7ff")).setDepth(21);
     if (body) ggMakeText(scene, scene.game.config.width * 0.5, scene.game.config.height * 0.76, body, ggDisplayStyle(26, "#70fff2")).setDepth(21);
