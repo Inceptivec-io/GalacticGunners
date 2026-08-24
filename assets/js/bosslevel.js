@@ -538,9 +538,9 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
         this.time.addEvent({
             delay: 10,
             callback: function() {
-                for (var x = 3; x < 27; x++) { //create an inset row of enemy ships by setting to 35, skipping the first 6 iterations of the loop by setting x, we can center the enemyShips by offsetting from the edge
+                for (var x = 5; x < 26; x += 2) { //create a readable centered formation without crowding the playfield
                     for (var y = 0; y < 3; y++) { //create 3 additional rows by iterating through x
-                        var enemy = new EnemyCruiser(this, x * (this.game.config.width * 0.035), (this.game.config.height * 0.25) + (y * (this.game.config.height * 0.11)), "enemyCruiser"); //set coordinates for image with spacing on x and y and assign a key from preloaded images to add the enemyship image sprite
+                        var enemy = new EnemyCruiser(this, x * (this.game.config.width * 0.04), (this.game.config.height * 0.27) + (y * (this.game.config.height * 0.12)), "enemyCruiser"); //set coordinates for image with spacing on x and y and assign a key from preloaded images to add the enemyship image sprite
                         enemy.play("enemyCruiser"); //start animation of the enemyShip
                         enemyShips++; //add a ship to total enemy ships created
                         this.enemies.add(enemy); //draw an enemy ship on the screen at x and y
@@ -1058,48 +1058,26 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
 
     //create win function
     win() {
-        ggPlayAudioOnce(this, "boss-victory", GG_AUDIO.VICTORY_STINGER);
         this.player.destroy(); //destroy player if victory to stop losing any lives 
-        this.addScore((currentLives + currentNukes + LevelRestart) * 100); //total left over assets and add to score
+        var completionBonus = ggPendingCompletionBonus();
+        this.addScore(completionBonus); //total left over assets and add to score
         textLives.setText('Lives: WINNER'); //set lives text to GAME OVER 
         textScore.setText('Final Score: ' + score); //set score text to final score
-        this.fireworksVictory = this.add.image(0, 0, 'fireworks'); //set fireworks image position x,y and initiate first so image behind the hero
-        this.aGrid.placeAtIndex(71, this.fireworksVictory); //set position on the grid
-        Align.scaleToGameW(this.fireworksVictory, 0.7); //set scale
-        this.textVictory = this.add.text( //create Victory text
-            0, //set x axis position
-            0, //set y axis position
-            "MOTHERSHIP DOWN!", //set text   
+        ggRenderVictory(
+            this,
+            "MISSION CLEARED",
+            "MOTHERSHIP DOWN",
+            null,
+            null,
             {
-                fontFamily: GG_FONT_DISPLAY, //set font type
-                fontSize: 100, //set font size
-                align: "center" //set text alignment
+                wave: "FINAL",
+                bonus: completionBonus,
+                menuCallback: function() { ggResetToMenu(this); }.bind(this),
+                replayCallback: function() { ggRestartGameplay(this, "BossLevel"); }.bind(this)
             }
         );
-        this.textVictory.setOrigin(0.5, 0.6); //set text origin to center 
-        this.textVictory.setTint(0x00ff00); //set victory text to green
-        this.aGrid.placeAtIndex(5, this.textVictory); //set position on the grid
-        Align.scaleToGameW(this.textVictory, 0.6); //set scale
-        this.heroWin = this.add.image(0, 0, 'hero'); //insert hero image setting x and y position
-        this.aGrid.placeAtIndex(71, this.heroWin); //set position on the grid
-        Align.scaleToGameW(this.heroWin, 0.25); //set scale
         enemyShips = 0; //set enemyShips to 0
         enemyDeaths = 0; //set enemyDeaths to 0
-        this.time.addEvent({ //add timed event
-            delay: 3000, //set delay to 3000
-            callback: function() { //create callback function
-                this.scene.start("Victory"); //set scene start for Boss Level
-                enemyShips = 0; //set enemyShips to 0
-                enemyDeaths = 0; //set enemyDeaths to 0
-                totalEnemyShips = 0; //reset total enemyships
-                currentLives = 0; //set values to game start
-                currentNukes = maxNukes; //set values to game start
-                motherShipAlive = true; //set values to game start
-                motherShipLives = maxMotherShipLives; //set values to game start
-            },
-            callbackScope: this, //set call back scope to this
-            loop: false //set loop to false only play once
-        });
     }
     //END win function
 
@@ -1144,33 +1122,6 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
                         score = 0; //set the score back to 0
                         this.scene.start("MainMenu"); //Restart Game
                     }
-                }
-                if (RIP && touch) { // if touch is true and RIP
-                    this.input.on('pointerdown', function() { //pointerdown acts as R
-                        if (LevelRestart > 0) { //if levelRestart = 1 
-                            enemyShips = 0; //set enemyShips to 0
-                            enemyDeaths = 0; //set enemyDeaths to 0
-                            totalEnemyShips = 0; //reset total enemyships
-                            currentLives = LevelRestartLives; //reset lives to LevelRestartLives
-                            this.loseRestartLife(); //lose level restart
-                            RIP = false; //set RIP to false so restart cant happen in game
-                            motherShipAlive = true; //reset mothership value
-                            motherShipLives = maxMotherShipLives;; //reset mothership lives
-                            this.scene.start("BossLevel"); //Restart Game
-                        }
-                        else {
-                            enemyShips = 0; //set enemyShips to 0
-                            enemyDeaths = 0; //set enemyDeaths to 0
-                            totalEnemyShips = 0; //reset total enemyships
-                            currentLives = 0; //reset lives
-                            currentNukes = 0; //reset nukes 
-                            motherShipAlive = true; //set mothership alive
-                            motherShipLives = maxMotherShipLives; //set mothership lives back to normal
-                            RIP = false; //set RIP to false so restart cant happen in game
-                            score = 0; //set the score back to 0
-                            this.scene.start("MainMenu"); //Restart Game
-                        }
-                    }, this);
                 }
             },
             callbackScope: this, //set call back scope to this

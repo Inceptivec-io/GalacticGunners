@@ -22,7 +22,7 @@ class Player extends Phaser.Physics.Arcade.Sprite { //Inherit Player class to Ph
         scene.physics.add.existing(this); //add existing game objects to the physics world
         this.setCollideWorldBounds(true); //set collide world bounds to true
         this.setOrigin(0.5, 0.5); //keep player hitbox stable through animation
-        Align.scaleToGameW(this, 0.052); //set scale
+        Align.scaleToGameW(this, 0.058); //set scale
         this.body.setSize(this.width * 0.42, this.height * 0.5, true);
         this.play("playerShip");
     }
@@ -31,7 +31,10 @@ class Player extends Phaser.Physics.Arcade.Sprite { //Inherit Player class to Ph
 class PlayerLaser extends Entity { //Inherit PlayerLaser class to Entity
     constructor(scene, x, y) { // constructor function to instantiate a player laser object
         super(scene, x, y, "sprLaserPlayer"); // call super class constructor
-        Align.scaleToGameW(this, 0.008); //set scale
+        this.setOrigin(0.5);
+        Align.scaleToGameW(this, 0.024); //set scale
+        this.setAngle(-90);
+        this.body.setSize(this.width * 0.58, this.height * 0.16, true);
     }
 }
 
@@ -41,10 +44,10 @@ class Nuke extends Phaser.Physics.Arcade.Sprite { //Inherit Nuke class to Phaser
         scene.add.existing(this); //add Nuke to this scene 
         scene.physics.add.existing(this); //add existing game objects to the physics world
         this.play("nuke");
-        Align.scaleToGameW(this, 0.035); //set scale
+        Align.scaleToGameW(this, 0.052); //set scale
         this.setVelocity(0, -400); //create random x (left or right)value and fire up at -200
         this.setAngle(0); //set angle to 0
-        this.body.angularVelocity = 100; //set rotation speed to 100
+        this.body.setSize(this.width * 0.46, this.height * 0.62, true);
         emitter.start(); //start emitting the particles
         emitter.startFollow(this); //start particles following the starNuke
     }
@@ -52,8 +55,8 @@ class Nuke extends Phaser.Physics.Arcade.Sprite { //Inherit Nuke class to Phaser
 
 class Explosion extends Entity { //Inherit Explosion class to Entity
     constructor(scene, x, y, large) { // constructor function to instantiate an explosion object
-        super(scene, x, y, "sprExplosion"); // call super class constructor
-        this.play("sprExplosion"); //play explosion animation when created
+        super(scene, x, y, large ? "sprExplosionLarge" : "sprExplosion"); // call super class constructor
+        this.play(large ? "sprExplosionLarge" : "sprExplosion"); //play explosion animation when created
         this.setOrigin(0.5); //sets the origin of the explosion to center of event
         this.setScale(large ? 0.28 : 0.16); //differentiate small and large explosion scale
         this.setBlendMode(Phaser.BlendModes.ADD);
@@ -77,7 +80,7 @@ class NukeExplosion extends Entity { //Inherit NukeExplosion class to Entity
         super(scene, x, y, "nukeBurst"); // call super class constructor
         this.play("nukeBurst"); //play supplied nuke burst animation when created
         this.setOrigin(0.5); //sets the origin of the nuke explosion to center of event
-        this.setScale(0.42); //set scale of the nuke explosion
+        this.setScale(0.5); //set scale of the nuke explosion
         this.setBlendMode(Phaser.BlendModes.ADD);
         this.setAlpha(0.95);
         scene.tweens.add({
@@ -106,7 +109,7 @@ class AlienScout extends Entity { //Inherit alienscout class to Entity
     constructor(scene, x, y, key) { // constructor function to instantiate an alienscout object
         super(scene, x, y, "alienscout"); // call super class constructor
         this.setOrigin(0.5); //set origin of AlienScout to center
-        Align.scaleToGameW(this, 0.032); //set scale
+        Align.scaleToGameW(this, 0.028); //set scale
         this.ggScoreEvent = "SCOUT_DESTROYED";
     }
 }
@@ -115,7 +118,7 @@ class Enemy extends Entity { //Inherit Enemy class to Entity
     constructor(scene, x, y, key) { // constructor function to instantiate an enemy object
         super(scene, x, y, key); // call super class constructor
         this.setOrigin(0.5); //set origin of enemy to center
-        Align.scaleToGameW(this, 0.032); //set scale of enemy
+        Align.scaleToGameW(this, 0.028); //set scale of enemy
         this.ggScoreEvent = "SHIP_DESTROYED";
     }
 }
@@ -124,7 +127,7 @@ class EnemyCruiser extends Entity { //Inherit Enemy class to Entity
     constructor(scene, x, y, key) { // constructor function to instantiate an enemy object
         super(scene, x, y, key); // call super class constructor
         this.setOrigin(0.5); //set origin of enemy to center
-        Align.scaleToGameW(this, 0.052); //set scale
+        Align.scaleToGameW(this, 0.044); //set scale
         this.ggScoreEvent = "SHIP_DESTROYED";
     }
 }
@@ -132,14 +135,20 @@ class EnemyCruiser extends Entity { //Inherit Enemy class to Entity
 class EnemyLaser extends Entity { //Inherit EnemyLaser class to Entity
     constructor(scene, x, y, key) { // constructor function to instantiate a enemy laser object
         super(scene, x, y, "sprLaserEnemy"); // call super class constructor
-        Align.scaleToGameW(this, 0.005); //set scale of enemy laser
+        this.setOrigin(0.5);
+        Align.scaleToGameW(this, 0.02); //set scale of enemy laser
+        this.setAngle(90);
+        this.body.setSize(this.width * 0.58, this.height * 0.16, true);
     }
 }
 
 class EnemyMotherShipLaser extends Entity { //Inherit EnemyLaser class to Entity
     constructor(scene, x, y, key) { // constructor function to instantiate a enemy laser object
         super(scene, x, y, "sprLaserEnemy"); // call super class constructor
-        Align.scaleToGameW(this, 0.007); //set scale
+        this.setOrigin(0.5);
+        Align.scaleToGameW(this, 0.026); //set scale
+        this.setAngle(90);
+        this.body.setSize(this.width * 0.58, this.height * 0.16, true);
     }
 }
 
@@ -163,10 +172,10 @@ class Comet extends Phaser.Physics.Arcade.Sprite {
         super(scene, x, y, "comet");
         scene.add.existing(this);
         scene.physics.add.existing(this);
-        this.ggVariant = Phaser.Math.RND.integerInRange(0, 1);
+        this.ggVariant = Phaser.Math.RND.integerInRange(0, 3);
         this.setFrame(this.ggVariant);
         this.ggScoreEvent = "COMET_DESTROYED";
-        Align.scaleToGameW(this, 0.07);
+        Align.scaleToGameW(this, 0.062);
         this.body.setSize(this.width * 0.55, this.height * 0.55, true);
         this.setVelocity(Phaser.Math.RND.integerInRange(180, -180), Phaser.Math.RND.integerInRange(180, -180));
         this.body.angularVelocity = 120;

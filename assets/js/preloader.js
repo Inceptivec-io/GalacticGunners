@@ -43,22 +43,32 @@ class Preloader extends Phaser.Scene {
         this.load.image("sprLaserEnemy", "assets/images/owned/sprites/gg_enemy_laser_v002.png"); //preload enemyLaser image to the game, assign key name and src
         this.load.image("sprLaserPlayer", "assets/images/owned/sprites/gg_player_laser_v002.png"); //preload playerLaser image to the game, assign key name and src
         this.load.spritesheet("nuke", "assets/images/owned/sprites/gg_nuke_projectile_v002_sheet.png", {
-            frameWidth: 512,
-            frameHeight: 768
+            frameWidth: 720,
+            frameHeight: 800
         });
         this.load.spritesheet("sprExplosion", "assets/images/owned/sprites/gg_explosion_small_v002_sheet.png", { //preload explosion spritesheet to the game, assign key name and src, object frameWidth and frameheight
-            frameWidth: 658,
-            frameHeight: 797
+            frameWidth: 494,
+            frameHeight: 494
         });
-        this.load.spritesheet("nukeBurst", "assets/images/owned/sprites/gg_nuke_burst_v002_sheet.png", {
+        this.load.spritesheet("sprExplosionLarge", "assets/images/owned/sprites/gg_explosion_large_v002_sheet.png", {
             frameWidth: 512,
             frameHeight: 512
+        });
+        this.load.spritesheet("nukeBurst", "assets/images/owned/sprites/gg_nuke_burst_v002_sheet.png", {
+            frameWidth: 516,
+            frameHeight: 516
         });
         this.load.image('alien', "assets/images/owned/branding/gg_game_over_panel_v002.png"); //preload alien image
         this.load.image('mute', "assets/images/owned/ui/gg_ui_sound_off_v002.png"); //preload mute image
         this.load.image('sound', "assets/images/owned/ui/gg_ui_sound_on_v002.png"); //preload sound image
         this.load.image('gameOver', "assets/images/owned/branding/gg_game_over_panel_v002.png"); //preload gameover shell image
         this.load.image('fireworks', "assets/images/owned/branding/gg_victory_panel_v002.png"); //preload victory panel image
+        this.load.image("buttonMenuOff", "assets/images/owned/ui/gg_button_main_menu_v002_off.png");
+        this.load.image("buttonMenuOn", "assets/images/owned/ui/gg_button_main_menu_v002_onclick.png");
+        this.load.image("buttonReplayOff", "assets/images/owned/ui/gg_button_replay_v002_off.png");
+        this.load.image("buttonReplayOn", "assets/images/owned/ui/gg_button_replay_v002_onclick.png");
+        this.load.image("buttonTryAgainOff", "assets/images/owned/ui/gg_button_try_again_v002_off.png");
+        this.load.image("buttonTryAgainOn", "assets/images/owned/ui/gg_button_try_again_v002_onclick.png");
         this.load.image("hudLife", "assets/images/owned/ui/gg_hud_life_icon_v002.png");
         this.load.image("hudNuke", "assets/images/owned/ui/gg_hud_nuke_icon_v002.png");
         this.load.spritesheet("asteroid", "assets/images/owned/sprites/gg_asteroid_v002_sheet.png", {
@@ -66,16 +76,16 @@ class Preloader extends Phaser.Scene {
             frameHeight: 724
         });
         this.load.spritesheet("comet", "assets/images/owned/sprites/gg_comet_v002_sheet.png", {
-            frameWidth: 836,
-            frameHeight: 940
+            frameWidth: 837,
+            frameHeight: 470
         });
     }
     create() {
         //create animations
         this.anims.create({ //animation object create
             key: "playerShip",
-            frames: this.anims.generateFrameNumbers("playerShip", { frames: [0, 1, 0, 2] }),
-            frameRate: 4,
+            frames: this.anims.generateFrameNumbers("playerShip", { frames: [0] }),
+            frameRate: 1,
             repeat: -1
         });
         this.anims.create({ //animation object create
@@ -107,6 +117,12 @@ class Preloader extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers("sprExplosion"), //set image to be used to generate frames
             frameRate: 18, //set frame rate speed
             repeat: 0 //play once and clean up
+        });
+        this.anims.create({
+            key: "sprExplosionLarge",
+            frames: this.anims.generateFrameNumbers("sprExplosionLarge"),
+            frameRate: 18,
+            repeat: 0
         });
         this.anims.create({
             key: "nuke",
@@ -152,6 +168,8 @@ class Preloader extends Phaser.Scene {
             Promise.all([
                 document.fonts.load("96px GalacticGunnersTitle"),
                 document.fonts.load("80px GalacticGunnersDisplay"),
+                document.fonts.load("80px GalacticGunnersSilverProduction"),
+                document.fonts.load("80px GalacticGunnersGoldProduction"),
                 document.fonts.ready
             ]).then(startMainMenu).catch(startMainMenu);
             return;

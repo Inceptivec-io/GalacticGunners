@@ -1,0 +1,6 @@
+GalacticGunnersSilverDisplay-Regular.otf: PASS; glyphs=65; required-map=PASS
+GalacticGunnersSilverDisplay-Regular.ttf: PASS; glyphs=65; required-map=PASS
+GalacticGunnersSilverDisplay-Regular.woff: PASS; flavor=woff; glyphs=65
+GalacticGunnersSilverDisplay-Regular.woff2: PASS; flavor=woff2; glyphs=65
+GalacticGunnersSilverDisplay-VF.woff2: PASS; flavor=woff2; axes=wght:400.0-900.0
+msdf-atlas.png: PASS; mode=RGB; size=1280x1152

@@ -1,26 +1,26 @@
 Active Handoff:
-GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP2
+GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1
 
 Programme:
 IP_FREEDOM_LICENSE_PROTECTION_ASSET_CREATION
 
 Stage:
-APP2 VISUAL/RUNTIME AND SMALL-SURFACE CORRECTION COMPLETE / PENDING FOUNDER ACCEPTANCE
+APP3 ACCEPTANCE-BLOCKING PRODUCTION-SURFACE CORRECTION COMPLETE / PENDING FOUNDER ACCEPTANCE
 
 Branch:
 feature/GG-COM-001
 
-DEVTEAM_003_APP2 Entry SHA:
-ccb80c298dd10e0c971c62f50a7c60d3b4cd614d
+DEVTEAM_003_APP3_REV1 Entry SHA:
+5ccd915ab9e11ff53ad1ae247fbe5a0c87710d43
 
 Current Repository Head Authority:
 origin/feature/GG-COM-001
 
 Local/Remote Reconciliation At Return:
-RECORDED IN EXTERNAL DEVTEAM-003 APP2 HANDOFF-OUT, NOT SELF-REFERENCED IN THIS COMMITTED FILE
+RECORDED IN EXTERNAL DEVTEAM-003 APP3 REV1 HANDOFF-OUT AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
 
 Worktree At Return:
-RECORDED IN EXTERNAL DEVTEAM-003 APP2 HANDOFF-OUT, NOT SELF-REFERENCED IN THIS COMMITTED FILE
+RECORDED IN EXTERNAL DEVTEAM-003 APP3 REV1 HANDOFF-OUT AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
 
 POST_BOX:
 CLEAN AT CLOSURE - boundary controls only / active payload zero
@@ -38,28 +38,37 @@ IP Freedom Integration:
 PASS
 
 DEVTEAM-003 Visual Reconstruction:
-PASS - corrected through APP2
+PASS - corrected through APP3 REV1
 
 Owned Audio Integration:
-PASS - 16/16 accepted WAV files integrated
+PASS - 16/16 accepted WAV files integrated under APP1
 
 Duplicate Transport Verification:
+PASS under APP1
+
+APP3 Production Surface Correction:
 PASS
 
-Unknown Audio Provenance:
-0
+Favicon:
+PASS - settled HUD life icon favicon retained and not revisited
+
+Main Menu Layout / Font:
+PASS - production gold/silver font surfaces and visible bounds verified
+
+Sprite / FX Runtime:
+PASS - player/scout frame extraction, FX strips, nuke projectile and nuke burst verified
+
+Projectile Orientation:
+PASS - player laser -90 degrees, enemy laser 90 degrees, readable sizing verified
+
+Result Panels:
+PASS - game-over button states active; victory values dynamic; panel-aligned NEXT/REPLAY/MENU controls verified
 
 Runtime Regression:
-PASS target - proof recorded externally at final APP2 pushed HEAD
+PASS - APP3 semantic browser verifier; runtime exceptions 0; network failures 0
 
 Docker Local Founder Acceptance Runtime:
-AVAILABLE - final rebuild proof recorded externally at APP2 pushed HEAD
-
-Favicon / Small-Surface Completeness:
-PASS
-
-Founder Review Correction:
-PASS - HUD life icon favicon delivered with cache-refreshing links; MainMenu viewport layout corrected; CTA uses owned title font with preload font readiness gate
+AVAILABLE - rebuilt for APP3 preview at http://localhost:8027/
 
 Founder Visual Acceptance:
 PENDING
@@ -71,10 +80,10 @@ Founder Audio-In-Context Acceptance:
 PENDING
 
 Controller Hardware:
-NOT EXECUTED - no Xbox/Haute hardware attached; controller runtime paths verified and existing hardware baseline retained
+NOT EXECUTED - no Xbox/Haute hardware attached; controller runtime paths retained from prior verified baseline
 
 Closure:
-PASS TARGET - FINAL PUSH / SAFE EXIT PROOF RECORDED IN EXTERNAL DEVTEAM-003 APP2 HANDOFF-OUT
+PASS TARGET - FINAL PUSH / SAFE EXIT PROOF RECORDED IN EXTERNAL DEVTEAM-003 APP3 REV1 HANDOFF-OUT
 
 Founder Acceptance:
 PENDING

@@ -1,0 +1,326 @@
+{
+  "runtimeUrl": "http://localhost:8027/",
+  "checkedAtUtc": "2026-08-24T02:55:23.201Z",
+  "viewport": {
+    "width": 1366,
+    "height": 665
+  },
+  "expectedFaviconVersion": "gg-hud-life-v004",
+  "menu": {
+    "documentTitle": "Galactic Gunners",
+    "readyState": "complete",
+    "canvasCount": 1,
+    "faviconLinks": [
+      {
+        "href": "/favicon.ico?v=gg-hud-life-v004",
+        "type": "",
+        "sizes": "any"
+      },
+      {
+        "href": "assets/images/owned/branding/favicons/favicon.ico?v=gg-hud-life-v004",
+        "type": "image/x-icon",
+        "sizes": ""
+      },
+      {
+        "href": "assets/images/owned/branding/favicons/favicon-16.png?v=gg-hud-life-v004",
+        "type": "image/png",
+        "sizes": "16x16"
+      },
+      {
+        "href": "assets/images/owned/branding/favicons/favicon-32.png?v=gg-hud-life-v004",
+        "type": "image/png",
+        "sizes": "32x32"
+      },
+      {
+        "href": "assets/images/owned/branding/favicons/favicon-48.png?v=gg-hud-life-v004",
+        "type": "image/png",
+        "sizes": "48x48"
+      }
+    ],
+    "appleTouchIconLinked": true,
+    "rootFaviconIcoLinked": true,
+    "fontsReady": "loaded",
+    "silverFontLoaded": true,
+    "goldFontLoaded": true,
+    "ctaText": "CAN YOU SAVE THE DAY?",
+    "ctaFontFamily": "'GalacticGunnersGoldProduction', 'GalacticGunnersTitle', 'GalacticGunnersDisplay', Arial, sans-serif",
+    "mainMenuActive": true,
+    "bounds": {
+      "logoPrimary": {
+        "x": 413.79899861878454,
+        "y": 18,
+        "width": 538.402002762431,
+        "height": 179.55,
+        "right": 952.2010013812155,
+        "bottom": 197.55
+      },
+      "textTitle2": {
+        "x": 399.09615384615387,
+        "y": 201.16250000000002,
+        "width": 567.8076923076924,
+        "height": 49.875,
+        "right": 966.9038461538462,
+        "bottom": 251.03750000000002
+      },
+      "heroImage": {
+        "x": 603.2,
+        "y": 293.93000000000006,
+        "width": 159.60000000000002,
+        "height": 159.60000000000002,
+        "right": 762.8000000000001,
+        "bottom": 453.5300000000001
+      },
+      "textPoint": {
+        "x": 69.25341346153844,
+        "y": 350.78749999999997,
+        "width": 189.33317307692306,
+        "height": 69.82499999999999,
+        "right": 258.5865865384615,
+        "bottom": 420.61249999999995
+      },
+      "btnPoint": {
+        "x": 265.76858653846153,
+        "y": 355.775,
+        "width": 59.849999999999966,
+        "height": 59.85000000000002,
+        "right": 325.6185865384615,
+        "bottom": 415.625
+      },
+      "textBest": {
+        "x": 1016.4328685897436,
+        "y": 354.1125,
+        "width": 262.01426282051295,
+        "height": 63.17500000000001,
+        "right": 1278.4471314102566,
+        "bottom": 417.2875
+      },
+      "btnInfo": {
+        "x": 1291.475,
+        "y": 590.4749999999999,
+        "width": 56.52500000000009,
+        "height": 56.52499999999998,
+        "right": 1348,
+        "bottom": 646.9999999999999
+      },
+      "btnMute": {
+        "x": 1217.9924999999998,
+        "y": 599.8958333333333,
+        "width": 56.52500000000009,
+        "height": 37.683333333333394,
+        "right": 1274.5175,
+        "bottom": 637.5791666666667
+      }
+    }
+  },
+  "runtime": {
+    "textures": {
+      "playerShip": {
+        "width": 2172,
+        "height": 724,
+        "frames": 3
+      },
+      "alienscout": {
+        "width": 1983,
+        "height": 793,
+        "frames": 3
+      },
+      "comet": {
+        "width": 3348,
+        "height": 470,
+        "frames": 4
+      },
+      "sprExplosion": {
+        "width": 3952,
+        "height": 494,
+        "frames": 8
+      },
+      "sprExplosionLarge": {
+        "width": 3072,
+        "height": 512,
+        "frames": 6
+      },
+      "nuke": {
+        "width": 2880,
+        "height": 800,
+        "frames": 4
+      },
+      "nukeBurst": {
+        "width": 5160,
+        "height": 516,
+        "frames": 10
+      }
+    },
+    "playerAnimationFrames": [
+      0
+    ],
+    "enemyCount": 22,
+    "enemyFormation": {
+      "minX": 281.422,
+      "maxX": 1221.23,
+      "minY": 93.92600000000002,
+      "maxY": 211.97400000000002
+    },
+    "playerLaser": {
+      "angle": -90,
+      "displayWidth": 32.784,
+      "displayHeight": 14.111523012552302,
+      "bodyWidth": 1108.96,
+      "bodyHeight": 131.68
+    },
+    "enemyLaser": {
+      "angle": 90,
+      "displayWidth": 27.32,
+      "displayHeight": 18.213333333333335,
+      "bodyWidth": 890.8799999999999,
+      "bodyHeight": 163.84
+    },
+    "nuke": {
+      "angle": 0,
+      "angularVelocity": 0,
+      "displayWidth": 71.032,
+      "displayHeight": 78.92444444444445
+    },
+    "fxKeys": {
+      "smallExplosion": "sprExplosion",
+      "largeExplosion": "sprExplosionLarge",
+      "nukeExplosion": "nukeBurst"
+    }
+  },
+  "victory": {
+    "texts": [
+      {
+        "text": "Score: 350",
+        "x": 62.09090909090909,
+        "y": 30.227272727272727,
+        "role": ""
+      },
+      {
+        "text": "Lives: 3",
+        "x": 62.09090909090909,
+        "y": 634.7727272727273,
+        "role": ""
+      },
+      {
+        "text": "ReArm: 150/150",
+        "x": 1229.4,
+        "y": 605.15,
+        "role": ""
+      },
+      {
+        "text": "Nukes: 2",
+        "x": 1229.4,
+        "y": 645.05,
+        "role": ""
+      },
+      {
+        "text": "LEVEL 1 COMPLETE",
+        "x": 683,
+        "y": 126.35000000000001,
+        "role": ""
+      },
+      {
+        "text": "SCORE  1234",
+        "x": 683,
+        "y": 232.74999999999997,
+        "role": ""
+      },
+      {
+        "text": "WAVE  1",
+        "x": 683,
+        "y": 285.95,
+        "role": ""
+      },
+      {
+        "text": "BONUS  600",
+        "x": 683,
+        "y": 339.15000000000003,
+        "role": ""
+      },
+      {
+        "text": "SECTOR CLEARED",
+        "x": 683,
+        "y": 392.34999999999997,
+        "role": ""
+      }
+    ],
+    "images": [
+      {
+        "key": "sound",
+        "x": 62.09090909090909,
+        "y": 574.3181818181819,
+        "off": ""
+      },
+      {
+        "key": "fireworks",
+        "x": 683,
+        "y": 359.1,
+        "off": ""
+      }
+    ],
+    "zones": [
+      {
+        "role": "NEXT",
+        "x": 464.44000000000005,
+        "y": 595.1750000000001,
+        "width": 245.88,
+        "height": 56.525000000000006
+      },
+      {
+        "role": "MENU",
+        "x": 901.5600000000001,
+        "y": 595.1750000000001,
+        "width": 245.88,
+        "height": 56.525000000000006
+      },
+      {
+        "role": "REPLAY",
+        "x": 683,
+        "y": 595.1750000000001,
+        "width": 245.88,
+        "height": 56.525000000000006
+      }
+    ],
+    "next": {
+      "role": "NEXT",
+      "x": 464.44000000000005,
+      "y": 595.1750000000001,
+      "width": 245.88,
+      "height": 56.525000000000006
+    }
+  },
+  "nextTouchResult": true,
+  "gameOver": {
+    "buttons": [
+      {
+        "key": "buttonMenuOff",
+        "off": "buttonMenuOff",
+        "on": "buttonMenuOn",
+        "x": 464.44000000000005,
+        "y": 488.775,
+        "width": 232.22000000000003,
+        "height": 95.62
+      },
+      {
+        "key": "buttonReplayOff",
+        "off": "buttonReplayOff",
+        "on": "buttonReplayOn",
+        "x": 683,
+        "y": 488.775,
+        "width": 232.22000000000006,
+        "height": 77.40666666666668
+      },
+      {
+        "key": "buttonTryAgainOff",
+        "off": "buttonTryAgainOff",
+        "on": "buttonTryAgainOn",
+        "x": 901.5600000000001,
+        "y": 488.775,
+        "width": 232.22000000000003,
+        "height": 92.888
+      }
+    ]
+  },
+  "runtimeExceptions": [],
+  "networkFailures": [],
+  "pass": true
+}

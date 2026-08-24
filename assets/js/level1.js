@@ -409,9 +409,9 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
         this.time.addEvent({
             delay: 10,
             callback: function() {
-                for (var x = 6; x < 35; x++) { //create an inset row of enemy ships by setting to 35, skipping the first 6 iterations of the loop by setting x, we can center the enemyShips by offsetting from the edge
+                for (var x = 7; x < 28; x += 2) { //create a readable centered formation without crowding the playfield
                     for (var y = 0; y < 2; y++) { //create 2 additional rows by iterating through x
-                        var enemy = new Enemy(this, x * (this.game.config.width * 0.025), (this.game.config.height * 0.15) + (y * (this.game.config.height * 0.11)), "enemyShip"); //set coordinates for image with spacing on x and y and assign a key from preloaded images to add the enemyship image sprite
+                        var enemy = new Enemy(this, x * (this.game.config.width * 0.033), (this.game.config.height * 0.17) + (y * (this.game.config.height * 0.12)), "enemyShip"); //set coordinates for image with spacing on x and y and assign a key from preloaded images to add the enemyship image sprite
                         enemy.play("enemyShip"); //start animation of the enemyShip
                         enemyShips++; //add a ship to total enemy ships created
                         this.enemies.add(enemy); //draw an enemy ship on the screen at x and y
@@ -832,42 +832,25 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
 
     //create win function
     win() {
-        ggPlayAudioOnce(this, "level-1-victory", GG_AUDIO.VICTORY_STINGER);
         this.player.destroy(); //destroy player if victory to stop losing any lives 
-        this.fireworksVictory = this.add.image(0, 0, 'fireworks'); //set fireworks image position x,y and initiate first so image behind the hero
-        this.aGrid.placeAtIndex(71, this.fireworksVictory); //set position on the grid
-        Align.scaleToGameW(this.fireworksVictory, 0.7); //set scale
-        this.textVictory = this.add.text( //create Victory text
-            0, //set x axis position
-            0, //set y axis position
-            "Level 1 Complete!", //set text   
+        ggRenderVictory(
+            this,
+            "LEVEL 1 COMPLETE",
+            "SECTOR CLEARED",
+            "NEXT",
+            function() {
+                levelWon = false;
+                gameWinPrize = true;
+                this.addWinPrize();
+                this.scene.start("Level2");
+            }.bind(this),
             {
-                fontFamily: GG_FONT_DISPLAY, //set font type
-                fontSize: 100, //set font size
-                align: "center" //set text alignment
+                wave: "1",
+                bonus: ggPendingCompletionBonus(),
+                menuCallback: function() { ggResetToMenu(this); }.bind(this),
+                replayCallback: function() { ggRestartGameplay(this, "Level1"); }.bind(this)
             }
         );
-        this.textVictory.setOrigin(0.5, 0.6); //set text origin to center 
-        this.textVictory.setTint(0x00ff00); //set victory text to green
-        this.aGrid.placeAtIndex(5, this.textVictory); //set position on the grid
-        Align.scaleToGameW(this.textVictory, 0.6); //set scale
-        this.textContinue = this.add.text( //create Victory text
-            0, //set x axis position
-            0, //set y axis position
-            this.GameContinue, //set text   
-            {
-                fontFamily: GG_FONT_DISPLAY, //set font type
-                fontSize: 70, //set font size
-                align: "center" //set text alignment
-            }
-        );
-        this.textContinue.setOrigin(0.5, 0.6); //set text origin to center 
-        this.textContinue.setTint(0x00ff00); //set victory text to green
-        this.aGrid.placeAtIndex(16, this.textContinue); //set position on the grid
-        Align.scaleToGameW(this.textContinue, 0.5); //set scale
-        this.heroWin = this.add.image(0, 0, 'hero'); //insert hero image setting x and y position
-        this.aGrid.placeAtIndex(71, this.heroWin); //set position on the grid
-        Align.scaleToGameW(this.heroWin, 0.25); //set scale
         enemyShips = 0; //set enemyShips to 0
         enemyDeaths = 0; //set enemyDeaths to 0
         totalEnemyShips = 0; //reset total enemyships
@@ -885,14 +868,6 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
                     gameWinPrize = true; //set gameWinPrize true
                     this.addWinPrize(); //goto function
                     this.scene.start("Level2"); //set scene start for level 2
-                }
-                if (levelWon && touch) { // if touch is true and levelWon
-                    this.input.on('pointerdown', function() { //pointerdown acts as enter
-                        levelWon = false; //set variable
-                        gameWinPrize = true; //set gameWinPrize true
-                        this.addWinPrize(); //goto function
-                        this.scene.start("Level2"); //set scene start for level 2
-                    }, this);
                 }
             },
             callbackScope: this, //set call back scope to this
@@ -949,18 +924,6 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
                     RIP = false; //set RIP to false so restart cant happen in game
                     score = 0; //set the score back to 0
                     this.scene.start("MainMenu"); //Restart Game
-                }
-                if (RIP && touch) { // if touch is true and RIP
-                    this.input.on('pointerdown', function() { //pointerdown acts as R
-                        enemyShips = 0; //set enemyShips to 0
-                        enemyDeaths = 0; //set enemyDeaths to 0
-                        totalEnemyShips = 0; //reset total enemyships
-                        currentLives = 0; //reset lives
-                        currentNukes = 0; //reset nukes
-                        RIP = false; //set RIP to false so restart cant happen in game
-                        score = 0; //set the score back to 0
-                        this.scene.start("MainMenu"); //Restart Game
-                    }, this);
                 }
             },
             callbackScope: this, //set call back scope to this

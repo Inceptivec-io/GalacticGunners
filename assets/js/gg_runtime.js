@@ -1,5 +1,7 @@
-const GG_FONT_TITLE = "'GalacticGunnersTitle', 'GalacticGunnersDisplay', Arial, sans-serif";
-const GG_FONT_DISPLAY = "'GalacticGunnersDisplay', Arial, sans-serif";
+const GG_FONT_SILVER = "'GalacticGunnersSilverProduction', 'GalacticGunnersTitle', 'GalacticGunnersDisplay', Arial, sans-serif";
+const GG_FONT_GOLD = "'GalacticGunnersGoldProduction', 'GalacticGunnersTitle', 'GalacticGunnersDisplay', Arial, sans-serif";
+const GG_FONT_TITLE = GG_FONT_SILVER;
+const GG_FONT_DISPLAY = GG_FONT_SILVER;
 
 const GG_SCORE_EVENTS = Object.freeze({
     LASER_TARGET: 5,
@@ -165,8 +167,64 @@ function ggDisplayStyle(size, color) {
     };
 }
 
+function ggGoldStyle(size, color) {
+    return {
+        fontFamily: GG_FONT_GOLD,
+        fontSize: size || 42,
+        align: "center",
+        color: color || "#ffb43c",
+        stroke: "#190b03",
+        strokeThickness: 4
+    };
+}
+
 function ggMakeText(scene, x, y, text, style) {
     return scene.add.text(x, y, text, style).setOrigin(0.5);
+}
+
+function ggSceneWaveLabel(scene) {
+    var key = scene && scene.scene && scene.scene.key ? scene.scene.key : "";
+    if (key === "Level1") return "1";
+    if (key === "Level2") return "2";
+    if (key === "BossLevel" || key === "Victory") return "FINAL";
+    return "CURRENT";
+}
+
+function ggPendingCompletionBonus() {
+    return (currentLives + currentNukes + LevelRestart) * 100;
+}
+
+function ggAddImageButton(scene, x, y, offKey, onKey, callback, scaleW) {
+    var button = scene.add.image(x, y, offKey).setOrigin(0.5).setDepth(25).setInteractive({ useHandCursor: true });
+    Align.scaleToGameW(button, scaleW || 0.18);
+    button.on("pointerover", function() {
+        if (scene.sfx && (scene.sfx.select || scene.sfx.uiSelect)) (scene.sfx.select || scene.sfx.uiSelect).play();
+        button.setTexture(onKey);
+    });
+    button.on("pointerout", function() {
+        button.setTexture(offKey);
+    });
+    button.on("pointerdown", function() {
+        button.setTexture(onKey);
+        if (scene.sfx && (scene.sfx.confirm || scene.sfx.uiConfirm)) (scene.sfx.confirm || scene.sfx.uiConfirm).play();
+        if (callback) callback();
+    });
+    button.ggButtonOffKey = offKey;
+    button.ggButtonOnKey = onKey;
+    return button;
+}
+
+function ggAddPanelHit(scene, role, x, y, width, height, callback) {
+    var zone = scene.add.zone(x, y, width, height).setDepth(26).setInteractive({ useHandCursor: true });
+    zone.ggButtonRole = role;
+    zone.on("pointerover", function() {
+        if (scene.sfx && (scene.sfx.select || scene.sfx.uiSelect)) (scene.sfx.select || scene.sfx.uiSelect).play();
+    });
+    zone.on("pointerdown", function() {
+        if (scene.sfx && (scene.sfx.confirm || scene.sfx.uiConfirm)) (scene.sfx.confirm || scene.sfx.uiConfirm).play();
+        if (callback) callback();
+    });
+    return zone;
 }
 
 function ggApplyScore(scene, amount) {
@@ -345,30 +403,38 @@ function ggRenderGameOver(scene, menuCallback, replayCallback, tryAgainCallback)
     Align.scaleToGameW(panel, 0.78);
     panel.setDepth(20);
 
-    ggMakeText(scene, scene.game.config.width * 0.5, scene.game.config.height * 0.18, "GAME OVER", ggTitleStyle(96)).setDepth(21);
-    ggMakeText(scene, scene.game.config.width * 0.5, scene.game.config.height * 0.36, "Final Score: " + finalScore, ggDisplayStyle(44, "#ffffff")).setDepth(21);
+    ggMakeText(scene, scene.game.config.width * 0.5, scene.game.config.height * 0.185, "GAME OVER", ggGoldStyle(86, "#ffb43c")).setDepth(21);
+    ggMakeText(scene, scene.game.config.width * 0.5, scene.game.config.height * 0.36, "SCORE  " + finalScore, ggDisplayStyle(42, "#ffffff")).setDepth(21);
 
     var buttonY = scene.game.config.height * 0.735;
-    var buttonW = scene.game.config.width * 0.18;
-    var buttonH = scene.game.config.height * 0.08;
-    var buttons = [
-        { x: scene.game.config.width * 0.35, callback: menuCallback },
-        { x: scene.game.config.width * 0.5, callback: replayCallback },
-        { x: scene.game.config.width * 0.65, callback: tryAgainCallback }
-    ];
-    buttons.forEach(function(button) {
-        scene.add.zone(button.x, buttonY, buttonW, buttonH).setDepth(24).setInteractive().on("pointerdown", button.callback);
-    });
+    ggAddImageButton(scene, scene.game.config.width * 0.34, buttonY, "buttonMenuOff", "buttonMenuOn", menuCallback, 0.17);
+    ggAddImageButton(scene, scene.game.config.width * 0.5, buttonY, "buttonReplayOff", "buttonReplayOn", replayCallback, 0.17);
+    ggAddImageButton(scene, scene.game.config.width * 0.66, buttonY, "buttonTryAgainOff", "buttonTryAgainOn", tryAgainCallback, 0.17);
 }
 
-function ggRenderVictory(scene, title, body, nextLabel, nextCallback) {
+function ggRenderVictory(scene, title, body, nextLabel, nextCallback, options) {
     ggPlayAudioOnce(scene, "victory-entry", GG_AUDIO.VICTORY_STINGER);
+    ggSetHudVisible(false);
     var panel = scene.add.image(scene.game.config.width * 0.5, scene.game.config.height * 0.54, "fireworks").setOrigin(0.5);
     Align.scaleToGameW(panel, 0.7);
     panel.setDepth(20);
-    ggMakeText(scene, scene.game.config.width * 0.5, scene.game.config.height * 0.18, title, ggTitleStyle(86)).setDepth(21);
-    ggMakeText(scene, scene.game.config.width * 0.5, scene.game.config.height * 0.36, "Score: " + score, ggDisplayStyle(44, "#ffffff")).setDepth(21);
-    ggMakeText(scene, scene.game.config.width * 0.5, scene.game.config.height * 0.49, body, ggDisplayStyle(34, "#f6f7ff")).setDepth(21);
-    var next = ggMakeText(scene, scene.game.config.width * 0.5, scene.game.config.height * 0.76, nextLabel, ggDisplayStyle(38, "#70fff2")).setDepth(21).setInteractive();
-    next.on("pointerdown", nextCallback);
+    var bonus = options && typeof options.bonus === "number" ? options.bonus : 0;
+    var wave = options && options.wave ? options.wave : ggSceneWaveLabel(scene);
+    ggMakeText(scene, scene.game.config.width * 0.5, scene.game.config.height * 0.19, title, ggGoldStyle(74, "#ffb43c")).setDepth(21);
+    ggMakeText(scene, scene.game.config.width * 0.5, scene.game.config.height * 0.35, "SCORE  " + score, ggDisplayStyle(40, "#ffffff")).setDepth(21);
+    ggMakeText(scene, scene.game.config.width * 0.5, scene.game.config.height * 0.43, "WAVE  " + wave, ggDisplayStyle(34, "#f6f7ff")).setDepth(21);
+    ggMakeText(scene, scene.game.config.width * 0.5, scene.game.config.height * 0.51, "BONUS  " + bonus, ggDisplayStyle(34, "#f6f7ff")).setDepth(21);
+    if (body) ggMakeText(scene, scene.game.config.width * 0.5, scene.game.config.height * 0.59, body, ggDisplayStyle(28, "#70fff2")).setDepth(21);
+    var buttonY = scene.game.config.height * 0.895;
+    var buttonW = scene.game.config.width * 0.18;
+    var buttonH = scene.game.config.height * 0.085;
+    if (nextCallback && nextLabel) {
+        ggAddPanelHit(scene, "NEXT", scene.game.config.width * 0.34, buttonY, buttonW, buttonH, nextCallback);
+    }
+    if (options && options.menuCallback) {
+        ggAddPanelHit(scene, "MENU", scene.game.config.width * 0.66, buttonY, buttonW, buttonH, options.menuCallback);
+    }
+    if (options && options.replayCallback) {
+        ggAddPanelHit(scene, "REPLAY", scene.game.config.width * 0.5, buttonY, buttonW, buttonH, options.replayCallback);
+    }
 }

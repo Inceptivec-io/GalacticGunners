@@ -49,7 +49,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
       0, //set y axis position
       "GALACTIC GUNNERS", //set text
       {
-        fontFamily: GG_FONT_DISPLAY, //set font style
+        fontFamily: GG_FONT_SILVER, //set font style
         fontSize: 120, //set font size
         align: "center" //set alignment
       }
@@ -67,7 +67,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
       0, //set y axis position
       "CAN YOU SAVE THE DAY?", //set text
       {
-        fontFamily: GG_FONT_TITLE, //set font style
+        fontFamily: GG_FONT_GOLD, //set font style
         fontSize: 80, //set font size
         align: "center" //set alignment
       }
@@ -101,7 +101,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
       0, //set position on the y axis
       BestPlayedOn, //set text to variable
       {
-        fontFamily: GG_FONT_DISPLAY, //set font style
+        fontFamily: GG_FONT_SILVER, //set font style
         fontSize: 80, //set font size
         align: "center" //set alignment
       }
@@ -144,7 +144,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
       0, //set position on the y axis
       TouchSelector, //set text to variable
       {
-        fontFamily: GG_FONT_DISPLAY, //set font style
+        fontFamily: GG_FONT_SILVER, //set font style
         fontSize: 80, //set font size
         align: "center" //set alignment
       }
@@ -254,23 +254,24 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
     }
 
     if (this.textTitle2) {
-      this.textTitle2.setTint(green);
+      this.textTitle2.setTint(0xffb43c);
       this.textTitle2.setOrigin(0.5);
-      fitText(this.textTitle2, w * 0.56, h * 0.085);
+      fitText(this.textTitle2, w * 0.54, h * 0.075);
+      var subtitleY = this.logoPrimary ? this.logoPrimary.y + this.logoPrimary.displayHeight * 0.5 + margin + this.textTitle2.displayHeight * 0.5 : h * 0.31;
       this.textTitle2.setPosition(
         w * 0.5,
-        Math.min(h * 0.36, this.logoPrimary.y + this.logoPrimary.displayHeight * 0.58 + margin * 0.5)
+        Math.min(h * 0.34, subtitleY)
       );
     }
 
     if (this.heroImage) {
-      fitImage(this.heroImage, w * 0.18, h * 0.28);
-      this.heroImage.setPosition(w * 0.5, h * 0.54);
+      fitImage(this.heroImage, w * 0.16, h * 0.24);
+      this.heroImage.setPosition(w * 0.5, h * 0.55);
       this.heroImage.clearTint();
     }
 
     if (this.textPoint) {
-      this.textPoint.setTint(green);
+      this.textPoint.setTint(0xffb43c);
       this.textPoint.setOrigin(0.5);
       fitText(this.textPoint, w * 0.16, h * 0.105);
       this.textPoint.setPosition(w * 0.12, h * 0.58);
@@ -286,7 +287,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
     }
 
     if (this.textBest) {
-      this.textBest.setTint(green);
+      this.textBest.setTint(0xffb43c);
       this.textBest.setOrigin(0.5);
       fitText(this.textBest, w * 0.20, h * 0.095);
       this.textBest.setPosition(w * 0.84, h * 0.58);

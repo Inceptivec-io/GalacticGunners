@@ -1,0 +1,76 @@
+﻿
+
+Mode     : -a----
+Length   : 1426
+Name     : BOUNDARY.md
+FullName : C:\Users\Michael\dev\GalacticGunners\_EXTERNAL_GalacticGunners\_GalacticGunners_MAIN_POST_BOX\_WORK_00000001
+           _POST_BOX\BOUNDARY.md
+
+Mode     : -a----
+Length   : 6994
+Name     : GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1_PACK.zip
+FullName : C:\Users\Michael\dev\GalacticGunners\_EXTERNAL_GalacticGunners\_GalacticGunners_MAIN_POST_BOX\_WORK_00000001
+           _POST_BOX\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1_PACK.zip
+
+Mode     : -a----
+Length   : 1741752
+Name     : gg_comet_v002_horizontal.png
+FullName : C:\Users\Michael\dev\GalacticGunners\_EXTERNAL_GalacticGunners\_GalacticGunners_MAIN_POST_BOX\_WORK_00000001
+           _POST_BOX\gg_comet_v002_horizontal.png
+
+Mode     : -a----
+Length   : 2585002
+Name     : gg_explosion_large_v002_sheet_horizontal.png
+FullName : C:\Users\Michael\dev\GalacticGunners\_EXTERNAL_GalacticGunners\_GalacticGunners_MAIN_POST_BOX\_WORK_00000001
+           _POST_BOX\gg_explosion_large_v002_sheet_horizontal.png
+
+Mode     : -a----
+Length   : 1736631
+Name     : gg_explosion_small_v002_horizontal.png
+FullName : C:\Users\Michael\dev\GalacticGunners\_EXTERNAL_GalacticGunners\_GalacticGunners_MAIN_POST_BOX\_WORK_00000001
+           _POST_BOX\gg_explosion_small_v002_horizontal.png
+
+Mode     : -a----
+Length   : 541713
+Name     : gg_game_over_buttons_v002_states_corrected.zip
+FullName : C:\Users\Michael\dev\GalacticGunners\_EXTERNAL_GalacticGunners\_GalacticGunners_MAIN_POST_BOX\_WORK_00000001
+           _POST_BOX\gg_game_over_buttons_v002_states_corrected.zip
+
+Mode     : -a----
+Length   : 7247001
+Name     : GG_Gold_Font_Production_v1.zip
+FullName : C:\Users\Michael\dev\GalacticGunners\_EXTERNAL_GalacticGunners\_GalacticGunners_MAIN_POST_BOX\_WORK_00000001
+           _POST_BOX\GG_Gold_Font_Production_v1.zip
+
+Mode     : -a----
+Length   : 2486712
+Name     : gg_nuke_burst_v002_horizontal.png
+FullName : C:\Users\Michael\dev\GalacticGunners\_EXTERNAL_GalacticGunners\_GalacticGunners_MAIN_POST_BOX\_WORK_00000001
+           _POST_BOX\gg_nuke_burst_v002_horizontal.png
+
+Mode     : -a----
+Length   : 2061937
+Name     : gg_nuke_projectile_v002_horizontal_upright.png
+FullName : C:\Users\Michael\dev\GalacticGunners\_EXTERNAL_GalacticGunners\_GalacticGunners_MAIN_POST_BOX\_WORK_00000001
+           _POST_BOX\gg_nuke_projectile_v002_horizontal_upright.png
+
+Mode     : -a----
+Length   : 14351082
+Name     : GG_Silver_Font_Production_v1.zip
+FullName : C:\Users\Michael\dev\GalacticGunners\_EXTERNAL_GalacticGunners\_GalacticGunners_MAIN_POST_BOX\_WORK_00000001
+           _POST_BOX\GG_Silver_Font_Production_v1.zip
+
+Mode     : -a----
+Length   : 2247203
+Name     : gg_victory_panel_v002_no_values.png
+FullName : C:\Users\Michael\dev\GalacticGunners\_EXTERNAL_GalacticGunners\_GalacticGunners_MAIN_POST_BOX\_WORK_00000001
+           _POST_BOX\gg_victory_panel_v002_no_values.png
+
+Mode     : -a----
+Length   : 268
+Name     : README.md
+FullName : C:\Users\Michael\dev\GalacticGunners\_EXTERNAL_GalacticGunners\_GalacticGunners_MAIN_POST_BOX\_WORK_00000001
+           _POST_BOX\README.md
+
+
+
