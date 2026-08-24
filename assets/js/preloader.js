@@ -18,7 +18,7 @@ class Preloader extends Phaser.Scene {
             frameWidth: 724,
             frameHeight: 724
         });
-        this.load.audio("sndBtn", "assets/audio/sndBtn.wav"); //preload the Button Sound
+        ggPreloadAudio(this);
         this.load.spritesheet("playerShip", "assets/images/owned/sprites/gg_player_ship_v002_sheet.png", {
             frameWidth: 724,
             frameHeight: 724
@@ -69,18 +69,13 @@ class Preloader extends Phaser.Scene {
             frameWidth: 836,
             frameHeight: 940
         });
-        this.load.audio("sndExplode", "assets/audio/sndExplode.wav"); //preload audio files, assign key name and src
-        this.load.audio("sndLaserPlayer", "assets/audio/sndLaserPlayer.wav"); //preload audio files, assign key name and src
-        this.load.audio("sndLaserEnemy", "assets/audio/sndLaserEnemy.wav"); //preload audio files, assign key name and src
-        this.load.audio("nukefiring", "assets/audio/gg_nuke_v001.wav"); //preload audio files, assign key name and src
-
     }
     create() {
         //create animations
         this.anims.create({ //animation object create
             key: "playerShip",
-            frames: this.anims.generateFrameNumbers("playerShip"),
-            frameRate: 6,
+            frames: this.anims.generateFrameNumbers("playerShip", { frames: [0, 1, 0, 2] }),
+            frameRate: 4,
             repeat: -1
         });
         this.anims.create({ //animation object create
@@ -110,8 +105,8 @@ class Preloader extends Phaser.Scene {
         this.anims.create({ //animation object create
             key: "sprExplosion", //set the image key name to be used
             frames: this.anims.generateFrameNumbers("sprExplosion"), //set image to be used to generate frames
-            frameRate: 15, //set frame rate speed
-            repeat: 5 //turns on then off higher equals longer on
+            frameRate: 18, //set frame rate speed
+            repeat: 0 //play once and clean up
         });
         this.anims.create({
             key: "nuke",

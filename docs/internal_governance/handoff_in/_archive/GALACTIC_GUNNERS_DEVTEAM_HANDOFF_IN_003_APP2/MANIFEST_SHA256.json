@@ -1,0 +1,97 @@
+[
+  {
+    "file": "00_COMMISSION/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP2.md",
+    "bytes": 1879,
+    "sha256": "0ca5afdad2d0b9ce56d5218630820e2e4588aa3422c16f36837e5f81ec8d485f"
+  },
+  {
+    "file": "01_SCOPE_AND_AUTHORITY/01_APP2_LOCKED_SCOPE.md",
+    "bytes": 843,
+    "sha256": "3b630b0e55c9d2548160ff67a0748f62216fbd353f38daac0b88e4db6680a745"
+  },
+  {
+    "file": "02_SPRITES_AND_ANIMATION/02_PLAYER_SHIP_CORRECTION.md",
+    "bytes": 1047,
+    "sha256": "66b99121dc814ecbb30d58b3368aef8f66fe7ff3cefc16ec5cc2ed56c408f348"
+  },
+  {
+    "file": "02_SPRITES_AND_ANIMATION/03_ENEMY_AND_BOSS_SPRITE_VERIFICATION.md",
+    "bytes": 593,
+    "sha256": "cf6ff29cbb5273fbd589ebb45404d0ed817cba49b03b538e84f11d2d24300419"
+  },
+  {
+    "file": "02_SPRITES_AND_ANIMATION/04_COMET_RENDERING_CORRECTION.md",
+    "bytes": 976,
+    "sha256": "7826bdff2f6c3fb698b52cf9c972c39ade35ea9af27e8184e1e60f9a168f40e0"
+  },
+  {
+    "file": "02_SPRITES_AND_ANIMATION/05_EXPLOSION_RENDERING_CORRECTION.md",
+    "bytes": 1356,
+    "sha256": "5a09180c3bfc5b0693778c474b395e22c96f8fb5d233a080e53fe494fd0b9682"
+  },
+  {
+    "file": "03_PLAYFIELD_AND_LAYOUT/06_PLAYFIELD_SCALE_AND_SPACE_USAGE.md",
+    "bytes": 1151,
+    "sha256": "76e352d09a37ffe846b229a7d16cc9b9ee67058742ed95a975c8b54103bf1e98"
+  },
+  {
+    "file": "03_PLAYFIELD_AND_LAYOUT/07_FULL_VIEWPORT_STELLAR_BACKGROUND.md",
+    "bytes": 1102,
+    "sha256": "2af754de05ba867fbc0f89f1b8395d583c877b39087d006b2c81e20138579689"
+  },
+  {
+    "file": "03_PLAYFIELD_AND_LAYOUT/08_VIEWPORT_CONTAINMENT_AND_SAFE_AREAS.md",
+    "bytes": 841,
+    "sha256": "a592f6e3bb42b083274ea58c8655886eec69c3fb438729acc8d0880a826e261a"
+  },
+  {
+    "file": "04_RESULT_SCENES_AND_EVENTS/09_GAME_OVER_CONTROL_RECONSTRUCTION.md",
+    "bytes": 1562,
+    "sha256": "70270f28702595c0d16ca84c0026b85bbc58ddbbd64055438db2d8b3d44b5e00"
+  },
+  {
+    "file": "04_RESULT_SCENES_AND_EVENTS/10_RESULT_SCENE_EVENT_MODEL.md",
+    "bytes": 715,
+    "sha256": "e90a0322e052faede611aeb3a348e39ceb775a2d9b605c3a203defdc6a0cab5a"
+  },
+  {
+    "file": "05_SCORING_AND_STATE/11_FINAL_SCORE_CONSISTENCY.md",
+    "bytes": 1185,
+    "sha256": "4a7722fa65d48ab6d833896b5f8ceaad49193e3bf42d4d9fe0c164318f236ec1"
+  },
+  {
+    "file": "05_SCORING_AND_STATE/12_LOCKED_GAMEPLAY_PRESERVATION.md",
+    "bytes": 668,
+    "sha256": "cfadea31ce5bf8e49846318770ef70452e9b7d52a3d209c69a69be76512db839"
+  },
+  {
+    "file": "06_TEST_AND_DOCKER/13_APP2_TEST_MATRIX.md",
+    "bytes": 1348,
+    "sha256": "fb63357907bfc5cd788a79c0c7c61709157a2330acc703ffbf6b9b04ad1a3ff1"
+  },
+  {
+    "file": "06_TEST_AND_DOCKER/14_DOCKER_FOUNDER_PREVIEW_REFRESH.md",
+    "bytes": 963,
+    "sha256": "52ed16c29d28c9efb1a5af97d0d99518e79255b458fe6aad45604f7c9510b654"
+  },
+  {
+    "file": "07_EVIDENCE_AND_CLOSURE/15_REQUIRED_EVIDENCE.md",
+    "bytes": 750,
+    "sha256": "b62338d23e41783fa09d79c0fbf475c01f1bf9a56a2aa473bfef8439a7411b5d"
+  },
+  {
+    "file": "07_EVIDENCE_AND_CLOSURE/16_APP2_CLOSURE_GATE.md",
+    "bytes": 1361,
+    "sha256": "8ccef0e6eb25bbfc966629510ce774c214c0dc99c1141fe4c7695abff88407b2"
+  },
+  {
+    "file": "08_ROUTING/ROUTING_MESSAGE.md",
+    "bytes": 7564,
+    "sha256": "e954f69230007980cb094850905ab836c19d65f1a81b6e9f4b154b5136975571"
+  },
+  {
+    "file": "README_PACK.md",
+    "bytes": 727,
+    "sha256": "8139841b617abe1882386e55092eb8f7a4a6b84679ef18621d026954639b8079"
+  }
+]

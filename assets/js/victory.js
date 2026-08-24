@@ -13,6 +13,8 @@ class Victory extends Phaser.Scene {
 
   //create function
   create() {
+    ggPlayAudioOnce(this, "final-victory", GG_AUDIO.VICTORY_STINGER);
+
     //add background
     this.background = new Background(this, this.game.config.width * 0.5, this.game.config.height * 0.5, "backgroundstars"); // add background image first
     //END background image

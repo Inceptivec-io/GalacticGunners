@@ -18,12 +18,7 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
         //END GRID
 
         //create sfx
-        this.sfx = { //add properties to call back sfx
-            explode: this.sound.add("sndExplode"), //create the soudn fx properties
-            laserPlayer: this.sound.add("sndLaserPlayer"), //create the soudn fx properties
-            laserEnemy: this.sound.add("sndLaserEnemy"), //create the soudn fx properties
-            nukeFiring: this.sound.add("nukefiring") //create the soudn fx properties
-        };
+        this.sfx = ggCreateGameplaySfx(this);
         //END sfx
 
         //Mute Button
@@ -266,7 +261,7 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
             }
             //ALSO
             if (player) { //if player  
-                this.createExplosion(player.x, player.y); //call createExplosion method
+                this.createExplosion(player.x, player.y, "playerHit"); //call createExplosion method
                 player.body.reset(this.game.config.width * 0.5, this.game.config.height - 50); //reset player to opening position
                 this.onLifeDown(); //start onLifeDown Method
             }
@@ -274,7 +269,7 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
 
         this.physics.add.overlap(this.player, this.alienMothership, function(player, Mothership) { //create a physics overlap event between object1 and object2, followed by collideCallback function
             if (player) { //if player collides with Mothership
-                this.createExplosion(player.x, player.y); //create explosion at player.x, player.y coordinates
+                this.createExplosion(player.x, player.y, "playerHit"); //create explosion at player.x, player.y coordinates
                 player.body.reset(this.game.config.width * 0.5, this.game.config.height - 50); //reset player to opening position
                 this.onLifeDown(); //start lifeDown function to lose life and check if GAME OVER
             }
@@ -287,7 +282,7 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
             }
             //ALSO
             if (Mothership) { //if mothership   
-                this.createExplosion(Mothership.x, Mothership.y); //call createExplosion method
+                this.createExplosion(Mothership.x, Mothership.y, "mothershipHit"); //call createExplosion method
                 ggScoreEvent(this, "MOTHERSHIP_HIT"); //locked mothership hit score event
                 this.motherShipHit(1); //mothership hit function with 1 as parameter
             }
@@ -301,7 +296,7 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
             }
             //ALSO
             if (Mothership) { //if mothership 
-                this.createNukeExplosion(Mothership.x, Mothership.y); //call createNukeExplosion method
+                this.createNukeExplosion(Mothership.x, Mothership.y, "mothershipHit"); //call createNukeExplosion method
                 ggScoreEvent(this, "MOTHERSHIP_HIT"); //locked mothership hit score event
                 this.motherShipHit(2); //mothership hit function with 2 as parameter
             }
@@ -391,7 +386,7 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
 
         this.physics.add.overlap(this.player, this.alienscouts, function(player, scout) { //create a physics overlap event between object1 and object2, followed by collideCallback function
             if (player) { //if player collides with scout
-                this.createExplosion(player.x, player.y); //create explosion at player.x, player.y coordinates
+                this.createExplosion(player.x, player.y, "playerHit"); //create explosion at player.x, player.y coordinates
                 player.body.reset(this.game.config.width * 0.5, this.game.config.height - 50); //reset player to opening position
                 this.onLifeDown(); //start lifeDown function to lose life and check if GAME OVER
             }
@@ -464,7 +459,7 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
 
         this.physics.add.overlap(this.player, this.enemies, function(player, enemy) { //create a physics overlap event between object1 and object2, followed by collideCallback function
             if (player) { //if player collides with enemy
-                this.createExplosion(player.x, player.y); //create explosion at player.x, player.y coordinates
+                this.createExplosion(player.x, player.y, "playerHit"); //create explosion at player.x, player.y coordinates
                 player.body.reset(this.game.config.width * 0.5, this.game.config.height - 50); //reset player to opening position
                 this.onLifeDown(); //start lifeDown function to lose life and check if GAME OVER
             }
@@ -472,7 +467,7 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
 
         this.physics.add.overlap(this.player, this.enemyLasers, function(player, laser) { //create a physics overlap event between object1 and object2, followed by collideCallback function
             if (player) { //if player hit by enemyLaser
-                this.createExplosion(player.x, player.y); //create explosion at player.x, player.y coordinates
+                this.createExplosion(player.x, player.y, "playerHit"); //create explosion at player.x, player.y coordinates
                 player.body.reset(this.game.config.width * 0.5, this.game.config.height - 50); //reset player to opening position
                 this.onLifeDown(); //start lifeDown function to lose life and check if GAME OVER
             }
@@ -579,6 +574,7 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
             enemyShips--; //decrement enemyShips by 1 (for testing)
             enemyDeaths++; //increment enemyDeaths by 1 for game win logic
             motherShipAlive = false; //set mothership alive to false
+            this.sfx.mothershipDestroyed.play(); //play final mothership destruction sound
             ggScoreEvent(this, "MOTHERSHIP_DESTROYED"); //locked mothership destruction score event
         }
     }
@@ -897,7 +893,7 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
                 for (var i = 0; i < this.starNukes.getChildren().length; i++) { //for each enemy in the enemies array
                     var nuke = this.starNukes.getChildren()[i]; //this nuke = starNukes[i]
                     if (nuke.y < 10) { //if laser is less than 10 away from screen edge
-                        this.createExplosion(nuke.x, nuke.y); //create an explosion at this nuke.x and nuke.y
+                        this.createNukeExplosion(nuke.x, nuke.y); //create an explosion at this nuke.x and nuke.y
                         emitter.stop(); //stope emitting particles
                         if (nuke) { //if nuke         
                             nuke.destroy(); //destroy this nuke
@@ -978,7 +974,7 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
     destroyShieldTile(tile, enemyHit) {
         if (tile) { //if(tile)
             if (enemyHit) ggScoreEvent(this, "SHIELD_TILE_ENEMY_HIT"); //locked shield penalty only for enemy hits
-            this.createExplosion(tile.x, tile.y); //create explosion at x and y of tile
+            this.createExplosion(tile.x, tile.y, "shieldHit"); //create explosion at x and y of tile
 
             for (var i = 0; i < Phaser.Math.Between(10, 20); i++) { //for loop to iterate through sheildtile array randomly
                 var shieldHole = this.add.graphics({ //create sheildhole var and add graphics
@@ -1017,9 +1013,15 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
     //END destroySheildTile function
 
     //create Explosion function
-    createExplosion(x, y) {
-        this.sfx.explode.play(); //play sound fx
-        var explosion = new Explosion(this, x, y); //create a new instance of explosion
+    createExplosion(x, y, audioEvent) {
+        if (audioEvent !== false) {
+            if (audioEvent == "playerHit") this.sfx.playerHit.play();
+            else if (audioEvent == "shieldHit") this.sfx.shieldHit.play();
+            else if (audioEvent == "mothershipHit") this.sfx.mothershipHit.play();
+            else if (audioEvent == "large") this.sfx.explosionLarge.play();
+            else this.sfx.explosionSmall.play();
+        }
+        var explosion = new Explosion(this, x, y, audioEvent == "large" || audioEvent == "mothershipHit"); //create a new instance of explosion
         this.explosions.add(explosion); //add it to the explosions group
         if (totalEnemyShips == enemyDeaths) { //if totalEnemyShips is same as totalDeaths
             this.win(); //start win method
@@ -1029,8 +1031,11 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
     //end explosion function
 
     //create nuke explosion function 
-    createNukeExplosion(x, y) {
-        this.sfx.explode.play(); //play sound fx
+    createNukeExplosion(x, y, audioEvent) {
+        if (audioEvent !== false) {
+            if (audioEvent == "mothershipHit") this.sfx.mothershipHit.play();
+            else this.sfx.nukeBurst.play();
+        }
         var nukeExplosion = new NukeExplosion(this, x, y); //create a new instance of nukeExplosion
         this.nukeExplosions.add(nukeExplosion); //add it to the nukeExplosions group
         if (totalEnemyShips == enemyDeaths) { // if totalEnemyShips is same as totalDeaths
@@ -1053,6 +1058,7 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
 
     //create win function
     win() {
+        ggPlayAudioOnce(this, "boss-victory", GG_AUDIO.VICTORY_STINGER);
         this.player.destroy(); //destroy player if victory to stop losing any lives 
         this.addScore((currentLives + currentNukes + LevelRestart) * 100); //total left over assets and add to score
         textLives.setText('Lives: WINNER'); //set lives text to GAME OVER 
@@ -1100,22 +1106,12 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
     //create gameover function
     gameOver() {
         if (this.player) this.player.destroy(); //destroy player
-        ggRenderGameOver(this, function() {
-            if (LevelRestart > 0) {
-                enemyShips = 0;
-                enemyDeaths = 0;
-                totalEnemyShips = 0;
-                currentLives = LevelRestartLives;
-                this.loseRestartLife();
-                RIP = false;
-                motherShipAlive = true;
-                motherShipLives = maxMotherShipLives;
-                this.scene.start("BossLevel");
-            }
-            else {
-                ggResetToMenu(this);
-            }
-        }.bind(this), function() { ggResetToMenu(this); }.bind(this));
+        ggRenderGameOver(
+            this,
+            function() { ggResetToMenu(this); }.bind(this),
+            function() { ggRestartGameplay(this, "BossLevel"); }.bind(this),
+            function() { ggRestartGameplay(this, "BossLevel"); }.bind(this)
+        );
     }
     //END gameover function
 

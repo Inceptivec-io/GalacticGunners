@@ -13,7 +13,6 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
     this.load.image("hero", "assets/images/owned/branding/gg_logo_compact_v002.png"); //preload the hero image
     this.load.image("BtnInfo", "assets/images/owned/ui/gg_ui_info_v002.png"); //preload the Info Button image
     this.load.spritesheet("BtnPoint", "assets/images/owned/ui/gg_ui_pointer_v002_sheet.png", { frameWidth: 724, frameHeight: 724 }); //preload the Pointer Button image
-    this.load.audio("sndBtn", "assets/audio/sndBtn.wav"); //preload the Button Sound
   }
   //END preload function
 
@@ -28,9 +27,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
     //END GRID
 
     //create sounds    
-    this.sfx = { //for sfx object create btn property 
-      btn: this.sound.add("sndBtn") //and add sound Button Sound
-    };
+    this.sfx = ggCreateUiSfx(this);
     //END create sounds
 
     this.menuCard = this.add.image(0, 0, "menuTitlecard");
@@ -100,6 +97,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
     Align.scaleToGameW(this.btnPlay, 0.1); //set scale
 
     this.btnPlay.on("pointerover", function() { //this Play Button when on method, in hover
+      this.sfx.select.play();
       this.btnPlay.setTexture("BtnPlayHover"); //change the image to Play Button without box
       this.btnPlay.setTint(0xff0000); // set the play button to red on hover
     }, this); //this state only
@@ -144,6 +142,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
 
 
     this.btnInfo.on("pointerover", function() { //this Play Button when on method, in hover
+      this.sfx.select.play();
       this.btnInfo.setTint(0xff0000); // set the play button to red on hover
     }, this); //this state only
 
@@ -201,6 +200,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
     }, this); //this state only
 
     this.btnPoint.on("pointerdown", function() { //this point Button when on selected
+      this.sfx.select.play();
       if (!touch) {
         this.btnPoint.setTint(0xff0000); // set the point button to red on select
         touch = true; //set touch variable
@@ -232,12 +232,12 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
   //END Create Function
 
   startGame() {
-    this.sfx.btn.play(); // set the sound to play             
+    this.sfx.confirm.play(); // set the sound to play
     this.scene.start("Level1"); // start level 1
   }
 
   openInfo() {
-    this.sfx.btn.play(); // set the sound to play             
+    this.sfx.confirm.play(); // set the sound to play
     this.scene.start("Info"); // open Info screen
   }
 }

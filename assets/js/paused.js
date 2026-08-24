@@ -10,7 +10,6 @@ class Paused extends Phaser.Scene { //creates a scene in the Phaser Object calle
         this.load.image("resumeHover", "assets/images/owned/ui/gg_ui_pause_v002.png"); //preload the Resume Button Hover image
         this.load.spritesheet("comet", "assets/images/owned/sprites/gg_comet_v002_sheet.png", { frameWidth: 836, frameHeight: 940 }); //preload the comet image
         this.load.image("pauseIcon", "assets/images/owned/ui/gg_ui_pause_v002.png"); //preload owned pause image
-        this.load.audio("sndBtn", "assets/audio/sndBtn.wav"); //preload the Button Sound
     }
     //END preload function
 
@@ -24,9 +23,7 @@ class Paused extends Phaser.Scene { //creates a scene in the Phaser Object calle
         this.aGrid = new AlignGrid({ scene: this, rows: 11, cols: 11 }); //add grid to screen for scaling and positioning
         //END GRID
 
-        this.sfx = { //for sfx object create btn property 
-            btn: this.sound.add("sndBtn") //and add sound Button Sound
-        };
+        this.sfx = ggCreateUiSfx(this);
 
         //pause Image
         this.planetImage = this.add.sprite(0, 0, 'comet'); //add animated comet image to bottom of screen
@@ -88,6 +85,7 @@ class Paused extends Phaser.Scene { //creates a scene in the Phaser Object calle
         this.btnResume.setInteractive(); //set button to be interactive
 
         this.btnResume.on("pointerover", function() { //this Resume Button when on method, in hover
+            this.sfx.select.play();
             this.btnResume.setTexture("resumeHover"); //change the image to Resume Button without box
             this.btnResume.setTint(0xff0000); // set the Resume button to red on hover
         }, this); //this state only
@@ -117,7 +115,7 @@ class Paused extends Phaser.Scene { //creates a scene in the Phaser Object calle
     //END create function
 
     resumeGame() {
-        this.sfx.btn.play(); // set the sound to play             
+        this.sfx.confirm.play(); // set the sound to play
         this.scene.resume(isPaused.key); // resume scene
         this.scene.setVisible(false);
     }

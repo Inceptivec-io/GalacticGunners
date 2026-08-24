@@ -8,7 +8,6 @@ class Info extends Phaser.Scene { //creates a scene in the Phaser Object called 
     this.load.image("backgroundstars", "assets/images/owned/backgrounds/gg_bg_starfield_v002.png") //preload background stars image
     this.load.image("hero", "assets/images/owned/branding/gg_logo_compact_v002.png"); //preload the hero image
     this.load.image("BtnBack", "assets/images/owned/ui/gg_ui_back_v002.png"); //preload the Info Button image
-    this.load.audio("sndBtn", "assets/audio/sndBtn.wav"); //preload the Button Sound
   }
   //END preload function
 
@@ -22,9 +21,7 @@ class Info extends Phaser.Scene { //creates a scene in the Phaser Object called 
     this.aGrid = new AlignGrid({ scene: this, rows: 11, cols: 11 }); //create grid for positioning
     //END GRID
 
-    this.sfx = { //for sfx object create btn property 
-      btn: this.sound.add("sndBtn") //and add sound Button Sound
-    };
+    this.sfx = ggCreateUiSfx(this);
     //END create function
 
     //Title, story and controls text
@@ -143,6 +140,7 @@ class Info extends Phaser.Scene { //creates a scene in the Phaser Object called 
     this.btnBack.setInteractive(); //set button to be interactive
 
     this.btnBack.on("pointerover", function() { //this Back Button when on method, in hover
+      this.sfx.select.play();
       this.btnBack.setTint(0xff0000) // set the play button to red on hover
     }, this); //this state only
 
@@ -169,7 +167,7 @@ class Info extends Phaser.Scene { //creates a scene in the Phaser Object called 
   //END create function
 
   backToMenu() {
-    this.sfx.btn.play(); // set the sound to play             
+    this.sfx.back.play(); // set the sound to play
     this.scene.start("MainMenu"); // back to Main Menu
   }
 }

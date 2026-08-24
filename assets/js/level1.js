@@ -18,12 +18,7 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
         //END GRID
 
         //create sfx
-        this.sfx = { //add properties to call back sfx
-            explode: this.sound.add("sndExplode"), //create the soudn fx properties
-            laserPlayer: this.sound.add("sndLaserPlayer"), //create the soudn fx properties
-            laserEnemy: this.sound.add("sndLaserEnemy"), //create the soudn fx properties
-            nukeFiring: this.sound.add("nukefiring") //create the soudn fx properties
-        };
+        this.sfx = ggCreateGameplaySfx(this);
         //END sfx
 
         //Mute Button
@@ -238,7 +233,7 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
             }
             //ALSO
             if (player) { //if player  
-                this.createExplosion(player.x, player.y); //call createExplosion method
+                this.createExplosion(player.x, player.y, "playerHit"); //call createExplosion method
                 player.body.reset(this.game.config.width * 0.5, this.game.config.height - 50); //reset player to opening position
                 this.onLifeDown(); //start onLifeDown Method
             }
@@ -336,7 +331,7 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
 
         this.physics.add.overlap(this.player, this.enemies, function(player, enemy) { //create a physics overlap event between object1 and object2, followed by collideCallback function
             if (player) { //if player collides with enemy
-                this.createExplosion(player.x, player.y); //create explosion at player.x, player.y coordinates
+                this.createExplosion(player.x, player.y, "playerHit"); //create explosion at player.x, player.y coordinates
                 player.body.reset(this.game.config.width * 0.5, this.game.config.height - 50); //reset player to opening position
                 this.onLifeDown(); //start lifeDown function to lose life and check if GAME OVER
             }
@@ -344,7 +339,7 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
 
         this.physics.add.overlap(this.player, this.enemyLasers, function(player, laser) { //create a physics overlap event between object1 and object2, followed by collideCallback function
             if (player) { //if player hit by enemyLaser
-                this.createExplosion(player.x, player.y); //create explosion at player.x, player.y coordinates
+                this.createExplosion(player.x, player.y, "playerHit"); //create explosion at player.x, player.y coordinates
                 player.body.reset(this.game.config.width * 0.5, this.game.config.height - 50); //reset player to opening position
                 this.onLifeDown(); //start lifeDown function to lose life and check if GAME OVER
             }
@@ -645,7 +640,7 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
                 for (var i = 0; i < this.starNukes.getChildren().length; i++) { //for each enemy in the enemies array
                     var nuke = this.starNukes.getChildren()[i]; //this nuke = starNukes[i]
                     if (nuke.y < 10) { //if laser is less than 10 away from screen edge
-                        this.createExplosion(nuke.x, nuke.y); //create an explosion at this nuke.x and nuke.y
+                        this.createNukeExplosion(nuke.x, nuke.y); //create an explosion at this nuke.x and nuke.y
                         emitter.stop(); //stope emitting particles
                         if (nuke) { //if nuke         
                             nuke.destroy(); //destroy this nuke
@@ -660,9 +655,14 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
     //END updateNukes function
 
     //create Explosion function
-    createExplosion(x, y) {
-        this.sfx.explode.play(); //play sound fx
-        var explosion = new Explosion(this, x, y); //create a new instance of explosion
+    createExplosion(x, y, audioEvent) {
+        if (audioEvent !== false) {
+            if (audioEvent == "playerHit") this.sfx.playerHit.play();
+            else if (audioEvent == "shieldHit") this.sfx.shieldHit.play();
+            else if (audioEvent == "large") this.sfx.explosionLarge.play();
+            else this.sfx.explosionSmall.play();
+        }
+        var explosion = new Explosion(this, x, y, audioEvent == "large" || audioEvent == "mothershipHit"); //create a new instance of explosion
         this.explosions.add(explosion); //add it to the explosions group
         if (totalEnemyShips == enemyDeaths) { //if totalEnemyShips is same as totalDeaths
             this.win(); //start win method
@@ -672,8 +672,8 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
     //end explosion function
 
     //create nuke explosion function 
-    createNukeExplosion(x, y) {
-        this.sfx.explode.play(); //play sound fx
+    createNukeExplosion(x, y, audioEvent) {
+        if (audioEvent !== false) this.sfx.nukeBurst.play(); //play sound fx
         var nukeExplosion = new NukeExplosion(this, x, y); //create a new instance of nukeExplosion
         this.nukeExplosions.add(nukeExplosion); //add it to the nukeExplosions group
         if (totalEnemyShips == enemyDeaths) { // if totalEnemyShips is same as totalDeaths
@@ -792,7 +792,7 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
     destroyShieldTile(tile, enemyHit) {
         if (tile) { //if(tile)
             if (enemyHit) ggScoreEvent(this, "SHIELD_TILE_ENEMY_HIT"); //locked shield penalty only for enemy hits
-            this.createExplosion(tile.x, tile.y); //create explosion at x and y of tile
+            this.createExplosion(tile.x, tile.y, "shieldHit"); //create explosion at x and y of tile
 
             for (var i = 0; i < Phaser.Math.Between(10, 20); i++) { //for loop to iterate through sheildtile array randomly
                 var shieldHole = this.add.graphics({ //create sheildhole var and add graphics
@@ -832,6 +832,7 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
 
     //create win function
     win() {
+        ggPlayAudioOnce(this, "level-1-victory", GG_AUDIO.VICTORY_STINGER);
         this.player.destroy(); //destroy player if victory to stop losing any lives 
         this.fireworksVictory = this.add.image(0, 0, 'fireworks'); //set fireworks image position x,y and initiate first so image behind the hero
         this.aGrid.placeAtIndex(71, this.fireworksVictory); //set position on the grid
@@ -925,7 +926,12 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
     //create gameover function
     gameOver() {
         if (this.player) this.player.destroy(); //destroy player
-        ggRenderGameOver(this, function() { ggResetToMenu(this); }.bind(this), function() { ggResetToMenu(this); }.bind(this));
+        ggRenderGameOver(
+            this,
+            function() { ggResetToMenu(this); }.bind(this),
+            function() { ggRestartGameplay(this, "Level1"); }.bind(this),
+            function() { ggRestartGameplay(this, "Level1"); }.bind(this)
+        );
     }
     //END gameover function
 

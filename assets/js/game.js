@@ -1,12 +1,12 @@
 var config = { //game configuration parameters
     type: Phaser.AUTO, //set Phaser to Auto, rather than webGL or Canvas
-    width: this.window.innerWidth * this.window.devicePixelRatio, //sets the game viewport width
-    height: this.window.innerHeight * this.window.devicePixelRatio, //sets the game viewport height
+    width: window.innerWidth, //sets the game viewport width
+    height: window.innerHeight, //sets the game viewport height
     scale: { //set scale property game
-        mode: Phaser.Scale.SHOW_ALL, //mode is SHOW_ALL
+        mode: Phaser.Scale.RESIZE, //fill browser viewport
         autoCenter: Phaser.Scale.CENTER_BOTH //center both axis
     },
-    backgroundColor: "black", //sets the game viewport background
+    backgroundColor: "#020817", //sets the game viewport background
     physics: { //load the physics property to game
         default: "arcade", //set default property key to arcade
         arcade: { //arcade properties set
@@ -61,6 +61,7 @@ var level2Shields = 6; //declares the number of sheilds in Level 2
 var levelBShields = 4; //declares the number of sheilds in Boss Level
 
 var score = 0; //declares score Global Variable
+var finalScore = null; //declares authoritative frozen result score
 var textScore; //declares score text Global Variable
 var textLives; //declares lives left text Global Variable
 var textNukes; //declares Nuke text Global Variable
