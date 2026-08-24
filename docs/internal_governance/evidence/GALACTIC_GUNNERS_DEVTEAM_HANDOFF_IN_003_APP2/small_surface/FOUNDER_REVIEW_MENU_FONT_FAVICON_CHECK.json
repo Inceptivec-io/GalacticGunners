@@ -1,33 +1,33 @@
 {
   "runtimeUrl": "http://localhost:8027/",
-  "checkedAtUtc": "2026-08-24T00:55:31.566Z",
+  "checkedAtUtc": "2026-08-24T01:06:54.883Z",
   "result": {
     "documentTitle": "Galactic Gunners",
     "readyState": "complete",
     "canvasCount": 1,
     "faviconLinks": [
       {
-        "href": "/favicon.ico?v=gg-ship-crest-v003",
+        "href": "/favicon.ico?v=gg-hud-life-v004",
         "type": "",
         "sizes": "any"
       },
       {
-        "href": "assets/images/owned/branding/favicons/favicon.ico?v=gg-ship-crest-v003",
+        "href": "assets/images/owned/branding/favicons/favicon.ico?v=gg-hud-life-v004",
         "type": "image/x-icon",
         "sizes": ""
       },
       {
-        "href": "assets/images/owned/branding/favicons/favicon-16.png?v=gg-ship-crest-v003",
+        "href": "assets/images/owned/branding/favicons/favicon-16.png?v=gg-hud-life-v004",
         "type": "image/png",
         "sizes": "16x16"
       },
       {
-        "href": "assets/images/owned/branding/favicons/favicon-32.png?v=gg-ship-crest-v003",
+        "href": "assets/images/owned/branding/favicons/favicon-32.png?v=gg-hud-life-v004",
         "type": "image/png",
         "sizes": "32x32"
       },
       {
-        "href": "assets/images/owned/branding/favicons/favicon-48.png?v=gg-ship-crest-v003",
+        "href": "assets/images/owned/branding/favicons/favicon-48.png?v=gg-hud-life-v004",
         "type": "image/png",
         "sizes": "48x48"
       }
@@ -112,6 +112,7 @@
     "width": 1366,
     "height": 665
   },
+  "expectedFaviconVersion": "gg-hud-life-v004",
   "runtimeExceptions": [],
   "networkFailures": [],
   "pass": true

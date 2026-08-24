@@ -2,9 +2,9 @@
 
 Correction scope:
 
-- Added root `favicon.ico` derived from `assets/images/owned/branding/gg_logo_compact_v002.png`.
+- Added root `favicon.ico` derived from `assets/images/owned/ui/gg_hud_life_icon_v002.png`.
 - Added explicit ICO favicon reference and retained existing PNG/apple favicon references.
-- Added favicon link versioning so browser tab caches refresh to `gg-ship-crest-v003`.
+- Added favicon link versioning so browser tab caches refresh to `gg-hud-life-v004`.
 - Updated Docker image assembly so `/favicon.ico` is served from the container root.
 - Updated Docker HTTP verifier to check `/favicon.ico` and the owned ICO derivative.
 - Changed MainMenu `CAN YOU SAVE THE DAY?` CTA to `GG_FONT_TITLE`.
@@ -22,5 +22,5 @@ Governance status:
 Verification:
 
 - Docker HTTP verification PASS; transcript: `FOUNDER_REVIEW_DOCKER_HTTP_VERIFY.txt`.
-- Browser/CDP verification PASS at 1366x665 constrained desktop viewport; result includes explicit bounds for key menu elements and `gg-ship-crest-v003` favicon links: `FOUNDER_REVIEW_MENU_FONT_FAVICON_CHECK.json`.
+- Browser/CDP verification PASS at 1366x665 constrained desktop viewport; result includes explicit bounds for key menu elements and `gg-hud-life-v004` favicon links: `FOUNDER_REVIEW_MENU_FONT_FAVICON_CHECK.json`.
 - Rendered menu evidence captured: `FOUNDER_REVIEW_MENU_FONT_FAVICON_CHECK.png`.

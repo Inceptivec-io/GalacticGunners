@@ -2,7 +2,7 @@
 
 | Surface | Result | Evidence |
 |---|---|---|
-| Favicon | PASS | `index.html` favicon links include versioned `/favicon.ico?v=gg-ship-crest-v003`; Docker HTTP verifier covers root ICO and owned favicon derivatives |
+| Favicon | PASS | `index.html` favicon links include versioned `/favicon.ico?v=gg-hud-life-v004`; Docker HTTP verifier covers root ICO and owned favicon derivatives |
 | Page/browser title | PASS | `Galactic Gunners` captured in browser regression JSON |
 | Logo/wordmark references | PASS | owned branding paths HTTP 200; main menu logo constrained inside viewport |
 | Sound icon state | PASS | owned sound/mute UI preserved; runtime sound manager toggle preserved |
@@ -15,7 +15,7 @@
 | Stale legacy branding | PASS | no obvious stale/default browser assets in active small surfaces |
 | Broken/404 asset references | PASS | HTTP verifier and browser network check: 0 failures |
 | Duplicated controls | PASS | duplicate lower-left menu play crest removed; center compact crest is the single primary play action |
-| Visible placeholder/default browser assets | PASS | root ICO and favicon derivatives use tight owned ship/crest crop from compact logo |
+| Visible placeholder/default browser assets | PASS | root ICO and favicon derivatives use Founder-directed `gg_hud_life_icon_v002.png` source |
 
 Target results:
 

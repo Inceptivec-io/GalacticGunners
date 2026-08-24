@@ -7,6 +7,7 @@ const path = require("path");
 const port = 9231;
 const runtimeUrl = "http://localhost:8027/";
 const viewport = { width: 1366, height: 665 };
+const expectedFaviconVersion = "gg-hud-life-v004";
 const writeEvidence = process.env.GG_VERIFY_NO_WRITE !== "1";
 const evidenceDir = path.resolve(
   __dirname,
@@ -170,14 +171,14 @@ async function main() {
         documentTitle: document.title,
         readyState: document.readyState,
         canvasCount: document.querySelectorAll("canvas").length,
-        faviconLinks: Array.from(document.querySelectorAll("link[rel~=icon]")).map((link) => ({
+      faviconLinks: Array.from(document.querySelectorAll("link[rel~=icon]")).map((link) => ({
           href: link.getAttribute("href"),
           type: link.getAttribute("type") || "",
           sizes: link.getAttribute("sizes") || ""
         })),
         appleTouchIconLinked: !!document.querySelector("link[rel='apple-touch-icon']"),
         rootFaviconIcoLinked: Array.from(document.querySelectorAll("link[rel~=icon]")).some((link) =>
-          (link.getAttribute("href") || "").startsWith("/favicon.ico")
+        (link.getAttribute("href") || "").startsWith("/favicon.ico")
         ),
         fontsReady: document.fonts.status,
         titleFontLoaded: document.fonts.check("96px GalacticGunnersTitle"),
@@ -206,11 +207,13 @@ async function main() {
       checkedAtUtc: new Date().toISOString(),
       result,
       viewport,
+      expectedFaviconVersion,
       runtimeExceptions,
       networkFailures,
       pass:
         result.documentTitle === "Galactic Gunners" &&
         result.rootFaviconIcoLinked === true &&
+        result.faviconLinks.every((link) => String(link.href).includes(expectedFaviconVersion)) &&
         result.appleTouchIconLinked === true &&
         result.faviconLinks.length >= 5 &&
         result.titleFontLoaded === true &&
