@@ -16,13 +16,13 @@ const GG_SCALES = Object.freeze({
 
 const GG_BODY_CONTRACTS = Object.freeze({
     PLAYER: { w: 0.34, h: 0.54, ox: 0.5, oy: 0.36 },
-    PLAYER_LASER: { w: 0.62, h: 0.22 },
+    PLAYER_LASER: { w: 0.78, h: 0.36 },
     NUKE: { w: 0.24, h: 0.72, ox: 0.5, oy: 0.18 },
     SCOUT: { w: 0.42, h: 0.48, ox: 0.5, oy: 0.32 },
     ENEMY: { w: 0.45, h: 0.52, ox: 0.5, oy: 0.32 },
     CRUISER: { w: 0.46, h: 0.54, ox: 0.5, oy: 0.22 },
     MOTHERSHIP: { w: 0.48, h: 0.52, ox: 0.5, oy: 0.22 },
-    ENEMY_LASER: { w: 0.62, h: 0.22 },
+    ENEMY_LASER: { w: 0.78, h: 0.36 },
     COMET: { w: 0.52, h: 0.48, ox: 0.5, oy: 0.28 }
 });
 
@@ -47,10 +47,14 @@ function ggSetVerticalProjectileBody(sprite, sourceLengthRatio, sourceThicknessR
     if (!sprite || !sprite.body) return;
     var frameW = sprite.width || 1;
     var frameH = sprite.height || 1;
+    var visualW = sprite.displayWidth || frameW;
+    var visualH = sprite.displayHeight || frameH;
     var scaleX = Math.max(0.001, Math.abs(sprite.scaleX || 1));
     var scaleY = Math.max(0.001, Math.abs(sprite.scaleY || 1));
-    var bodyW = Math.max(1, Math.round((sprite.displayWidth || frameW) * sourceLengthRatio * scaleX));
-    var bodyH = Math.max(1, Math.round((sprite.displayHeight || frameH) * sourceThicknessRatio * scaleY));
+    var desiredBodyW = Math.max(14, Math.round(visualH * sourceThicknessRatio));
+    var desiredBodyH = Math.max(32, Math.round(visualW * sourceLengthRatio));
+    var bodyW = Math.round(desiredBodyW / scaleX);
+    var bodyH = Math.round(desiredBodyH / scaleY);
     sprite.body.setSize(bodyW, bodyH, false);
     sprite.body.setOffset(Math.round((frameW - bodyW) * 0.5), Math.round((frameH - bodyH) * 0.5));
 }
@@ -894,6 +898,34 @@ function ggResolveEnemyLaserPlayerHit(scene, laser, player) {
     return true;
 }
 
+function ggResolveHostileBodyPlayerHit(scene, hostile, player) {
+    if (!scene || !hostile || !player || !hostile.active || !player.active || hostile.ggResolved) return false;
+    hostile.ggResolved = true;
+    var damage = {
+        eventId: ggRuntimeEventId(scene, "PLAYER_DAMAGE"),
+        scene: scene && scene.scene && scene.scene.key ? scene.scene.key : "UNKNOWN",
+        timestamp: Date.now(),
+        damageSource: hostile.ggEntityType || hostile.ggScoreEvent || (hostile.constructor ? hostile.constructor.name : "HOSTILE_BODY"),
+        projectileId: null,
+        projectileSide: "hostile-body",
+        playerBodyBounds: ggBodyTrace(player),
+        projectileBodyBounds: ggBodyTrace(hostile),
+        livesBefore: typeof currentLives === "number" ? currentLives : null
+    };
+    if (!window.ggPlayerDamageTrace) window.ggPlayerDamageTrace = [];
+    var hitX = player.x;
+    var hitY = player.y;
+    var explosionEvent = ggCombatEvent(scene, "HOSTILE_BODY_PLAYER_HIT", hostile, player, "playerHit");
+    scene.onLifeDown();
+    damage.livesAfter = typeof currentLives === "number" ? currentLives : null;
+    explosionEvent.livesAfter = damage.livesAfter;
+    window.ggPlayerDamageTrace.push(damage);
+    scene.createExplosion(hitX, hitY, explosionEvent);
+    hostile.destroy();
+    if (player.body) player.body.reset(scene.game.config.width * 0.5, scene.game.config.height - 50);
+    return true;
+}
+
 function ggClampPlayerToWorld(scene) {
     if (!scene || !scene.player || !scene.player.body) return;
     var body = scene.player.body;
@@ -916,6 +948,22 @@ function ggGroupChildren(group) {
 
 function ggBoundsFor(item) {
     if (!item || !item.active) return null;
+    function expand(bounds, minWidth, minHeight) {
+        var width = bounds.right - bounds.left;
+        var height = bounds.bottom - bounds.top;
+        var cx = bounds.left + width * 0.5;
+        var cy = bounds.top + height * 0.5;
+        var nextW = Math.max(width, minWidth || width);
+        var nextH = Math.max(height, minHeight || height);
+        return { left: cx - nextW * 0.5, top: cy - nextH * 0.5, right: cx + nextW * 0.5, bottom: cy + nextH * 0.5 };
+    }
+    if (item.getBounds) {
+        var bounds = item.getBounds();
+        var current = { left: bounds.left, top: bounds.top, right: bounds.right, bottom: bounds.bottom };
+        if (item.ggProjectileType === "PLAYER_LASER" || item.ggProjectileType === "ENEMY_LASER" || item.ggProjectileType === "MOTHERSHIP_LASER") return expand(current, 36, 32);
+        if (item.ggProjectileType === "PLAYER_NUKE") return expand(current, 44, 44);
+        return current;
+    }
     if (item.body) {
         return {
             left: item.body.x,
@@ -923,10 +971,6 @@ function ggBoundsFor(item) {
             right: item.body.x + item.body.width,
             bottom: item.body.y + item.body.height
         };
-    }
-    if (item.getBounds) {
-        var bounds = item.getBounds();
-        return { left: bounds.left, top: bounds.top, right: bounds.right, bottom: bounds.bottom };
     }
     return null;
 }
@@ -1016,6 +1060,35 @@ function ggHitPlayerTarget(scene, laser, player) {
     return ggResolveEnemyLaserPlayerHit(scene, laser, player);
 }
 
+function ggResolveProjectileClash(scene, playerLaser, hostileLaser) {
+    if (!scene || !playerLaser || !hostileLaser) return false;
+    if (!playerLaser.active || !hostileLaser.active || playerLaser.ggProjectileSide !== "player" || hostileLaser.ggProjectileSide !== "enemy") return false;
+    if (playerLaser.ggResolved || hostileLaser.ggResolved) return false;
+    playerLaser.ggResolved = true;
+    hostileLaser.ggResolved = true;
+    if (!window.ggProjectileClashTrace) window.ggProjectileClashTrace = [];
+    window.ggProjectileClashTrace.push({
+        eventId: ggRuntimeEventId(scene, "PROJECTILE_CLASH"),
+        scene: scene && scene.scene && scene.scene.key ? scene.scene.key : "UNKNOWN",
+        timestamp: Date.now(),
+        playerProjectileId: ggAssignEntityId(scene, playerLaser, playerLaser.ggProjectileType || "PLAYER_LASER"),
+        hostileProjectileId: ggAssignEntityId(scene, hostileLaser, hostileLaser.ggProjectileType || "ENEMY_LASER"),
+        playerProjectileBounds: ggBodyTrace(playerLaser),
+        hostileProjectileBounds: ggBodyTrace(hostileLaser)
+    });
+    playerLaser.destroy();
+    hostileLaser.destroy();
+    return true;
+}
+
+function ggResolvePlayerLaserShieldHit(scene, laser, tile) {
+    if (!scene || !laser || !tile || !laser.active || !tile.active || laser.ggProjectileSide !== "player" || laser.ggResolved) return false;
+    laser.ggResolved = true;
+    laser.destroy();
+    scene.destroyShieldTile(tile, "PLAYER_LASER_HIT_SHIELD");
+    return true;
+}
+
 function ggSweepProjectilesAgainst(scene, projectileGroup, targetGroup, hitCallback) {
     ggGroupChildren(projectileGroup).slice().forEach(function(projectile) {
         if (!projectile || !projectile.active) return;
@@ -1029,8 +1102,14 @@ function ggSweepProjectilesAgainst(scene, projectileGroup, targetGroup, hitCallb
 }
 
 function ggRunSweptCollisionContracts(scene) {
-    if (!scene || !scene.ggEnableSweptCollision) return;
     if (!scene || RIP || levelWon) return;
+    var playerGroup = { getChildren: function() { return scene.player && scene.player.active ? [scene.player] : []; } };
+    ggSweepProjectilesAgainst(scene, scene.playerLasers, scene.enemyLasers, function(playerLaser, hostileLaser) {
+        return ggResolveProjectileClash(scene, playerLaser, hostileLaser);
+    });
+    ggSweepProjectilesAgainst(scene, scene.playerLasers, scene.shieldTiles, function(laser, tile) {
+        return ggResolvePlayerLaserShieldHit(scene, laser, tile);
+    });
     ggSweepProjectilesAgainst(scene, scene.playerLasers, scene.enemies, function(laser, enemy) {
         return ggDestroyEnemyTarget(scene, laser, enemy, false);
     });
@@ -1058,8 +1137,20 @@ function ggRunSweptCollisionContracts(scene) {
     ggSweepProjectilesAgainst(scene, scene.starNukes, scene.asteroids, function(nuke, asteroid) {
         return ggDestroyAsteroidTarget(scene, nuke, asteroid, true);
     });
-    ggSweepProjectilesAgainst(scene, scene.enemyLasers, { getChildren: function() { return scene.player && scene.player.active ? [scene.player] : []; } }, function(laser, player) {
+    ggSweepProjectilesAgainst(scene, scene.enemyLasers, playerGroup, function(laser, player) {
         return ggHitPlayerTarget(scene, laser, player);
+    });
+    ggSweepProjectilesAgainst(scene, scene.enemies, playerGroup, function(enemy, player) {
+        return ggResolveHostileBodyPlayerHit(scene, enemy, player);
+    });
+    ggSweepProjectilesAgainst(scene, scene.alienscouts, playerGroup, function(scout, player) {
+        return ggResolveHostileBodyPlayerHit(scene, scout, player);
+    });
+    ggSweepProjectilesAgainst(scene, scene.asteroids, playerGroup, function(asteroid, player) {
+        return ggResolveHostileBodyPlayerHit(scene, asteroid, player);
+    });
+    ggSweepProjectilesAgainst(scene, scene.comets, playerGroup, function(comet, player) {
+        return ggResolveHostileBodyPlayerHit(scene, comet, player);
     });
     ggMarkSweepPositions(scene.playerLasers);
     ggMarkSweepPositions(scene.starNukes);
@@ -1067,7 +1158,6 @@ function ggRunSweptCollisionContracts(scene) {
 }
 
 function ggInstallSweptCollisionContracts(scene) {
-    if (!scene || !scene.ggEnableSweptCollision) return;
     if (!scene || !scene.time || scene.ggSweptCollisionEvent) return;
     ggMarkSweepPositions(scene.playerLasers);
     ggMarkSweepPositions(scene.starNukes);
@@ -1120,6 +1210,16 @@ function ggInstallGameplayTestControls(scene) {
                 if (!group || !group.getChildren) return;
                 group.getChildren().slice().forEach(function(child) {
                     if (child && child.ggTestFixture) child.destroy();
+                });
+            });
+            return true;
+        },
+        clearRuntimeCollisionField: function() {
+            ["enemies", "alienscouts", "enemyLasers", "playerLasers", "starNukes", "asteroids", "comets", "shieldTiles", "shieldHoles", "explosions", "nukeExplosions"].forEach(function(groupName) {
+                var group = scene[groupName];
+                if (!group || !group.getChildren) return;
+                group.getChildren().slice().forEach(function(child) {
+                    if (child && child.destroy) child.destroy();
                 });
             });
             return true;
@@ -1178,15 +1278,16 @@ function ggInstallGameplayTestControls(scene) {
                 currentNukes: currentNukes,
                 sweptCollisionLoopInstalled: !!scene.ggSweptCollisionEvent,
                 playerLasers: ggGroupChildren(scene.playerLasers).filter(function(item) { return item && item.active; }).map(function(item) {
-                    return { id: item.ggEntityId, x: item.x, y: item.y, velocityY: item.body ? item.body.velocity.y : null, side: item.ggProjectileSide, type: item.ggProjectileType, active: item.active };
+                    return { id: item.ggEntityId, x: item.x, y: item.y, velocityY: item.body ? item.body.velocity.y : null, side: item.ggProjectileSide, type: item.ggProjectileType, active: item.active, body: item.body ? ggBodyTrace(item) : null };
                 }),
                 enemyLasers: ggGroupChildren(scene.enemyLasers).filter(function(item) { return item && item.active; }).map(function(item) {
-                    return { id: item.ggEntityId, x: item.x, y: item.y, velocityY: item.body ? item.body.velocity.y : null, side: item.ggProjectileSide, type: item.ggProjectileType, active: item.active };
+                    return { id: item.ggEntityId, x: item.x, y: item.y, velocityY: item.body ? item.body.velocity.y : null, side: item.ggProjectileSide, type: item.ggProjectileType, active: item.active, body: item.body ? ggBodyTrace(item) : null };
                 }),
                 traces: {
                     explosions: window.ggExplosionTrace || [],
                     damage: window.ggPlayerDamageTrace || [],
-                    projectileSpawns: window.ggProjectileSpawnTrace || []
+                    projectileSpawns: window.ggProjectileSpawnTrace || [],
+                    projectileClashes: window.ggProjectileClashTrace || []
                 }
             };
         }

@@ -227,6 +227,18 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
             ggResolveEnemyLaserPlayerHit(this, laser, player);
         }, null, this);
 
+        this.physics.add.overlap(this.player, this.enemies, function(player, enemy) {
+            ggResolveHostileBodyPlayerHit(this, enemy, player);
+        }, null, this);
+
+        this.physics.add.overlap(this.player, this.asteroids, function(player, asteroid) {
+            ggResolveHostileBodyPlayerHit(this, asteroid, player);
+        }, null, this);
+
+        this.physics.add.overlap(this.player, this.comets, function(player, comet) {
+            ggResolveHostileBodyPlayerHit(this, comet, player);
+        }, null, this);
+
         this.physics.add.overlap(this.shieldTiles, this.enemies, function(tile, enemy) { //create a physics overlap event between object1 and object2, followed by collideCallback function
             if (enemy) { //if enemy
                 this.destroyShieldTile(tile, "ENEMY_BODY_HIT_SHIELD"); //enemy contact destroys one shield tile
@@ -241,7 +253,16 @@ class Level1 extends Phaser.Scene { //creates a scene in the Phaser Object calle
             this.destroyShieldTile(tile, "ENEMY_LASER_SHIELD_HIT"); //enemy fire destroys one shield tile
         }, null, this); //processCallback set to null and context set to this
 
+        this.physics.add.overlap(this.playerLasers, this.shieldTiles, function(laser, tile) {
+            ggResolvePlayerLaserShieldHit(this, laser, tile);
+        }, null, this);
+
+        this.physics.add.overlap(this.playerLasers, this.enemyLasers, function(playerLaser, hostileLaser) {
+            ggResolveProjectileClash(this, playerLaser, hostileLaser);
+        }, null, this);
+
         ggInstallCometCollisions(this); //install supplied comet collision rules
+        ggInstallSweptCollisionContracts(this); //install projectile tunneling safety net
         ggInstallGameplayTestControls(this); //install gated semantic QA controls
 
         //END COLLISION DETECTION

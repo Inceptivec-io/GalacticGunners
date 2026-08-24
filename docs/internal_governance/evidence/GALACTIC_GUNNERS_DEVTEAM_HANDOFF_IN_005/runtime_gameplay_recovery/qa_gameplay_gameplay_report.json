@@ -3,24 +3,38 @@
   "runtimeExceptions": [],
   "failedRequests": [],
   "checks": {
-    "NORMAL_RUNTIME_SWEPT_COLLISION_LOOP": "OFF",
-    "NORMAL_RUNTIME_COLLISION_AUTHORITY": "ARCADE_OVERLAP",
+    "PROJECTILE_SWEPT_COLLISION_LOOP": "ON",
+    "NORMAL_RUNTIME_COLLISION_AUTHORITY": "ARCADE_OVERLAP_PLUS_PROJECTILE_SWEEP",
     "PLAYER_LASER_VISIBLE": true,
     "PLAYER_LASER_MOVES_UP": true,
+    "PLAYER_LASER_BODY_CORE": true,
     "PLAYER_LASER_REPEAT_FIRE": true,
-    "PLAYER_BODY_CONTACT_DAMAGE": 0,
+    "PLAYER_BODY_CONTACT_DAMAGE": -1,
     "PLAYER_LASER_ENEMY": true,
     "PLAYER_LASER_ASTEROID": true,
     "PLAYER_LASER_COMET": true,
     "COMET_SCORE_REWARD": 500,
     "COMET_NUKE_REWARD": 1,
-    "PLAYER_LASER_SHIELD_PASS": true,
+    "PLAYER_LASER_SHIELD_COLLISION": true,
+    "PLAYER_LASER_SHIELD_SCORE_MUTATION": 0,
+    "PLAYER_ENEMY_LASER_CLASH": true,
     "PLAYER_NUKE_HOSTILE_TARGETS": true,
     "ENEMY_LASER_VISIBLE": true,
     "ENEMY_LASER_MOVES_DOWN": true,
+    "ENEMY_LASER_BODY_CORE": true,
     "ENEMY_LASER_PLAYER": true,
     "UNTRACED_PLAYER_LIFE_DECREMENT": 0,
     "ENEMY_LASER_SHIELD": true,
+    "HOSTILE_PLAYER_LASER_ENEMY_HITS": 5,
+    "HOSTILE_PLAYER_LASER_COMET_HITS": 5,
+    "HOSTILE_NUKE_ENEMY_HITS": 5,
+    "HOSTILE_ENEMY_LASER_PLAYER_HITS": 5,
+    "BOSS_PLAYER_LASER_MOTHERSHIP_HITS": 3,
+    "BOSS_NUKE_MOTHERSHIP_HITS": 3,
+    "BOSS_PLAYER_LASER_CRUISER_HITS": 3,
+    "BOSS_NUKE_CRUISER_HITS": 3,
+    "BOSS_SCOUT_BODY_PLAYER_CONTACT": true,
+    "BOSS_MOTHERSHIP_HIT_FRAME_CROP": true,
     "UNKNOWN_EXPLOSION_SOURCE": 0,
     "PROJECTILE_CULL_EXPLOSIONS": 0,
     "UNEXPLAINED_BASE_EXPLOSIONS": 0,
@@ -31,6 +45,165 @@
   "screenshots": {
     "playerLaser": "C:\\Users\\Michael\\dev\\GalacticGunners\\docs\\internal_governance\\evidence\\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_005\\runtime_gameplay_recovery\\player_laser_visible_moves_up.png",
     "runtime": "C:\\Users\\Michael\\dev\\GalacticGunners\\docs\\internal_governance\\evidence\\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_005\\runtime_gameplay_recovery\\gameplay_runtime_after_collision_matrix.png"
+  },
+  "hostileCollisionMatrix": {
+    "playerLaserEnemy": [
+      {
+        "offset": -28,
+        "hit": true
+      },
+      {
+        "offset": -14,
+        "hit": true
+      },
+      {
+        "offset": 0,
+        "hit": true
+      },
+      {
+        "offset": 14,
+        "hit": true
+      },
+      {
+        "offset": 28,
+        "hit": true
+      }
+    ],
+    "playerLaserComet": [
+      {
+        "offset": -28,
+        "hit": true
+      },
+      {
+        "offset": -14,
+        "hit": true
+      },
+      {
+        "offset": 0,
+        "hit": true
+      },
+      {
+        "offset": 14,
+        "hit": true
+      },
+      {
+        "offset": 28,
+        "hit": true
+      }
+    ],
+    "nukeEnemy": [
+      {
+        "offset": -28,
+        "hit": true
+      },
+      {
+        "offset": -14,
+        "hit": true
+      },
+      {
+        "offset": 0,
+        "hit": true
+      },
+      {
+        "offset": 14,
+        "hit": true
+      },
+      {
+        "offset": 28,
+        "hit": true
+      }
+    ],
+    "enemyLaserPlayer": [
+      {
+        "offset": -28,
+        "hit": true
+      },
+      {
+        "offset": -14,
+        "hit": true
+      },
+      {
+        "offset": 0,
+        "hit": true
+      },
+      {
+        "offset": 14,
+        "hit": true
+      },
+      {
+        "offset": 28,
+        "hit": true
+      }
+    ]
+  },
+  "bossHostileCollisionMatrix": {
+    "playerLaserMothership": [
+      {
+        "offset": -28,
+        "hit": true
+      },
+      {
+        "offset": 0,
+        "hit": true
+      },
+      {
+        "offset": 28,
+        "hit": true
+      }
+    ],
+    "nukeMothership": [
+      {
+        "offset": -28,
+        "hit": true
+      },
+      {
+        "offset": 0,
+        "hit": true
+      },
+      {
+        "offset": 28,
+        "hit": true
+      }
+    ],
+    "playerLaserCruiser": [
+      {
+        "offset": -28,
+        "hit": true
+      },
+      {
+        "offset": 0,
+        "hit": true
+      },
+      {
+        "offset": 28,
+        "hit": true
+      }
+    ],
+    "nukeCruiser": [
+      {
+        "offset": -28,
+        "hit": true
+      },
+      {
+        "offset": 0,
+        "hit": true
+      },
+      {
+        "offset": 28,
+        "hit": true
+      }
+    ],
+    "scoutBodyPlayer": {
+      "scoutActive": false,
+      "damageCount": 1
+    },
+    "mothershipHitFrame": {
+      "normalWidth": 475,
+      "normalHeight": 724,
+      "hitWidth": 362,
+      "hitHeight": 724,
+      "hitCutX": 362
+    }
   },
   "pass": true,
   "failures": []

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-24T22:00:51.474Z",
+  "generatedAt": "2026-08-24T23:39:52.858Z",
   "pass": true,
   "sprites": [
     {
@@ -505,15 +505,15 @@
       "frames": [
         {
           "name": "0",
-          "x": 0,
+          "x": 362,
           "y": 0,
-          "w": 724,
+          "w": 362,
           "h": 724,
           "contentBounds": {
             "empty": false,
             "x": 0,
             "y": 1,
-            "w": 724,
+            "w": 362,
             "h": 723,
             "padding": {
               "left": 0,
@@ -528,8 +528,8 @@
       "stableLogicalAnchor": true,
       "contentSizeRange": {
         "width": {
-          "min": 724,
-          "max": 724
+          "min": 362,
+          "max": 362
         },
         "height": {
           "min": 723,

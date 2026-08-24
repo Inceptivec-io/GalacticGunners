@@ -114,9 +114,15 @@ class AlienMothership extends Entity { //Inherit AlienMothership class to Entity
 
     showHitState() {
         if (!this.active) return;
+        var displayW = this.displayWidth;
+        var displayH = this.displayHeight;
         this.setTexture("motherShipHit", "0");
+        this.setDisplaySize(displayW, displayH);
         this.ggHitTimer = this.scene.time.delayedCall(180, function() {
-            if (this.active) this.setTexture("motherShip", "0");
+            if (this.active) {
+                this.setTexture("motherShip", "0");
+                this.setDisplaySize(displayW, displayH);
+            }
         }, null, this);
     }
 }
