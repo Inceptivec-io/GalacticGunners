@@ -84,17 +84,17 @@ var levelWon = false; //set level won variable
 
 const StoryContent = [ //set story text variable
     "The Year 3001 AD...",
-    "The Alien Hoards are battling through the Galaxy, on a quest to destroy ALL mankind!",
+    "The Alien Hordes are battling through the Galaxy, on a quest to destroy ALL mankind!",
     "The Human Fleet, on intel gathered from an Alien Satellite, has gone out to get the",
     "Mothership and put an end to this reign of terror!",
     "Not knowing this is a devious Alien trick, YOU are the only ship left behind to",
     "protect our Outpost on Gamma10 and uphold peace in the sector...",
     "",
     "On the scanner, in the distance, what seems to be an asteroid field is heading straight",
-    "towards Gamma 10. But wait, whats that moving inside it?????",
+    "towards Gamma 10. But wait, what's that moving inside it?????",
     "",
-    "BATTLE STATIONS!! We have been dooped, the Alien Hoard is in this sector! CONTACT the Fleet!",
-    "You must ATTACK and slow them down until the Fleet arrives! Your our only HOPE!",
+    "BATTLE STATIONS!! We have been duped, the Alien Horde is in this sector! CONTACT the Fleet!",
+    "You must ATTACK and slow them down until the Fleet arrives! You're our only HOPE!",
     "WATCH OUT FOR THE ASTEROIDS!"
 ];
 
@@ -109,7 +109,7 @@ const Controls = [ //set controls text variable
 ];
 const TouchControls = [ //set touch controls text variable
     "GAME CONTROLS - Tap Speaker Icon to Mute",
-    "Use Finger to FLY       Tap Screen for LASERS      Press Label for NUKES"
+    "Use Finger to FLY       Tap Open Playfield for LASERS      Tap Nukes for NUKES"
 ];
 
 const GameOver = ["GAME OVER"]; //set Gameover text variable
@@ -120,15 +120,15 @@ const BestPlayedOn = [
 ];
 
 const TitlesText = [ //set titles text variable
-    "CREATED BY MICHAEL LEESE 2019",
+    "Original game created by Michael Leese in 2019 as an educational project.",
     "",
-    "THANKS TO PHASER 3 FOR THEIR API",
+    "Commercial continuation: Inceptivec Gamification.",
     "",
-    "THANKS TO GIMP FOR IMAGE MANIPULATION PROGRAM",
+    "Built on Phaser 3 with retained MIT provenance acknowledgements.",
     "",
-    "FOR FURTHER CREDITS SEE MY GITHUB REPO README.MD",
+    "See governed repository credits and provenance records for complete acknowledgements.",
     "",
-    "I HOPE YOU HAD FUN!           THANKS FOR PLAYING!"
+    "Thanks for playing Galactic Gunners."
 ];
 
 var game = new Phaser.Game(config); //sets game variable to new Phaser Game with parameters of config

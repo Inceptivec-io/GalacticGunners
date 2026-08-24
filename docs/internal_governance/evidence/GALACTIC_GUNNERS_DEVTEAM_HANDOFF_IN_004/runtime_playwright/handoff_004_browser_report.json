@@ -1,0 +1,42 @@
+{
+  "generatedAt": "2026-08-24T04:43:15.364Z",
+  "mode": "browser",
+  "url": "http://localhost:8027/",
+  "pass": true,
+  "runtimeExceptions": [],
+  "failedRequests": [],
+  "browser": {
+    "fonts": {
+      "goldWoff2": 200,
+      "silverWoff2": 200,
+      "goldCheck": true,
+      "silverCheck": true,
+      "menuCta": "'Galactic Gunners Gold Display', 'GalacticGunnersDisplay', Arial, sans-serif"
+    },
+    "infoFont": "'Galactic Gunners Silver Display', 'GalacticGunnersDisplay', Arial, sans-serif",
+    "level1": {
+      "population": 58,
+      "playerScale": 0.04,
+      "enemyScale": 0.024,
+      "playerLaserScale": 0.021,
+      "enemyLaserScale": 0.018
+    },
+    "pauseCycles": {
+      "cycles": 20,
+      "clean": true
+    },
+    "level2Population": 87,
+    "bossPopulation": 72,
+    "victory": {
+      "active": true,
+      "score": 12345,
+      "finalScore": 12345,
+      "hasNoForcedTimer": true
+    },
+    "titles": {
+      "active": true,
+      "scorePreserved": true,
+      "timers": 0
+    }
+  }
+}

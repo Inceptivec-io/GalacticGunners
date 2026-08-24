@@ -1,0 +1,38 @@
+{
+  "frames": {
+    "0": {
+      "frame": { "x": 0, "y": 0, "w": 418, "h": 941 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 418, "h": 941 },
+      "sourceSize": { "w": 418, "h": 941 }
+    },
+    "1": {
+      "frame": { "x": 418, "y": 0, "w": 418, "h": 941 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 418, "h": 941 },
+      "sourceSize": { "w": 418, "h": 941 }
+    },
+    "2": {
+      "frame": { "x": 836, "y": 0, "w": 418, "h": 941 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 418, "h": 941 },
+      "sourceSize": { "w": 418, "h": 941 }
+    },
+    "3": {
+      "frame": { "x": 1254, "y": 0, "w": 418, "h": 941 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 418, "h": 941 },
+      "sourceSize": { "w": 418, "h": 941 }
+    }
+  },
+  "meta": {
+    "image": "gg_enemy_cruiser_v002_sheet.png",
+    "format": "RGBA8888",
+    "size": { "w": 1672, "h": 941 },
+    "scale": "1"
+  }
+}

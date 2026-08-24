@@ -3,6 +3,74 @@ const GG_FONT_GOLD = "'Galactic Gunners Gold Display', 'GalacticGunnersDisplay',
 const GG_FONT_TITLE = GG_FONT_SILVER;
 const GG_FONT_DISPLAY = GG_FONT_SILVER;
 
+const GG_SCALES = Object.freeze({
+    PLAYER: 0.040,
+    ENEMY: 0.024,
+    SCOUT: 0.025,
+    CRUISER: 0.034,
+    PLAYER_LASER: 0.021,
+    ENEMY_LASER: 0.018,
+    MOTHERSHIP_LASER: 0.023
+});
+
+function ggSetBodyLocal(sprite, widthRatio, heightRatio, offsetXRatio, offsetYRatio) {
+    if (!sprite || !sprite.body) return;
+    var frameW = sprite.width || (sprite.frame && sprite.frame.realWidth) || sprite.displayWidth || 1;
+    var frameH = sprite.height || (sprite.frame && sprite.frame.realHeight) || sprite.displayHeight || 1;
+    var bodyW = Math.max(1, Math.round(frameW * widthRatio));
+    var bodyH = Math.max(1, Math.round(frameH * heightRatio));
+    var offsetX = Math.round((frameW - bodyW) * (typeof offsetXRatio === "number" ? offsetXRatio : 0.5));
+    var offsetY = Math.round((frameH - bodyH) * (typeof offsetYRatio === "number" ? offsetYRatio : 0.5));
+    sprite.body.setSize(bodyW, bodyH, false);
+    sprite.body.setOffset(offsetX, offsetY);
+}
+
+function ggSetVerticalProjectileBody(sprite, sourceLengthRatio, sourceThicknessRatio) {
+    if (!sprite || !sprite.body) return;
+    var frameW = sprite.width || 1;
+    var frameH = sprite.height || 1;
+    var bodyW = Math.max(1, Math.round(frameH * sourceThicknessRatio));
+    var bodyH = Math.max(1, Math.round(frameW * sourceLengthRatio));
+    sprite.body.setSize(bodyW, bodyH, false);
+    sprite.body.setOffset(Math.round((frameW - bodyW) * 0.5), Math.round((frameH - bodyH) * 0.5));
+}
+
+function ggPlayerLaserVelocity(scene) {
+    return -(scene.game.config.height / 3);
+}
+
+function ggEnemyLaserVelocity(scene) {
+    return scene.game.config.height * 0.078125;
+}
+
+function ggCullProjectiles(scene) {
+    function cull(group, top, bottom, burst) {
+        group.getChildren().slice().forEach(function(projectile) {
+            if (!projectile || !projectile.active) return;
+            if (projectile.y < top || projectile.y > bottom) {
+                if (burst) burst(projectile);
+                projectile.destroy();
+            }
+        });
+    }
+    cull(scene.playerLasers, -24, scene.game.config.height + 24, function(projectile) {
+        scene.createExplosion(projectile.x, projectile.y, false);
+    });
+    cull(scene.enemyLasers, -24, scene.game.config.height + 24, function(projectile) {
+        scene.createExplosion(projectile.x, projectile.y, false);
+    });
+}
+
+function ggApplyCompletionBonusOnce(scene) {
+    if (!scene) return 0;
+    if (scene.ggCompletionBonusApplied) return scene.ggCompletionBonusAmount || 0;
+    var bonus = ggPendingCompletionBonus();
+    scene.ggCompletionBonusApplied = true;
+    scene.ggCompletionBonusAmount = bonus;
+    ggApplyScore(scene, bonus);
+    return bonus;
+}
+
 const GG_SCORE_EVENTS = Object.freeze({
     LASER_TARGET: 5,
     ASTEROID_DESTROYED: 10,
@@ -327,17 +395,68 @@ function ggOrientCometToVelocity(comet) {
 }
 
 function ggInstallResultInputControls(scene, controls) {
+    scene.ggResultActionLocked = false;
+    function runOnce(callback) {
+        if (!callback || scene.ggResultActionLocked) return;
+        scene.ggResultActionLocked = true;
+        callback();
+    }
     scene.time.addEvent({
         delay: 100,
         callback: function() {
             if (!levelWon && !RIP) return;
-            if (controls.next && (this.keyEnter && this.keyEnter.isDown || controllerActionPressed("start"))) controls.next();
-            if (controls.replay && (this.keyR && this.keyR.isDown || controllerActionPressed("restart"))) controls.replay();
-            if (controls.menu && (this.keyM && this.keyM.isDown || controllerActionPressed("info"))) controls.menu();
+            if (controls.next && (this.keyEnter && this.keyEnter.isDown || controllerActionPressed("start"))) runOnce(controls.next);
+            if (controls.replay && (this.keyR && this.keyR.isDown || controllerActionPressed("restart"))) runOnce(controls.replay);
+            if (controls.menu && (this.keyM && this.keyM.isDown || controllerActionPressed("info"))) runOnce(controls.menu);
         },
         callbackScope: scene,
         loop: true
     });
+    return runOnce;
+}
+
+function ggPointerHitsInteractiveUi(scene, pointer) {
+    if (!scene || !pointer || !scene.input || !scene.input.manager || !scene.children) return false;
+    var camera = scene.cameras && scene.cameras.main ? scene.cameras.main : null;
+    if (!camera || !scene.input.manager.hitTest) return false;
+    var hits = scene.input.manager.hitTest(pointer, scene.children.list, camera);
+    return hits.some(function(hit) {
+        return hit && hit.input && hit.active !== false && hit !== scene.player;
+    });
+}
+
+function ggFirePlayerLaser(scene) {
+    if (!scene || !scene.player || !scene.player.active || levelWon || RIP) return false;
+    var laser = new PlayerLaser(scene, scene.player.x, scene.player.y);
+    scene.playerLasers.add(laser);
+    if (scene.sfx && scene.sfx.laserPlayer) scene.sfx.laserPlayer.play();
+    return true;
+}
+
+function ggFirePlayerNuke(scene) {
+    if (!scene || !scene.player || !scene.player.active || levelWon || RIP || currentNukes <= 0) return false;
+    var nuke = new Nuke(scene, scene.player.x, scene.player.y);
+    scene.starNukes.add(nuke);
+    if (scene.sfx && scene.sfx.nukeFiring) scene.sfx.nukeFiring.play();
+    currentNukes--;
+    if (textNukes && textNukes.setText) textNukes.setText("Nukes: " + currentNukes);
+    return true;
+}
+
+function ggInstallTouchFire(scene) {
+    scene.playertouchShootTick = 1;
+    scene.playertouchShootDelay = 1;
+    scene.input.on("pointerdown", function(pointer) {
+        if (!touch || levelWon || RIP || !scene.player || !scene.player.active) return;
+        if (ggPointerHitsInteractiveUi(scene, pointer)) return;
+        if (scene.playertouchShootTick < scene.playertouchShootDelay) {
+            scene.playertouchShootTick++;
+            return;
+        }
+        if (scene.playertouchShootTick === scene.playertouchShootDelay && ggFirePlayerLaser(scene)) {
+            scene.playertouchShootTick = 0;
+        }
+    }, scene);
 }
 
 function ggAwardComet(scene, comet, nukeBurst) {
@@ -439,14 +558,14 @@ function ggRenderGameOver(scene, menuCallback, replayCallback, tryAgainCallback)
     ggMakeText(scene, scene.game.config.width * 0.5, scene.game.config.height * 0.36, "SCORE  " + finalScore, ggDisplayStyle(42, "#ffffff")).setDepth(21);
 
     var buttonY = scene.game.config.height * 0.735;
-    ggAddImageButton(scene, scene.game.config.width * 0.34, buttonY, "buttonMenuOff", "buttonMenuOn", menuCallback, 0.17);
-    ggAddImageButton(scene, scene.game.config.width * 0.5, buttonY, "buttonReplayOff", "buttonReplayOn", replayCallback, 0.17);
-    ggAddImageButton(scene, scene.game.config.width * 0.66, buttonY, "buttonTryAgainOff", "buttonTryAgainOn", tryAgainCallback, 0.17);
-    ggInstallResultInputControls(scene, {
+    var runOnce = ggInstallResultInputControls(scene, {
         next: tryAgainCallback || null,
         replay: replayCallback || null,
         menu: menuCallback || null
     });
+    ggAddImageButton(scene, scene.game.config.width * 0.34, buttonY, "buttonMenuOff", "buttonMenuOn", function() { runOnce(menuCallback); }, 0.17);
+    ggAddImageButton(scene, scene.game.config.width * 0.5, buttonY, "buttonReplayOff", "buttonReplayOn", function() { runOnce(replayCallback); }, 0.17);
+    ggAddImageButton(scene, scene.game.config.width * 0.66, buttonY, "buttonTryAgainOff", "buttonTryAgainOn", function() { runOnce(tryAgainCallback); }, 0.17);
 }
 
 function ggRenderVictory(scene, title, body, nextLabel, nextCallback, options) {
@@ -465,18 +584,18 @@ function ggRenderVictory(scene, title, body, nextLabel, nextCallback, options) {
     var buttonY = scene.game.config.height * 0.895;
     var buttonW = scene.game.config.width * 0.18;
     var buttonH = scene.game.config.height * 0.085;
-    if (nextCallback && nextLabel) {
-        ggAddPanelHit(scene, "NEXT", scene.game.config.width * 0.34, buttonY, buttonW, buttonH, nextCallback);
-    }
-    if (options && options.menuCallback) {
-        ggAddPanelHit(scene, "MENU", scene.game.config.width * 0.66, buttonY, buttonW, buttonH, options.menuCallback);
-    }
-    if (options && options.replayCallback) {
-        ggAddPanelHit(scene, "REPLAY", scene.game.config.width * 0.5, buttonY, buttonW, buttonH, options.replayCallback);
-    }
-    ggInstallResultInputControls(scene, {
+    var runOnce = ggInstallResultInputControls(scene, {
         next: nextCallback || null,
         replay: options && options.replayCallback ? options.replayCallback : null,
         menu: options && options.menuCallback ? options.menuCallback : null
     });
+    if (nextCallback && nextLabel) {
+        ggAddPanelHit(scene, "NEXT", scene.game.config.width * 0.34, buttonY, buttonW, buttonH, function() { runOnce(nextCallback); });
+    }
+    if (options && options.menuCallback) {
+        ggAddPanelHit(scene, "MENU", scene.game.config.width * 0.66, buttonY, buttonW, buttonH, function() { runOnce(options.menuCallback); });
+    }
+    if (options && options.replayCallback) {
+        ggAddPanelHit(scene, "REPLAY", scene.game.config.width * 0.5, buttonY, buttonW, buttonH, function() { runOnce(options.replayCallback); });
+    }
 }

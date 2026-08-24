@@ -1,79 +1,45 @@
-class Titles extends Phaser.Scene { //creates a scene in the Phaser Object called Title, to be referenced in game.js
-  constructor() { //call constructor method on the game object to create an instance of scene 
-    super({ key: "Titles" }); //on the game object create a property of scene and set key to Title, used in config parameters for game
+class Titles extends Phaser.Scene {
+  constructor() {
+    super({ key: "Titles" });
   }
 
-  //preload function to load all assets
-  preload() {
-    this.load.image("backgroundstars", "assets/images/owned/backgrounds/gg_bg_starfield_v002.png") //preload background stars image
-    this.load.image('hero', "assets/images/owned/branding/gg_symbol_v001.png"); //preload heroin image
-    this.load.image('fireworks', "assets/images/owned/branding/gg_victory_panel_v002.png"); //preload fireworks image
-  }
-  //end preload function
-
-  //Create function
   create() {
-    //add background
-    this.background = new Background(this, this.game.config.width * 0.5, this.game.config.height * 0.5, "backgroundstars"); // add background image first
-    //END background image
+    this.background = new Background(this, this.game.config.width * 0.5, this.game.config.height * 0.5, "backgroundstars");
+    this.sfx = ggCreateUiSfx(this);
+    this.keyEnter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+    this.keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
+    this.keyM = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M);
 
-    //Create Grid
-    this.aGrid = new AlignGrid({ scene: this, rows: 11, cols: 11 }); //create grid for positioning
-    //END GRID
+    var w = this.game.config.width;
+    var h = this.game.config.height;
+    var logo = this.add.image(w * 0.5, h * 0.12, "logoPrimary").setOrigin(0.5);
+    Align.scaleToGameW(logo, 0.34);
 
-    this.titlesFunction(); //create titles function
-  }
-  //END Create function
+    ggMakeText(this, w * 0.5, h * 0.28, "CREDITS / PROVENANCE", ggGoldStyle(64, "#ffb43c"));
+    ggMakeText(this, w * 0.5, h * 0.42, TitlesText, ggDisplayStyle(32, "#f6f7ff")).setLineSpacing(8);
+    ggMakeText(this, w * 0.5, h * 0.67, "FINAL SCORE  " + score, ggDisplayStyle(34, "#70fff2"));
 
-  //titles function
-  titlesFunction() {
-    this.fireworksVictory1 = this.add.image(0, 0, 'fireworks'); //add fireworks image
-    this.aGrid.placeAtIndex(34, this.fireworksVictory1); //set position on the grid
-    Align.scaleToGameW(this.fireworksVictory1, 0.3); //scale image
-    this.fireworksVictory2 = this.add.image(0, 0, 'fireworks'); //add fireworks image
-    this.aGrid.placeAtIndex(42, this.fireworksVictory2); //set position on the grid
-    Align.scaleToGameW(this.fireworksVictory2, 0.3); //scale image
-    this.textTitleHead = this.add.text( //create Titles Header text
-      0, //set x axis position
-      0, //set y axis position
-      "TITLES", //set text
-      {
-        fontFamily: GG_FONT_DISPLAY, //set font type
-        fontSize: 120, //set font size
-        align: "center" //set text alignment
-      }
-    );
-    this.textTitleHead.setOrigin(0.5); //set origin of text to center of itself
-    this.textTitleHead.setTint(0x00ff00); //set colour of text to green
-    this.aGrid.placeAtIndex(27, this.textTitleHead); //set position on the grid
-    Align.scaleToGameW(this.textTitleHead, 0.3); //scale image
+    var replay = ggAddPanelHit(this, "REPLAY", w * 0.42, h * 0.86, w * 0.2, h * 0.09, function() {
+      ggRestartGameplay(this, "Level1");
+    }.bind(this));
+    var menu = ggAddPanelHit(this, "MENU", w * 0.58, h * 0.86, w * 0.2, h * 0.09, function() {
+      ggResetToMenu(this);
+    }.bind(this));
+    ggMakeText(this, replay.x, replay.y, "PLAY AGAIN", ggGoldStyle(30, "#ffb43c")).setDepth(27);
+    ggMakeText(this, menu.x, menu.y, "MENU", ggDisplayStyle(30, "#70fff2")).setDepth(27);
 
-    this.textTitles = this.add.text( //create Titles text
-      this.game.config.width * 0.5, //set x axis position
-      this.game.config.height * 0.6, //set y axis position
-      TitlesText, //set text
-      {
-        fontFamily: GG_FONT_DISPLAY, //set font type
-        fontSize: 55, //set font size
-        align: "center" //set text alignment
-      }
-    );
-    this.textTitles.setOrigin(0.5); //set origin of text to center of itself
-    this.textTitles.setTint(0x00ff00); //set colour of text to green
-    this.aGrid.placeAtIndex(71, this.textTitles); //set position on the grid
-    Align.scaleToGameW(this.textTitles, 0.6); //scale image
-    
-    score = 0; //set score to zero
-
-    this.time.addEvent({ //add timed event
-      delay: 15000, //set delay to 15000
-      callback: function() { //create callback function
-        this.scene.start("MainMenu"); //set scene start for main game if lives is greater than 0
+    this.time.addEvent({
+      delay: 100,
+      callback: function() {
+        if (this.keyEnter.isDown || this.keyR.isDown || controllerActionPressed("start") || controllerActionPressed("restart")) {
+          ggRestartGameplay(this, "Level1");
+        }
+        if (this.keyM.isDown || controllerActionPressed("info")) {
+          ggResetToMenu(this);
+        }
       },
-      callbackScope: this, //set call back scope to this
-      loop: false //set loop to false only play once
+      callbackScope: this,
+      loop: true
     });
   }
-  //END titles function
 }
-//END scene

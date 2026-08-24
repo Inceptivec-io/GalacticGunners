@@ -22,10 +22,7 @@ class Preloader extends Phaser.Scene {
         this.load.atlas("playerShip", "assets/images/owned/sprites/gg_player_ship_v002_sheet.png", "assets/images/owned/sprites/gg_player_ship_v002_atlas.json");
         this.load.atlas("motherShip", "assets/images/owned/sprites/gg_boss_mothership_v002_sheet.png", "assets/images/owned/sprites/gg_boss_mothership_v002_atlas.json");
         this.load.atlas("alienscout", "assets/images/owned/sprites/gg_enemy_scout_v002_sheet.png", "assets/images/owned/sprites/gg_enemy_scout_v002_atlas.json");
-        this.load.spritesheet("enemyCruiser", "assets/images/owned/sprites/gg_enemy_cruiser_v002_sheet.png", { //preload enemyCruiser spritesheet to the game, assign key name and src, object frameWidth and frameheight
-            frameWidth: 836,
-            frameHeight: 941
-        });
+        this.load.atlas("enemyCruiser", "assets/images/owned/sprites/gg_enemy_cruiser_v002_sheet.png", "assets/images/owned/sprites/gg_enemy_cruiser_v002_atlas.json");
         this.load.atlas("enemyShip", "assets/images/owned/sprites/gg_enemy_destroyer_v002_sheet.png", "assets/images/owned/sprites/gg_enemy_destroyer_v002_atlas.json");
         this.load.image("sprShieldTile", "assets/images/owned/sprites/gg_shield_tile_v002.png"); //preload shield image to the game, assign key name and src
         this.load.image("sprLaserEnemy", "assets/images/owned/sprites/gg_enemy_laser_v002.png"); //preload enemyLaser image to the game, assign key name and src
@@ -84,7 +81,7 @@ class Preloader extends Phaser.Scene {
         });
         this.anims.create({ //animation object create
             key: "enemyCruiser", //set the image key name to be used
-            frames: this.anims.generateFrameNumbers("enemyCruiser"), //set image to be used to generate frames
+            frames: this.anims.generateFrameNames("enemyCruiser", { frames: ["0", "1", "2", "3"] }), //set image to be used to generate frames
             frameRate: 5, //set frame rate speed
             repeat: -1 //set to -1, continuous
         });

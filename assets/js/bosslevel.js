@@ -111,20 +111,7 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
         }, this);
         //END touch mute function
 
-        this.playertouchShootTick = 1; //create touch shoot tick
-        this.playertouchShootDelay = 1; //create touch shoot delay
-
-        this.input.on("pointerdown", function() { //this Play Button when on method, in hover
-            if (touch && this.playertouchShootTick < this.playertouchShootDelay) { //if SPACE is down && player is active still
-                this.playertouchShootTick++; //add to touch shoot tick
-            }
-            else if (touch && this.playertouchShootTick == this.playertouchShootDelay) {
-                var laser = new PlayerLaser(this, this.player.x, this.player.y); //create new laser object and start this object at player.x and player.y
-                this.playerLasers.add(laser); //add this laser to playerLaser group
-                this.sfx.laserPlayer.play(); //add laserPlayer sound
-                this.playertouchShootTick = 0; //set touch shoot tick to 0
-            }
-        }, this);
+        ggInstallTouchFire(this);
         if (touch) { //if touch true
             this.input.on('pointerout', function(pointer) { //when pointerout of circle 
                 playerMoveX = "GO"; //set to GO
@@ -202,6 +189,7 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
         enemyShips++; //add mothership to enemyship count
         motherShipLives = maxMotherShipLives; //set mothership lives
         Align.scaleToGameW(this.alienMothership, 0.1); //set the scale of the motherShip
+        ggSetBodyLocal(this.alienMothership, 0.48, 0.52, 0.5, 0.22);
         this.alienMothership.play("motherShip"); //play mothership animation
         this.tweens.add({ //add a tween(movement state)
             targets: this.alienMothership, //target the mothership
@@ -241,7 +229,6 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
         this.updatePlayerShooting(); //create callback method for updating player shots
         this.updateLasers(); //create callback method for updating shots
         this.updateNukes(); //create callback method for updating Nukes
-        this.updateRestart(); //create callback method for restarting the game on GameOver
         this.createAsteroids(); //create callback method for asteroids
         ggCreateComets(this); //create supplied animated comet events
         //END callback methods
@@ -534,12 +521,14 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
             callback: function() {
                 var cols = 24;
                 var rows = 3;
-                var minX = this.game.config.width * 0.12;
-                var maxX = this.game.config.width * 0.88;
+                var minX = this.game.config.width * 0.05;
+                var maxX = this.game.config.width * 0.95;
+                var rowY = this.game.config.height * 0.31;
+                var rowGap = Math.max(this.game.config.height * 0.085, this.game.config.width * GG_SCALES.CRUISER * 0.62);
                 for (var col = 0; col < cols; col++) {
                     for (var y = 0; y < rows; y++) { //restore full population and reflow it inside the playfield
                         var x = minX + ((maxX - minX) * (col / (cols - 1)));
-                        var enemy = new EnemyCruiser(this, x, (this.game.config.height * 0.29) + (y * (this.game.config.height * 0.092)), "enemyCruiser"); //set coordinates for image with spacing on x and y and assign a key from preloaded images to add the enemyship image sprite
+                        var enemy = new EnemyCruiser(this, x, rowY + (y * rowGap), "enemyCruiser"); //set coordinates for image with spacing on x and y and assign a key from preloaded images to add the enemyship image sprite
                         enemy.play("enemyCruiser"); //start animation of the enemyShip
                         enemyShips++; //add a ship to total enemy ships created
                         this.enemies.add(enemy); //draw an enemy ship on the screen at x and y
@@ -854,9 +843,7 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
                         this.playerShootTick++; //add 1 to Tick count, which will repeat until it hits 30
                     }
                     else {
-                        var laser = new PlayerLaser(this, this.player.x, this.player.y); //create new laser object and start this object at player.x and player.y
-                        this.playerLasers.add(laser); //add this laser to playerLaser group
-                        this.sfx.laserPlayer.play(); //add laserPlayer sound
+                        ggFirePlayerLaser(this);
                         this.playerShootTick = 0; //set shootTick back to 0
                     }
                 }
@@ -866,12 +853,8 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
                         textNukesLoad.setText('ReArm: ' + this.playerNukeTick + '/' + this.playerNukeDelay); //set rearm text to count the nuke tick number
                     }
                     else {
-                        var nuke = new Nuke(this, this.player.x, this.player.y); //create new laser object and start this object at player.x and player.y
-                        this.starNukes.add(nuke); //add this nuke to starNukes group
-                        this.sfx.nukeFiring.play(); //add nukeFiring sound
+                        ggFirePlayerNuke(this);
                         this.playerNukeTick = 0; //set nukeTick back to 0
-                        currentNukes--; //decrement current nukes by 1
-                        textNukes.setText('Nukes: ' + currentNukes); //set nuke left text to current value
                     }
                 }
                 if (nukeDown && this.player.active && currentNukes == 0) { //if SPACE is down && no nukes left
@@ -914,8 +897,6 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
                 for (var i = 0; i < this.playerLasers.getChildren().length; i++) { //for each enemy in the enemies array
                     var laser = this.playerLasers.getChildren()[i]; //this laser = playerLaser[i]
 
-                    laser.y -= this.game.config.height * 0.01; //set movement down on y axis as 1% (higher the number the faster it goes)
-
                     if (laser.y < 10) { //if laser is less than 5 away from screen edge
                         this.createExplosion(laser.x, laser.y); //create an explosion at this laser.x and laser.y
 
@@ -934,8 +915,6 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
             callback: function() { //create call back function for time event
                 for (var i = 0; i < this.enemyLasers.getChildren().length; i++) { //for each enemyLaser in the enemyLaser group
                     var laser = this.enemyLasers.getChildren()[i]; //set
-
-                    laser.y += this.game.config.height * 0.01; //set movement down on y axis as 1% (higher the number the faster it goes)
 
                     if (laser.y > this.game.config.height - 10) { //if laser is less than 5 away from screen edge
                         this.createExplosion(laser.x, laser.y); //create an explosion at this laser.x and laser.y
@@ -1057,24 +1036,16 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
 
     //create win function
     win() {
+        if (this.ggWinHandled) return;
+        this.ggWinHandled = true;
+        levelWon = true;
         this.player.destroy(); //destroy player if victory to stop losing any lives 
-        var completionBonus = ggPendingCompletionBonus();
-        this.addScore(completionBonus); //total left over assets and add to score
+        var completionBonus = ggApplyCompletionBonusOnce(this);
         textLives.setText('Lives: WINNER'); //set lives text to GAME OVER 
         textScore.setText('Final Score: ' + score); //set score text to final score
-        ggRenderVictory(
-            this,
-            "MISSION CLEARED",
-            "MOTHERSHIP DOWN",
-            null,
-            null,
-            {
-                wave: "FINAL",
-                bonus: completionBonus,
-                menuCallback: function() { ggResetToMenu(this); }.bind(this),
-                replayCallback: function() { ggRestartGameplay(this, "BossLevel"); }.bind(this)
-            }
-        );
+        finalScore = score;
+        window.ggFinalVictoryState = { score: score, wave: "FINAL", bonus: completionBonus };
+        this.scene.start("Victory", window.ggFinalVictoryState);
         enemyShips = 0; //set enemyShips to 0
         enemyDeaths = 0; //set enemyDeaths to 0
     }
@@ -1134,6 +1105,7 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
     }
 
     pauseGame() {
+        if (this.scene.get("Paused").scene.isActive()) return;
         isPaused = this.scene; //set isPasued to this.scene to get key
         this.scene.pause(); //pause this scene
         this.scene.launch('Paused'); //launch paused scene

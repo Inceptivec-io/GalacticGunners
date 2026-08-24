@@ -54,7 +54,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
         align: "center" //set alignment
       }
     );
-    this.textTitle.setTint(0x00ff00); //set game title text to green
+    this.textTitle.setTint(0xf6f7ff); //kept hidden; current hierarchy if shown
     this.textTitle.setOrigin(0.5, 0.3); //set position on grid
     this.aGrid.placeAtIndex(5, this.textTitle); //set position on grid
     Align.scaleToGameW(this.textTitle, 0.6); //set scale
@@ -72,7 +72,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
         align: "center" //set alignment
       }
     );
-    this.textTitle2.setTint(0x009500); //set sub heading text to green
+    this.textTitle2.setTint(0xffb43c); //set sub heading text to gold
     this.textTitle2.setOrigin(0.5); //set position on grid
     this.aGrid.placeAtIndex(16, this.textTitle2); //set position on grid
     Align.scaleToGameW(this.textTitle2, 0.4); //set scale
@@ -106,7 +106,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
         align: "center" //set alignment
       }
     );
-    this.textBest.setTint(0x00ff00); // set the point text to green
+    this.textBest.setTint(0xffb43c); // set current highlight colour
     this.textBest.setOrigin(0.5); //set the origin point of text
     this.aGrid.placeAtIndex(75, this.textBest); //set grid position of text
     Align.scaleToGameW(this.textBest, 0.12); //scale the text
@@ -118,7 +118,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
       0, //set position on the y axis
       "BtnInfo" //add image key
     );
-    this.btnInfo.setTint(0x00ff00); // set the info button back to green when not hovering
+    this.btnInfo.clearTint(); // use supplied current art
     this.btnInfo.setInteractive(); //set button to be interactive
     this.aGrid.placeAtIndex(108, this.btnInfo); //set position on the grid
     Align.scaleToGameW(this.btnInfo, 0.08); //set scale
@@ -126,11 +126,11 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
 
     this.btnInfo.on("pointerover", function() { //this Play Button when on method, in hover
       this.sfx.select.play();
-      this.btnInfo.setTint(0xff0000); // set the play button to red on hover
+      this.btnInfo.setAlpha(0.82); // hover feedback without recolouring art
     }, this); //this state only
 
     this.btnInfo.on("pointerout", function() { //this Play Button when on method, in hover
-      this.btnInfo.setTint(0x00ff00); // set the play button back to white when not hovering
+      this.btnInfo.setAlpha(1); // restore supplied art
     }, this); //this state only
 
     this.btnInfo.on("pointerdown", function() { //this Play Button when on method, when mouse clicks
@@ -149,7 +149,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
         align: "center" //set alignment
       }
     );
-    this.textPoint.setTint(0x00ff00); // set the point text to green
+    this.textPoint.setTint(0x70fff2); // set current selector text colour
     this.textPoint.setOrigin(0.5); //set the origin point of text
     this.aGrid.placeAtIndex(67, this.textPoint); //set grid position of text
     Align.scaleToGameW(this.textPoint, 0.12); //scale the text
@@ -159,7 +159,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
       0, //set position on the y axis
       "BtnPoint" //add image key
     );
-    this.btnPoint.setTint(0x00ff00); // set the point button to green
+    this.btnPoint.clearTint(); // use supplied current pointer art
     this.btnPoint.setInteractive(); //set button to be interactive
     this.aGrid.placeAtIndex(68, this.btnPoint); //set grid position of button
     Align.scaleToGameW(this.btnPoint, 0.05); //scale the button
@@ -167,29 +167,29 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
 
     this.btnPoint.on("pointerover", function() { //this Point Button when in hover
       if (!touch) {
-        this.btnPoint.setTint(0xff0000); // set the Point button to red on hover
+        this.btnPoint.setAlpha(0.82); // hover feedback
       }
       else {
-        this.btnPoint.setTint(0x00ff00); // set the Point button to green on hover    
+        this.btnPoint.setAlpha(1);
       }
     }, this); //this state only
     this.btnPoint.on("pointerout", function() { //this Point Button when off hover
       if (!touch) {
-        this.btnPoint.setTint(0x00ff00); // set the Point button to green when out
+        this.btnPoint.setAlpha(1);
       }
       else {
-        this.btnPoint.setTint(0xff0000); // set the Point button to red when out
+        this.btnPoint.setAlpha(0.82);
       }
     }, this); //this state only
 
     this.btnPoint.on("pointerdown", function() { //this point Button when on selected
       this.sfx.select.play();
       if (!touch) {
-        this.btnPoint.setTint(0xff0000); // set the point button to red on select
+        this.btnPoint.setAlpha(0.82); // selected feedback
         touch = true; //set touch variable
       }
       else {
-        this.btnPoint.setTint(0x00ff00); // set the point button back to green when deselected
+        this.btnPoint.setAlpha(1); // deselected feedback
         touch = false; //set touch variable
       }
     }, this);
@@ -221,7 +221,6 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
     var w = this.scale.width || this.game.config.width;
     var h = this.scale.height || this.game.config.height;
     var margin = Math.max(18, Math.min(w, h) * 0.025);
-    var green = 0x00ff66;
     var cyan = 0x70fff2;
 
     function fitImage(image, maxW, maxH) {
@@ -283,7 +282,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
         this.textPoint.x + this.textPoint.displayWidth * 0.5 + this.btnPoint.displayWidth * 0.62,
         this.textPoint.y
       );
-      this.btnPoint.setTint(touch ? 0xff4b5c : green);
+      this.btnPoint.setAlpha(touch ? 0.82 : 1);
     }
 
     if (this.textBest) {
@@ -297,7 +296,7 @@ class MainMenu extends Phaser.Scene { //creates a scene in the Phaser Object cal
     if (this.btnInfo) {
       fitImage(this.btnInfo, iconSize, iconSize);
       this.btnInfo.setPosition(w - margin - iconSize * 0.5, h - margin - iconSize * 0.5);
-      this.btnInfo.setTint(green);
+      this.btnInfo.clearTint();
     }
 
     if (this.btnMute) {
