@@ -244,7 +244,12 @@ async function main() {
   } finally {
     browser.kill();
     await delay(1000);
-    fs.rmSync(userDataDir, { recursive: true, force: true });
+    try {
+      fs.rmSync(userDataDir, { recursive: true, force: true, maxRetries: 3, retryDelay: 500 });
+    } catch {
+      // Windows can briefly hold the headless browser profile after Browser.close.
+      // The verifier result should be governed by runtime checks, not temp cleanup timing.
+    }
   }
 }
 
