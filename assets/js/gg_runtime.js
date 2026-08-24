@@ -5,12 +5,13 @@ const GG_FONT_DISPLAY = GG_FONT_SILVER;
 
 const GG_SCALES = Object.freeze({
     PLAYER: 0.040,
+    ENEMY_LEVEL1: 0.029,
     ENEMY: 0.024,
     SCOUT: 0.025,
     CRUISER: 0.034,
-    PLAYER_LASER: 0.021,
-    ENEMY_LASER: 0.018,
-    MOTHERSHIP_LASER: 0.023
+    PLAYER_LASER: 0.026,
+    ENEMY_LASER: 0.023,
+    MOTHERSHIP_LASER: 0.027
 });
 
 function ggSetBodyLocal(sprite, widthRatio, heightRatio, offsetXRatio, offsetYRatio) {
@@ -41,6 +42,31 @@ function ggPlayerLaserVelocity(scene) {
 
 function ggEnemyLaserVelocity(scene) {
     return scene.game.config.height * 0.078125;
+}
+
+function ggSetEnemyScale(enemy, scale) {
+    if (!enemy) return;
+    Align.scaleToGameW(enemy, scale || GG_SCALES.ENEMY);
+    ggSetBodyLocal(enemy, 0.45, 0.52, 0.5, 0.32);
+}
+
+function ggSetPlayerMovementState(scene, moving) {
+    if (!scene || !scene.player || !scene.player.active) return;
+    if (moving) {
+        if (scene.ggPlayerMoving) return;
+        scene.ggPlayerMoving = true;
+        scene.player.play("playerShipThrust", true);
+        return;
+    }
+    if (!scene.ggPlayerMoving) {
+        if (!scene.player.anims || !scene.player.anims.currentAnim) scene.player.setFrame("0");
+        return;
+    }
+    scene.ggPlayerMoving = false;
+    scene.player.play("playerShipReturn", true);
+    scene.player.once("animationcomplete-playerShipReturn", function() {
+        if (scene.player && scene.player.active && !scene.ggPlayerMoving) scene.player.setFrame("0");
+    });
 }
 
 function ggCullProjectiles(scene) {
@@ -318,17 +344,37 @@ function ggCreateHud(scene, options) {
     textScore = scene.add.text(scene.game.config.width * 0.03, topY, "Score: " + score, textStyle).setOrigin(0, 0.5);
     textLives = scene.add.text(scene.game.config.width * 0.03, bottomY, "Lives: " + currentLives, textStyle).setOrigin(0, 0.5);
     textNukesLoad = scene.add.text(scene.game.config.width * 0.97, bottomY, "ReArm: 150/150", textStyle).setOrigin(1, 0.5);
-    textNukes = scene.add.text(scene.game.config.width * 0.97, topY, "Nukes: " + currentNukes, textStyle).setOrigin(1, 0.5);
+    textNukes = scene.add.text(scene.game.config.width * 0.965, topY, String(currentNukes), textStyle).setOrigin(1, 0.5);
 
     if (scene.textures.exists("hudLife")) {
         scene.add.image(scene.game.config.width * 0.015, bottomY, "hudLife").setDisplaySize(28, 28).setOrigin(0, 0.5);
     }
     if (scene.textures.exists("hudNuke")) {
-        scene.add.image(scene.game.config.width * 0.985, topY, "hudNuke").setDisplaySize(28, 28).setOrigin(1, 0.5);
+        scene.ggHudNukeIcon = scene.add.image(scene.game.config.width * 0.985, topY, "hudNuke").setDisplaySize(32, 32).setOrigin(1, 0.5);
     }
     if (showReplay) {
         restartlevel = scene.add.text(scene.game.config.width * 0.5, topY, "Replay: " + LevelRestart, textStyle).setOrigin(0.5);
     }
+}
+
+function ggInstallNukeHud(scene) {
+    if (!scene || !textNukes) return;
+    var topY = scene.game.config.height * 0.035;
+    textNukes.removeAllListeners();
+    textNukes.setText(String(currentNukes));
+    textNukes.setOrigin(1, 0.5);
+    textNukes.setPosition(scene.game.config.width * 0.965, topY);
+    if (textNukes.setTint) textNukes.setTint(0xffffff);
+    if (scene.ggHudNukeIcon && scene.ggHudNukeIcon.destroy) scene.ggHudNukeIcon.destroy();
+    scene.ggHudNukeIcon = scene.add.image(scene.game.config.width * 0.985, topY, "hudNuke").setDisplaySize(32, 32).setOrigin(1, 0.5);
+    var fireNuke = function() {
+        if (scene.playerNukeTick < scene.playerNukeDelay || currentNukes <= 0) return;
+        if (ggFirePlayerNuke(scene)) scene.playerNukeTick = 0;
+    };
+    [textNukes, scene.ggHudNukeIcon].forEach(function(target) {
+        target.setInteractive({ useHandCursor: true });
+        target.on("pointerdown", fireNuke);
+    });
 }
 
 function ggSetHudVisible(visible) {
@@ -390,7 +436,7 @@ function ggOrientCometToVelocity(comet) {
     var vx = comet.body.velocity.x;
     var vy = comet.body.velocity.y;
     if (vx === 0 && vy === 0) return;
-    comet.setRotation(Math.atan2(vy, vx) + Math.PI);
+    comet.setRotation(Math.atan2(vy, vx) - Math.PI / 2);
     comet.body.angularVelocity = 0;
 }
 
@@ -439,7 +485,7 @@ function ggFirePlayerNuke(scene) {
     scene.starNukes.add(nuke);
     if (scene.sfx && scene.sfx.nukeFiring) scene.sfx.nukeFiring.play();
     currentNukes--;
-    if (textNukes && textNukes.setText) textNukes.setText("Nukes: " + currentNukes);
+    if (textNukes && textNukes.setText) textNukes.setText(String(currentNukes));
     return true;
 }
 
@@ -471,7 +517,7 @@ function ggAwardComet(scene, comet, nukeBurst) {
     }
     ggScoreEvent(scene, "COMET_DESTROYED");
     currentNukes++;
-    if (textNukes && textNukes.setText) textNukes.setText("Nukes: " + currentNukes);
+    if (textNukes && textNukes.setText) textNukes.setText(String(currentNukes));
     comet.destroy();
 }
 
@@ -557,15 +603,15 @@ function ggRenderGameOver(scene, menuCallback, replayCallback, tryAgainCallback)
     ggMakeText(scene, scene.game.config.width * 0.5, scene.game.config.height * 0.185, "GAME OVER", ggGoldStyle(86, "#ffb43c")).setDepth(21);
     ggMakeText(scene, scene.game.config.width * 0.5, scene.game.config.height * 0.36, "SCORE  " + finalScore, ggDisplayStyle(42, "#ffffff")).setDepth(21);
 
-    var buttonY = scene.game.config.height * 0.735;
+    var buttonY = scene.game.config.height * 0.742;
     var runOnce = ggInstallResultInputControls(scene, {
         next: tryAgainCallback || null,
         replay: replayCallback || null,
         menu: menuCallback || null
     });
-    ggAddImageButton(scene, scene.game.config.width * 0.34, buttonY, "buttonMenuOff", "buttonMenuOn", function() { runOnce(menuCallback); }, 0.17);
+    ggAddImageButton(scene, scene.game.config.width * 0.315, buttonY, "buttonMenuOff", "buttonMenuOn", function() { runOnce(menuCallback); }, 0.16);
     ggAddImageButton(scene, scene.game.config.width * 0.5, buttonY, "buttonReplayOff", "buttonReplayOn", function() { runOnce(replayCallback); }, 0.17);
-    ggAddImageButton(scene, scene.game.config.width * 0.66, buttonY, "buttonTryAgainOff", "buttonTryAgainOn", function() { runOnce(tryAgainCallback); }, 0.17);
+    ggAddImageButton(scene, scene.game.config.width * 0.685, buttonY, "buttonTryAgainOff", "buttonTryAgainOn", function() { runOnce(tryAgainCallback); }, 0.16);
 }
 
 function ggRenderVictory(scene, title, body, nextLabel, nextCallback, options) {
@@ -577,11 +623,11 @@ function ggRenderVictory(scene, title, body, nextLabel, nextCallback, options) {
     var bonus = options && typeof options.bonus === "number" ? options.bonus : 0;
     var wave = options && options.wave ? options.wave : ggSceneWaveLabel(scene);
     ggMakeText(scene, scene.game.config.width * 0.5, scene.game.config.height * 0.19, title, ggGoldStyle(74, "#ffb43c")).setDepth(21);
-    ggMakeText(scene, scene.game.config.width * 0.5, scene.game.config.height * 0.35, "SCORE  " + score, ggDisplayStyle(40, "#ffffff")).setDepth(21);
-    ggMakeText(scene, scene.game.config.width * 0.5, scene.game.config.height * 0.43, "WAVE  " + wave, ggDisplayStyle(34, "#f6f7ff")).setDepth(21);
-    ggMakeText(scene, scene.game.config.width * 0.5, scene.game.config.height * 0.51, "BONUS  " + bonus, ggDisplayStyle(34, "#f6f7ff")).setDepth(21);
-    if (body) ggMakeText(scene, scene.game.config.width * 0.5, scene.game.config.height * 0.59, body, ggDisplayStyle(28, "#70fff2")).setDepth(21);
-    var buttonY = scene.game.config.height * 0.895;
+    ggMakeText(scene, scene.game.config.width * 0.31, scene.game.config.height * 0.66, String(score), ggDisplayStyle(42, "#ffffff")).setDepth(21);
+    ggMakeText(scene, scene.game.config.width * 0.50, scene.game.config.height * 0.66, String(wave), ggDisplayStyle(36, "#f6f7ff")).setDepth(21);
+    ggMakeText(scene, scene.game.config.width * 0.69, scene.game.config.height * 0.66, String(bonus), ggDisplayStyle(36, "#f6f7ff")).setDepth(21);
+    if (body) ggMakeText(scene, scene.game.config.width * 0.5, scene.game.config.height * 0.76, body, ggDisplayStyle(26, "#70fff2")).setDepth(21);
+    var buttonY = scene.game.config.height * 0.865;
     var buttonW = scene.game.config.width * 0.18;
     var buttonH = scene.game.config.height * 0.085;
     var runOnce = ggInstallResultInputControls(scene, {

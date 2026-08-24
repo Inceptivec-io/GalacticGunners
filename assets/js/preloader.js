@@ -20,7 +20,8 @@ class Preloader extends Phaser.Scene {
         });
         ggPreloadAudio(this);
         this.load.atlas("playerShip", "assets/images/owned/sprites/gg_player_ship_v002_sheet.png", "assets/images/owned/sprites/gg_player_ship_v002_atlas.json");
-        this.load.atlas("motherShip", "assets/images/owned/sprites/gg_boss_mothership_v002_sheet.png", "assets/images/owned/sprites/gg_boss_mothership_v002_atlas.json");
+        this.load.atlas("motherShip", "assets/images/owned/sprites/gg_boss_mothership_normal_v002_sheet.png", "assets/images/owned/sprites/gg_boss_mothership_normal_v002_atlas.json");
+        this.load.atlas("motherShipHit", "assets/images/owned/sprites/gg_boss_mothership_hit_v002_sheet.png", "assets/images/owned/sprites/gg_boss_mothership_hit_v002_atlas.json");
         this.load.atlas("alienscout", "assets/images/owned/sprites/gg_enemy_scout_v002_sheet.png", "assets/images/owned/sprites/gg_enemy_scout_v002_atlas.json");
         this.load.atlas("enemyCruiser", "assets/images/owned/sprites/gg_enemy_cruiser_v002_sheet.png", "assets/images/owned/sprites/gg_enemy_cruiser_v002_atlas.json");
         this.load.atlas("enemyShip", "assets/images/owned/sprites/gg_enemy_destroyer_v002_sheet.png", "assets/images/owned/sprites/gg_enemy_destroyer_v002_atlas.json");
@@ -28,7 +29,7 @@ class Preloader extends Phaser.Scene {
         this.load.image("sprLaserEnemy", "assets/images/owned/sprites/gg_enemy_laser_v002.png"); //preload enemyLaser image to the game, assign key name and src
         this.load.image("sprLaserPlayer", "assets/images/owned/sprites/gg_player_laser_v002.png"); //preload playerLaser image to the game, assign key name and src
         this.load.spritesheet("nuke", "assets/images/owned/sprites/gg_nuke_projectile_v002_sheet.png", {
-            frameWidth: 720,
+            frameWidth: 480,
             frameHeight: 800
         });
         this.load.spritesheet("sprExplosion", "assets/images/owned/sprites/gg_explosion_small_v002_sheet.png", { //preload explosion spritesheet to the game, assign key name and src, object frameWidth and frameheight
@@ -61,17 +62,29 @@ class Preloader extends Phaser.Scene {
             frameHeight: 724
         });
         this.load.spritesheet("comet", "assets/images/owned/sprites/gg_comet_v002_sheet.png", {
-            frameWidth: 837,
-            frameHeight: 470
+            frameWidth: 448,
+            frameHeight: 448
         });
     }
     create() {
         //create animations
         this.anims.create({ //animation object create
-            key: "playerShip",
+            key: "playerShipIdle",
             frames: [{ key: "playerShip", frame: "0" }],
             frameRate: 1,
+            repeat: 0
+        });
+        this.anims.create({
+            key: "playerShipThrust",
+            frames: this.anims.generateFrameNames("playerShip", { frames: ["1", "2"] }),
+            frameRate: 9,
             repeat: -1
+        });
+        this.anims.create({
+            key: "playerShipReturn",
+            frames: this.anims.generateFrameNames("playerShip", { frames: ["3", "0"] }),
+            frameRate: 9,
+            repeat: 0
         });
         this.anims.create({ //animation object create
             key: "enemyShip", //set the image key name to be used
@@ -87,9 +100,15 @@ class Preloader extends Phaser.Scene {
         });
         this.anims.create({ //animation object create
             key: "motherShip", //set the image key name to be used
-            frames: this.anims.generateFrameNames("motherShip", { frames: ["0", "1", "2", "3", "4", "5"] }), //set image to be used to generate frames
+            frames: this.anims.generateFrameNames("motherShip", { frames: ["0", "1", "2"] }), //set image to be used to generate frames
             frameRate: 5, //set frame rate speed
             repeat: -1 //set to -1, continuous
+        });
+        this.anims.create({
+            key: "motherShipHit",
+            frames: this.anims.generateFrameNames("motherShipHit", { frames: ["0"] }),
+            frameRate: 1,
+            repeat: 0
         });
         this.anims.create({ //animation object create
             key: "alienscout", //set the image key name to be used

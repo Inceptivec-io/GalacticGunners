@@ -8,7 +8,9 @@ const pixelmatch = pixelmatchModule.default || pixelmatchModule;
 const modeArg = process.argv.find((arg) => arg.startsWith("--mode="));
 const mode = modeArg ? modeArg.split("=")[1] : "all";
 const url = process.env.GG_RUNTIME_URL || "http://localhost:8027/";
-const evidenceRoot = path.resolve("docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004");
+const evidenceRoot = path.resolve(process.env.GG_HANDOFF_ID
+  ? `docs/internal_governance/evidence/${process.env.GG_HANDOFF_ID}`
+  : "docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV1");
 const runtimeDir = path.join(evidenceRoot, "runtime_playwright");
 
 function ensureDir(dir) {
@@ -205,7 +207,27 @@ async function runSurfaceSuite(page) {
   report.level1 = await page.evaluate(() => ({
     population: game.scene.keys.Level1.enemies.getChildren().length,
     playerScale: GG_SCALES.PLAYER,
-    enemyScale: GG_SCALES.ENEMY,
+    enemyScale: game.scene.keys.Level1.enemies.getChildren()[0].scaleX,
+    baselineEnemyScale: GG_SCALES.ENEMY,
+    enemyAngle: game.scene.keys.Level1.enemies.getChildren()[0].angle,
+    enemyBounds: game.scene.keys.Level1.enemies.getChildren().map((enemy) => enemy.getBounds()).reduce((acc, bounds) => ({
+      minLeft: Math.min(acc.minLeft, bounds.left),
+      maxRight: Math.max(acc.maxRight, bounds.right)
+    }), { minLeft: Infinity, maxRight: -Infinity }),
+    nukeHud: {
+      iconTexture: game.scene.keys.Level1.ggHudNukeIcon.texture.key,
+      countText: textNukes.text
+    },
+    playerAnimation: (() => {
+      const scene = game.scene.keys.Level1;
+      const player = scene.player;
+      const idleFrame = player.frame.name;
+      ggSetPlayerMovementState(scene, true);
+      const movingAnim = player.anims.currentAnim.key;
+      ggSetPlayerMovementState(scene, false);
+      const returnAnim = player.anims.currentAnim.key;
+      return { idleFrame, movingAnim, returnAnim };
+    })(),
     playerLaserScale: GG_SCALES.PLAYER_LASER,
     enemyLaserScale: GG_SCALES.ENEMY_LASER
   }));
@@ -241,6 +263,42 @@ async function runSurfaceSuite(page) {
   await sceneReady(page, "BossLevel");
   await capture(page, "boss_formation");
   report.bossPopulation = await page.evaluate(() => game.scene.keys.BossLevel.enemies.getChildren().length);
+  report.bossStateImagery = await page.evaluate(async () => {
+    function wait(ms) { return new Promise((resolve) => setTimeout(resolve, ms)); }
+    const scene = game.scene.keys.BossLevel;
+    const normalTexture = scene.alienMothership.texture.key;
+    scene.motherShipHit(1);
+    const hitTexture = scene.alienMothership.texture.key;
+    await wait(240);
+    const restoredTexture = scene.alienMothership.texture.key;
+    return { normalTexture, hitTexture, restoredTexture };
+  });
+  report.nukeAndComets = await page.evaluate(() => {
+    const scene = game.scene.keys.BossLevel;
+    const cometVariants = [];
+    for (let i = 0; i < 24; i++) {
+      const comet = new Comet(scene, 100, 100);
+      cometVariants.push(comet.frame.name);
+      comet.destroy();
+    }
+    const right = new Comet(scene, 100, 100);
+    right.setVelocity(180, 80);
+    ggOrientCometToVelocity(right);
+    const rightRotation = right.rotation;
+    right.destroy();
+    const left = new Comet(scene, 100, 100);
+    left.setVelocity(-180, 80);
+    ggOrientCometToVelocity(left);
+    const leftRotation = left.rotation;
+    left.destroy();
+    return {
+      nukeFrameTotal: game.textures.get("nuke").frameTotal,
+      cometFrameTotal: game.textures.get("comet").frameTotal,
+      cometVariants: Array.from(new Set(cometVariants)).sort(),
+      rightRotation,
+      leftRotation
+    };
+  });
 
   await page.evaluate(() => {
     ["Level1", "Level2", "BossLevel", "Info", "Titles", "Paused"].forEach((key) => game.scene.stop(key));
@@ -255,7 +313,13 @@ async function runSurfaceSuite(page) {
     active: game.scene.keys.Victory.scene.isActive(),
     score,
     finalScore,
-    hasNoForcedTimer: !game.scene.keys.Victory.time.getAllEvents || game.scene.keys.Victory.time.getAllEvents().length <= 1
+    hasNoForcedTimer: !game.scene.keys.Victory.time.getAllEvents || game.scene.keys.Victory.time.getAllEvents().length <= 1,
+    values: game.scene.keys.Victory.children.list
+      .filter((child) => child.type === "Text")
+      .map((child) => ({ text: child.text, x: Math.round(child.x), y: Math.round(child.y) })),
+    controls: game.scene.keys.Victory.children.list
+      .filter((child) => child.ggButtonRole)
+      .map((child) => ({ role: child.ggButtonRole, x: Math.round(child.x), y: Math.round(child.y), width: Math.round(child.input.hitArea.width), height: Math.round(child.input.hitArea.height) }))
   }));
 
   await page.evaluate(() => {
@@ -333,9 +397,22 @@ async function main() {
   if (report.browser) {
     const ok = report.browser.fonts.goldWoff2 === 200 && report.browser.fonts.silverWoff2 === 200 &&
       report.browser.fonts.goldCheck && report.browser.fonts.silverCheck &&
-      report.browser.level1.population === 58 && report.browser.level2Population === 87 &&
+      report.browser.level1.population === 58 && report.browser.level1.enemyScale > report.browser.level1.baselineEnemyScale &&
+      Math.abs(Math.abs(report.browser.level1.enemyAngle) - 180) < 0.01 && report.browser.level1.enemyBounds.minLeft >= -1 &&
+      report.browser.level1.enemyBounds.maxRight <= 1367 && report.browser.level1.nukeHud.iconTexture === "hudNuke" &&
+      report.browser.level1.playerAnimation.idleFrame === "0" &&
+      report.browser.level1.playerAnimation.movingAnim === "playerShipThrust" &&
+      report.browser.level1.playerAnimation.returnAnim === "playerShipReturn" &&
+      report.browser.level2Population === 87 &&
       report.browser.bossPopulation === 72 && report.browser.pauseCycles.clean &&
-      report.browser.victory.active && report.browser.titles.scorePreserved;
+      report.browser.bossStateImagery.normalTexture === "motherShip" &&
+      report.browser.bossStateImagery.hitTexture === "motherShipHit" &&
+      report.browser.bossStateImagery.restoredTexture === "motherShip" &&
+      report.browser.nukeAndComets.nukeFrameTotal === 7 &&
+      report.browser.nukeAndComets.cometFrameTotal === 7 &&
+      report.browser.nukeAndComets.cometVariants.length >= 4 &&
+      report.browser.victory.active && report.browser.victory.controls.length >= 3 &&
+      report.browser.titles.scorePreserved;
     if (!ok) report.pass = false;
   }
   if (report.visual && !report.visual.pass) report.pass = false;

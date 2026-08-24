@@ -3,17 +3,20 @@ const path = require("path");
 const crypto = require("crypto");
 const sharp = require("sharp");
 
-const evidenceRoot = path.resolve("docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004/toolchain");
+const evidenceRoot = path.resolve(process.env.GG_HANDOFF_ID
+  ? `docs/internal_governance/evidence/${process.env.GG_HANDOFF_ID}/toolchain`
+  : "docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV1/toolchain");
 const outFile = path.join(evidenceRoot, "sprite_atlas_report.json");
 const sprites = [
   { key: "player", source: "assets/images/owned/sprites/gg_player_ship_v002_sheet.png", atlas: "assets/images/owned/sprites/gg_player_ship_v002_atlas.json" },
   { key: "standardEnemy", source: "assets/images/owned/sprites/gg_enemy_destroyer_v002_sheet.png", atlas: "assets/images/owned/sprites/gg_enemy_destroyer_v002_atlas.json" },
   { key: "cruiser", source: "assets/images/owned/sprites/gg_enemy_cruiser_v002_sheet.png", atlas: "assets/images/owned/sprites/gg_enemy_cruiser_v002_atlas.json" },
   { key: "scout", source: "assets/images/owned/sprites/gg_enemy_scout_v002_sheet.png", atlas: "assets/images/owned/sprites/gg_enemy_scout_v002_atlas.json" },
-  { key: "mothership", source: "assets/images/owned/sprites/gg_boss_mothership_v002_sheet.png", atlas: "assets/images/owned/sprites/gg_boss_mothership_v002_atlas.json" },
+  { key: "mothershipNormal", source: "assets/images/owned/sprites/gg_boss_mothership_normal_v002_sheet.png", atlas: "assets/images/owned/sprites/gg_boss_mothership_normal_v002_atlas.json" },
+  { key: "mothershipHit", source: "assets/images/owned/sprites/gg_boss_mothership_hit_v002_sheet.png", atlas: "assets/images/owned/sprites/gg_boss_mothership_hit_v002_atlas.json" },
   { key: "asteroid", source: "assets/images/owned/sprites/gg_asteroid_v002_sheet.png", frameWidth: 724, frameHeight: 724 },
-  { key: "comet", source: "assets/images/owned/sprites/gg_comet_v002_sheet.png", frameWidth: 837, frameHeight: 470 },
-  { key: "nukeProjectile", source: "assets/images/owned/sprites/gg_nuke_projectile_v002_sheet.png", frameWidth: 720, frameHeight: 800 },
+  { key: "comet", source: "assets/images/owned/sprites/gg_comet_v002_sheet.png", frameWidth: 448, frameHeight: 448 },
+  { key: "nukeProjectile", source: "assets/images/owned/sprites/gg_nuke_projectile_v002_sheet.png", frameWidth: 480, frameHeight: 800 },
   { key: "nukeBurst", source: "assets/images/owned/sprites/gg_nuke_burst_v002_sheet.png", frameWidth: 516, frameHeight: 516 },
   { key: "smallExplosion", source: "assets/images/owned/sprites/gg_explosion_small_v002_sheet.png", frameWidth: 494, frameHeight: 494 },
   { key: "largeExplosion", source: "assets/images/owned/sprites/gg_explosion_large_v002_sheet.png", frameWidth: 512, frameHeight: 512 }

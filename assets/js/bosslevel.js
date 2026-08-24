@@ -50,7 +50,7 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
         this.aGrid.placeAtIndex(120, textNukesLoad); //set position on the grid
         Align.scaleToGameW(textNukesLoad, 0.17); //set scale
         textNukesLoad.setPosition(this.game.config.width * 0.9, this.game.config.height * 0.91); //separate HUD labels
-        textNukes = this.add.text(0, 0, 'Nukes: ' + currentNukes, { fontFamily: GG_FONT_DISPLAY, fontSize: 42, fill: '#ffffff' }); //create Nukes Left text, position x and y, set text with currentNukes variable and add font styling
+        textNukes = this.add.text(0, 0, String(currentNukes), { fontFamily: GG_FONT_DISPLAY, fontSize: 42, fill: '#ffffff' }); //create Nukes Left text, position x and y, set text with currentNukes variable and add font styling
         textNukes.setOrigin(0.8, 0.4); //set origin
         this.aGrid.placeAtIndex(120, textNukes); //set position on the grid
         Align.scaleToGameW(textNukes, 0.12); //set scale
@@ -131,22 +131,6 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
                     playerDirY = "DOWN"; //set var to down
                 }
             }, this);
-            textNukes.setInteractive(); //set nukes label as interactive
-            textNukes.on("pointerover", function() { //this nukes label when hover
-                textNukes.setTint(0xff0000); // set the play button to red on hover
-            }, this); //this state only
-
-            textNukes.on("pointerout", function() { //this nukes label when not hover
-                textNukes.setTint(0xffffff); // set the nukes label back to white when not hovering
-            });
-
-            textNukes.on("pointerdown", function() { //this nukes label when on method, when mouse clicks
-                var nuke = new Nuke(this, this.player.x, this.player.y); //create new nuke object and start this object at player.x and player.y
-                this.starNukes.add(nuke); //add this nuke to starNuke group
-                this.sfx.nukeFiring.play(); //add nukeFiring sound
-                currentNukes--; //decrement current nukes by 1
-                textNukes.setText('Nukes: ' + currentNukes); //set nuke left text to current value
-            }, this); //this state only
         }
 
         if (touch) {
@@ -155,6 +139,7 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
         else {
             this.Restart = ["Press R to Restart"];
         }
+        ggInstallNukeHud(this);
         //END TOUCH CONTROLS
         //END CONTROL METHODS
 
@@ -190,7 +175,7 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
         motherShipLives = maxMotherShipLives; //set mothership lives
         Align.scaleToGameW(this.alienMothership, 0.1); //set the scale of the motherShip
         ggSetBodyLocal(this.alienMothership, 0.48, 0.52, 0.5, 0.22);
-        this.alienMothership.play("motherShip"); //play mothership animation
+        this.alienMothership.play("motherShip"); //play normal mothership animation
         this.tweens.add({ //add a tween(movement state)
             targets: this.alienMothership, //target the mothership
             props: { //set its movement positions between its starting point and 
@@ -557,7 +542,11 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
         if (motherShipLives > 0 && h == 1) { //else if lives greater than 0 & type = laser
             motherShipLives--; //mothership lose a life by value of enemyHitStrength
         }
+        if (motherShipLives > 0 && h && this.alienMothership && this.alienMothership.showHitState) {
+            this.alienMothership.showHitState();
+        }
         if (motherShipLives <= 0 && motherShipAlive) { //if current hit destroyed mothership
+            this.createExplosion(this.alienMothership.x, this.alienMothership.y, "large");
             this.alienMothership.destroy(); //destroy mothership
             enemyShips--; //decrement enemyShips by 1 (for testing)
             enemyDeaths++; //increment enemyDeaths by 1 for game win logic
@@ -763,20 +752,26 @@ class BossLevel extends Phaser.Scene { //creates a scene in the Phaser Object ca
                 if (controllerActionPressed("pause")) {
                     this.pauseGame();
                 }
+                var moved = false;
                 if (!touch || getController()) {
                     if (cursors.left.isDown || controllerDirectionDown("left")) { //if key A pressed down
                         this.player.x -= this.game.config.height * 0.007; //Move left
+                        moved = true;
                     }
                     if (cursors.right.isDown || controllerDirectionDown("right")) { //if key D pressed down
                         this.player.x += this.game.config.height * 0.007; //Move right
+                        moved = true;
                     }
                     if (cursors.up.isDown || controllerDirectionDown("up")) { //if key W pressed down
                         this.player.y -= this.game.config.height * 0.007; //Move up   
+                        moved = true;
                     }
                     if (cursors.down.isDown || controllerDirectionDown("down")) { //if key S pressed down
                         this.player.y += this.game.config.height * 0.007; //Move down
+                        moved = true;
                     }
                 }
+                ggSetPlayerMovementState(this, moved);
             },
             callbackScope: this, //set call back scope to this function
             loop: true //set loop to true

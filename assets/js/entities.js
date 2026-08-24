@@ -24,7 +24,7 @@ class Player extends Phaser.Physics.Arcade.Sprite { //Inherit Player class to Ph
         this.setOrigin(0.5, 0.5); //keep player hitbox stable through animation
         Align.scaleToGameW(this, GG_SCALES.PLAYER); //set scale
         ggSetBodyLocal(this, 0.34, 0.54, 0.5, 0.36);
-        this.play("playerShip");
+        this.setFrame("0");
     }
 }
 
@@ -101,6 +101,15 @@ class AlienMothership extends Entity { //Inherit AlienMothership class to Entity
         super(scene, x, y, "motherShip"); // call super class constructor
         this.setOrigin(0.5, 0.95); //set origin of AlienMothership to bottom and center
         this.ggScoreEvent = "MOTHERSHIP_DESTROYED";
+        this.ggHitTimer = null;
+    }
+
+    showHitState() {
+        if (!this.active) return;
+        this.setTexture("motherShipHit", "0");
+        this.ggHitTimer = this.scene.time.delayedCall(180, function() {
+            if (this.active) this.setTexture("motherShip", "0");
+        }, null, this);
     }
 }
 
@@ -110,6 +119,7 @@ class AlienScout extends Entity { //Inherit alienscout class to Entity
         this.setOrigin(0.5); //set origin of AlienScout to center
         Align.scaleToGameW(this, GG_SCALES.SCOUT); //set scale
         ggSetBodyLocal(this, 0.42, 0.48, 0.5, 0.32);
+        this.setAngle(180);
         this.ggScoreEvent = "SCOUT_DESTROYED";
     }
 }
@@ -118,8 +128,8 @@ class Enemy extends Entity { //Inherit Enemy class to Entity
     constructor(scene, x, y, key) { // constructor function to instantiate an enemy object
         super(scene, x, y, key); // call super class constructor
         this.setOrigin(0.5); //set origin of enemy to center
-        Align.scaleToGameW(this, GG_SCALES.ENEMY); //set scale of enemy
-        ggSetBodyLocal(this, 0.45, 0.52, 0.5, 0.32);
+        ggSetEnemyScale(this, GG_SCALES.ENEMY); //set scale of enemy
+        this.setAngle(180);
         this.ggScoreEvent = "SHIP_DESTROYED";
     }
 }
@@ -130,6 +140,7 @@ class EnemyCruiser extends Entity { //Inherit Enemy class to Entity
         this.setOrigin(0.5); //set origin of enemy to center
         Align.scaleToGameW(this, GG_SCALES.CRUISER); //set scale
         ggSetBodyLocal(this, 0.46, 0.54, 0.5, 0.22);
+        this.setAngle(180);
         this.ggScoreEvent = "SHIP_DESTROYED";
     }
 }
@@ -176,7 +187,7 @@ class Comet extends Phaser.Physics.Arcade.Sprite {
         super(scene, x, y, "comet");
         scene.add.existing(this);
         scene.physics.add.existing(this);
-        this.ggVariant = Phaser.Math.RND.integerInRange(0, 3);
+        this.ggVariant = Phaser.Math.RND.integerInRange(0, 5);
         this.setFrame(this.ggVariant);
         this.ggScoreEvent = "COMET_DESTROYED";
         Align.scaleToGameW(this, 0.062);

@@ -1,0 +1,13 @@
+{
+  "frames": {
+    "0": { "frame": { "x": 0, "y": 0, "w": 475, "h": 724 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 475, "h": 724 }, "sourceSize": { "w": 475, "h": 724 } },
+    "1": { "frame": { "x": 475, "y": 0, "w": 475, "h": 724 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 475, "h": 724 }, "sourceSize": { "w": 475, "h": 724 } },
+    "2": { "frame": { "x": 950, "y": 0, "w": 475, "h": 724 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 475, "h": 724 }, "sourceSize": { "w": 475, "h": 724 } }
+  },
+  "meta": {
+    "image": "gg_boss_mothership_normal_v002_sheet.png",
+    "format": "RGBA8888",
+    "size": { "w": 1425, "h": 724 },
+    "scale": "1"
+  }
+}
