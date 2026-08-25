@@ -15,6 +15,10 @@ import { ScoreSystem } from '../systems/ScoreSystem';
 
 type TerminalState = 'complete' | 'failed';
 type PlayerState = 'active' | 'hit' | 'regenerating';
+type SweptHitTarget =
+  | { kind: 'player'; body: Phaser.Physics.Arcade.Body }
+  | { kind: 'scout'; body: Phaser.Physics.Arcade.Body; scout: Phaser.Physics.Arcade.Sprite }
+  | { kind: 'shield'; body: Phaser.Physics.Arcade.Body; tile: Phaser.Physics.Arcade.Image };
 
 const SHIELD_MATRIX = [
   [1, 1, 1, 1, 1, 1, 1, 1],
@@ -26,6 +30,7 @@ const SHIELD_MATRIX = [
 
 interface HostileQaApi {
   firePlayerLaserAtScout: (index?: number, offsetX?: number) => Record<string, unknown>;
+  firePlayerLaserForVisual: (offsetX?: number) => Record<string, unknown>;
   fireEnemyLaserAtPlayer: (offsetX?: number) => Record<string, unknown>;
   fireEnemyLaserAtShield: (index?: number) => Record<string, unknown>;
   firePlayerLaserAtShield: (index?: number) => Record<string, unknown>;
@@ -173,7 +178,9 @@ export class Level1Scene extends Phaser.Scene {
     this.updateNukeRearm(deltaMs);
     this.#player.clampToPlayfield(this.#layout);
     this.updateScouts(time);
+    this.resolveSweptProjectileCollisions();
     this.cleanupProjectiles();
+    this.recordProjectilePreviousPositions();
     this.checkTerminalConditions();
     this.publishQaState();
   }
@@ -324,8 +331,7 @@ export class Level1Scene extends Phaser.Scene {
     const barWidth = Phaser.Math.Clamp(this.#layout.viewport.width * 0.1, 72, 170);
     const lifeSpacing = 34;
     const nukeSpacing = 36;
-    const lifeClusterRight = left + 20 + (this.#lifeIcons.length - 1) * lifeSpacing + 26;
-    const nukeBarX = Phaser.Math.Clamp(lifeClusterRight + 128, left + 220, right - barWidth);
+    const nukeBarX = right - barWidth;
     this.#scoreText.setPosition(left, this.#layout.hudSafeRect.y + 12);
     this.#soundIcon.setPosition(right - 4, this.#layout.hudSafeRect.y + 28);
     this.#lifeIcons.forEach((icon, index) => {
@@ -352,12 +358,10 @@ export class Level1Scene extends Phaser.Scene {
       this.damagePlayer(true);
     });
     this.physics.add.overlap(this.#enemyLasers, this.#shieldTiles, (laser, tile) => {
-      this.destroyProjectile(laser as Phaser.Physics.Arcade.Image);
-      this.destroyShieldTile(tile as Phaser.Physics.Arcade.Image, true);
+      this.handleEnemyLaserShieldOverlap(laser as Phaser.Physics.Arcade.Image, tile as Phaser.Physics.Arcade.Image);
     });
     this.physics.add.overlap(this.#playerLasers, this.#shieldTiles, (laser, tile) => {
-      this.destroyProjectile(laser as Phaser.Physics.Arcade.Image);
-      this.destroyShieldTile(tile as Phaser.Physics.Arcade.Image, false);
+      this.handlePlayerLaserShieldOverlap(laser as Phaser.Physics.Arcade.Image, tile as Phaser.Physics.Arcade.Image);
     });
     this.physics.add.overlap(this.#nukes, this.#scouts, (nuke, scout) => {
       this.handleNukeScoutOverlap(nuke as Phaser.Physics.Arcade.Sprite, scout as Phaser.Physics.Arcade.Sprite);
@@ -476,6 +480,8 @@ export class Level1Scene extends Phaser.Scene {
     const body = laser.body as Phaser.Physics.Arcade.Body;
     body.enable = true;
     body.setSize(this.#layout.projectileBodySize.width / laser.scaleX, this.#layout.projectileBodySize.height / laser.scaleY, true);
+    laser.setData('previousBodyCenterX', body.x + body.width / 2);
+    laser.setData('previousBodyCenterY', body.y + body.height / 2);
   }
 
   private reflowActiveProjectiles(): void {
@@ -486,6 +492,8 @@ export class Level1Scene extends Phaser.Scene {
       laser.setDisplaySize(this.#layout.projectileSize.width, this.#layout.projectileSize.height);
       const body = laser.body as Phaser.Physics.Arcade.Body;
       body.setSize(this.#layout.projectileBodySize.width / laser.scaleX, this.#layout.projectileBodySize.height / laser.scaleY, true);
+      laser.setData('previousBodyCenterX', body.x + body.width / 2);
+      laser.setData('previousBodyCenterY', body.y + body.height / 2);
     }
     for (const nuke of this.#nukes.getChildren() as Phaser.Physics.Arcade.Sprite[]) {
       if (!nuke.active) {
@@ -511,6 +519,106 @@ export class Level1Scene extends Phaser.Scene {
     laser.setData('spent', true);
     this.destroyProjectile(laser);
     this.damagePlayer();
+  }
+
+  private handleEnemyLaserShieldOverlap(laser: Phaser.Physics.Arcade.Image, tile: Phaser.Physics.Arcade.Image): void {
+    if (laser.getData('spent')) {
+      return;
+    }
+    laser.setData('spent', true);
+    this.destroyProjectile(laser);
+    this.destroyShieldTile(tile, true);
+  }
+
+  private handlePlayerLaserShieldOverlap(laser: Phaser.Physics.Arcade.Image, tile: Phaser.Physics.Arcade.Image): void {
+    if (laser.getData('spent')) {
+      return;
+    }
+    laser.setData('spent', true);
+    this.destroyProjectile(laser);
+    this.destroyShieldTile(tile, false);
+  }
+
+  private resolveSweptProjectileCollisions(): void {
+    for (const laser of this.#playerLasers.getChildren() as Phaser.Physics.Arcade.Image[]) {
+      if (!laser.active || laser.getData('spent')) {
+        continue;
+      }
+      const candidates: SweptHitTarget[] = [
+        ...this.getActiveShieldTiles().map((tile) => ({ kind: 'shield' as const, tile, body: tile.body as Phaser.Physics.Arcade.Body })),
+        ...this.getActiveScouts().map((scout) => ({ kind: 'scout' as const, scout, body: scout.body as Phaser.Physics.Arcade.Body })),
+      ];
+      const hit = this.findSweptHit(laser, -1, candidates);
+      if (hit?.kind === 'shield') {
+        this.handlePlayerLaserShieldOverlap(laser, hit.tile);
+      } else if (hit?.kind === 'scout') {
+        this.handlePlayerLaserScoutOverlap(laser, hit.scout);
+      }
+    }
+
+    for (const laser of this.#enemyLasers.getChildren() as Phaser.Physics.Arcade.Image[]) {
+      if (!laser.active || laser.getData('spent')) {
+        continue;
+      }
+      const playerBody = this.#player.sprite.body as Phaser.Physics.Arcade.Body;
+      const candidates: SweptHitTarget[] = [
+        ...this.getActiveShieldTiles().map((tile) => ({ kind: 'shield' as const, tile, body: tile.body as Phaser.Physics.Arcade.Body })),
+        { kind: 'player', body: playerBody },
+      ];
+      const hit = this.findSweptHit(laser, 1, candidates);
+      if (hit?.kind === 'shield') {
+        this.handleEnemyLaserShieldOverlap(laser, hit.tile);
+      } else if (hit?.kind === 'player') {
+        this.handleEnemyLaserPlayerOverlap(laser);
+      }
+    }
+  }
+
+  private findSweptHit(
+    projectile: Phaser.Physics.Arcade.Image,
+    directionY: -1 | 1,
+    targets: SweptHitTarget[],
+  ): SweptHitTarget | null {
+    const projectileBody = projectile.body as Phaser.Physics.Arcade.Body;
+    const currentX = projectileBody.x + projectileBody.width / 2;
+    const currentY = projectileBody.y + projectileBody.height / 2;
+    const previousX = Number(projectile.getData('previousBodyCenterX') ?? currentX);
+    const previousY = Number(projectile.getData('previousBodyCenterY') ?? currentY);
+    const minY = Math.min(previousY, currentY) - projectileBody.height / 2;
+    const maxY = Math.max(previousY, currentY) + projectileBody.height / 2;
+    const centerX = (previousX + currentX) / 2;
+    const halfWidth = projectileBody.width / 2;
+    let best: { target: SweptHitTarget; entry: number } | null = null;
+
+    for (const target of targets) {
+      if (!target.body.enable) {
+        continue;
+      }
+      const left = target.body.x - halfWidth;
+      const right = target.body.x + target.body.width + halfWidth;
+      const top = target.body.y - projectileBody.height / 2;
+      const bottom = target.body.y + target.body.height + projectileBody.height / 2;
+      if (centerX < left || centerX > right || maxY < top || minY > bottom) {
+        continue;
+      }
+      const entry = directionY > 0 ? top : bottom;
+      if (!best || (directionY > 0 ? entry < best.entry : entry > best.entry)) {
+        best = { target, entry };
+      }
+    }
+
+    return best?.target ?? null;
+  }
+
+  private recordProjectilePreviousPositions(): void {
+    for (const laser of [...this.#playerLasers.getChildren(), ...this.#enemyLasers.getChildren()] as Phaser.Physics.Arcade.Image[]) {
+      if (!laser.active) {
+        continue;
+      }
+      const body = laser.body as Phaser.Physics.Arcade.Body;
+      laser.setData('previousBodyCenterX', body.x + body.width / 2);
+      laser.setData('previousBodyCenterY', body.y + body.height / 2);
+    }
   }
 
   private destroyScoutBody(scout: Phaser.Physics.Arcade.Sprite, awardScore: boolean): void {
@@ -812,6 +920,10 @@ export class Level1Scene extends Phaser.Scene {
         }
         const laser = this.firePlayerLaser(Number.POSITIVE_INFINITY, scout.x + offsetX, scout.y + this.#layout.scoutSize.height * 0.95);
         return { fired: Boolean(laser), scoutX: scout.x, laserX: laser?.x, offsetX };
+      },
+      firePlayerLaserForVisual: (offsetX = 0) => {
+        const laser = this.firePlayerLaser(Number.POSITIVE_INFINITY, this.#player.sprite.x + offsetX, this.#player.sprite.y - this.#layout.playerSize.height * 0.52);
+        return { fired: Boolean(laser), playerX: this.#player.sprite.x, laserX: laser?.x, offsetX };
       },
       fireEnemyLaserAtPlayer: (offsetX = 0) => {
         const laser = this.#enemyLasers.get(this.#player.sprite.x + offsetX, this.#player.sprite.y - this.#layout.playerSize.height * 0.42, RUNTIME_ASSETS.projectile.enemyLaser.key) as Phaser.Physics.Arcade.Image | null;

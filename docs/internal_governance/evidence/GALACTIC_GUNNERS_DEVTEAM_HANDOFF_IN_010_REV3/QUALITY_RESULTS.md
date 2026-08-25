@@ -19,10 +19,11 @@ Runtime URL: `http://localhost:3002`
 - Shield lower-lane gap: 1.18 new player heights, matching lower legacy-game base-tile topology.
 - Real-origin player laser direct hit: PASS.
 - Real-origin player laser near miss: PASS.
-- Player/enemy laser visual/body mapping: PASS.
-- Icon-only lives HUD, icon-only nuke HUD, bottom-left nuke pips growing left of the fixed `ENERGISE` rearm bar, and sound top-right: PASS.
+- Player/enemy laser visual/body mapping, widened body envelopes and swept collision checks: PASS.
+- Enemy laser left/center/right player-body lane hits: PASS.
+- Icon-only lives HUD, icon-only nuke HUD, bottom-right nuke pips growing left of the fixed `ENERGISE` rearm bar, and sound top-right: PASS.
 - Correct scout orientation: PASS.
-- Nuke initial icons, `N` fire, gamepad Y action path, upright projectile, unclipped burst, score exactness, non-negative count, bottom-left `ENERGISE` bar and HUD: PASS.
+- Nuke initial icons, `N` fire, gamepad Y action path, upright projectile, unclipped burst, score exactness, non-negative count, bottom-right `ENERGISE` bar and HUD: PASS.
 - Shield-hit explosion/scar feedback and unclipped small explosion animation: PASS.
 - Pause/resume freeze and repeat cleanliness: PASS.
 - Retained movement, diagonal normalization, respawn, shield collision, resize, terminal/menu/replay, online/offline backend and console/network checks: PASS.

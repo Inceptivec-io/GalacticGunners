@@ -1,7 +1,7 @@
 {
   "url": "http://localhost:3002",
   "handoff_id": "GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_010_REV3",
-  "generated_at": "2026-08-25T18:33:49.637Z",
+  "generated_at": "2026-08-25T19:39:34.327Z",
   "banned_visible_terms": [
     "LEVEL 1 VERTICAL SLICE",
     "VERTICAL SLICE",
@@ -35,6 +35,7 @@
       "player_laser_near_miss_score_zero": true,
       "real_origin_player_laser_near_miss": true,
       "direct_enemy_laser_hit_one_damage": true,
+      "enemy_laser_player_body_lanes_hit": true,
       "player_regenerates": true,
       "player_respawns": true,
       "respawn_velocity_reset": true,
@@ -57,7 +58,7 @@
       "nuke_burst_multikill_score_exact": true,
       "nuke_rearm_progresses": true,
       "nuke_hud_live": true,
-      "nuke_hud_bottom_left_bar": true,
+      "nuke_hud_bottom_right_bar": true,
       "life_hud_icon_only": true,
       "enemy_scouts_correct_orientation": true,
       "sound_mute_top_right": true,
@@ -167,25 +168,25 @@
         ],
         "nukes": [
           {
-            "x": 208,
+            "x": 1118,
             "y": 730,
             "visible": true,
             "texture": "ui.nukeIcon"
           },
           {
-            "x": 244,
+            "x": 1154,
             "y": 730,
             "visible": true,
             "texture": "ui.nukeIcon"
           }
         ],
         "rearm": {
-          "x": 280,
+          "x": 1190,
           "y": 738,
           "text": "ENERGISE"
         },
         "rearmBar": {
-          "x": 280,
+          "x": 1190,
           "y": 756,
           "width": 137,
           "fillWidth": 137
@@ -257,25 +258,25 @@
         ],
         "nukes": [
           {
-            "x": 210,
+            "x": 1184,
             "y": 862,
             "visible": true,
             "texture": "ui.nukeIcon"
           },
           {
-            "x": 246,
+            "x": 1220,
             "y": 862,
             "visible": true,
             "texture": "ui.nukeIcon"
           }
         ],
         "rearm": {
-          "x": 282,
+          "x": 1256,
           "y": 870,
           "text": "ENERGISE"
         },
         "rearmBar": {
-          "x": 282,
+          "x": 1256,
           "y": 888,
           "width": 144,
           "fillWidth": 144
@@ -347,25 +348,25 @@
         ],
         "nukes": [
           {
-            "x": 224,
+            "x": 1624,
             "y": 1042,
             "visible": true,
             "texture": "ui.nukeIcon"
           },
           {
-            "x": 260,
+            "x": 1660,
             "y": 1042,
             "visible": true,
             "texture": "ui.nukeIcon"
           }
         ],
         "rearm": {
-          "x": 296,
+          "x": 1696,
           "y": 1050,
           "text": "ENERGISE"
         },
         "rearmBar": {
-          "x": 296,
+          "x": 1696,
           "y": 1068,
           "width": 170,
           "fillWidth": 170
@@ -437,25 +438,25 @@
         ],
         "nukes": [
           {
-            "x": 242,
+            "x": 2246,
             "y": 1402,
             "visible": true,
             "texture": "ui.nukeIcon"
           },
           {
-            "x": 278,
+            "x": 2282,
             "y": 1402,
             "visible": true,
             "texture": "ui.nukeIcon"
           }
         ],
         "rearm": {
-          "x": 314,
+          "x": 2318,
           "y": 1410,
           "text": "ENERGISE"
         },
         "rearmBar": {
-          "x": 314,
+          "x": 2318,
           "y": 1428,
           "width": 170,
           "fillWidth": 170
@@ -527,25 +528,25 @@
         ],
         "nukes": [
           {
-            "x": 199,
+            "x": 820,
             "y": 730,
             "visible": true,
             "texture": "ui.nukeIcon"
           },
           {
-            "x": 235,
+            "x": 856,
             "y": 730,
             "visible": true,
             "texture": "ui.nukeIcon"
           }
         ],
         "rearm": {
-          "x": 271,
+          "x": 892,
           "y": 738,
           "text": "ENERGISE"
         },
         "rearmBar": {
-          "x": 271,
+          "x": 892,
           "y": 756,
           "width": 102,
           "fillWidth": 102
@@ -617,25 +618,25 @@
         ],
         "nukes": [
           {
-            "x": 194,
+            "x": 216,
             "y": 806,
             "visible": true,
             "texture": "ui.nukeIcon"
           },
           {
-            "x": 230,
+            "x": 252,
             "y": 806,
             "visible": true,
             "texture": "ui.nukeIcon"
           }
         ],
         "rearm": {
-          "x": 266,
+          "x": 288,
           "y": 814,
           "text": "ENERGISE"
         },
         "rearmBar": {
-          "x": 266,
+          "x": 288,
           "y": 832,
           "width": 72,
           "fillWidth": 72

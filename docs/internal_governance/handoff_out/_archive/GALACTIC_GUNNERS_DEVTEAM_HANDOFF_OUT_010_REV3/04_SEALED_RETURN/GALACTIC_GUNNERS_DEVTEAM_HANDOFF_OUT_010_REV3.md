@@ -21,7 +21,7 @@ Corrected:
 - real-origin player laser direct hit and near miss hostile cases added;
 - shield bunkers restored to 8, 256 active shield tiles;
 - shield lower-lane gap derived from new player height at 1.18 player heights;
-- nukes restored with max 2, icon-only bottom-left HUD pips, fixed `ENERGISE` bar to their right, `N`, gamepad Y action path, projectile, burst, audio and exact normal scout scoring;
+- nukes restored with max 2, icon-only bottom-right HUD pips, fixed `ENERGISE` bar to their right, `N`, gamepad Y action path, projectile, burst, audio and exact normal scout scoring;
 - lives restored as icon-only bottom-left HUD pips, with no numeric life counter;
 - score remains top-left and sound/mute remains top-right;
 - pause restored with `P`, PauseScene overlay, frozen Level1 state and exact resume;
@@ -43,8 +43,9 @@ Hostile runtime PASS includes:
 - 8 bunkers / 256 shield tiles;
 - shield lower-lane gap 1.18 player heights;
 - real-origin player laser direct hit and near miss;
-- player/enemy laser rendered dimensions and collider dimensions;
-- nuke projectile/burst and bottom-left icon-only HUD / `ENERGISE` trace;
+- player/enemy laser rendered dimensions, widened collider dimensions and swept collision checks;
+- enemy laser left/center/right player-body lane hit proof;
+- nuke projectile/burst and bottom-right icon-only HUD / `ENERGISE` trace;
 - icon-only lives HUD and top-right sound/mute trace;
 - pause/resume freeze trace;
 - retained REV2 hostile coverage;

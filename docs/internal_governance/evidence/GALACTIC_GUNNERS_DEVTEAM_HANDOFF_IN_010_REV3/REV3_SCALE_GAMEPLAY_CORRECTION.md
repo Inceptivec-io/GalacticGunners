@@ -27,7 +27,7 @@ Player laser source: `1912 x 823`, asset `GG-SPRITE-SPRITES-OBJECTS-GG-PLAYER-LA
 
 Enemy laser source: `1536 x 1024`, asset `GG-SPRITE-SPRITES-OBJECTS-GG-ENEMY-LASER-V002`, SHA-256 `C25388AA4C1BAA3123AFCAB5B820718150806749E4AE5F6D8B99331C793578AC`.
 
-Runtime display uses local horizontal beam length/thickness before rotation. Arcade body is vertical after rotation: width = core thickness, height = core length. Hostile evidence verifies rendered world bounds are taller than wide and collider bodies match the vertical beam.
+Runtime display uses local horizontal beam length/thickness before rotation. Arcade body is vertical after rotation: width = core thickness, height = core length. Hostile evidence verifies rendered world bounds are taller than wide and collider bodies match the vertical beam. Projectile and ship bodies use widened meaningful visual envelopes, and the runtime adds swept laser collision checks so frame-step movement cannot skip player/scout/shield targets.
 
 Projectile speed authority:
 
@@ -54,8 +54,8 @@ Nuke asset IDs and hashes:
 
 Runtime trace:
 
-- Initial nukes: two visible nuke icons positioned bottom-left, immediately left of the `ENERGISE` bar.
-- Initial rearm: full fixed `ENERGISE` bar positioned bottom-left to the right of the nuke icons.
+- Initial nukes: two visible nuke icons positioned bottom-right, immediately left of the `ENERGISE` bar.
+- Initial rearm: full fixed `ENERGISE` bar positioned bottom-right to the right of the nuke icons.
 - `N` fires one nuke, decrements count once, resets rearm, displays projectile, detonates into canonical burst and applies normal scout +25 scoring once per destroyed scout.
 - Count never becomes negative.
 - HUD reflects live nuke count through icon pips only; no visible numeric nuke counter is rendered.
@@ -66,7 +66,8 @@ Runtime trace:
 
 - Lives render as three owned ship icon pips only, 15% larger than the previous HUD icon; no visible numeric life counter is rendered.
 - Nukes render as owned nuke icon pips only, 15% larger than the previous HUD icon; no visible numeric nuke counter is rendered.
-- Nuke pips and the fixed `ENERGISE` bar render as a bottom-left group, with pips growing left of the bar.
+- Nuke pips and the fixed `ENERGISE` bar render as a bottom-right group, with pips growing left of the bar.
+- Enemy laser hostile verification covers left, center and right player-body lanes plus a near-miss lane.
 - Score remains top-left and sound/mute icon remains top-right.
 - Scout ships are rotated to the correct enemy orientation.
 - Explosion, nuke projectile and nuke burst runtime sheets use the owned horizontal/upright sheets to avoid boxed/clipped animation.
@@ -83,7 +84,7 @@ Runtime trace:
 ## Evidence
 
 - Hostile runtime report: `docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_010_REV3/browser_runtime/runtime-hostile-verification.json`.
-- Hostile runtime report SHA-256: `4A51B01C2B09661C1FB275D59BA0C820ED144F9A8E50C401D0242C60DAA47F4A`.
+- Hostile runtime report SHA-256: `420124D7B32D17CA86E314500D11EFBA3138CFFA7A6CADBC4419E27DE739CD1F`.
 - Screenshots include player/enemy laser mid-flight, nuke projectile, nuke burst, pause overlay, viewport matrix, mission complete/failed and active resize.
 - Transport receiving record: `docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_010_REV3/TRANSPORT_RECEIVING_RECORD.md`.
 - Transport member inventory: `docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_010_REV3/transport_pack_member_inventory.json`.

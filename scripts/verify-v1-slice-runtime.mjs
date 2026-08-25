@@ -171,11 +171,11 @@ async function runVisualMatrix(browser) {
       && state.hudPositions.lives.every((icon) => icon.y > viewport.height * 0.86), `Level1 ${viewport.name} lives HUD not bottom-left`);
     assert(state.hudPositions.nukes.filter((icon) => icon.visible).length === state.currentNukes, `Level1 ${viewport.name} nuke icons do not match live state`);
     assert(Math.max(...state.hudPositions.nukes.map((icon) => icon.x)) < state.hudPositions.rearmBar.x
-      && state.hudPositions.rearmBar.x < Math.max(360, viewport.width * 0.36)
-      && state.hudPositions.nukes.every((icon) => icon.y > viewport.height * 0.82), `Level1 ${viewport.name} nuke HUD not bottom-left before energise bar`);
+      && state.hudPositions.rearmBar.x > viewport.width * 0.68
+      && state.hudPositions.nukes.every((icon) => icon.y > viewport.height * 0.82), `Level1 ${viewport.name} nuke HUD not bottom-right before energise bar`);
     assert(!state.visibleTexts.some((text) => numericHudCounterPattern.test(text) || /^NUKES/i.test(text)), `Level1 ${viewport.name} exposed numeric life/nuke HUD text`);
     assert(state.hudPositions.rearm.text === 'ENERGISE', `Level1 ${viewport.name} nuke bar label not ENERGISE`);
-    assert(state.hudPositions.rearmBar.x < Math.max(360, viewport.width * 0.36) && state.hudPositions.rearmBar.y > viewport.height * 0.82, `Level1 ${viewport.name} energise bar not bottom-left`);
+    assert(state.hudPositions.rearmBar.x > viewport.width * 0.68 && state.hudPositions.rearmBar.y > viewport.height * 0.82, `Level1 ${viewport.name} energise bar not bottom-right`);
     assert(state.gameplayRect.width < viewport.width || viewport.width <= 480, `Level1 ${viewport.name} gameplay rect did not differ from viewport on desktop`);
     assert(bodiesInsideViewport(state.scoutBodies, viewport.width, viewport.height), `Level1 ${viewport.name} scout body clipped`);
     assert(Number(state.playerBody?.x ?? -1) >= 0, `Level1 ${viewport.name} player clipped left`);
@@ -223,10 +223,10 @@ function laserVisualAndBodyValid(laser) {
     && laser.display.height <= 8
     && laser.worldBounds.height > laser.worldBounds.width
     && laser.body.height > laser.body.width
-    && laser.body.width >= 3
-    && laser.body.width <= 8
-    && laser.body.height >= 23
-    && laser.body.height <= 35;
+    && laser.body.width >= 4
+    && laser.body.width <= 10
+    && laser.body.height >= 26
+    && laser.body.height <= 40;
 }
 
 function findScoutClearOfShield(state) {
@@ -366,6 +366,20 @@ async function runHostileCases(browser) {
   await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__.state().playerState === 'active', null, { timeout: 3000 });
   const respawnState = await getGameState(page);
   cases.direct_enemy_laser_hit_one_damage = hitState.lives === 2 && hitState.score === preHit.score;
+  const enemyLaserLaneOffsets = [
+    -Math.max(4, Math.floor(preHit.playerBody.width * 0.42)),
+    0,
+    Math.max(4, Math.floor(preHit.playerBody.width * 0.42)),
+  ];
+  const laneHitResults = [];
+  for (const offset of enemyLaserLaneOffsets) {
+    await loadGame(page);
+    await page.evaluate((laneOffset) => window.__GALACTIC_GUNNERS_HOSTILE__.fireEnemyLaserAtPlayer(laneOffset), offset);
+    await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__.state().lives === 2, null, { timeout: 3000 });
+    const laneState = await getGameState(page);
+    laneHitResults.push(laneState.lives === 2);
+  }
+  cases.enemy_laser_player_body_lanes_hit = laneHitResults.every(Boolean);
   cases.player_regenerates = ['hit', 'regenerating'].includes(hitState.playerState) || invulnerableState.playerState === 'regenerating';
   cases.player_respawns = Math.abs(respawnState.playerX - respawnState.playerSpawn.x) <= 2
     && Math.abs(respawnState.playerY - respawnState.playerSpawn.y) <= 2
@@ -383,8 +397,8 @@ async function runHostileCases(browser) {
   cases.enemy_laser_near_miss_zero_damage = state.lives === 3;
 
   await loadGame(page);
-  await page.keyboard.press('Space');
-  await page.waitForTimeout(400);
+  await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__.firePlayerLaserForVisual(0));
+  await page.waitForTimeout(90);
   state = await getGameState(page);
   cases.player_laser_visual_body_mapping = laserVisualAndBodyValid(firstLaser(state, 'player')) && firstLaser(state, 'player').angle === -90;
   await page.screenshot({ path: path.join(outputDir, 'player-laser-mid-flight.png'), fullPage: true });
@@ -450,7 +464,7 @@ async function runHostileCases(browser) {
     && state.visibleTexts.some((text) => text === 'ENERGISE')
     && !state.visibleTexts.some((text) => text === `${state.currentNukes}`)
     && !state.visibleTexts.some((text) => text.includes(`REARM ${state.rearmProgress}/150`));
-  cases.nuke_hud_bottom_left_bar = state.hudPositions.rearmBar.x < Math.max(360, state.viewport.width * 0.36)
+  cases.nuke_hud_bottom_right_bar = state.hudPositions.rearmBar.x > state.viewport.width * 0.68
     && state.hudPositions.rearmBar.y > state.viewport.height * 0.82
     && state.hudPositions.rearmBar.fillWidth <= state.hudPositions.rearmBar.width
     && Math.max(...state.hudPositions.nukes.map((icon) => icon.x)) < state.hudPositions.rearmBar.x

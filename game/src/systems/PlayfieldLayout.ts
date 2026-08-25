@@ -100,10 +100,10 @@ export function createPlayfieldLayout(width: number, height: number): PlayfieldL
     projectileSize,
     nukeProjectileSize: { width: clamp(playerSize.height * 0.8, 48, 68), height: clamp(playerSize.height * 0.26, 16, 24) },
     nukeBurstSize: { width: clamp(playerSize.height * 2.6, 150, 220), height: clamp(playerSize.height * 2.6, 150, 220) },
-    playerBodySize: { width: playerSize.width * 0.48, height: playerSize.height * 0.62 },
-    scoutBodySize: { width: scoutSize.width * 0.74, height: scoutSize.height * 0.62 },
+    playerBodySize: { width: playerSize.width * 0.64, height: playerSize.height * 0.72 },
+    scoutBodySize: { width: scoutSize.width * 0.86, height: scoutSize.height * 0.74 },
     shieldBodySize: { width: shieldTile * 0.92, height: shieldTile * 0.92 },
-    projectileBodySize: { width: projectileSize.height * 0.78, height: projectileSize.width * 0.86 },
-    nukeProjectileBodySize: { width: clamp(playerSize.height * 0.22, 14, 21), height: clamp(playerSize.height * 0.72, 44, 62) },
+    projectileBodySize: { width: projectileSize.height * 1.08, height: projectileSize.width * 0.96 },
+    nukeProjectileBodySize: { width: clamp(playerSize.height * 0.32, 18, 28), height: clamp(playerSize.height * 0.86, 52, 72) },
   };
 }
