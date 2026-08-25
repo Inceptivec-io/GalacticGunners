@@ -27,6 +27,8 @@
 | Contract Authority | PASS - OpenAPI 3.1 plus JSON Schema draft 2020-12 validated by `scripts/validate-contracts.mjs` |
 | Docker Full Stack | AVAILABLE - web host `3002`, backend host `8010`, db internal only |
 | Handoff 010 REV3 Quality Gate | PASS - `npm run quality`; Docker build/start; hostile browser runtime verifier including REV3 scale/layout contracts, laser geometry/body mapping, swept collision checks, real-origin hits/near-misses, enemy laser left/center/right player-body hits, 8 bunkers, bottom-right icon-only nukes/`ENERGISE` HUD, top-right sound, scout orientation, pause/resume, respawn, shields and projectile collision families |
+| Handoff 010 REV4 CI Gate | PASS - diagnostic-only hostile harness correction; local hostile PASS x3; GitHub Actions run `32894066325` backend/client-and-game/docker-smoke/runtime-hostile all SUCCESS; Founder-accepted product state preserved |
+| Handoff 011 Entry Gate | STOP - ENTRY_GATE_NOT_SATISFIED; PR #4 remains OPEN / DRAFT / NOT MERGED, so no authorised post-merge `dev` SHA exists for `feature/v1-config-driven-campaign-platform` branch creation |
 | Full Level 1 | NOT CLAIMED |
 | Level 2 | NOT STARTED |
 | Boss / Final Victory / Final Game Over | NOT STARTED |

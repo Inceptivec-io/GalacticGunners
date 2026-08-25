@@ -1,11 +1,11 @@
 Active Handoff:
-GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_010_REV3
+GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_010_REV4 / GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_011 INTAKE STOP
 
 Programme:
 v1.0 BUILD - SPRINT 001
 
 Stage:
-SCALE / GAMEPLAY COMPOSITION CORRECTION COMPLETE / PENDING CTO AND FOUNDER REVIEW
+REV4 CI REPRODUCIBILITY COMPLETE / HANDOFF 011 ENTRY GATE NOT SATISFIED
 
 Branch:
 feature/v1-level1-vertical-slice
@@ -21,6 +21,9 @@ DEVTEAM_010_REV2 Entry SHA:
 
 DEVTEAM_010_REV3 Entry SHA:
 771bf384ae3878e292acf8d7e53dca90576b23b3
+
+DEVTEAM_010_REV4 Entry SHA:
+5d0f8d04556a51f3398192e011e8b6b41b9bd2bf
 
 Current Repository Head Authority:
 origin/feature/v1-level1-vertical-slice
@@ -43,6 +46,15 @@ CURRENT
 Evidence:
 DURABLE
 
+REV4 Remote CI:
+PASS - GitHub Actions run 32894066325 backend/client-and-game/docker-smoke/runtime-hostile all SUCCESS
+
+REV4 Local Hostile:
+PASS x3 consecutive
+
+Handoff 011:
+STOP - ENTRY_GATE_NOT_SATISFIED; PR #4 not merged into dev, no authorised post-merge dev SHA, implementation not started
+
 Runtime Gameplay:
 PASS - BootScene, MainMenuScene and bounded Level1 playable runtime corrected for REV3 scale/composition, semantic PlayfieldLayout authority, 58-enemy Level1 formation, four-direction player movement, respawn/regeneration, 8-bunker / 256-tile shield zone, rotated laser geometry/body alignment, widened meaningful body envelopes, swept laser collision checks, normal real-origin laser hits/near-misses, enemy laser left/center/right player-body hits, nuke projectile/burst, bottom-left icon-only lives, bottom-right icon-only nukes with fixed `ENERGISE` bar, top-left score, top-right sound, pause/resume and hostile runtime/composition verification.
 
@@ -59,4 +71,4 @@ Boarding:
 NOT STARTED
 
 Founder Acceptance:
-PENDING
+REV4 PRODUCT STATE ACCEPTED AS-IS AT ENTRY; CTO FINAL MERGE GATE PENDING
