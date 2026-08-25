@@ -1,0 +1,52 @@
+[
+  {
+    "path": "00_COMMISSION/COMMISSION.md",
+    "bytes": 768,
+    "sha256": "fb652a19cdcf495749d7cba39904e9f243c7a38e2cd04a29e6a498799f72d5a5"
+  },
+  {
+    "path": "01_ENTRY_STATE/CTO_PRECHECK.md",
+    "bytes": 1122,
+    "sha256": "43f4d64f5dd5c9a78b4d62660cf35e4f3cc265cb27c6e1b6853d533c5c1e0a8e"
+  },
+  {
+    "path": "02_TARGET_BRANCH_MODEL/BRANCH_MODEL.md",
+    "bytes": 842,
+    "sha256": "239696407bb56fa86469f47e9099d70d6313916b4ea7817142bd7a71c6b51b57"
+  },
+  {
+    "path": "03_PROMOTION_AND_CUTOVER/PROMOTION.md",
+    "bytes": 2198,
+    "sha256": "097aed552a17494e5532524818b4a4114813ab5900865ac73ea332ead9429418"
+  },
+  {
+    "path": "04_MAIN_RETIREMENT/MAIN_RETIREMENT.md",
+    "bytes": 775,
+    "sha256": "f9538d36ab2aee163d709e9ab3c661987dd273f082af8cf8358aea21d4843139"
+  },
+  {
+    "path": "05_CI_DOCS_GOVERNANCE/ALIGNMENT.md",
+    "bytes": 989,
+    "sha256": "53dfcfd866889aff0839259f9e40ea4b63909e0137397e25cc30188fcb292f96"
+  },
+  {
+    "path": "06_VERIFICATION/ACCEPTANCE.md",
+    "bytes": 1363,
+    "sha256": "f5a032bd6e2534c213497593cc4e595067a5ae1bc74f109e228a13835483bdf9"
+  },
+  {
+    "path": "07_RETURN/RETURN.md",
+    "bytes": 1011,
+    "sha256": "500956894b68096596c9ec55a6ced030f8b903ed618f64441a5fcce096ad33fc"
+  },
+  {
+    "path": "08_ROUTING/ROUTING_MESSAGE.md",
+    "bytes": 7752,
+    "sha256": "2305007f0f719cbc63bc355b65719203216e1b538a538045cc7baa65db0ee17b"
+  },
+  {
+    "path": "README.md",
+    "bytes": 380,
+    "sha256": "2b4739fc32d24ab46db5efba3afd40ee9a692248ab64a9cf23fb4c97a1ad54f4"
+  }
+]

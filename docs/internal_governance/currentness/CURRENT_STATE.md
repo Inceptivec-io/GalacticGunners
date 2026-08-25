@@ -1,29 +1,32 @@
 Active Handoff:
-GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_008_REV1
+GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_009
 
 Programme:
-STEP 5 - PRODUCTION ARCHITECTURE HARDENING / RECONCILIATION
+STEP 6 - RELEASE BRANCH ESTABLISHMENT AND MAIN-TO-PROD CUTOVER
 
 Stage:
-ARCHITECTURE HARDENING REV1 COMPLETE / PR OPEN PENDING CTO AND FOUNDER REVIEW
+RELEASE BRANCH CUTOVER IN EXECUTION / PENDING SAFE EXIT
 
 Branch:
-feature/architecture-hardening-reconciliation
+feature/release-branch-establishment
 
-DEVTEAM_008 Entry SHA:
-c49a3108e7084daa1872c15fa3d6641af60c6f2a
+DEVTEAM_009 Entry SHA:
+5a522f7076a95ad5d0e17c3d7f79da11a7e0a6bc
 
-DEVTEAM_008_REV1 Entry SHA:
-4947cbfe90dccbc714e26f18e982b83b7d0aecb6
-
-Base Branch:
+Accepted Foundation Branch:
 feature/production-architecture-foundation
 
-Base SHA:
-c49a3108e7084daa1872c15fa3d6641af60c6f2a
+Accepted Foundation SHA:
+5a522f7076a95ad5d0e17c3d7f79da11a7e0a6bc
+
+Branch Model:
+feature/* -> dev -> stage -> prod
+
+Default Branch Target:
+prod
 
 Current Repository Head Authority:
-origin/feature/architecture-hardening-reconciliation
+origin/feature/release-branch-establishment
 
 Local/Remote Reconciliation At Return:
 RECORDED EXTERNALLY AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
@@ -43,17 +46,14 @@ CURRENT
 Evidence:
 DURABLE
 
-Architecture Hardening:
-PASS - Django/DRF backend authority, contracts, schemas, web shell API client, Phaser/TypeScript foundation, Docker stack and CI quality gates reconciled.
-
-REV1 Corrections:
-PASS - leaderboard read invariant enforces linked GameRun validity/completion; API error contract aligned to stable code/detail/errors envelope.
+Release Cutover:
+IN EXECUTION - promote accepted foundation through dev, stage and prod; set prod as default; retire main after fail-closed proof.
 
 Docker Full Stack:
-PASS - web host port 3002, backend host port 8010, container ports web 3000 and backend 8000 retained.
+PASS TARGET - web host port 3002, backend host port 8010, container ports web 3000 and backend 8000 retained.
 
 Runtime Gameplay:
-NOT PERFORMED - Handoff 008 does not port legacy gameplay or integrate runtime assets.
+NOT PERFORMED - Handoff 009 is branch/release authority cutover only.
 
 Founder Acceptance:
 PENDING

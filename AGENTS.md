@@ -203,11 +203,13 @@ Authoritative commercial repository:
 
 Default commercial branch:
 
-`main`
+`prod`
 
 Normal execution occurs only on the branch authorised by the current Handoff.
 
-Do not work directly on `main` unless Founder authority expressly commissions it.
+Do not work directly on `prod` unless Founder authority expressly commissions it.
+
+`main` is historical/recovery-only after the governed Step 6 release cutover and retirement gates.
 
 Founder Michael controls acceptance and merge unless explicitly delegated.
 

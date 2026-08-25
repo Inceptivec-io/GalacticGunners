@@ -1,8 +1,8 @@
-# GG-STD-001 — REPOSITORY GOVERNANCE STANDARD v1.0
+# GG-STD-001 - REPOSITORY GOVERNANCE STANDARD v1.0
 
 ## Authority
 
-Founder Michael Leese → Inceptivec Gamification → Galactic Gunners.
+Founder Michael Leese -> Inceptivec Gamification -> Galactic Gunners.
 
 ## Repository
 
@@ -14,12 +14,14 @@ Normal development:
 
 ```text
 CURRENT AUTHORISED FEATURE BRANCH
-→ Founder review
-→ Founder merge decision
-→ main
+-> dev
+-> stage
+-> prod
 ```
 
-No direct work on `main` without explicit Founder authority.
+`prod` is the production/release authority and repository default after the governed Step 6 cutover.
+
+No direct work on `prod` without explicit Founder authority. `main` is retired only after fail-closed proof confirms its history is contained in `prod`, no open PR depends on it, no active CI/deployment/documentation authority references it, the default branch is already `prod`, and `prod` health passes.
 
 ## Required root control
 

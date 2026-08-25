@@ -1,0 +1,4 @@
+NAME                        IMAGE                     COMMAND                  SERVICE   CREATED          STATUS                            PORTS
+galacticgunners-backend-1   galacticgunners-backend   "sh -c 'python manag…"   backend   26 seconds ago   Up 20 seconds (healthy)           0.0.0.0:8010->8000/tcp, [::]:8010->8000/tcp
+galacticgunners-db-1        postgres:17-alpine        "docker-entrypoint.s…"   db        27 minutes ago   Up 27 minutes (healthy)           5432/tcp
+galacticgunners-web-1       galacticgunners-web       "docker-entrypoint.s…"   web       22 seconds ago   Up 9 seconds (health: starting)   0.0.0.0:3002->3000/tcp, [::]:3002->3000/tcp

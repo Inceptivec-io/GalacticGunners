@@ -8,12 +8,9 @@ The repository is being formed as a production-grade multi-client game platform:
 
 ```text
 apps/web        Next.js product client
-    ↓
-game            Phaser + TypeScript game core
-    ↓
-backend         Django + Django REST Framework authoritative backend
-    ↓
-PostgreSQL      authoritative application data
+    -> game     Phaser + TypeScript game core
+    -> backend  Django + Django REST Framework authoritative backend
+    -> PostgreSQL authoritative application data
 
 packages/contracts
                 versioned machine-readable contracts
@@ -28,10 +25,12 @@ The browser is an untrusted client. Phaser owns moment-to-moment gameplay. Next.
 ## Branch promotion
 
 ```text
-feature/* → dev → stage → main
+feature/* -> dev -> stage -> prod
 ```
 
 Promotion is explicit and separately accepted. Merge is not deployment and deployment is not Founder acceptance.
+
+`prod` is the permanent production/release branch authority after the governed Step 6 cutover. `main` is retired after fail-closed proof confirms its history is contained in the `prod` lineage and no active authority depends on it.
 
 ## Legacy migration
 
