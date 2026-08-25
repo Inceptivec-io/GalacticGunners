@@ -1,17 +1,20 @@
 Active Handoff:
-GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_006
+GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_006_REV1
 
 Programme:
 STEP 3 - LEGACY GAME CONTAINMENT FOR FOUNDER PR REVIEW
 
 Stage:
-LEGACY GAME CONTAINMENT COMPLETE / PENDING FOUNDER PR REVIEW
+LEGACY GAME CONTAINMENT CI BOOTSTRAP CORRECTED / PENDING FOUNDER PR REVIEW
 
 Branch:
 feature/legacy-game-containment
 
 DEVTEAM_006 Entry SHA:
 1579a03aa38aa9242107d808636a1582b4373b9d
+
+DEVTEAM_006_REV1 Entry SHA:
+921af6566cb9784f5db7e7b803549010a0578e5b
 
 Legacy Source Authority:
 feature/GG-COM-001 @ 6cda67a3c539ae85d769a571eb4f5299ed9bc4e6
@@ -51,6 +54,9 @@ PASS - machine-readable inventory records 1148 preserved files, 2 intentional me
 
 Production Isolation:
 PASS - production code imports/dependencies from Legacy_Game/ = 0.
+
+CI Bootstrap:
+PASS TARGET - root package-lock.json generated from declared production npm workspace dependency graph for setup-node npm cache and deterministic installs; final GitHub Actions quality result recorded externally after final push.
 
 External Asset/IP Package:
 NOT TOUCHED - Step 4 asset/IP package remains out of scope.
