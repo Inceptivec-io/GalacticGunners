@@ -7,15 +7,18 @@
     "game"
   ],
   "scripts": {
+    "assets:sync": "node scripts/sync-runtime-assets.mjs",
     "web:dev": "npm --workspace apps/web run dev",
     "web:build": "npm --workspace apps/web run build",
     "web:typecheck": "npm --workspace apps/web run typecheck",
     "game:typecheck": "npm --workspace game run typecheck",
     "game:test": "npm --workspace game run test",
+    "runtime:verify": "node scripts/verify-v1-slice-runtime.mjs",
     "contracts:validate": "node scripts/validate-contracts.mjs",
-    "quality": "npm run contracts:validate && npm run game:typecheck && npm run game:test && npm run web:typecheck && npm run web:build"
+    "quality": "npm run assets:sync && npm run contracts:validate && npm run game:typecheck && npm run game:test && npm run web:typecheck && npm run web:build"
   },
   "devDependencies": {
+    "playwright": "^1.62.1",
     "yaml": "^2.9.0"
   }
 }

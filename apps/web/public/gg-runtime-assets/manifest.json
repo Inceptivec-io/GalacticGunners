@@ -1,0 +1,141 @@
+{
+  "generated_by": "scripts/sync-runtime-assets.mjs",
+  "assets": [
+    {
+      "key": "background.starfield",
+      "asset_id": "GG-BACKGROUND-BACKGROUNDS-OWNED-GG-BG-STARFIELD-V002",
+      "canonical_path": "assets/backgrounds/owned/gg_bg_starfield_v002.png",
+      "canonical_sha256": "25BBB12578B10E5AD6E77593656DF3CE8FFD72A15EEABADA8134ED76390301C2",
+      "runtime_path": "/gg-runtime-assets/backgrounds/gg_bg_starfield_v002.png",
+      "runtime_sha256": "25BBB12578B10E5AD6E77593656DF3CE8FFD72A15EEABADA8134ED76390301C2"
+    },
+    {
+      "key": "branding.primaryLogo",
+      "asset_id": "GG-BRAND-BRANDING-LOGOS-GG-LOGO-PRIMARY-V002",
+      "canonical_path": "assets/branding/logos/gg_logo_primary_v002.png",
+      "canonical_sha256": "4815BCBF0325CEBC0DE9B61F4CADBD87D6C791EF54F4B537CF2DA196221AAB76",
+      "runtime_path": "/gg-runtime-assets/branding/gg_logo_primary_v002.png",
+      "runtime_sha256": "4815BCBF0325CEBC0DE9B61F4CADBD87D6C791EF54F4B537CF2DA196221AAB76"
+    },
+    {
+      "key": "player.ship",
+      "asset_id": "GG-SPRITE-SPRITES-SHIPS-GG-PLAYER-SHIP-V002-SHEET",
+      "canonical_path": "assets/sprites/ships/gg_player_ship_v002_sheet.png",
+      "canonical_sha256": "A3E2EDBDEE85B312AD1766EE00C5A5438F60ABF9DFCD006B2BD8474012DDFF38",
+      "runtime_path": "/gg-runtime-assets/sprites/ships/gg_player_ship_v002_sheet.png",
+      "runtime_sha256": "A3E2EDBDEE85B312AD1766EE00C5A5438F60ABF9DFCD006B2BD8474012DDFF38"
+    },
+    {
+      "key": "enemy.scout",
+      "asset_id": "GG-SPRITE-SPRITES-SHIPS-GG-ENEMY-SCOUT-V002-SHEET",
+      "canonical_path": "assets/sprites/ships/gg_enemy_scout_v002_sheet.png",
+      "canonical_sha256": "FBB60A9EB52346CB57CDF22FA1B6088DD24B08F9132540B05DFD0F1612405A7F",
+      "runtime_path": "/gg-runtime-assets/sprites/ships/gg_enemy_scout_v002_sheet.png",
+      "runtime_sha256": "FBB60A9EB52346CB57CDF22FA1B6088DD24B08F9132540B05DFD0F1612405A7F"
+    },
+    {
+      "key": "projectile.playerLaser",
+      "asset_id": "GG-SPRITE-SPRITES-OBJECTS-GG-PLAYER-LASER-V002",
+      "canonical_path": "assets/sprites/objects/gg_player_laser_v002.png",
+      "canonical_sha256": "D89ED695599F72F4980538E6AB89AEE2BFA85A6307A392C9FC08E2BDA38D1E13",
+      "runtime_path": "/gg-runtime-assets/sprites/objects/gg_player_laser_v002.png",
+      "runtime_sha256": "D89ED695599F72F4980538E6AB89AEE2BFA85A6307A392C9FC08E2BDA38D1E13"
+    },
+    {
+      "key": "projectile.enemyLaser",
+      "asset_id": "GG-SPRITE-SPRITES-OBJECTS-GG-ENEMY-LASER-V002",
+      "canonical_path": "assets/sprites/objects/gg_enemy_laser_v002.png",
+      "canonical_sha256": "C25388AA4C1BAA3123AFCAB5B820718150806749E4AE5F6D8B99331C793578AC",
+      "runtime_path": "/gg-runtime-assets/sprites/objects/gg_enemy_laser_v002.png",
+      "runtime_sha256": "C25388AA4C1BAA3123AFCAB5B820718150806749E4AE5F6D8B99331C793578AC"
+    },
+    {
+      "key": "fx.explosionSmall",
+      "asset_id": "GG-SPRITE-SPRITES-OBJECTS-GG-EXPLOSION-SMALL-V002-SHEET",
+      "canonical_path": "assets/sprites/objects/gg_explosion_small_v002_sheet.png",
+      "canonical_sha256": "3F8FF2BB76214E234828AB9BE559A21BC5935CC4E6336E558AC35B6380E39049",
+      "runtime_path": "/gg-runtime-assets/sprites/objects/gg_explosion_small_v002_sheet.png",
+      "runtime_sha256": "3F8FF2BB76214E234828AB9BE559A21BC5935CC4E6336E558AC35B6380E39049"
+    },
+    {
+      "key": "ui.lifeIcon",
+      "asset_id": "GG-UI-UI-ICONS-GG-HUD-LIFE-ICON-V002",
+      "canonical_path": "assets/ui/icons/gg_hud_life_icon_v002.png",
+      "canonical_sha256": "9E0F8607F264ACB9614958D7043C5F69F4A4EBB303D57049203FD481D1EB0408",
+      "runtime_path": "/gg-runtime-assets/ui/icons/gg_hud_life_icon_v002.png",
+      "runtime_sha256": "9E0F8607F264ACB9614958D7043C5F69F4A4EBB303D57049203FD481D1EB0408"
+    },
+    {
+      "key": "font.goldDisplay",
+      "asset_id": "GG-FONT-FONTS-GOLD-DISPLAY-V1-0-GALACTICGUNNERS-GOLD-DISPLAY-FONT-V1-0-PRODUCTION-WEB-GALACTICGUNNERSGOL-2",
+      "canonical_path": "assets/fonts/gold_display_v1.0/GalacticGunners_Gold_Display_Font_v1.0_PRODUCTION/web/GalacticGunnersGoldDisplay-Regular.woff2",
+      "canonical_sha256": "8EF834D1046F7C95F0A257512B33E80030F98BF6E2A21B22B2DC25B774089F4B",
+      "runtime_path": "/gg-runtime-assets/fonts/GoldDisplay/GalacticGunnersGoldDisplay-Regular.woff2",
+      "runtime_sha256": "8EF834D1046F7C95F0A257512B33E80030F98BF6E2A21B22B2DC25B774089F4B"
+    },
+    {
+      "key": "font.silverDisplay",
+      "asset_id": "GG-FONT-FONTS-SILVER-DISPLAY-V1-0-GALACTICGUNNERS-SILVER-DISPLAY-FONT-V1-0-PRODUCTION-WEB-GALACTICGUNNER-2",
+      "canonical_path": "assets/fonts/silver_display_v1.0/GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION/web/GalacticGunnersSilverDisplay-Regular.woff2",
+      "canonical_sha256": "908926163A1455032D9D5D7E11FA6C470204408B56EE65534BBA9FAA8E4762F1",
+      "runtime_path": "/gg-runtime-assets/fonts/SilverDisplay/GalacticGunnersSilverDisplay-Regular.woff2",
+      "runtime_sha256": "908926163A1455032D9D5D7E11FA6C470204408B56EE65534BBA9FAA8E4762F1"
+    },
+    {
+      "key": "font.hud",
+      "asset_id": "GG-FONT-FONTS-HUD-V1-0-GALACTICGUNNERSHUD-FONT-V1-0-PRODUCTION-WEB-GALACTICGUNNERSHUD-REGULAR-2",
+      "canonical_path": "assets/fonts/hud_v1.0/GalacticGunnersHUD_Font_v1.0_PRODUCTION/web/GalacticGunnersHUD-Regular.woff",
+      "canonical_sha256": "F890F251A422B1291516B1D2433AAADCAD7B27A66CD3746AB2538A9B4331D2FD",
+      "runtime_path": "/gg-runtime-assets/fonts/HUD/GalacticGunnersHUD-Regular.woff",
+      "runtime_sha256": "F890F251A422B1291516B1D2433AAADCAD7B27A66CD3746AB2538A9B4331D2FD"
+    },
+    {
+      "key": "audio.uiConfirm",
+      "asset_id": "GG-AUDIO-AUDIO-OWNED-REV2-GG-UI-CONFIRM-V001",
+      "canonical_path": "assets/audio/owned/rev2/gg_ui_confirm_v001.wav",
+      "canonical_sha256": "5126059176E8D15623C5EFF70DCD8EAF39ED092156E8C5EFA3D55468C5317B93",
+      "runtime_path": "/gg-runtime-assets/audio/gg_ui_confirm_v001.wav",
+      "runtime_sha256": "5126059176E8D15623C5EFF70DCD8EAF39ED092156E8C5EFA3D55468C5317B93"
+    },
+    {
+      "key": "audio.uiSelect",
+      "asset_id": "GG-AUDIO-AUDIO-OWNED-REV2-GG-UI-SELECT-V001",
+      "canonical_path": "assets/audio/owned/rev2/gg_ui_select_v001.wav",
+      "canonical_sha256": "BB382B07D808043ECD484DE8F92C154596F7DA95A11DCE60FB770E2862AF0618",
+      "runtime_path": "/gg-runtime-assets/audio/gg_ui_select_v001.wav",
+      "runtime_sha256": "BB382B07D808043ECD484DE8F92C154596F7DA95A11DCE60FB770E2862AF0618"
+    },
+    {
+      "key": "audio.playerLaser",
+      "asset_id": "GG-AUDIO-AUDIO-OWNED-REV2-GG-PLAYER-LASER-V001",
+      "canonical_path": "assets/audio/owned/rev2/gg_player_laser_v001.wav",
+      "canonical_sha256": "9EDA7CF68F47E307AB3F7041E1DD59AC5F07E279C32CB1A9C9D3405905247AFF",
+      "runtime_path": "/gg-runtime-assets/audio/gg_player_laser_v001.wav",
+      "runtime_sha256": "9EDA7CF68F47E307AB3F7041E1DD59AC5F07E279C32CB1A9C9D3405905247AFF"
+    },
+    {
+      "key": "audio.enemyLaser",
+      "asset_id": "GG-AUDIO-AUDIO-OWNED-REV2-GG-ENEMY-LASER-V001",
+      "canonical_path": "assets/audio/owned/rev2/gg_enemy_laser_v001.wav",
+      "canonical_sha256": "FCE8F2C8853FF92A6EF2F80D9418C11B34F9601B5EFDA385377080999E6D5942",
+      "runtime_path": "/gg-runtime-assets/audio/gg_enemy_laser_v001.wav",
+      "runtime_sha256": "FCE8F2C8853FF92A6EF2F80D9418C11B34F9601B5EFDA385377080999E6D5942"
+    },
+    {
+      "key": "audio.explosionSmall",
+      "asset_id": "GG-AUDIO-AUDIO-OWNED-REV2-GG-EXPLOSION-SMALL-V001",
+      "canonical_path": "assets/audio/owned/rev2/gg_explosion_small_v001.wav",
+      "canonical_sha256": "AEFFDB12344846F6207C61F0A70F19F9FDF5835D621745A75BD4707012F94FE4",
+      "runtime_path": "/gg-runtime-assets/audio/gg_explosion_small_v001.wav",
+      "runtime_sha256": "AEFFDB12344846F6207C61F0A70F19F9FDF5835D621745A75BD4707012F94FE4"
+    },
+    {
+      "key": "audio.playerHit",
+      "asset_id": "GG-AUDIO-AUDIO-OWNED-REV2-GG-PLAYER-HIT-V001",
+      "canonical_path": "assets/audio/owned/rev2/gg_player_hit_v001.wav",
+      "canonical_sha256": "049D14BD1353957D2A859FF4F5C56E5B854B6D75B9D136310559CA45810BF311",
+      "runtime_path": "/gg-runtime-assets/audio/gg_player_hit_v001.wav",
+      "runtime_sha256": "049D14BD1353957D2A859FF4F5C56E5B854B6D75B9D136310559CA45810BF311"
+    }
+  ]
+}

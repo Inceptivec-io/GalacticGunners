@@ -77,7 +77,7 @@ export class ApiError extends Error {
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${publicConfig.apiBaseUrl}${path}`, {
-    credentials: 'include',
+    credentials: 'same-origin',
     headers: {
       accept: 'application/json',
       ...(init?.body ? { 'content-type': 'application/json' } : {}),

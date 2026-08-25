@@ -1,32 +1,20 @@
 Active Handoff:
-GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_009
+GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_010
 
 Programme:
-STEP 6 - RELEASE BRANCH ESTABLISHMENT AND MAIN-TO-PROD CUTOVER
+v1.0 BUILD - SPRINT 001
 
 Stage:
-RELEASE BRANCH CUTOVER COMPLETE / PENDING FOUNDER ACCEPTANCE
+BOOT / MAIN MENU / LEVEL 1 PLAYABLE VERTICAL SLICE RETURNED FOR REVIEW
 
 Branch:
-feature/release-branch-establishment
+feature/v1-level1-vertical-slice
 
-DEVTEAM_009 Entry SHA:
-5a522f7076a95ad5d0e17c3d7f79da11a7e0a6bc
-
-Accepted Foundation Branch:
-feature/production-architecture-foundation
-
-Accepted Foundation SHA:
-5a522f7076a95ad5d0e17c3d7f79da11a7e0a6bc
-
-Branch Model:
-feature/* -> dev -> stage -> prod
-
-Default Branch Target:
-prod
+DEVTEAM_010 Entry SHA:
+051c7fc9170ae73344a0dc88214c48fc94e0bfdc
 
 Current Repository Head Authority:
-origin/feature/release-branch-establishment
+origin/feature/v1-level1-vertical-slice
 
 Local/Remote Reconciliation At Return:
 RECORDED EXTERNALLY AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
@@ -35,7 +23,7 @@ Worktree At Return:
 RECORDED EXTERNALLY AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
 
 POST_BOX:
-CLEAN AT CLOSURE - boundary controls only / active payload zero
+CLEAN - boundary controls only / active payload zero
 
 Internal Governance:
 CURRENT
@@ -46,14 +34,20 @@ CURRENT
 Evidence:
 DURABLE
 
-Release Cutover:
-PASS - accepted foundation promoted through dev, stage and prod; prod set as default; main retired after fail-closed proof.
-
-Docker Full Stack:
-PASS TARGET - web host port 3002, backend host port 8010, container ports web 3000 and backend 8000 retained.
-
 Runtime Gameplay:
-NOT PERFORMED - Handoff 009 is branch/release authority cutover only.
+PASS - BootScene, MainMenuScene and Level1Scene playable slice implemented and Docker/browser verified.
+
+Full Level 1:
+NOT CLAIMED
+
+Level 2:
+NOT STARTED
+
+Boss / Final Victory / Final Game Over:
+NOT STARTED
+
+Boarding:
+NOT STARTED
 
 Founder Acceptance:
 PENDING
