@@ -7,7 +7,7 @@
 | Commercial Repository | `Inceptivec-io/GalacticGunners` |
 | Historical Repository | `michael-leese/GallacticGunners` READ-ONLY |
 | Current Programme | STEP 6 - RELEASE BRANCH ESTABLISHMENT AND MAIN-TO-PROD CUTOVER |
-| Current Stage | RELEASE BRANCH CUTOVER IN EXECUTION / PENDING SAFE EXIT |
+| Current Stage | RELEASE BRANCH CUTOVER COMPLETE / PENDING FOUNDER ACCEPTANCE |
 | Active Handoff | GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_009 |
 | Current Feature Branch | `feature/release-branch-establishment` |
 | Base Branch | `feature/production-architecture-foundation` |
@@ -15,7 +15,7 @@
 | Branch Model | `feature/* -> dev -> stage -> prod` |
 | Default Branch Target | `prod` |
 | Current Feature HEAD | final pushed SHA recorded externally after final push |
-| Closure State | IN EXECUTION - SAFE EXIT PROOF REQUIRED BEFORE RETURN |
+| Closure State | PASS TARGET - SAFE EXIT PROOF RECORDED EXTERNALLY AFTER FINAL PUSH |
 | Root Execution Contract | `AGENTS.md` |
 | External Boundary | `_EXTERNAL_GalacticGunners` |
 | Internal Governance Root | `docs/internal_governance` |
@@ -29,7 +29,7 @@
 | Handoff 008 REV1 Quality Gate | PASS - backend checks/tests; contract validation; `npm run quality`; Docker smoke |
 | Handoff 008 REV1 Leaderboard Invariant | PASS - stale invalid and incomplete leaderboard rows excluded at read time |
 | Handoff 008 REV1 API Error Contract | PASS - stable `{ code, detail, errors }` envelope for 400/404/409 |
-| Handoff 009 Release Cutover | IN EXECUTION - promote accepted foundation to dev/stage/prod and retire main after fail-closed proof |
+| Handoff 009 Release Cutover | PASS - accepted foundation promoted to dev/stage/prod; prod default established; main retired after fail-closed proof |
 | Runtime Gameplay | NOT PERFORMED - Step 6 branch/release authority cutover only |
 | Founder Acceptance Authority | Michael Leese |
 | Founder Acceptance | PENDING |

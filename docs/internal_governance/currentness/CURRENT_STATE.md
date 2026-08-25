@@ -5,7 +5,7 @@ Programme:
 STEP 6 - RELEASE BRANCH ESTABLISHMENT AND MAIN-TO-PROD CUTOVER
 
 Stage:
-RELEASE BRANCH CUTOVER IN EXECUTION / PENDING SAFE EXIT
+RELEASE BRANCH CUTOVER COMPLETE / PENDING FOUNDER ACCEPTANCE
 
 Branch:
 feature/release-branch-establishment
@@ -47,7 +47,7 @@ Evidence:
 DURABLE
 
 Release Cutover:
-IN EXECUTION - promote accepted foundation through dev, stage and prod; set prod as default; retire main after fail-closed proof.
+PASS - accepted foundation promoted through dev, stage and prod; prod set as default; main retired after fail-closed proof.
 
 Docker Full Stack:
 PASS TARGET - web host port 3002, backend host port 8010, container ports web 3000 and backend 8000 retained.
