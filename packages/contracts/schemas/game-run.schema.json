@@ -3,11 +3,36 @@
   "$id": "https://galacticgunners.inceptivec.com/contracts/game-run.schema.json",
   "title": "GameRun",
   "type": "object",
-  "required": ["runId", "gameVersion", "startedAt"],
+  "required": [
+    "id",
+    "game_version",
+    "client_type",
+    "started_at",
+    "completed_at",
+    "score",
+    "level_reached",
+    "lives_used",
+    "nukes_used",
+    "victory",
+    "validity"
+  ],
   "properties": {
-    "runId": { "type": "string", "format": "uuid" },
-    "gameVersion": { "type": "string" },
-    "startedAt": { "type": "string", "format": "date-time" }
+    "id": { "type": "string", "format": "uuid" },
+    "game_version": { "type": "string", "minLength": 1, "maxLength": 32 },
+    "client_type": { "type": "string", "enum": ["web", "windows", "macos", "android", "ios", "unknown"] },
+    "started_at": { "type": "string", "format": "date-time" },
+    "completed_at": {
+      "anyOf": [
+        { "type": "string", "format": "date-time" },
+        { "type": "null" }
+      ]
+    },
+    "score": { "type": "integer", "minimum": 0 },
+    "level_reached": { "type": "string", "maxLength": 32 },
+    "lives_used": { "type": "integer", "minimum": 0 },
+    "nukes_used": { "type": "integer", "minimum": 0 },
+    "victory": { "type": "boolean" },
+    "validity": { "type": "string", "enum": ["pending", "valid", "rejected"] }
   },
   "additionalProperties": false
 }

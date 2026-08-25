@@ -1,0 +1,82 @@
+[
+  {
+    "path": "00_COMMISSION/COMMISSION.md",
+    "bytes": 1576,
+    "sha256": "0b2a6c21c9432b4718b054057b4bec111654a55c4d5caed2cf1ca8a7d1ab86ed"
+  },
+  {
+    "path": "01_EXISTING_REPOSITORY_AUTHORITIES/EXISTING_AUTHORITIES.md",
+    "bytes": 2489,
+    "sha256": "140620365636d4bc7eb1eda1e4914bde573d7ec6acb9e3aa4375dde287d30ce1"
+  },
+  {
+    "path": "02_TARGET_ARCHITECTURE/TARGET_ARCHITECTURE.md",
+    "bytes": 1963,
+    "sha256": "92bd73a566a009effddb0c53485c4f9990c2abd4be8b088bca6298e54234f14c"
+  },
+  {
+    "path": "03_BACKEND_MODELS/MODEL_SPECIFICATION.md",
+    "bytes": 5269,
+    "sha256": "a7f886e0170eaf02de6ee62a9541216f6af5ad63b84e53c215f34df7762808f1"
+  },
+  {
+    "path": "04_API_CONTRACT/API_SPECIFICATION.md",
+    "bytes": 2752,
+    "sha256": "4dac088b2ac1db77b5b2b41a876754618ab249b9abc4845e39e3f308e2f78ebc"
+  },
+  {
+    "path": "05_JSON_SCHEMAS/SCHEMA_SPECIFICATION.md",
+    "bytes": 2733,
+    "sha256": "3777ce17cf8a0fada018d3351ced37fa165bc69eb43016be98b7a42827fba355"
+  },
+  {
+    "path": "06_WEB_CLIENT/WEB_SPECIFICATION.md",
+    "bytes": 1605,
+    "sha256": "7b02a2376861291788908d0be5d63989c2e272a8d1cb569ae6225c06ecb39d7b"
+  },
+  {
+    "path": "07_GAME_CORE/GAME_CORE_SPECIFICATION.md",
+    "bytes": 2419,
+    "sha256": "84ac5c6e5e53c5171a72473229258e7dd0c3444d22df9ea6f07223c91e668af5"
+  },
+  {
+    "path": "08_DATABASE_MIGRATIONS/MIGRATION_SPECIFICATION.md",
+    "bytes": 1044,
+    "sha256": "75edbbd7d815a09b33667e913cf977d6c733ef35e7fbd50cb0ad1d07dc3aefcf"
+  },
+  {
+    "path": "09_CONFIG_ENV_DOCKER/CONFIG_ENV_DOCKER.md",
+    "bytes": 1514,
+    "sha256": "fce52a5a72b7caa21f0953c1af6821c717f3f533bd534695cc37af296edede36"
+  },
+  {
+    "path": "10_CI_QUALITY/CI_QUALITY_SPECIFICATION.md",
+    "bytes": 1579,
+    "sha256": "1231e2c958390607c560b63b7ff674e2ba8073a2a62c0c14797083f080aed817"
+  },
+  {
+    "path": "11_TEST_ASSURANCE/TEST_MATRIX.md",
+    "bytes": 1788,
+    "sha256": "5e222c15cc6d5f1a74bb1afe26a8523de02eef4f63c27dd9d8dcb39e88671724"
+  },
+  {
+    "path": "12_GOVERNANCE_CURRENTNESS/CURRENTNESS_REQUIREMENTS.md",
+    "bytes": 1133,
+    "sha256": "4b4e87f9e11d5f3a04afbcef30535c79d8955c945aa061bfb2c4557b43cc83e3"
+  },
+  {
+    "path": "13_PR_RETURN/PR_AND_RETURN.md",
+    "bytes": 1060,
+    "sha256": "e060bc9f075d95c8a780fea0b544125f0806839fc89260dff13c72982b59da3d"
+  },
+  {
+    "path": "14_ROUTING/ROUTING_MESSAGE.md",
+    "bytes": 12375,
+    "sha256": "4d6aeffafabdaaa007549d5ed872e634f759f0695404b004d963b7f691b73d91"
+  },
+  {
+    "path": "README.md",
+    "bytes": 473,
+    "sha256": "1704c6a8008927685a945a3c82f92c893b67279712bc5dcb054ca740df72434b"
+  }
+]

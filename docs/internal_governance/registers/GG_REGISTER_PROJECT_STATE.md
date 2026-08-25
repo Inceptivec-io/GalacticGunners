@@ -1,4 +1,4 @@
-# GALACTIC GUNNERS — PROJECT STATE REGISTER
+# GALACTIC GUNNERS - PROJECT STATE REGISTER
 
 | Field | Current Value |
 |---|---|
@@ -6,29 +6,28 @@
 | Institutional Arm | Inceptivec Gamification |
 | Commercial Repository | `Inceptivec-io/GalacticGunners` |
 | Historical Repository | `michael-leese/GallacticGunners` READ-ONLY |
-| Current Programme | STEP 4 - ASSET / IP BASELINE |
-| Current Stage | ASSET / IP BASELINE ESTABLISHED / PENDING FOUNDER PR REVIEW |
-| Active Handoff | GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_007 |
-| Current Feature HEAD | final pushed SHA recorded in external DEVTEAM-007 handoff-out |
-| Closure State | PASS TARGET - PR OPEN / SAFE EXIT PROOF RECORDED IN EXTERNAL DEVTEAM-007 HANDOFF-OUT |
+| Current Programme | STEP 5 - PRODUCTION ARCHITECTURE HARDENING / RECONCILIATION |
+| Current Stage | ARCHITECTURE HARDENING REV1 COMPLETE / PR OPEN PENDING CTO AND FOUNDER REVIEW |
+| Active Handoff | GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_008_REV1 |
+| Current Feature Branch | `feature/architecture-hardening-reconciliation` |
+| Base Branch | `feature/production-architecture-foundation` |
+| Entry/Base SHA | `c49a3108e7084daa1872c15fa3d6641af60c6f2a` |
+| REV1 Entry SHA | `4947cbfe90dccbc714e26f18e982b83b7d0aecb6` |
+| Current Feature HEAD | final pushed SHA recorded externally after final push |
+| Closure State | PASS TARGET - PR OPEN / SAFE EXIT PROOF RECORDED EXTERNALLY AFTER FINAL PUSH |
 | Root Execution Contract | `AGENTS.md` |
 | External Boundary | `_EXTERNAL_GalacticGunners` |
 | Internal Governance Root | `docs/internal_governance` |
 | Living Registers | `docs/internal_governance/registers` |
 | POST_BOX Closed State | boundary/readme controls only; active payload zero |
-| Docker Local Founder Acceptance Runtime | AVAILABLE |
-| Handoff 004 QA Toolchain | AVAILABLE - pinned npm development-only QA layer |
-| Handoff 004 QA Gate | PASS - npm run qa:all |
-| Handoff 004 REV1 QA Gate | PASS - npm run qa:all |
-| Handoff 004 REV2 QA Gate | PASS - npm run qa:all |
-| Handoff 007 Asset/IP Register Gate | PASS - `assets/tools/UPDATE_ASSET_REGISTER.ps1 -Verify` |
-| Handoff 007 Source Package | `GalacticGunners.zip` SHA-256 `DC1F9BA259075364CF2A19C9BE2AA48A83EA61735DBB3C2C248E0041005B8FCA` |
-| Handoff 007 Runtime Integration | NOT PERFORMED |
-| Foundational Convergence | PASS - minimum score clamp, player logical-envelope normalization, 10% player scale reduction, swept projectile collision contracts, shared HUD, result-state freeze, pause component and planning v1.1 admission complete |
-| Favicon / Small-Surface Completeness | PASS - HUD life icon favicon served with APP4 cache-bust version and HTTP 200 verification |
-| APP4 Production Surface Correction | PASS - semantic runtime verifier passed |
+| Production Architecture Foundation | PASS - Django/DRF backend, PostgreSQL Docker topology, Next.js web shell, Phaser/TypeScript game package, contracts and CI gates reconciled |
+| Backend API | PASS - `/api/v1/health/`, `/api/v1/game-runs/`, `/api/v1/game-runs/{runId}/complete/`, `/api/v1/leaderboard/` |
+| Contract Authority | PASS - OpenAPI 3.1 plus JSON Schema draft 2020-12 validated by `scripts/validate-contracts.mjs` |
+| Docker Full Stack | AVAILABLE - web host `3002`, backend host `8010`, db internal only |
+| Handoff 008 Quality Gate | PASS - `npm run quality`; backend checks/tests; Docker smoke |
+| Handoff 008 REV1 Quality Gate | PASS - backend checks/tests; contract validation; `npm run quality`; Docker smoke |
+| Handoff 008 REV1 Leaderboard Invariant | PASS - stale invalid and incomplete leaderboard rows excluded at read time |
+| Handoff 008 REV1 API Error Contract | PASS - stable `{ code, detail, errors }` envelope for 400/404/409 |
+| Runtime Gameplay | NOT PERFORMED - Step 5 architecture hardening only |
 | Founder Acceptance Authority | Michael Leese |
-| Founder Visual Acceptance | PENDING |
-| Founder Functional Acceptance | PENDING |
-| Founder Audio-In-Context Acceptance | PENDING |
 | Founder Acceptance | PENDING |

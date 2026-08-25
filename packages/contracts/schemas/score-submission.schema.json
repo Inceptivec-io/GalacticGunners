@@ -3,12 +3,30 @@
   "$id": "https://galacticgunners.inceptivec.com/contracts/score-submission.schema.json",
   "title": "ScoreSubmission",
   "type": "object",
-  "required": ["score", "levelReached", "victory", "eventSummary"],
+  "required": [
+    "run_id",
+    "claimed_score",
+    "level_reached",
+    "lives_used",
+    "nukes_used",
+    "victory",
+    "event_summary"
+  ],
   "properties": {
-    "score": { "type": "integer", "minimum": 0 },
-    "levelReached": { "type": "string" },
+    "run_id": { "type": "string", "format": "uuid" },
+    "claimed_score": { "type": "integer", "minimum": 0 },
+    "level_reached": { "type": "string", "maxLength": 32 },
+    "lives_used": { "type": "integer", "minimum": 0 },
+    "nukes_used": { "type": "integer", "minimum": 0 },
     "victory": { "type": "boolean" },
-    "eventSummary": { "type": "object" }
+    "event_summary": { "type": "object" },
+    "payload_hash": { "type": "string", "pattern": "^[0-9a-fA-F]{64}$" },
+    "idempotency_key": {
+      "anyOf": [
+        { "type": "string", "minLength": 1, "maxLength": 128 },
+        { "type": "null" }
+      ]
+    }
   },
   "additionalProperties": false
 }
