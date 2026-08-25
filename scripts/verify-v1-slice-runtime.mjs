@@ -620,8 +620,62 @@ try {
   };
   writeFileSync(path.join(outputDir, 'runtime-hostile-verification.json'), `${JSON.stringify(result, null, 2)}\n`);
   const failed = Object.entries(assertions).filter(([, passed]) => !passed);
+  const failedHostileCases = Object.entries(hostile.cases)
+    .filter(([, passed]) => !passed)
+    .map(([name]) => name);
+  const failedVisualMatrix = visualMatrix
+    .map((entry) => ({
+      viewport: entry.viewport,
+      failures: [
+        !entry.canvas_full_viewport && 'canvas_full_viewport',
+        entry.duplicate_canvas !== 0 && 'duplicate_canvas',
+        entry.hud_clipped !== 0 && 'hud_clipped',
+        entry.player_enemy_clipped !== 0 && 'player_enemy_clipped',
+        entry.scout_count !== 58 && 'scout_count',
+        entry.shield_tile_count !== 256 && 'shield_tile_count',
+        entry.bunker_count !== 8 && 'bunker_count',
+        !(entry.projectile_size.width >= 28 && entry.projectile_size.width <= 40) && 'projectile_size.width',
+        !(entry.shield_tile_size.width >= 4 && entry.shield_tile_size.width <= 14) && 'shield_tile_size.width',
+        !(entry.player_scale_relative_rev2 >= 0.55 && entry.player_scale_relative_rev2 <= 0.65) && 'player_scale_relative_rev2',
+        !(Math.abs(entry.scout_size.width - entry.scout_expected_width) <= 0.2) && 'scout_expected_width',
+        !(entry.shield_bottom_gap_player_heights >= 1.1 && entry.shield_bottom_gap_player_heights <= 1.3) && 'shield_bottom_gap_player_heights',
+        entry.hud_positions.rearm.text !== 'ENERGISE' && 'hud_positions.rearm.text',
+        entry.hud_positions.sound.texture !== 'ui.soundOn' && 'hud_positions.sound.texture',
+        !(entry.hud_positions.lives.filter((icon) => icon.visible).length > 0) && 'hud_positions.lives',
+        !(entry.hud_positions.nukes.filter((icon) => icon.visible).length > 0) && 'hud_positions.nukes',
+      ].filter(Boolean),
+    }))
+    .filter((entry) => entry.failures.length > 0);
   if (failed.length > 0) {
-    throw new Error(`Runtime hostile verification failed: ${failed.map(([name]) => name).join(', ')}`);
+    console.error('FAILED ASSERTIONS:');
+    for (const [name] of failed) {
+      console.error(`- ${name}`);
+    }
+    if (failedHostileCases.length > 0) {
+      console.error('FAILED HOSTILE CASES:');
+      for (const name of failedHostileCases) {
+        console.error(`- ${name}`);
+      }
+    }
+    if (failedVisualMatrix.length > 0) {
+      console.error('FAILED VISUAL MATRIX:');
+      for (const entry of failedVisualMatrix) {
+        console.error(`- ${entry.viewport}: ${entry.failures.join(', ')}`);
+      }
+    }
+    if (unexpectedConsoleErrors.length > 0) {
+      console.error('UNEXPECTED CONSOLE ERRORS:');
+      for (const entry of unexpectedConsoleErrors) {
+        console.error(`- ${entry.type}: ${entry.text}`);
+      }
+    }
+    if (unexpectedNetworkFailures.length > 0) {
+      console.error('UNEXPECTED NETWORK FAILURES:');
+      for (const entry of unexpectedNetworkFailures) {
+        console.error(`- ${entry.url}: ${entry.failure ?? entry.status ?? 'unknown'}`);
+      }
+    }
+    throw new Error(`Runtime hostile verification failed: ${failed.map(([name]) => name).join(', ')}${failedHostileCases.length > 0 ? `; hostile cases: ${failedHostileCases.join(', ')}` : ''}`);
   }
   console.log(JSON.stringify(result, null, 2));
 } finally {
