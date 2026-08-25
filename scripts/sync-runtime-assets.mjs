@@ -59,9 +59,9 @@ const runtimeAssets = [
   {
     key: 'projectile.nuke',
     assetId: 'GG-SPRITE-SPRITES-OBJECTS-GG-NUKE-PROJECTILE-V002-SHEET',
-    source: 'assets/sprites/objects/gg_nuke_projectile_v002_sheet.png',
-    runtime: 'sprites/objects/gg_nuke_projectile_v002_sheet.png',
-    sha256: '811291512550286B626EA37CEF6EB4135F7B570DE78777FEB26537761883B008',
+    source: 'assets/sprites/objects/gg_nuke_projectile_v002_horizontal_upright.png',
+    runtime: 'sprites/objects/gg_nuke_projectile_v002_horizontal_upright.png',
+    sha256: '3B826087AD38EB6963046260EC384B9507C80E450DFAA3B302B923875B8B21AA',
   },
   {
     key: 'shield.tile',
@@ -73,16 +73,16 @@ const runtimeAssets = [
   {
     key: 'fx.explosionSmall',
     assetId: 'GG-SPRITE-SPRITES-OBJECTS-GG-EXPLOSION-SMALL-V002-SHEET',
-    source: 'assets/sprites/objects/gg_explosion_small_v002_sheet.png',
-    runtime: 'sprites/objects/gg_explosion_small_v002_sheet.png',
-    sha256: '3F8FF2BB76214E234828AB9BE559A21BC5935CC4E6336E558AC35B6380E39049',
+    source: 'assets/sprites/objects/gg_explosion_small_v002_horizontal.png',
+    runtime: 'sprites/objects/gg_explosion_small_v002_horizontal.png',
+    sha256: '895ECEAFF03C8390A3F17FA9D829B7B86A6D0AE0B4D73BBA3CD2D2A267D569CC',
   },
   {
     key: 'fx.nukeBurst',
     assetId: 'GG-SPRITE-SPRITES-OBJECTS-GG-NUKE-BURST-V002-SHEET',
-    source: 'assets/sprites/objects/gg_nuke_burst_v002_sheet.png',
-    runtime: 'sprites/objects/gg_nuke_burst_v002_sheet.png',
-    sha256: '0758B63ABB31A3BB164106F180F3E423C2FAFCD98631AB05A3A8855BBC3E1743',
+    source: 'assets/sprites/objects/gg_nuke_burst_v002_horizontal.png',
+    runtime: 'sprites/objects/gg_nuke_burst_v002_horizontal.png',
+    sha256: 'F9E47B6D3875778217620FE0FDDACAA515405D377900BA5F7F2D1271F0A96C53',
   },
   {
     key: 'ui.lifeIcon',
@@ -104,6 +104,20 @@ const runtimeAssets = [
     source: 'assets/ui/icons/gg_ui_pause_v002.png',
     runtime: 'ui/icons/gg_ui_pause_v002.png',
     sha256: 'E2ECCAAB8AF581266AA849322B067304C1BBC0A419D795A34A906090492EA9EA',
+  },
+  {
+    key: 'ui.soundOn',
+    assetId: 'GG-UI-UI-ICONS-GG-UI-SOUND-ON-V002',
+    source: 'assets/ui/icons/gg_ui_sound_on_v002.png',
+    runtime: 'ui/icons/gg_ui_sound_on_v002.png',
+    sha256: 'AD65B1C61E0ECA378C3A29DFCB3F7D9FB7AC1D0120104E6C17448D35B1C47D5D',
+  },
+  {
+    key: 'ui.soundOff',
+    assetId: 'GG-UI-UI-ICONS-GG-UI-SOUND-OFF-V002',
+    source: 'assets/ui/icons/gg_ui_sound_off_v002.png',
+    runtime: 'ui/icons/gg_ui_sound_off_v002.png',
+    sha256: '9CC310E201C728B5ACC8F4B05E4E8FE3D1A1440F1EF9160190DBAF6CEC678E43',
   },
   {
     key: 'pause.screen',

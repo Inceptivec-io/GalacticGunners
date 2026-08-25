@@ -14,14 +14,16 @@ REV3 scale / gameplay composition correction is complete for the bounded Boot/Ma
 Corrected:
 
 - player scale reduced to REV2 x0.60 within tolerance;
-- scout scale increased to REV2 x1.075 while preserving 29 x 2 = 58 enemies;
+- scout visual sizing corrected to the playfield-width contract while preserving 29 x 2 = 58 enemies;
 - laser local source geometry corrected so horizontal source beams render as vertical length/thickness after rotation;
 - Arcade laser bodies aligned to rotated vertical beams;
-- player and enemy projectile speeds derived from gameplay height;
+- player and enemy projectile speeds restored to Level1 gameplay authority (`760` / `300`);
 - real-origin player laser direct hit and near miss hostile cases added;
 - shield bunkers restored to 8, 256 active shield tiles;
-- shield lower-lane gap derived from new player height at 2.12 player heights;
-- nukes restored with max 2, initial 2/2, rearm 150/150, `N`, gamepad Y action path, projectile, burst, audio, HUD and exact normal scout scoring;
+- shield lower-lane gap derived from new player height at 1.18 player heights;
+- nukes restored with max 2, icon-only bottom-left HUD pips, fixed `ENERGISE` bar to their right, `N`, gamepad Y action path, projectile, burst, audio and exact normal scout scoring;
+- lives restored as icon-only bottom-left HUD pips, with no numeric life counter;
+- score remains top-left and sound/mute remains top-right;
 - pause restored with `P`, PauseScene overlay, frozen Level1 state and exact resume;
 - hostile suite updated to fail on wrong scale, squashed lasers, bad collider mapping, missing nukes, wrong rearm, wrong bunker count, wrong shield gap and missing pause.
 
@@ -36,13 +38,14 @@ Local gates:
 Hostile runtime PASS includes:
 
 - REV3 player scale 0.600;
-- REV3 scout scale 1.075;
+- REV3 scout width matches expected playfield-width contract;
 - 58 enemies;
 - 8 bunkers / 256 shield tiles;
-- shield lower-lane gap 2.12 player heights;
+- shield lower-lane gap 1.18 player heights;
 - real-origin player laser direct hit and near miss;
 - player/enemy laser rendered dimensions and collider dimensions;
-- nuke projectile/burst/rearm/HUD trace;
+- nuke projectile/burst and bottom-left icon-only HUD / `ENERGISE` trace;
+- icon-only lives HUD and top-right sound/mute trace;
 - pause/resume freeze trace;
 - retained REV2 hostile coverage;
 - unexpected console errors 0;

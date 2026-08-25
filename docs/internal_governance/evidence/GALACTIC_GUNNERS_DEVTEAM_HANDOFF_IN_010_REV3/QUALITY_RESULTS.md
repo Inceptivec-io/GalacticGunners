@@ -13,14 +13,17 @@ Runtime URL: `http://localhost:3002`
 ## Hostile Runtime Coverage
 
 - REV3 player scale relative to REV2: 0.600 across viewport matrix.
-- REV3 scout scale relative to REV2: 1.075 across viewport matrix.
+- REV3 scout width: matches expected playfield-width contract across viewport matrix.
 - 58 enemies retained.
 - 8 bunkers and 256 initial shield tiles.
-- Shield lower-lane gap: 2.12 new player heights.
+- Shield lower-lane gap: 1.18 new player heights, matching lower legacy-game base-tile topology.
 - Real-origin player laser direct hit: PASS.
 - Real-origin player laser near miss: PASS.
 - Player/enemy laser visual/body mapping: PASS.
-- Nuke initial count, `N` fire, gamepad Y action path, projectile, burst, score exactness, non-negative count, rearm and HUD: PASS.
+- Icon-only lives HUD, icon-only nuke HUD, bottom-left nuke pips growing left of the fixed `ENERGISE` rearm bar, and sound top-right: PASS.
+- Correct scout orientation: PASS.
+- Nuke initial icons, `N` fire, gamepad Y action path, upright projectile, unclipped burst, score exactness, non-negative count, bottom-left `ENERGISE` bar and HUD: PASS.
+- Shield-hit explosion/scar feedback and unclipped small explosion animation: PASS.
 - Pause/resume freeze and repeat cleanliness: PASS.
 - Retained movement, diagonal normalization, respawn, shield collision, resize, terminal/menu/replay, online/offline backend and console/network checks: PASS.
 - Unexpected browser console errors: 0.

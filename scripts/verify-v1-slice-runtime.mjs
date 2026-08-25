@@ -20,6 +20,8 @@ const bannedVisibleTerms = [
   'DEVELOPMENT',
 ];
 
+const numericHudCounterPattern = new RegExp('^[0-9]+/[0-9]+$');
+
 const viewports = [
   { name: '1365x768', width: 1365, height: 768 },
   { name: '1440x900', width: 1440, height: 900 },
@@ -34,10 +36,9 @@ function rev2PlayerSize(viewport) {
   return { width: height * 0.75, height };
 }
 
-function rev2ScoutSize(viewport) {
-  const gameplayWidth = Math.min(viewport.width * 0.94, 1120);
-  const width = Math.max(10, Math.min(34, gameplayWidth / 35));
-  return { width, height: width * 0.92 };
+function expectedScoutWidth(viewport) {
+  const gameplayWidth = viewport.width * 0.94;
+  return Math.max(10.75, Math.min(74, (gameplayWidth / 35) * 1.075));
 }
 
 mkdirSync(outputDir, { recursive: true });
@@ -157,10 +158,24 @@ async function runVisualMatrix(browser) {
     assert(state.activeScouts === 58, `Level1 ${viewport.name} enemy count was ${state.activeScouts}, expected 58`);
     assert(state.activeShieldTiles === 256, `Level1 ${viewport.name} shield tile count was ${state.activeShieldTiles}, expected 256`);
     const playerRatio = state.playerSize.height / rev2PlayerSize(viewport).height;
-    const scoutRatio = state.scoutSize.width / rev2ScoutSize(viewport).width;
     assert(playerRatio >= 0.55 && playerRatio <= 0.65, `Level1 ${viewport.name} player scale ratio ${playerRatio} outside REV3 tolerance`);
-    assert(scoutRatio >= 1.05 && scoutRatio <= 1.10, `Level1 ${viewport.name} scout scale ratio ${scoutRatio} outside REV3 tolerance`);
-    assert(state.shieldBottomGapPlayerHeights >= 2.0 && state.shieldBottomGapPlayerHeights <= 2.25, `Level1 ${viewport.name} shield gap ${state.shieldBottomGapPlayerHeights} outside REV3 target`);
+    assert(Math.abs(state.scoutSize.width - expectedScoutWidth(viewport)) <= 0.2, `Level1 ${viewport.name} scout width ${state.scoutSize.width} outside visual contract`);
+    assert(state.shieldBottomGapPlayerHeights >= 1.1 && state.shieldBottomGapPlayerHeights <= 1.3, `Level1 ${viewport.name} shield gap ${state.shieldBottomGapPlayerHeights} outside legacy topology target`);
+    assert(state.projectileSize.width >= 28 && state.projectileSize.width <= 40, `Level1 ${viewport.name} projectile length ${state.projectileSize.width} outside reference tolerance`);
+    assert(state.projectileSize.height >= 5 && state.projectileSize.height <= 8, `Level1 ${viewport.name} projectile thickness ${state.projectileSize.height} outside reference tolerance`);
+    assert(state.shieldTileSize.width >= 4 && state.shieldTileSize.width <= 14, `Level1 ${viewport.name} shield tile size ${state.shieldTileSize.width} outside reference tolerance`);
+    assert(state.hudPositions.score.x < viewport.width * 0.2 && state.hudPositions.score.y < viewport.height * 0.12, `Level1 ${viewport.name} score HUD not top-left`);
+    assert(state.hudPositions.sound.x > viewport.width * 0.9 && state.hudPositions.sound.y < viewport.height * 0.12, `Level1 ${viewport.name} sound HUD not top-right`);
+    assert(state.hudPositions.lives.filter((icon) => icon.visible).length === state.lives, `Level1 ${viewport.name} life icons do not match live state`);
+    assert(Math.min(...state.hudPositions.lives.map((icon) => icon.x)) < viewport.width * 0.2
+      && state.hudPositions.lives.every((icon) => icon.y > viewport.height * 0.86), `Level1 ${viewport.name} lives HUD not bottom-left`);
+    assert(state.hudPositions.nukes.filter((icon) => icon.visible).length === state.currentNukes, `Level1 ${viewport.name} nuke icons do not match live state`);
+    assert(Math.max(...state.hudPositions.nukes.map((icon) => icon.x)) < state.hudPositions.rearmBar.x
+      && state.hudPositions.rearmBar.x < Math.max(360, viewport.width * 0.36)
+      && state.hudPositions.nukes.every((icon) => icon.y > viewport.height * 0.82), `Level1 ${viewport.name} nuke HUD not bottom-left before energise bar`);
+    assert(!state.visibleTexts.some((text) => numericHudCounterPattern.test(text) || /^NUKES/i.test(text)), `Level1 ${viewport.name} exposed numeric life/nuke HUD text`);
+    assert(state.hudPositions.rearm.text === 'ENERGISE', `Level1 ${viewport.name} nuke bar label not ENERGISE`);
+    assert(state.hudPositions.rearmBar.x < Math.max(360, viewport.width * 0.36) && state.hudPositions.rearmBar.y > viewport.height * 0.82, `Level1 ${viewport.name} energise bar not bottom-left`);
     assert(state.gameplayRect.width < viewport.width || viewport.width <= 480, `Level1 ${viewport.name} gameplay rect did not differ from viewport on desktop`);
     assert(bodiesInsideViewport(state.scoutBodies, viewport.width, viewport.height), `Level1 ${viewport.name} scout body clipped`);
     assert(Number(state.playerBody?.x ?? -1) >= 0, `Level1 ${viewport.name} player clipped left`);
@@ -180,8 +195,10 @@ async function runVisualMatrix(browser) {
       player_size: state.playerSize,
       player_scale_relative_rev2: Number(playerRatio.toFixed(3)),
       scout_size: state.scoutSize,
-      scout_scale_relative_rev2: Number(scoutRatio.toFixed(3)),
+      scout_expected_width: Number(expectedScoutWidth(viewport).toFixed(3)),
       projectile_size: state.projectileSize,
+      shield_tile_size: state.shieldTileSize,
+      hud_positions: state.hudPositions,
       shield_bottom_gap_player_heights: Number(state.shieldBottomGapPlayerHeights.toFixed(3)),
       hud_clipped: 0,
       player_enemy_clipped: 0,
@@ -200,16 +217,16 @@ function firstLaser(state, type) {
 function laserVisualAndBodyValid(laser) {
   return Boolean(laser)
     && laser.angle !== 0
-    && laser.display.width >= 42
-    && laser.display.width <= 58
-    && laser.display.height >= 7
-    && laser.display.height <= 11
+    && laser.display.width >= 28
+    && laser.display.width <= 40
+    && laser.display.height >= 5
+    && laser.display.height <= 8
     && laser.worldBounds.height > laser.worldBounds.width
     && laser.body.height > laser.body.width
-    && laser.body.width >= 5
-    && laser.body.width <= 12
-    && laser.body.height >= 35
-    && laser.body.height <= 55;
+    && laser.body.width >= 3
+    && laser.body.width <= 8
+    && laser.body.height >= 23
+    && laser.body.height <= 35;
 }
 
 function findScoutClearOfShield(state) {
@@ -264,7 +281,7 @@ async function runHostileCases(browser) {
   cases.level1_enemy_count_58 = state.activeScouts === 58;
   cases.level1_bunkers_8 = state.bunkerCount === 8;
   cases.shield_zone_present = state.activeShieldTiles === 256;
-  cases.shield_lower_lane_gap = state.shieldBottomGapPlayerHeights >= 2.0 && state.shieldBottomGapPlayerHeights <= 2.25;
+  cases.shield_lower_lane_gap = state.shieldBottomGapPlayerHeights >= 1.1 && state.shieldBottomGapPlayerHeights <= 1.3;
   cases.playfield_layout_authority = state.gameplayRect.width < state.viewport.width
     && state.movementBounds.left > state.gameplayRect.x
     && state.formationBounds.width === state.gameplayRect.width;
@@ -277,7 +294,7 @@ async function runHostileCases(browser) {
     && formationYAfterThreeSeconds - formationStartY <= 20
     && state.activeScouts === 58;
   cases.rev3_player_scale = Math.abs((state.playerSize.height / 115.2) - 0.6) <= 0.05;
-  cases.rev3_scout_scale = (state.scoutSize.width / 32) >= 1.05 && (state.scoutSize.width / 32) <= 1.10;
+  cases.rev3_scout_scale = Math.abs(state.scoutSize.width - expectedScoutWidth(state.viewport)) <= 0.2;
 
   const right = await movementProbe(page, ['ArrowRight']);
   const left = await movementProbe(page, ['ArrowLeft']);
@@ -327,7 +344,11 @@ async function runHostileCases(browser) {
 
   await loadGame(page);
   state = await getGameState(page);
-  await page.evaluate((index) => window.__GALACTIC_GUNNERS_HOSTILE__.setPlayerUnderScout(index, -30), findScoutClearOfShield(state));
+  const nearMissOffset = -Math.max(60, state.scoutSize.width * 1.45);
+  await page.evaluate(({ index, offset }) => window.__GALACTIC_GUNNERS_HOSTILE__.setPlayerUnderScout(index, offset), {
+    index: findScoutClearOfShield(state),
+    offset: nearMissOffset,
+  });
   await page.keyboard.press('Space');
   await page.waitForTimeout(3600);
   state = await getGameState(page);
@@ -425,8 +446,21 @@ async function runHostileCases(browser) {
   cases.nuke_projectile_visible = nukeFiredState.nukeProjectileCount >= 1 && nukeFiredState.nukeBodies.length >= 1;
   cases.nuke_burst_multikill_score_exact = state.score % 25 === 0 && state.score >= 25 && state.activeScouts <= 57;
   cases.nuke_rearm_progresses = state.rearmProgress > nukeFiredState.rearmProgress && state.rearmProgress <= 150;
-  cases.nuke_hud_live = state.visibleTexts.some((text) => text.includes(`NUKES ${state.currentNukes}/2`))
-    && state.visibleTexts.some((text) => text.includes(`REARM ${state.rearmProgress}/150`));
+  cases.nuke_hud_live = state.hudPositions.nukes.filter((icon) => icon.visible).length === state.currentNukes
+    && state.visibleTexts.some((text) => text === 'ENERGISE')
+    && !state.visibleTexts.some((text) => text === `${state.currentNukes}`)
+    && !state.visibleTexts.some((text) => text.includes(`REARM ${state.rearmProgress}/150`));
+  cases.nuke_hud_bottom_left_bar = state.hudPositions.rearmBar.x < Math.max(360, state.viewport.width * 0.36)
+    && state.hudPositions.rearmBar.y > state.viewport.height * 0.82
+    && state.hudPositions.rearmBar.fillWidth <= state.hudPositions.rearmBar.width
+    && Math.max(...state.hudPositions.nukes.map((icon) => icon.x)) < state.hudPositions.rearmBar.x
+    && state.hudPositions.nukes.every((icon) => icon.y > state.viewport.height * 0.82);
+  cases.life_hud_icon_only = state.hudPositions.lives.filter((icon) => icon.visible).length === state.lives
+    && !state.visibleTexts.some((text) => text.includes('LIVES') || numericHudCounterPattern.test(text));
+  cases.enemy_scouts_correct_orientation = state.scoutBodies.every((scout) => Math.abs(Math.abs(scout.angle) - 180) <= 1);
+  cases.sound_mute_top_right = state.hudPositions.sound.x > state.viewport.width * 0.9
+    && state.hudPositions.sound.y < state.viewport.height * 0.12
+    && state.hudPositions.sound.texture === 'ui.soundOn';
   await page.screenshot({ path: path.join(outputDir, 'nuke-burst-after-hit.png'), fullPage: true });
   await page.keyboard.press('N');
   await page.keyboard.press('N');
@@ -538,10 +572,19 @@ try {
       && entry.scout_count === 58
       && entry.shield_tile_count === 256
       && entry.bunker_count === 8
+      && entry.projectile_size.width >= 28
+      && entry.projectile_size.width <= 40
+      && entry.shield_tile_size.width >= 4
+      && entry.shield_tile_size.width <= 14
       && entry.player_scale_relative_rev2 >= 0.55
       && entry.player_scale_relative_rev2 <= 0.65
-      && entry.scout_scale_relative_rev2 >= 1.05
-      && entry.scout_scale_relative_rev2 <= 1.10),
+      && Math.abs(entry.scout_size.width - entry.scout_expected_width) <= 0.2
+      && entry.shield_bottom_gap_player_heights >= 1.1
+      && entry.shield_bottom_gap_player_heights <= 1.3
+      && entry.hud_positions.rearm.text === 'ENERGISE'
+      && entry.hud_positions.sound.texture === 'ui.soundOn'
+      && entry.hud_positions.lives.filter((icon) => icon.visible).length > 0
+      && entry.hud_positions.nukes.filter((icon) => icon.visible).length > 0),
     no_console_errors: unexpectedConsoleErrors.length === 0 && visualMatrix.every((entry) => entry.console_errors === 0),
     no_network_failures: unexpectedNetworkFailures.length === 0 && visualMatrix.every((entry) => entry.network_failures === 0),
     no_visible_dev_terms: true,

@@ -16,6 +16,7 @@ export class Scout {
   }
 
   applyLayout(layout: PlayfieldLayout): void {
+    this.sprite.setAngle(180);
     this.sprite.setDisplaySize(layout.scoutSize.width, layout.scoutSize.height);
     const body = this.sprite.body as Phaser.Physics.Arcade.Body;
     body.setSize(layout.scoutBodySize.width / this.sprite.scaleX, layout.scoutBodySize.height / this.sprite.scaleY, true);

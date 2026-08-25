@@ -15,11 +15,11 @@ Transport disposition: PASS - ZIP transport was hashed, inventoried, unpacked in
 | Surface | REV2 1365x768 | REV3 1365x768 | Ratio | Status |
 |---|---:|---:|---:|---|
 | Player | 86.4 x 115.2 | 51.84 x 69.12 | 0.600 | PASS |
-| Scout | 32.0 x 29.44 | 34.4 x 31.648 | 1.075 | PASS |
+| Scout | playfield-width contract | 39.409 x 36.257 | exact expected width at 1365x768 | PASS |
 | Player laser world | 19 x 81 | 9 x 52 | corrected rotated length/thickness | PASS |
 | Enemy laser world | 19 x 81 | 9 x 52 | corrected rotated length/thickness | PASS |
 
-Viewport scale ratios are recorded in `browser_runtime/runtime-hostile-verification.json` for 1365x768, 1440x900, 1920x1080, 2560x1440, 1024x768 and mobile portrait.
+Viewport scale and layout contract values are recorded in `browser_runtime/runtime-hostile-verification.json` for 1365x768, 1440x900, 1920x1080, 2560x1440, 1024x768 and mobile portrait.
 
 ## Laser Source / Runtime Geometry
 
@@ -29,36 +29,48 @@ Enemy laser source: `1536 x 1024`, asset `GG-SPRITE-SPRITES-OBJECTS-GG-ENEMY-LAS
 
 Runtime display uses local horizontal beam length/thickness before rotation. Arcade body is vertical after rotation: width = core thickness, height = core length. Hostile evidence verifies rendered world bounds are taller than wide and collider bodies match the vertical beam.
 
-Projectile speed derivation:
+Projectile speed authority:
 
-- Player laser: `gameplayRect.height / 3`.
-- Enemy laser: `gameplayRect.height * 0.078125`.
+- Player laser: `LEVEL_ONE_SLICE.playerLaserSpeed = 760`.
+- Enemy laser: `LEVEL_ONE_SLICE.enemyLaserSpeed = 300`.
 
 ## Shields
 
 - Bunkers: 8.
 - Matrix per bunker: locked 8 x 5 matrix with 32 active tiles.
 - Initial shield tiles: 256.
-- Shield bottom gap to player movement bottom: 2.12 new player heights at all tested viewports.
+- Shield bottom gap to player movement bottom: 1.18 new player heights at all tested viewports, aligning the base-tile band with the lower legacy-game topology.
+- Enemy/player shield hits create owned explosion feedback and leave a dark impact scar after tile removal.
 
 ## Nukes
 
 Nuke asset IDs and hashes:
 
-- Projectile: `GG-SPRITE-SPRITES-OBJECTS-GG-NUKE-PROJECTILE-V002-SHEET`, `assets/sprites/objects/gg_nuke_projectile_v002_sheet.png`, SHA-256 `811291512550286B626EA37CEF6EB4135F7B570DE78777FEB26537761883B008`.
-- Burst: `GG-SPRITE-SPRITES-OBJECTS-GG-NUKE-BURST-V002-SHEET`, `assets/sprites/objects/gg_nuke_burst_v002_sheet.png`, SHA-256 `0758B63ABB31A3BB164106F180F3E423C2FAFCD98631AB05A3A8855BBC3E1743`.
+- Projectile: `GG-SPRITE-SPRITES-OBJECTS-GG-NUKE-PROJECTILE-V002-SHEET`, `assets/sprites/objects/gg_nuke_projectile_v002_horizontal_upright.png`, SHA-256 `3B826087AD38EB6963046260EC384B9507C80E450DFAA3B302B923875B8B21AA`.
+- Burst: `GG-SPRITE-SPRITES-OBJECTS-GG-NUKE-BURST-V002-SHEET`, `assets/sprites/objects/gg_nuke_burst_v002_horizontal.png`, SHA-256 `F9E47B6D3875778217620FE0FDDACAA515405D377900BA5F7F2D1271F0A96C53`.
 - HUD icon: `GG-UI-UI-ICONS-GG-HUD-NUKE-ICON-V002`, `assets/ui/icons/gg_hud_nuke_icon_v002.png`, SHA-256 `3D0A6A32EEEC514D7E4BE36B474B5E059347F3C74C5032093D58BA8C3633E08C`.
 - Fire audio: `GG-AUDIO-AUDIO-OWNED-REV2-GG-NUKE-FIRE-V001`, `assets/audio/owned/rev2/gg_nuke_fire_v001.wav`, SHA-256 `CDECCACB879343A5D3772EFE6ABF6A514F8E7B2CC5C5486C123D4B8906898E1C`.
 - Burst audio: `GG-AUDIO-AUDIO-OWNED-REV2-GG-NUKE-BURST-V001`, `assets/audio/owned/rev2/gg_nuke_burst_v001.wav`, SHA-256 `46E97A344CBCEF9E775B9FCC81B0895858D29E975C32C416C6E3CD91C8DA6D2B`.
 
 Runtime trace:
 
-- Initial nukes: 2/2.
-- Initial rearm: 150/150.
+- Initial nukes: two visible nuke icons positioned bottom-left, immediately left of the `ENERGISE` bar.
+- Initial rearm: full fixed `ENERGISE` bar positioned bottom-left to the right of the nuke icons.
 - `N` fires one nuke, decrements count once, resets rearm, displays projectile, detonates into canonical burst and applies normal scout +25 scoring once per destroyed scout.
 - Count never becomes negative.
-- HUD reflects live nuke count and rearm state.
+- HUD reflects live nuke count through icon pips only; no visible numeric nuke counter is rendered.
+- `ENERGISE` bar reflects rearm state without numeric `REARM` text, and the fill is left-anchored.
 - Gamepad Y action path is mapped and exercised through the hostile QA action bridge.
+
+## Founder Review Corrections
+
+- Lives render as three owned ship icon pips only, 15% larger than the previous HUD icon; no visible numeric life counter is rendered.
+- Nukes render as owned nuke icon pips only, 15% larger than the previous HUD icon; no visible numeric nuke counter is rendered.
+- Nuke pips and the fixed `ENERGISE` bar render as a bottom-left group, with pips growing left of the bar.
+- Score remains top-left and sound/mute icon remains top-right.
+- Scout ships are rotated to the correct enemy orientation.
+- Explosion, nuke projectile and nuke burst runtime sheets use the owned horizontal/upright sheets to avoid boxed/clipped animation.
+- Player damage respawn is state-driven and clears active enemy projectiles on hit to prevent life-cascade damage during regeneration.
 
 ## Pause
 
@@ -71,7 +83,7 @@ Runtime trace:
 ## Evidence
 
 - Hostile runtime report: `docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_010_REV3/browser_runtime/runtime-hostile-verification.json`.
-- Hostile runtime report SHA-256: `E86B7DFD909242EE191E94A512E5E3BA1A3B1FD4AB770F803DDAC9CA599D0468`.
+- Hostile runtime report SHA-256: `4A51B01C2B09661C1FB275D59BA0C820ED144F9A8E50C401D0242C60DAA47F4A`.
 - Screenshots include player/enemy laser mid-flight, nuke projectile, nuke burst, pause overlay, viewport matrix, mission complete/failed and active resize.
 - Transport receiving record: `docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_010_REV3/TRANSPORT_RECEIVING_RECORD.md`.
 - Transport member inventory: `docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_010_REV3/transport_pack_member_inventory.json`.

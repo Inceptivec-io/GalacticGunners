@@ -60,11 +60,15 @@ export class Level1Scene extends Phaser.Scene {
   #playerLasers!: Phaser.Physics.Arcade.Group;
   #enemyLasers!: Phaser.Physics.Arcade.Group;
   #nukes!: Phaser.Physics.Arcade.Group;
+  #lifeIcons: Phaser.GameObjects.Image[] = [];
+  #soundIcon!: Phaser.GameObjects.Image;
   #scoreText!: Phaser.GameObjects.Text;
-  #lifeText!: Phaser.GameObjects.Text;
-  #nukeText!: Phaser.GameObjects.Text;
+  #nukeIcons: Phaser.GameObjects.Image[] = [];
   #rearmText!: Phaser.GameObjects.Text;
+  #rearmBarBack!: Phaser.GameObjects.Rectangle;
+  #rearmBarFill!: Phaser.GameObjects.Rectangle;
   #lastDamageAtMs = Number.NEGATIVE_INFINITY;
+  #respawnAtMs = Number.POSITIVE_INFINITY;
   #formationDirection: 1 | -1 = 1;
   #formationOffsetX = 0;
   #formationDropY = 0;
@@ -89,6 +93,7 @@ export class Level1Scene extends Phaser.Scene {
     this.#playerState = 'active';
     this.#lastDamageAtMs = Number.NEGATIVE_INFINITY;
     this.#invulnerableUntilMs = Number.NEGATIVE_INFINITY;
+    this.#respawnAtMs = Number.POSITIVE_INFINITY;
     this.#formationDirection = 1;
     this.#formationOffsetX = 0;
     this.#formationDropY = 0;
@@ -154,6 +159,9 @@ export class Level1Scene extends Phaser.Scene {
     const deltaMs = this.#lastUpdateAtMs === 0 ? 0 : Math.max(time - this.#lastUpdateAtMs, 0);
     this.#lastUpdateAtMs = time;
 
+    if (this.#playerState === 'hit' && time >= this.#respawnAtMs) {
+      this.respawnPlayer();
+    }
     if (this.#playerState === 'regenerating' && time >= this.#invulnerableUntilMs) {
       this.#playerState = 'active';
       this.#player.sprite.setAlpha(1);
@@ -176,7 +184,7 @@ export class Level1Scene extends Phaser.Scene {
     this.#background.setPosition(gameSize.width / 2, gameSize.height / 2).setDisplaySize(gameSize.width, gameSize.height);
     this.#player.applyLayout(this.#layout);
     this.#player.clampToPlayfield(this.#layout);
-    this.#scoreText.setPosition(this.#layout.hudSafeRect.x + this.#layout.hudSafeRect.width, this.#layout.hudSafeRect.y + 8);
+    this.reflowHud();
     this.reflowScoutWave();
     this.reflowShieldZone();
     this.reflowActiveProjectiles();
@@ -275,32 +283,61 @@ export class Level1Scene extends Phaser.Scene {
   }
 
   private createHud(): void {
-    this.add.image(this.#layout.hudSafeRect.x + 18, this.#layout.hudSafeRect.y + 24, RUNTIME_ASSETS.ui.lifeIcon.key)
-      .setDisplaySize(34, 34)
-      .setDepth(10);
-    this.#lifeText = this.add.text(this.#layout.hudSafeRect.x + 46, this.#layout.hudSafeRect.y + 8, `LIVES ${this.#lives.value}/${this.#lives.maxLives}`, {
+    this.#scoreText = this.add.text(0, 0, 'SCORE 0', {
       color: '#d7e9ff',
       fontFamily: 'GalacticGunnersHUD, monospace',
       fontSize: '24px',
     }).setDepth(10);
-    this.#scoreText = this.add.text(this.#layout.hudSafeRect.x + this.#layout.hudSafeRect.width, this.#layout.hudSafeRect.y + 8, 'SCORE 0', {
-      color: '#f7d56a',
-      fontFamily: 'GalacticGunnersHUD, monospace',
-      fontSize: '24px',
-    }).setOrigin(1, 0).setDepth(10);
-    this.add.image(this.#layout.hudSafeRect.x + 18, this.#layout.hudSafeRect.y + 66, RUNTIME_ASSETS.ui.nukeIcon.key)
-      .setDisplaySize(30, 30)
-      .setDepth(10);
-    this.#nukeText = this.add.text(this.#layout.hudSafeRect.x + 46, this.#layout.hudSafeRect.y + 52, `NUKES ${this.#currentNukes}/${LEVEL_ONE_SLICE.maxNukes}`, {
-      color: '#f7d56a',
-      fontFamily: 'GalacticGunnersHUD, monospace',
-      fontSize: '20px',
-    }).setDepth(10);
-    this.#rearmText = this.add.text(this.#layout.hudSafeRect.x + 46, this.#layout.hudSafeRect.y + 78, `REARM ${Math.floor(this.#rearmProgress)}/${LEVEL_ONE_SLICE.nukeRearmMax}`, {
+    this.#soundIcon = this.add.image(0, 0, RUNTIME_ASSETS.ui.soundOn.key)
+      .setDisplaySize(42, 28)
+      .setDepth(10)
+      .setInteractive({ useHandCursor: true });
+    this.#soundIcon.on('pointerdown', () => {
+      this.#audio.toggleMute();
+      this.updateSoundHud();
+    });
+    this.#lifeIcons = Array.from({ length: this.#lives.maxLives }, () => this.add.image(0, 0, RUNTIME_ASSETS.ui.lifeIcon.key)
+      .setDisplaySize(39, 39)
+      .setDepth(10));
+    this.#nukeIcons = Array.from({ length: LEVEL_ONE_SLICE.maxNukes }, () => this.add.image(0, 0, RUNTIME_ASSETS.ui.nukeIcon.key)
+      .setDisplaySize(35, 35)
+      .setDepth(10));
+    this.#rearmText = this.add.text(0, 0, 'ENERGISE', {
       color: '#d7e9ff',
       fontFamily: 'GalacticGunnersHUD, monospace',
       fontSize: '18px',
-    }).setDepth(10);
+    }).setOrigin(0, 0.5).setDepth(10);
+    this.#rearmBarBack = this.add.rectangle(0, 0, 150, 10, 0x142744, 0.86)
+      .setOrigin(0, 0.5)
+      .setStrokeStyle(1, 0xd7e9ff, 0.82)
+      .setDepth(10);
+    this.#rearmBarFill = this.add.rectangle(0, 0, 150, 8, 0x7ee8ff, 0.95)
+      .setOrigin(0, 0.5)
+      .setDepth(11);
+    this.reflowHud();
+  }
+
+  private reflowHud(): void {
+    const left = Math.max(24, this.#layout.viewport.width * 0.028);
+    const right = this.#layout.viewport.width - Math.max(30, this.#layout.viewport.width * 0.028);
+    const bottom = this.#layout.viewport.height - 50;
+    const barWidth = Phaser.Math.Clamp(this.#layout.viewport.width * 0.1, 72, 170);
+    const lifeSpacing = 34;
+    const nukeSpacing = 36;
+    const lifeClusterRight = left + 20 + (this.#lifeIcons.length - 1) * lifeSpacing + 26;
+    const nukeBarX = Phaser.Math.Clamp(lifeClusterRight + 128, left + 220, right - barWidth);
+    this.#scoreText.setPosition(left, this.#layout.hudSafeRect.y + 12);
+    this.#soundIcon.setPosition(right - 4, this.#layout.hudSafeRect.y + 28);
+    this.#lifeIcons.forEach((icon, index) => {
+      icon.setPosition(left + 20 + index * lifeSpacing, bottom + 12);
+    });
+    this.#nukeIcons.forEach((icon, index) => {
+      icon.setPosition(nukeBarX - (LEVEL_ONE_SLICE.maxNukes - index) * nukeSpacing, bottom + 12);
+    });
+    this.#rearmText.setPosition(nukeBarX, bottom + 20);
+    this.#rearmBarBack.setPosition(nukeBarX, bottom + 38).setDisplaySize(barWidth, 10);
+    this.#rearmBarFill.setPosition(nukeBarX, bottom + 38);
+    this.updateNukeHud();
   }
 
   private createCollisions(): void {
@@ -351,6 +388,7 @@ export class Level1Scene extends Phaser.Scene {
     }
     if (this.#inputSystem.consumeMuteToggle()) {
       this.#audio.toggleMute();
+      this.updateSoundHud();
     }
   }
 
@@ -400,11 +438,11 @@ export class Level1Scene extends Phaser.Scene {
   }
 
   private playerLaserSpeed(): number {
-    return this.#layout.gameplayRect.height / 3;
+    return LEVEL_ONE_SLICE.playerLaserSpeed;
   }
 
   private enemyLaserSpeed(): number {
-    return this.#layout.gameplayRect.height * 0.078125;
+    return LEVEL_ONE_SLICE.enemyLaserSpeed;
   }
 
   private fireEnemyLaser(): Phaser.Physics.Arcade.Image | null {
@@ -499,6 +537,7 @@ export class Level1Scene extends Phaser.Scene {
       this.#score.apply('shield_tile_hit', this.time.now, { source: 'enemy_laser' });
       this.#scoreText.setText(`SCORE ${this.#score.value}`);
     }
+    this.createShieldImpact(tile.x, tile.y);
   }
 
   private fireNuke(x = this.#player.sprite.x, y = this.#player.sprite.y - this.#layout.playerSize.height * 0.62): Phaser.Physics.Arcade.Sprite | null {
@@ -520,7 +559,9 @@ export class Level1Scene extends Phaser.Scene {
     nuke.setDepth(4);
     nuke.setData('spent', false);
     nuke.setVelocity(0, -this.playerLaserSpeed() * 0.72);
-    nuke.play('projectile.nuke.fly');
+    if (this.anims.exists('projectile.nuke.fly')) {
+      nuke.play('projectile.nuke.fly');
+    }
     this.configureNukeBody(nuke);
     this.#audio.play('nukeFire');
     return nuke;
@@ -547,7 +588,12 @@ export class Level1Scene extends Phaser.Scene {
     const burst = this.add.sprite(x, y, RUNTIME_ASSETS.fx.nukeBurst.key)
       .setDisplaySize(this.#layout.nukeBurstSize.width, this.#layout.nukeBurstSize.height)
       .setDepth(7);
-    burst.play('fx.nukeBurst.play');
+    if (this.anims.exists('fx.nukeBurst.play')) {
+      burst.play('fx.nukeBurst.play');
+      burst.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => burst.destroy());
+    } else {
+      this.time.delayedCall(260, () => burst.destroy());
+    }
     this.#audio.play('nukeBurst');
   }
 
@@ -578,8 +624,23 @@ export class Level1Scene extends Phaser.Scene {
   }
 
   private updateNukeHud(): void {
-    this.#nukeText?.setText(`NUKES ${this.#currentNukes}/${LEVEL_ONE_SLICE.maxNukes}`);
-    this.#rearmText?.setText(`REARM ${Math.floor(this.#rearmProgress)}/${LEVEL_ONE_SLICE.nukeRearmMax}`);
+    this.#rearmText?.setText('ENERGISE');
+    this.#nukeIcons.forEach((icon, index) => {
+      icon.setVisible(index < this.#currentNukes);
+    });
+    const progress = Phaser.Math.Clamp(this.#rearmProgress / LEVEL_ONE_SLICE.nukeRearmMax, 0, 1);
+    const barWidth = Phaser.Math.Clamp(this.#layout.viewport.width * 0.1, 72, 170);
+    this.#rearmBarFill?.setDisplaySize(Math.max(2, barWidth * progress), 8);
+  }
+
+  private updateLifeHud(): void {
+    this.#lifeIcons.forEach((icon, index) => {
+      icon.setVisible(index < this.#lives.value);
+    });
+  }
+
+  private updateSoundHud(): void {
+    this.#soundIcon?.setTexture(this.#audio.muted ? RUNTIME_ASSETS.ui.soundOff.key : RUNTIME_ASSETS.ui.soundOn.key);
   }
 
   private pauseLevel(): void {
@@ -616,7 +677,12 @@ export class Level1Scene extends Phaser.Scene {
     this.#lastDamageAtMs = this.time.now;
     this.#playerState = 'hit';
     this.#lives.damage(1);
-    this.#lifeText.setText(`LIVES ${this.#lives.value}/${this.#lives.maxLives}`);
+    this.updateLifeHud();
+    for (const laser of this.#enemyLasers.getChildren() as Phaser.Physics.Arcade.Image[]) {
+      if (laser.active) {
+        this.destroyProjectile(laser);
+      }
+    }
     this.#audio.play('playerHit');
     this.createExplosion(this.#player.sprite.x, this.#player.sprite.y, this.#layout.playerSize.height * 0.78);
     this.cameras.main.shake(120, 0.006);
@@ -627,7 +693,7 @@ export class Level1Scene extends Phaser.Scene {
       this.showTerminal('failed');
       return;
     }
-    this.time.delayedCall(420, () => this.respawnPlayer());
+    this.#respawnAtMs = this.time.now + 420;
   }
 
   private respawnPlayer(): void {
@@ -635,6 +701,7 @@ export class Level1Scene extends Phaser.Scene {
       return;
     }
     this.#playerState = 'regenerating';
+    this.#respawnAtMs = Number.POSITIVE_INFINITY;
     this.#player.respawn(this.#layout);
     this.#inputSystem.resetPointerState();
     this.#invulnerableUntilMs = this.time.now + 1200;
@@ -645,7 +712,18 @@ export class Level1Scene extends Phaser.Scene {
     const explosion = this.add.sprite(x, y, RUNTIME_ASSETS.fx.explosionSmall.key)
       .setDisplaySize(size, size)
       .setDepth(6);
-    explosion.play('fx.explosionSmall.play');
+    if (this.anims.exists('fx.explosionSmall.play')) {
+      explosion.play('fx.explosionSmall.play');
+      explosion.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => explosion.destroy());
+    } else {
+      this.time.delayedCall(220, () => explosion.destroy());
+    }
+  }
+
+  private createShieldImpact(x: number, y: number): void {
+    this.add.rectangle(x, y, this.#layout.shieldTileSize.width * 1.15, this.#layout.shieldTileSize.height * 1.15, 0x020406, 0.72)
+      .setDepth(3.5);
+    this.createExplosion(x, y, Math.max(26, this.#layout.shieldTileSize.width * 3.8));
   }
 
   private cleanupProjectiles(): void {
@@ -854,6 +932,19 @@ export class Level1Scene extends Phaser.Scene {
       formationDirection: this.#formationDirection,
       formationTravelMargin: Math.round(this.formationTravelMargin()),
       shieldZone: this.#layout.shieldZone,
+      hudPositions: {
+        score: { x: Math.round(this.#scoreText.x), y: Math.round(this.#scoreText.y) },
+        sound: { x: Math.round(this.#soundIcon.x), y: Math.round(this.#soundIcon.y), texture: this.#soundIcon.texture.key },
+        lives: this.#lifeIcons.map((icon) => ({ x: Math.round(icon.x), y: Math.round(icon.y), visible: icon.visible, texture: icon.texture.key })),
+        nukes: this.#nukeIcons.map((icon) => ({ x: Math.round(icon.x), y: Math.round(icon.y), visible: icon.visible, texture: icon.texture.key })),
+        rearm: { x: Math.round(this.#rearmText.x), y: Math.round(this.#rearmText.y), text: this.#rearmText.text },
+        rearmBar: {
+          x: Math.round(this.#rearmBarBack.x),
+          y: Math.round(this.#rearmBarBack.y),
+          width: Math.round(this.#rearmBarBack.displayWidth),
+          fillWidth: Math.round(this.#rearmBarFill.displayWidth),
+        },
+      },
       playerSpawn: this.#layout.playerSpawn,
       playerSize: this.#layout.playerSize,
       scoutSize: this.#layout.scoutSize,
@@ -880,6 +971,7 @@ export class Level1Scene extends Phaser.Scene {
           y: Math.round(scout.y),
           body: { x: Math.round(body.x), y: Math.round(body.y), width: Math.round(body.width), height: Math.round(body.height) },
           frame: scout.frame.name,
+          angle: scout.angle,
           row: scout.getData('row'),
           col: scout.getData('col'),
         };

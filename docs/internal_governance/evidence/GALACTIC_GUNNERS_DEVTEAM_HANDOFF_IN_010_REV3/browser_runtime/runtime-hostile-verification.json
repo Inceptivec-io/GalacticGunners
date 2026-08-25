@@ -1,7 +1,7 @@
 {
   "url": "http://localhost:3002",
   "handoff_id": "GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_010_REV3",
-  "generated_at": "2026-08-25T16:30:09.293Z",
+  "generated_at": "2026-08-25T18:33:49.637Z",
   "banned_visible_terms": [
     "LEVEL 1 VERTICAL SLICE",
     "VERTICAL SLICE",
@@ -57,6 +57,10 @@
       "nuke_burst_multikill_score_exact": true,
       "nuke_rearm_progresses": true,
       "nuke_hud_live": true,
+      "nuke_hud_bottom_left_bar": true,
+      "life_hud_icon_only": true,
+      "enemy_scouts_correct_orientation": true,
+      "sound_mute_top_right": true,
       "nuke_count_never_negative": true,
       "gamepad_y_nuke_path": true,
       "pause_freezes_state": true,
@@ -111,7 +115,7 @@
       "scout_count": 58,
       "shield_tile_count": 256,
       "bunker_count": 8,
-      "gameplay_width": 1120,
+      "gameplay_width": 1283,
       "viewport_width": 1365,
       "player_size": {
         "width": 51.83999999999999,
@@ -119,15 +123,75 @@
       },
       "player_scale_relative_rev2": 0.6,
       "scout_size": {
-        "width": 34.4,
-        "height": 31.648
+        "width": 39.409499999999994,
+        "height": 36.25673999999999
       },
-      "scout_scale_relative_rev2": 1.075,
+      "scout_expected_width": 39.409,
       "projectile_size": {
-        "width": 52.224000000000004,
-        "height": 9.40032
+        "width": 34.56,
+        "height": 6.912000000000001
       },
-      "shield_bottom_gap_player_heights": 2.12,
+      "shield_tile_size": {
+        "width": 11.456249999999999,
+        "height": 11.456249999999999
+      },
+      "hud_positions": {
+        "score": {
+          "x": 38,
+          "y": 26
+        },
+        "sound": {
+          "x": 1323,
+          "y": 42,
+          "texture": "ui.soundOn"
+        },
+        "lives": [
+          {
+            "x": 58,
+            "y": 730,
+            "visible": true,
+            "texture": "ui.lifeIcon"
+          },
+          {
+            "x": 92,
+            "y": 730,
+            "visible": true,
+            "texture": "ui.lifeIcon"
+          },
+          {
+            "x": 126,
+            "y": 730,
+            "visible": true,
+            "texture": "ui.lifeIcon"
+          }
+        ],
+        "nukes": [
+          {
+            "x": 208,
+            "y": 730,
+            "visible": true,
+            "texture": "ui.nukeIcon"
+          },
+          {
+            "x": 244,
+            "y": 730,
+            "visible": true,
+            "texture": "ui.nukeIcon"
+          }
+        ],
+        "rearm": {
+          "x": 280,
+          "y": 738,
+          "text": "ENERGISE"
+        },
+        "rearmBar": {
+          "x": 280,
+          "y": 756,
+          "width": 137,
+          "fillWidth": 137
+        }
+      },
+      "shield_bottom_gap_player_heights": 1.18,
       "hud_clipped": 0,
       "player_enemy_clipped": 0,
       "console_errors": 0,
@@ -141,7 +205,7 @@
       "scout_count": 58,
       "shield_tile_count": 256,
       "bunker_count": 8,
-      "gameplay_width": 1120,
+      "gameplay_width": 1354,
       "viewport_width": 1440,
       "player_size": {
         "width": 59.400000000000006,
@@ -149,15 +213,75 @@
       },
       "player_scale_relative_rev2": 0.6,
       "scout_size": {
-        "width": 34.4,
-        "height": 31.648
+        "width": 41.574857142857134,
+        "height": 38.24886857142857
       },
-      "scout_scale_relative_rev2": 1.075,
+      "scout_expected_width": 41.575,
       "projectile_size": {
-        "width": 58,
-        "height": 10.44
+        "width": 40,
+        "height": 8
       },
-      "shield_bottom_gap_player_heights": 2.12,
+      "shield_tile_size": {
+        "width": 12.085714285714285,
+        "height": 12.085714285714285
+      },
+      "hud_positions": {
+        "score": {
+          "x": 40,
+          "y": 26
+        },
+        "sound": {
+          "x": 1396,
+          "y": 42,
+          "texture": "ui.soundOn"
+        },
+        "lives": [
+          {
+            "x": 60,
+            "y": 862,
+            "visible": true,
+            "texture": "ui.lifeIcon"
+          },
+          {
+            "x": 94,
+            "y": 862,
+            "visible": true,
+            "texture": "ui.lifeIcon"
+          },
+          {
+            "x": 128,
+            "y": 862,
+            "visible": true,
+            "texture": "ui.lifeIcon"
+          }
+        ],
+        "nukes": [
+          {
+            "x": 210,
+            "y": 862,
+            "visible": true,
+            "texture": "ui.nukeIcon"
+          },
+          {
+            "x": 246,
+            "y": 862,
+            "visible": true,
+            "texture": "ui.nukeIcon"
+          }
+        ],
+        "rearm": {
+          "x": 282,
+          "y": 870,
+          "text": "ENERGISE"
+        },
+        "rearmBar": {
+          "x": 282,
+          "y": 888,
+          "width": 144,
+          "fillWidth": 144
+        }
+      },
+      "shield_bottom_gap_player_heights": 1.18,
       "hud_clipped": 0,
       "player_enemy_clipped": 0,
       "console_errors": 0,
@@ -171,7 +295,7 @@
       "scout_count": 58,
       "shield_tile_count": 256,
       "bunker_count": 8,
-      "gameplay_width": 1120,
+      "gameplay_width": 1805,
       "viewport_width": 1920,
       "player_size": {
         "width": 59.400000000000006,
@@ -179,15 +303,75 @@
       },
       "player_scale_relative_rev2": 0.6,
       "scout_size": {
-        "width": 34.4,
-        "height": 31.648
+        "width": 55.433142857142855,
+        "height": 50.99849142857143
       },
-      "scout_scale_relative_rev2": 1.075,
+      "scout_expected_width": 55.433,
       "projectile_size": {
-        "width": 58,
-        "height": 10.44
+        "width": 40,
+        "height": 8
       },
-      "shield_bottom_gap_player_heights": 2.12,
+      "shield_tile_size": {
+        "width": 14,
+        "height": 14
+      },
+      "hud_positions": {
+        "score": {
+          "x": 54,
+          "y": 26
+        },
+        "sound": {
+          "x": 1862,
+          "y": 42,
+          "texture": "ui.soundOn"
+        },
+        "lives": [
+          {
+            "x": 74,
+            "y": 1042,
+            "visible": true,
+            "texture": "ui.lifeIcon"
+          },
+          {
+            "x": 108,
+            "y": 1042,
+            "visible": true,
+            "texture": "ui.lifeIcon"
+          },
+          {
+            "x": 142,
+            "y": 1042,
+            "visible": true,
+            "texture": "ui.lifeIcon"
+          }
+        ],
+        "nukes": [
+          {
+            "x": 224,
+            "y": 1042,
+            "visible": true,
+            "texture": "ui.nukeIcon"
+          },
+          {
+            "x": 260,
+            "y": 1042,
+            "visible": true,
+            "texture": "ui.nukeIcon"
+          }
+        ],
+        "rearm": {
+          "x": 296,
+          "y": 1050,
+          "text": "ENERGISE"
+        },
+        "rearmBar": {
+          "x": 296,
+          "y": 1068,
+          "width": 170,
+          "fillWidth": 170
+        }
+      },
+      "shield_bottom_gap_player_heights": 1.18,
       "hud_clipped": 0,
       "player_enemy_clipped": 0,
       "console_errors": 0,
@@ -201,7 +385,7 @@
       "scout_count": 58,
       "shield_tile_count": 256,
       "bunker_count": 8,
-      "gameplay_width": 1120,
+      "gameplay_width": 2406,
       "viewport_width": 2560,
       "player_size": {
         "width": 59.400000000000006,
@@ -209,15 +393,75 @@
       },
       "player_scale_relative_rev2": 0.6,
       "scout_size": {
-        "width": 34.4,
-        "height": 31.648
+        "width": 73.91085714285713,
+        "height": 67.99798857142856
       },
-      "scout_scale_relative_rev2": 1.075,
+      "scout_expected_width": 73.911,
       "projectile_size": {
-        "width": 58,
-        "height": 10.44
+        "width": 40,
+        "height": 8
       },
-      "shield_bottom_gap_player_heights": 2.12,
+      "shield_tile_size": {
+        "width": 14,
+        "height": 14
+      },
+      "hud_positions": {
+        "score": {
+          "x": 72,
+          "y": 26
+        },
+        "sound": {
+          "x": 2484,
+          "y": 42,
+          "texture": "ui.soundOn"
+        },
+        "lives": [
+          {
+            "x": 92,
+            "y": 1402,
+            "visible": true,
+            "texture": "ui.lifeIcon"
+          },
+          {
+            "x": 126,
+            "y": 1402,
+            "visible": true,
+            "texture": "ui.lifeIcon"
+          },
+          {
+            "x": 160,
+            "y": 1402,
+            "visible": true,
+            "texture": "ui.lifeIcon"
+          }
+        ],
+        "nukes": [
+          {
+            "x": 242,
+            "y": 1402,
+            "visible": true,
+            "texture": "ui.nukeIcon"
+          },
+          {
+            "x": 278,
+            "y": 1402,
+            "visible": true,
+            "texture": "ui.nukeIcon"
+          }
+        ],
+        "rearm": {
+          "x": 314,
+          "y": 1410,
+          "text": "ENERGISE"
+        },
+        "rearmBar": {
+          "x": 314,
+          "y": 1428,
+          "width": 170,
+          "fillWidth": 170
+        }
+      },
+      "shield_bottom_gap_player_heights": 1.18,
       "hud_clipped": 0,
       "player_enemy_clipped": 0,
       "console_errors": 0,
@@ -242,12 +486,72 @@
         "width": 29.564342857142854,
         "height": 27.19919542857143
       },
-      "scout_scale_relative_rev2": 1.075,
+      "scout_expected_width": 29.564,
       "projectile_size": {
-        "width": 52.224000000000004,
-        "height": 9.40032
+        "width": 34.56,
+        "height": 6.912000000000001
       },
-      "shield_bottom_gap_player_heights": 2.12,
+      "shield_tile_size": {
+        "width": 8.594285714285714,
+        "height": 8.594285714285714
+      },
+      "hud_positions": {
+        "score": {
+          "x": 29,
+          "y": 26
+        },
+        "sound": {
+          "x": 990,
+          "y": 42,
+          "texture": "ui.soundOn"
+        },
+        "lives": [
+          {
+            "x": 49,
+            "y": 730,
+            "visible": true,
+            "texture": "ui.lifeIcon"
+          },
+          {
+            "x": 83,
+            "y": 730,
+            "visible": true,
+            "texture": "ui.lifeIcon"
+          },
+          {
+            "x": 117,
+            "y": 730,
+            "visible": true,
+            "texture": "ui.lifeIcon"
+          }
+        ],
+        "nukes": [
+          {
+            "x": 199,
+            "y": 730,
+            "visible": true,
+            "texture": "ui.nukeIcon"
+          },
+          {
+            "x": 235,
+            "y": 730,
+            "visible": true,
+            "texture": "ui.nukeIcon"
+          }
+        ],
+        "rearm": {
+          "x": 271,
+          "y": 738,
+          "text": "ENERGISE"
+        },
+        "rearmBar": {
+          "x": 271,
+          "y": 756,
+          "width": 102,
+          "fillWidth": 102
+        }
+      },
+      "shield_bottom_gap_player_heights": 1.18,
       "hud_clipped": 0,
       "player_enemy_clipped": 0,
       "console_errors": 0,
@@ -272,12 +576,72 @@
         "width": 11.259857142857141,
         "height": 10.35906857142857
       },
-      "scout_scale_relative_rev2": 1.075,
+      "scout_expected_width": 11.26,
       "projectile_size": {
-        "width": 57.392,
-        "height": 10.33056
+        "width": 37.98,
+        "height": 7.596
       },
-      "shield_bottom_gap_player_heights": 2.12,
+      "shield_tile_size": {
+        "width": 4,
+        "height": 4
+      },
+      "hud_positions": {
+        "score": {
+          "x": 24,
+          "y": 26
+        },
+        "sound": {
+          "x": 356,
+          "y": 42,
+          "texture": "ui.soundOn"
+        },
+        "lives": [
+          {
+            "x": 44,
+            "y": 806,
+            "visible": true,
+            "texture": "ui.lifeIcon"
+          },
+          {
+            "x": 78,
+            "y": 806,
+            "visible": true,
+            "texture": "ui.lifeIcon"
+          },
+          {
+            "x": 112,
+            "y": 806,
+            "visible": true,
+            "texture": "ui.lifeIcon"
+          }
+        ],
+        "nukes": [
+          {
+            "x": 194,
+            "y": 806,
+            "visible": true,
+            "texture": "ui.nukeIcon"
+          },
+          {
+            "x": 230,
+            "y": 806,
+            "visible": true,
+            "texture": "ui.nukeIcon"
+          }
+        ],
+        "rearm": {
+          "x": 266,
+          "y": 814,
+          "text": "ENERGISE"
+        },
+        "rearmBar": {
+          "x": 266,
+          "y": 832,
+          "width": 72,
+          "fillWidth": 72
+        }
+      },
+      "shield_bottom_gap_player_heights": 1.18,
       "hud_clipped": 0,
       "player_enemy_clipped": 0,
       "console_errors": 0,

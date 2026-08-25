@@ -44,7 +44,7 @@ Evidence:
 DURABLE
 
 Runtime Gameplay:
-PASS - BootScene, MainMenuScene and bounded Level1 playable runtime corrected for REV3 scale/composition, semantic PlayfieldLayout authority, 58-enemy Level1 formation, four-direction player movement, respawn/regeneration, 8-bunker / 256-tile shield zone, rotated laser geometry/body alignment, normal real-origin laser hits/near-misses, nuke projectile/burst/rearm/HUD, pause/resume and hostile runtime/composition verification.
+PASS - BootScene, MainMenuScene and bounded Level1 playable runtime corrected for REV3 scale/composition, semantic PlayfieldLayout authority, 58-enemy Level1 formation, four-direction player movement, respawn/regeneration, 8-bunker / 256-tile shield zone, rotated laser geometry/body alignment, normal real-origin laser hits/near-misses, nuke projectile/burst, bottom-left icon-only lives/nukes with fixed `ENERGISE` bar, top-left score, top-right sound, pause/resume and hostile runtime/composition verification.
 
 Full Level 1:
 NOT CLAIMED

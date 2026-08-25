@@ -25,17 +25,17 @@ export class BootScene extends Phaser.Scene {
     this.load.spritesheet(
       RUNTIME_ASSETS.fx.explosionSmall.key,
       RUNTIME_ASSETS.fx.explosionSmall.runtimePath,
-      { frameWidth: 493, frameHeight: 797 },
+      { frameWidth: FRAME_RECTS.explosionSmall.frameWidth, frameHeight: FRAME_RECTS.explosionSmall.frameHeight },
     );
     this.load.spritesheet(
       RUNTIME_ASSETS.projectile.nuke.key,
       RUNTIME_ASSETS.projectile.nuke.runtimePath,
-      { frameWidth: 512, frameHeight: 768 },
+      { frameWidth: FRAME_RECTS.nukeProjectile.frameWidth, frameHeight: FRAME_RECTS.nukeProjectile.frameHeight },
     );
     this.load.spritesheet(
       RUNTIME_ASSETS.fx.nukeBurst.key,
       RUNTIME_ASSETS.fx.nukeBurst.runtimePath,
-      { frameWidth: 512, frameHeight: 512 },
+      { frameWidth: FRAME_RECTS.nukeBurst.frameWidth, frameHeight: FRAME_RECTS.nukeBurst.frameHeight },
     );
   }
 
@@ -60,20 +60,20 @@ export class BootScene extends Phaser.Scene {
 
     this.anims.create({
       key: 'fx.explosionSmall.play',
-      frames: this.anims.generateFrameNumbers(RUNTIME_ASSETS.fx.explosionSmall.key, { start: 0, end: 3 }),
+      frames: this.anims.generateFrameNumbers(RUNTIME_ASSETS.fx.explosionSmall.key, { start: 0, end: FRAME_RECTS.explosionSmall.endFrame }),
       frameRate: 14,
       repeat: 0,
       hideOnComplete: true,
     });
     this.anims.create({
       key: 'projectile.nuke.fly',
-      frames: this.anims.generateFrameNumbers(RUNTIME_ASSETS.projectile.nuke.key, { start: 0, end: 3 }),
+      frames: this.anims.generateFrameNumbers(RUNTIME_ASSETS.projectile.nuke.key, { start: 0, end: FRAME_RECTS.nukeProjectile.endFrame }),
       frameRate: 10,
       repeat: -1,
     });
     this.anims.create({
       key: 'fx.nukeBurst.play',
-      frames: this.anims.generateFrameNumbers(RUNTIME_ASSETS.fx.nukeBurst.key, { start: 0, end: 5 }),
+      frames: this.anims.generateFrameNumbers(RUNTIME_ASSETS.fx.nukeBurst.key, { start: 0, end: FRAME_RECTS.nukeBurst.endFrame }),
       frameRate: 14,
       repeat: 0,
       hideOnComplete: true,

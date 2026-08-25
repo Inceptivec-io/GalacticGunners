@@ -41,7 +41,7 @@ function clamp(value: number, min: number, max: number): number {
 }
 
 export function createPlayfieldLayout(width: number, height: number): PlayfieldLayout {
-  const gameplayWidth = Math.min(width * 0.94, 1120);
+  const gameplayWidth = width * 0.94;
   const gameplayHeight = height * 0.86;
   const gameplayRect = {
     x: (width - gameplayWidth) / 2,
@@ -56,20 +56,20 @@ export function createPlayfieldLayout(width: number, height: number): PlayfieldL
     height: Math.max(48, height * 0.08),
   };
 
-  const scoutWidth = clamp((gameplayRect.width / 35) * 1.075, 10.75, 36.55);
+  const scoutWidth = clamp((gameplayRect.width / 35) * 1.075, 10.75, 74);
   const scoutSize = { width: scoutWidth, height: scoutWidth * 0.92 };
   const playerHeight = clamp(height * 0.15, 86, 132) * 0.6;
   const playerSize = { width: playerHeight * 0.75, height: playerHeight };
-  const projectileLength = clamp(height * 0.068, 42, 58);
-  const projectileThickness = clamp(projectileLength * 0.18, 7, 11);
+  const projectileLength = clamp(height * 0.045, 28, 40);
+  const projectileThickness = clamp(projectileLength * 0.2, 5, 8);
   const projectileSize = { width: projectileLength, height: projectileThickness };
-  const shieldTile = clamp(gameplayRect.width / 176, 5, 8);
+  const shieldTile = clamp(gameplayRect.width / 112, 4, 14);
 
   const playerSpawn = {
     x: width / 2,
     y: gameplayRect.y + gameplayRect.height - playerSize.height / 2 - 10,
   };
-  const shieldY = playerSpawn.y - playerSize.height * 2.12 - shieldTile * 5;
+  const shieldY = playerSpawn.y - playerSize.height * 1.18 - shieldTile * 5;
 
   return {
     viewport: { width, height },
