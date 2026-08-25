@@ -1,0 +1,2 @@
+NAMES                            STATUS                   PORTS
+galactic-gunners-founder-local   Up 5 minutes (healthy)   0.0.0.0:8027->80/tcp, [::]:8027->80/tcp

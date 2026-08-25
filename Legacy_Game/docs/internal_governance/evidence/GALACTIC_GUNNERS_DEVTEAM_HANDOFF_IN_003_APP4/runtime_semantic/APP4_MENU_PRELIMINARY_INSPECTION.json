@@ -1,0 +1,133 @@
+{
+  "documentTitle": "Galactic Gunners",
+  "canvasCount": 1,
+  "faviconLinks": [
+    "assets/images/owned/branding/favicons/favicon-32.png?v=gg-hud-life-v005",
+    "assets/images/owned/branding/favicons/favicon-48.png?v=gg-hud-life-v005",
+    "assets/images/owned/branding/favicons/favicon-16.png?v=gg-hud-life-v005",
+    "/favicon.ico?v=gg-hud-life-v005",
+    "assets/images/owned/branding/favicons/favicon.ico?v=gg-hud-life-v005"
+  ],
+  "faviconStatuses": [
+    {
+      "href": "assets/images/owned/branding/favicons/favicon-32.png?v=gg-hud-life-v005",
+      "status": 200,
+      "contentType": "image/png"
+    },
+    {
+      "href": "assets/images/owned/branding/favicons/favicon-48.png?v=gg-hud-life-v005",
+      "status": 200,
+      "contentType": "image/png"
+    },
+    {
+      "href": "assets/images/owned/branding/favicons/favicon-16.png?v=gg-hud-life-v005",
+      "status": 200,
+      "contentType": "image/png"
+    },
+    {
+      "href": "/favicon.ico?v=gg-hud-life-v005",
+      "status": 200,
+      "contentType": "image/x-icon"
+    },
+    {
+      "href": "assets/images/owned/branding/favicons/favicon.ico?v=gg-hud-life-v005",
+      "status": 200,
+      "contentType": "image/x-icon"
+    },
+    {
+      "href": "assets/images/owned/branding/favicons/favicon-180.png?v=gg-hud-life-v005",
+      "status": 200,
+      "contentType": "image/png"
+    }
+  ],
+  "fontsReady": "loaded",
+  "fontFaces": [
+    {
+      "family": "Galactic Gunners Silver Display",
+      "status": "loaded"
+    },
+    {
+      "family": "Galactic Gunners Gold Display",
+      "status": "loaded"
+    },
+    {
+      "family": "GalacticGunnersTitle",
+      "status": "loaded"
+    },
+    {
+      "family": "GalacticGunnersDisplay",
+      "status": "loaded"
+    }
+  ],
+  "silverFontLoaded": true,
+  "goldFontLoaded": true,
+  "ctaText": "CAN YOU SAVE THE DAY?",
+  "ctaFontFamily": "'Galactic Gunners Gold Display', 'GalacticGunnersDisplay', Arial, sans-serif",
+  "mainMenuActive": true,
+  "bounds": {
+    "logoPrimary": {
+      "x": 463.6510359116022,
+      "y": 18,
+      "width": 438.6979281767957,
+      "height": 146.3,
+      "right": 902.3489640883979,
+      "bottom": 164.3
+    },
+    "textTitle2": {
+      "x": 410.4523076923077,
+      "y": 174.20000000000002,
+      "width": 545.0953846153845,
+      "height": 47.879999999999995,
+      "right": 955.5476923076923,
+      "bottom": 222.08
+    },
+    "heroImage": {
+      "x": 609.85,
+      "y": 309.89,
+      "width": 146.30000000000007,
+      "height": 146.3,
+      "right": 756.1500000000001,
+      "bottom": 456.19
+    },
+    "textPoint": {
+      "x": 82.77721153846153,
+      "y": 345.79999999999995,
+      "width": 162.28557692307692,
+      "height": 59.85000000000002,
+      "right": 245.06278846153845,
+      "bottom": 405.65
+    },
+    "btnPoint": {
+      "x": 252.24478846153846,
+      "y": 345.79999999999995,
+      "width": 59.849999999999966,
+      "height": 59.85000000000002,
+      "right": 312.0947884615384,
+      "bottom": 405.65
+    },
+    "textBest": {
+      "x": 1030.223092948718,
+      "y": 347.4625,
+      "width": 234.43381410256416,
+      "height": 56.52499999999998,
+      "right": 1264.6569070512821,
+      "bottom": 403.98749999999995
+    },
+    "btnInfo": {
+      "x": 1296.13,
+      "y": 595.1300000000001,
+      "width": 51.86999999999989,
+      "height": 51.870000000000005,
+      "right": 1348,
+      "bottom": 647.0000000000001
+    },
+    "btnMute": {
+      "x": 1228.699,
+      "y": 603.7750000000001,
+      "width": 51.86999999999989,
+      "height": 34.58000000000004,
+      "right": 1280.569,
+      "bottom": 638.3550000000001
+    }
+  }
+}

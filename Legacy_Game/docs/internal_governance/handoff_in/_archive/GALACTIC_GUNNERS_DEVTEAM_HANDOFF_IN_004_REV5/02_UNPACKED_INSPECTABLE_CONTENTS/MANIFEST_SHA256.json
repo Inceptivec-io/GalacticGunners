@@ -1,0 +1,62 @@
+[
+  {
+    "path": "00_CTO_COMMISSION/CTO_REV5_FINAL_LEGACY_BASELINE_COMMISSION.md",
+    "bytes": 767,
+    "sha256": "5dafdf73f557f63004a9d18d3e68c050f308807c6fff19ed74fbb9aff4f3d257"
+  },
+  {
+    "path": "01_DEEP_DIVE_FINDINGS/CTO_SOURCE_ANALYSIS.md",
+    "bytes": 1198,
+    "sha256": "57631cfabd0ca020ddcb7d24f115e856546ef061301f5f2202535e127d136e4b"
+  },
+  {
+    "path": "02_COMBAT_AUTHORITY/COMBAT_INTERACTION_MATRIX.md",
+    "bytes": 1134,
+    "sha256": "44164752dc8dc971b6166112f95cd7a628ffc88d32bdb8641e3abc5523f5c628"
+  },
+  {
+    "path": "03_EXACT_IMPLEMENTATION/CANONICAL_DAMAGE_AND_PROJECTILE_RESOLUTION.md",
+    "bytes": 2466,
+    "sha256": "5f5b77ff6066e5d97b63da413200778477daab6041aab3b78a675947b08467e9"
+  },
+  {
+    "path": "03_EXACT_IMPLEMENTATION/SCENE_BY_SCENE_CHANGE_LIST.md",
+    "bytes": 775,
+    "sha256": "6cd193d6eaeeeed06939c8d4944c196fa3a7f3a03638702bdf4d547b2557fe25"
+  },
+  {
+    "path": "04_HERO_AUTHORITY/HERO_ASSET_AUTHORITY.md",
+    "bytes": 775,
+    "sha256": "ae1120e6f1742274e3f54890c8986c2bd43d3ab6a8eeca454cd105b61925b3fd"
+  },
+  {
+    "path": "05_TEST_AND_EVIDENCE/MANDATORY_REV5_TESTS.md",
+    "bytes": 1515,
+    "sha256": "4b339724ee7af1a76d86d15018fb8e2891b3d91cee5c7175603f50db566da9e3"
+  },
+  {
+    "path": "05_TEST_AND_EVIDENCE/REV5_ACCEPTANCE_DENOMINATOR.md",
+    "bytes": 1027,
+    "sha256": "3794e3b8463b00490c474e30995d520e18196a48e9e15ed396b140e8ab248faf"
+  },
+  {
+    "path": "06_CLOSURE/RETURN_REQUIREMENTS.md",
+    "bytes": 989,
+    "sha256": "6a016a24b415a38c21c534934e0643296daa223fc6e974949c632be0c78ee908"
+  },
+  {
+    "path": "07_ROUTING/ROUTING_MESSAGE.md",
+    "bytes": 3894,
+    "sha256": "c37cef590a5a2de81c8259baec0f873c94da0cb2b62479c09effd0e8c9cb98a7"
+  },
+  {
+    "path": "PAYLOAD/assets/gg_hero_image_player_fighting_v002_2x_poster_master.png",
+    "bytes": 5113426,
+    "sha256": "119dde72a02dc3722a7334d270c9f0221a3b078013baec9d3cd7d64fcec136f4"
+  },
+  {
+    "path": "PAYLOAD/assets/gg_hero_image_player_fighting_v002_4k_uhd_master.png",
+    "bytes": 5135424,
+    "sha256": "d524e9a9a6971cce5ce16f52c6586e436c1b1a9b7cfd1983eb05d0e85acf00df"
+  }
+]

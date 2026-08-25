@@ -1,0 +1,52 @@
+[
+  {
+    "path": "00_COMMISSION/GAMEPLAY_RUNTIME_RECOVERY_COMMISSION.md",
+    "bytes": 1201,
+    "sha256": "3b4df2636e04679b1a089cd5c4677ab822e6f21e48acde97c961f3d595c43794"
+  },
+  {
+    "path": "01_CTO_DEEP_DIVE/CTO_ROOT_CAUSE_ANALYSIS.md",
+    "bytes": 3800,
+    "sha256": "b55bd054ad0656c67e9054ef97a3ad59bba2bbc4fe433beaee17b465c4b5aa07"
+  },
+  {
+    "path": "02_RUNTIME_RECOVERY_ARCHITECTURE/PROJECTILE_RUNTIME_MODEL.md",
+    "bytes": 2425,
+    "sha256": "1c44623d0779bac4486b81fa87868b69eae967179c7bb9164a4b775befadc4fb"
+  },
+  {
+    "path": "03_EXACT_COMBAT_CONTRACT/COMBAT_MATRIX.md",
+    "bytes": 1773,
+    "sha256": "d0f8d664d2ef50dca15a3e2dbba23287f4aa18b6d21dfae5211fa58938739f72"
+  },
+  {
+    "path": "03_EXACT_COMBAT_CONTRACT/EXPLOSION_CAUSALITY.md",
+    "bytes": 705,
+    "sha256": "ca19342ea77a2091a4a2d043ec5701717602af51c80336b17fa4c4384954b216"
+  },
+  {
+    "path": "04_ASSURANCE_REBUILD/INTEGRATED_RUNTIME_TEST_STANDARD.md",
+    "bytes": 3051,
+    "sha256": "6214620f4bcae443e7c204009c5399a50c1735f7b7c04bec8c244d8f7454600b"
+  },
+  {
+    "path": "04_ASSURANCE_REBUILD/SEMANTIC_QA_NAMING.md",
+    "bytes": 491,
+    "sha256": "2b65f8f3e3aa8a87b67c95b3927b36c4a06d44e57aaa1c29b46e6f8d33673350"
+  },
+  {
+    "path": "05_ACCEPTANCE/P0_EXIT_GATE.md",
+    "bytes": 1149,
+    "sha256": "673985ff26cb728118bbc218a202d7e745821dfaf01d18ee695583a1c20d2f9e"
+  },
+  {
+    "path": "06_ROUTING/ROUTING_MESSAGE.md",
+    "bytes": 7120,
+    "sha256": "c4377b3aec1c0aee0e57358a8f6deb40cfda11c412000fc33e9111023fdd4597"
+  },
+  {
+    "path": "README.md",
+    "bytes": 407,
+    "sha256": "4146d6d77a9370ba801c6aba68a395eb3d5c202b121cbf7443a9ed963ce3347c"
+  }
+]

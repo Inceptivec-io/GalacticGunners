@@ -1,0 +1,14 @@
+﻿
+FullName                                                                                                                          Length Mode  
+--------                                                                                                                          ------ ----  
+C:\Users\Michael\dev\GalacticGunners\_EXTERNAL_GalacticGunners\_GalacticGunners_MAIN_POST_BOX                                            d-----
+C:\Users\Michael\dev\GalacticGunners\_EXTERNAL_GalacticGunners\BOUNDARY.md                                                        1302   -a----
+C:\Users\Michael\dev\GalacticGunners\_EXTERNAL_GalacticGunners\README.md                                                          308    -a----
+C:\Users\Michael\dev\GalacticGunners\_EXTERNAL_GalacticGunners\_GalacticGunners_MAIN_POST_BOX\_WORK_00000001_POST_BOX                    d-----
+C:\Users\Michael\dev\GalacticGunners\_EXTERNAL_GalacticGunners\_GalacticGunners_MAIN_POST_BOX\BOUNDARY.md                         748    -a----
+C:\Users\Michael\dev\GalacticGunners\_EXTERNAL_GalacticGunners\_GalacticGunners_MAIN_POST_BOX\README.md                           277    -a----
+C:\Users\Michael\dev\GalacticGunners\_EXTERNAL_GalacticGunners\_GalacticGunners_MAIN_POST_BOX\_WORK_00000001_POST_BOX\BOUNDARY.md 1426   -a----
+C:\Users\Michael\dev\GalacticGunners\_EXTERNAL_GalacticGunners\_GalacticGunners_MAIN_POST_BOX\_WORK_00000001_POST_BOX\README.md   268    -a----
+
+
+

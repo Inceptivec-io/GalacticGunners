@@ -1,0 +1,16 @@
+﻿
+
+Mode     : -a----
+Length   : 1426
+Name     : BOUNDARY.md
+FullName : C:\Users\Michael\dev\GalacticGunners\_EXTERNAL_GalacticGunners\_GalacticGunners_MAIN_POST_BOX\_WORK_00000001
+           _POST_BOX\BOUNDARY.md
+
+Mode     : -a----
+Length   : 268
+Name     : README.md
+FullName : C:\Users\Michael\dev\GalacticGunners\_EXTERNAL_GalacticGunners\_GalacticGunners_MAIN_POST_BOX\_WORK_00000001
+           _POST_BOX\README.md
+
+
+

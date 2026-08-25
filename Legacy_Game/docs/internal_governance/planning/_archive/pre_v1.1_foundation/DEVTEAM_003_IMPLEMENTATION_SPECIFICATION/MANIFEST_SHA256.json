@@ -1,0 +1,52 @@
+[
+  {
+    "file": "00_EXECUTIVE/00_EXECUTIVE_DIRECTIVE_v1.0.md",
+    "bytes": 1575,
+    "sha256": "3d0c91358dcdc3a6f1ac0f75821f78718037ad1774af3ad767f7b73fe4fe27f5"
+  },
+  {
+    "file": "01_ASSET_INTAKE/01_ASSET_INTAKE_MANIFEST_v1.0.md",
+    "bytes": 2568,
+    "sha256": "53bb091b464986563aa9ca2493e039287e027ebbe51430c0d7664f79b8c1fbe6"
+  },
+  {
+    "file": "01_ASSET_INTAKE/02_ASSET_AUTHORITY_AND_USAGE_RULES_v1.0.md",
+    "bytes": 1569,
+    "sha256": "a74693dd5e4c15155a43a9e07200d0f97e401a6803b51e0a7910f82f71f0310c"
+  },
+  {
+    "file": "02_SCENE_COMPOSITION/03_TITLE_VICTORY_GAMEOVER_EVENT_COMPOSITION_v1.0.md",
+    "bytes": 2565,
+    "sha256": "da26694ca040aa74f3d1fc02f8d9fe7f1a44552a2354974bd1a4347dc84589cd"
+  },
+  {
+    "file": "03_RUNTIME_INTEGRATION/04_SCENE_BY_SCENE_RUNTIME_INTEGRATION_SPEC_v1.0.md",
+    "bytes": 1605,
+    "sha256": "69aa208b01589d1400b57fdd23724333134dc3bd566316c904f204f0dda572ad"
+  },
+  {
+    "file": "04_FONT_AND_UI/05_FONT_INTEGRATION_AND_TEXT_HIERARCHY_v1.0.md",
+    "bytes": 976,
+    "sha256": "c55550b2f67baf4c72cdb255da890b1cae19301ac1fed8a02b93edd3958fd72c"
+  },
+  {
+    "file": "05_DEVELOPMENT_EXECUTION/06_DEVELOPMENT_IMPLEMENTATION_SEQUENCE_v1.0.md",
+    "bytes": 1351,
+    "sha256": "b10766e1693edd712dd19759a2690dd9cd4364a76265dcbf289472493b90c857"
+  },
+  {
+    "file": "06_ACCEPTANCE_AND_DEFECTS/07_ACCEPTANCE_CRITERIA_AND_PRIOR_DEFECTS_v1.0.md",
+    "bytes": 1360,
+    "sha256": "564d15bae22a6be70f58b32b89a2eff1ce72ebccf2d87132f3ba4f0f7c6785c0"
+  },
+  {
+    "file": "06_ACCEPTANCE_AND_DEFECTS/08_OUTSTANDING_REMAINING_BUILD_REGISTER_v1.0.md",
+    "bytes": 1013,
+    "sha256": "d06307a44265cb15a2243b6e5af68fb1904b46d4cfe80db69b558b91c25a50b5"
+  },
+  {
+    "file": "README.md",
+    "bytes": 579,
+    "sha256": "761110fe342d8b51ade631a6c7dbac4fa5c5be92bedbbf834c490e69c0c2969a"
+  }
+]

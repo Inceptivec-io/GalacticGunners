@@ -1,0 +1,10 @@
+{
+  "runtimeUrl": "http://localhost:8027/",
+  "screenshots": [
+    "screenshot_01_main_menu.png",
+    "screenshot_02_level1_runtime.png",
+    "screenshot_03_info_scene.png",
+    "screenshot_04_victory_scene.png"
+  ],
+  "status": "PASS"
+}

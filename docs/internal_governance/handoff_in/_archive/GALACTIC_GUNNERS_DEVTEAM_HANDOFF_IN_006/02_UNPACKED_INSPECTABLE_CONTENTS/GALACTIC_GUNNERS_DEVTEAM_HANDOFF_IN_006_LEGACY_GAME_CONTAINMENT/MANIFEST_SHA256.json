@@ -1,0 +1,47 @@
+[
+  {
+    "path": "00_COMMISSION/COMMISSION.md",
+    "bytes": 996,
+    "sha256": "ef7c574cbce2bd5468befa8d6f6d83ce309b0d7b213c681c9a355a881eb430f2"
+  },
+  {
+    "path": "01_SOURCE_AUTHORITY/SOURCE_AUTHORITY.md",
+    "bytes": 606,
+    "sha256": "b0f893609c815edc7eb520a7448537a18d4d1e2b5c4d4628e598cb39a7adfd5f"
+  },
+  {
+    "path": "02_EXACT_IMPLEMENTATION/IMPLEMENTATION.md",
+    "bytes": 980,
+    "sha256": "1c26c794c30e6f67ea8ba0a48fe0ab10297461b88ae3b079e5088357519c0345"
+  },
+  {
+    "path": "03_PROVENANCE_AND_README/LEGACY_README_REQUIREMENTS.md",
+    "bytes": 1058,
+    "sha256": "70674574175387a1f08120a0b7f9b88899eda15d915e5b7ccead6c499fc926df"
+  },
+  {
+    "path": "04_VERIFICATION/VERIFICATION.md",
+    "bytes": 782,
+    "sha256": "946ce63693bd9cf9887996b1195d47305d87af1181eb5f3072b0d5a60492fd9a"
+  },
+  {
+    "path": "05_PR_AND_BRANCH_DISPOSITION/PR_AND_BRANCH.md",
+    "bytes": 620,
+    "sha256": "383877fb79983d0b60ae6acf09d9d7f4f3d21866f5fa97ecd4c764697a86fde8"
+  },
+  {
+    "path": "06_RETURN/RETURN.md",
+    "bytes": 805,
+    "sha256": "e0ed72077542c9f4b2caf32bbd37bea2cd0165241b6137eb239c1203854cb40f"
+  },
+  {
+    "path": "07_ROUTING/ROUTING_MESSAGE.md",
+    "bytes": 2667,
+    "sha256": "a0949190c170c3a4b886a91c72e5a143dc9d8d70a411f717019690c54c812508"
+  },
+  {
+    "path": "README.md",
+    "bytes": 345,
+    "sha256": "ec207a2b92424958a8fdb2f4671ed9c2d8a0b10156387c76af78d2b6c20869f8"
+  }
+]

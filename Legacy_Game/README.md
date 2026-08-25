@@ -1,21 +1,72 @@
-# Galactic Gunners Legacy Game
+# Galactic Gunners Legacy Game Containment
 
-This directory contains the provisional behavioural legacy runtime snapshot used during GGF-2 Production Application Architecture Formation.
+## Identity
+
+`Legacy_Game/` contains the closed Galactic Gunners v0.1 legacy implementation as a contained reference estate.
+
+It is preserved for comparison, regression, provenance and controlled migration work. It is not the active production architecture and must not be treated as production runtime authority.
+
+## Commercial Legacy Source
+
+Repository: `Inceptivec-io/GalacticGunners`
+
+Branch: `feature/GG-COM-001`
+
+Source HEAD: `6cda67a3c539ae85d769a571eb4f5299ed9bc4e6`
+
+## Accepted Behavioural Coordinate
+
+Accepted v0.1 behavioural coordinate:
+
+`1539395a6e2eb3a8a0a571692c5425122ae0b82e`
+
+This SHA is the accepted behavioural/runtime coordinate inside the legacy history. The full contained estate is sourced from the later closed branch head listed above.
+
+## Historical Educational Provenance
+
+Historical educational/provenance repository:
+
+`michael-leese/GallacticGunners`
+
+That historical repository remains provenance evidence. It is not the current production repository and is not mutated by this containment.
 
 ## Purpose
 
-The legacy implementation is retained temporarily so that the production architecture can reproduce accepted gameplay, timing, scoring, controls, collision behaviour, visual treatment and audio without destructive in-place rewriting.
+`Legacy_Game/` exists for:
+
+- behavioural comparison;
+- regression reference;
+- provenance;
+- historical continuity;
+- controlled migration reference.
 
 ## Authority
 
-This directory is **not** the production architecture and must not become the location for new product capability. The production implementation lives under `apps/`, `game/`, `backend/` and `packages/`.
+`Legacy_Game/` is not production runtime authority.
 
-The provisional snapshot in this branch originates from commit `5b91bed73ce8846ec577575dab10de1527084820`. Before this architecture branch is eligible to merge into `dev`, this directory must be resynchronised to the exact Founder-accepted GGF-1 baseline HEAD produced by the final legacy-runtime stabilisation movement.
+Production architecture remains outside `Legacy_Game/`. Production code must not import from, execute through, or depend on this contained legacy estate.
 
-## Migration rule
+## Migration Rule
 
-Copy or reimplement behaviour from here into the production structures only through explicit behavioural contracts and tests. Do not move arbitrary global state or historical naming into the new architecture merely because it existed here.
+`EXTRACT -> TYPE -> TEST -> PRESERVE BEHAVIOUR`
+
+Future production migration work must extract intended behaviour, type and test it in the production architecture, and preserve accepted behaviour rather than wiring production code directly to the legacy folder.
+
+## Known Accepted v0.1 Limitations
+
+Known accepted limitations of the v0.1 behavioural coordinate include:
+
+- nuke interaction/lifecycle imperfections;
+- occasional collision-boundary inconsistencies.
+
+These are recorded legacy limitations, not authority to alter this contained estate during containment.
 
 ## Retirement
 
-`Legacy_Game/` is temporary. It may be removed only when the production implementation has complete accepted behavioural coverage and the Founder / Secuvara CTAIO authorises retirement.
+`Legacy_Game/` remains until the v1.0 production implementation has superseded the required legacy behaviour and Founder authority permits removal.
+
+## Step 4 Pointer
+
+Current commercial asset/IP ownership and provenance will be established separately during Step 4.
+
+This containment does not ingest, inspect, move, rename, register, wire or document the contents of any external Step 4 asset/IP package.

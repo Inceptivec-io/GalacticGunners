@@ -1,0 +1,2 @@
+NAME                             IMAGE                              COMMAND                  SERVICE            CREATED         STATUS                   PORTS
+galactic-gunners-founder-local   galacticgunners-galactic-gunners   "/docker-entrypoint.…"   galactic-gunners   2 minutes ago   Up 2 minutes (healthy)   0.0.0.0:8027->80/tcp, [::]:8027->80/tcp

@@ -1,0 +1,11 @@
+Error: Runtime.evaluate: Object reference chain is too long
+    at ws.onmessage ([stdin]:12:528)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:845:20)
+    at WebSocket.dispatchEvent (node:internal/event_target:778:26)
+    at fireEvent (node:internal/deps/undici/undici:13224:14)
+    at #onMessage (node:internal/deps/undici/undici:14453:9)
+    at Object.onMessage (node:internal/deps/undici/undici:14166:76)
+    at websocketMessageReceived (node:internal/deps/undici/undici:13228:15)
+    at node:internal/deps/undici/undici:13885:19
+    at node:internal/deps/undici/undici:13705:11
+    at afterWrite (node:internal/streams/writable:708:5)

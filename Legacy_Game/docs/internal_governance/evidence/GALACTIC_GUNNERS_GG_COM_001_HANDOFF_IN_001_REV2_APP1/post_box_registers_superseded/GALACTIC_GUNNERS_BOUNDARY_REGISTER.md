@@ -1,0 +1,7 @@
+# Galactic Gunners Boundary Register
+
+| Boundary ID | Class | Path | Parent | Purpose | Sender | Receiver | Direction | Repository | Mutation Mode | Status | Created | Last Reviewed | Evidence |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| _EXTERNAL_GalacticGunners | PROJECT EXTERNAL | _EXTERNAL_GalacticGunners/ | Inceptivec Gamification authority | Persistent external project/product exchange boundary | Founder Michael Leese | Bounded workers | Inbound/outbound via POST_BOX | https://github.com/Inceptivec-io/GalacticGunners.git | NONE except boundary maintenance | CURRENT | 2026-08-23 | 2026-08-23 | BOUNDARY.md |
+| _GalacticGunners_MAIN_POST_BOX | MAIN_POST_BOX | _EXTERNAL_GalacticGunners/_GalacticGunners_MAIN_POST_BOX/ | _EXTERNAL_GalacticGunners | Main project exchange, registers and evidence | Founder Michael Leese | Bounded workers | Bidirectional governed exchange | https://github.com/Inceptivec-io/GalacticGunners.git | REGISTER/BOUNDARY | CURRENT | 2026-08-23 | 2026-08-23 | _GalacticGunners_MAIN_POST_BOX/BOUNDARY.md |
+| _WORK_00000001_POST_BOX | WORK | _EXTERNAL_GalacticGunners/_GalacticGunners_MAIN_POST_BOX/_WORK_00000001_POST_BOX/ | _GalacticGunners_MAIN_POST_BOX | GG-COM-001 execution and return | Founder Michael Leese | CODEX_DEVELOPMENT_AGENT_GG_COM_001_WORKER_001 | Receive handoff_in, return handoff_out | https://github.com/Inceptivec-io/GalacticGunners.git | BOUNDED on feature/GG-COM-001 | CURRENT | 2026-08-23 | 2026-08-23 | _WORK_00000001_POST_BOX/BOUNDARY.md |

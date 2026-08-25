@@ -195,111 +195,43 @@ class Level2 extends Phaser.Scene { //creates a scene in the Phaser Object calle
 
         //COLLISION DETECTION
 
-        this.physics.add.overlap(this.asteroids, this.player, function(asteroid, player) { //create a physics overlap event between object1 and object2, followed by collideCallback function
-
-            if (asteroid) { //if asteroid
-                asteroid.destroy(); //destroy asteroid
-            }
-            //ALSO
-            if (player) { //if player  
-                this.createExplosion(player.x, player.y, "playerHit"); //call createExplosion method
-                player.body.reset(this.game.config.width * 0.5, this.game.config.height - 50); //reset player to opening position
-                this.onLifeDown(); //start onLifeDown Method
-            }
-        }, null, this);
-
         this.physics.add.overlap(this.starNukes, this.enemies, function(nuke, enemy) { //create a physics overlap event between object1 and object2, followed by collideCallback function
 
-            if (nuke) { //if player nuke
-                nuke.destroy(); //destroy nuke object 
-                emitter.stop(); //stop particles emitting
-            }
-            //ALSO
-            if (enemy) { //if enemy  
-                enemyShips--; //decrement enemyShips by 1 (used for testing)
-                enemyDeaths++; //increment enemyDeaths by 1 for game win logic
-                this.createNukeExplosion(enemy.x, enemy.y); //call createNukeExplosion method
-                ggScoreEvent(this, ggEnemyScoreEvent(enemy)); //locked score event for destroyed enemy                 
-                enemy.destroy(); //destroy enemy object
-            }
+            ggDestroyEnemyTarget(this, nuke, enemy, true);
         }, null, this);
 
         this.physics.add.overlap(this.nukeExplosions, this.enemies, function(explosion, enemies) { //create a physics overlap event between object1 and object2, followed by collideCallback function
 
-            if (enemies) { //if enemies (plural hit)  
+            if (enemies && !enemies.ggSweptResolved) { //if enemies (plural hit)
+                enemies.ggSweptResolved = true;
                 enemyShips--; //decrement enemyShips by 1 (used for testing)
                 enemyDeaths++; //increment enemyDeaths by 1 for game win logic
-                this.createExplosion(enemies.x, enemies.y); //call creatExplosion method on each object
+                var burstEvent = ggCombatEvent(this, "PLAYER_NUKE_BURST_HOSTILE_HIT", explosion, enemies);
                 ggScoreEvent(this, ggEnemyScoreEvent(enemies)); //locked score event for destroyed enemy
+                burstEvent.scoreAfter = score;
+                this.createExplosion(enemies.x, enemies.y, burstEvent); //call creatExplosion method on each object
                 enemies.destroy(); //destroy enemies that are hit
             }
         }, null, this);
 
         this.physics.add.overlap(this.playerLasers, this.enemies, function(laser, enemy) { //create a physics overlap event between object1 and object2, followed by collideCallback function
 
-            if (laser) { //if player laser
-                laser.destroy(); //destroy laser object
-            }
-            //ALSO
-            if (enemy) { //if enemy  
-                enemyShips--; //decrement enemyShips by 1 (used for testing)
-                enemyDeaths++; //increment enemyDeaths by 1 for game win logic
-                this.createExplosion(enemy.x, enemy.y); //call creatExplosion method
-                ggScoreEvent(this, ggEnemyScoreEvent(enemy)); //locked score event for destroyed enemy
-                enemy.destroy(); //destroy enemy object
-            }
+            ggDestroyEnemyTarget(this, laser, enemy, false);
         }, null, this); //processCallback set to null and context set to this
 
         this.physics.add.overlap(this.playerLasers, this.asteroids, function(laser, asteroid) { //create a physics overlap event between object1 and object2, followed by collideCallback function
 
-            if (laser) { //if player laser
-                laser.destroy(); //destroy laser object
-            }
-            //ALSO
-            if (asteroid) { //if asteroid  
-                this.createExplosion(asteroid.x, asteroid.y); //call createExplosion method
-                ggScoreEvent(this, "ASTEROID_DESTROYED"); //locked asteroid score event
-                asteroid.destroy(); //destroy asteroid object
-            }
+            ggDestroyAsteroidTarget(this, laser, asteroid, false);
         }, null, this);
 
         this.physics.add.overlap(this.starNukes, this.asteroids, function(nuke, asteroid) { //create a physics overlap event between object1 and object2, followed by collideCallback function
 
-            if (nuke) { //if player nuke
-                nuke.destroy(); //destroy nuke object
-                emitter.stop(); //stop particles emitting    
-            }
-            //ALSO
-            if (asteroid) { //if asteroid  
-                this.createNukeExplosion(asteroid.x, asteroid.y); //call createNukeExplosion method
-                ggScoreEvent(this, "ASTEROID_DESTROYED"); //locked asteroid score event
-                asteroid.destroy(); //destroy asteroid object
-            }
+            ggDestroyAsteroidTarget(this, nuke, asteroid, true);
         }, null, this);
-
-        this.physics.add.overlap(this.playerLasers, this.enemyLasers, function(playerLaser, enemyLaser) { //create a physics overlap event between object1 and object2, followed by collideCallback function
-
-            if (playerLaser) { //if playerLaser
-                playerLaser.destroy(); //destroy enemy object
-            }
-            //ALSO
-            if (enemyLaser) { //if enemyLaser 
-                enemyLaser.destroy(); //destroy enemyLaser object
-            }
-
-        }, null, this); //processCallback set to null and context set to this
-
-        this.physics.add.overlap(this.playerLasers, this.shieldTiles, function(laser, tile) { //create a physics overlap event between object1 and object2, followed by collideCallback function
-            if (laser) { //if playerLaser
-                laser.destroy(); //destroy laser object
-            }
-            //ALSO
-            this.destroyShieldTile(tile, false); //player fire destroys shield tile without score penalty
-        }, null, this); //processCallback set to null and context set to this
 
         this.physics.add.overlap(this.shieldTiles, this.enemies, function(tile, enemy) { //create a physics overlap event between object1 and object2, followed by collideCallback function
             if (enemy) { //if enemy
-                this.destroyShieldTile(tile, true); //enemy contact destroys one shield tile
+                this.destroyShieldTile(tile, "ENEMY_BODY_HIT_SHIELD"); //enemy contact destroys one shield tile
             }
         }, null, this); //processCallback set to null and context set to this
 
@@ -308,30 +240,33 @@ class Level2 extends Phaser.Scene { //creates a scene in the Phaser Object calle
                 laser.destroy(); //destroy laser object
             }
             //ALSO
-            this.destroyShieldTile(tile, true); //enemy fire destroys one shield tile
-        }, null, this); //processCallback set to null and context set to this
-
-        this.physics.add.overlap(this.player, this.enemies, function(player, enemy) { //create a physics overlap event between object1 and object2, followed by collideCallback function
-            if (player) { //if player collides with enemy
-                this.createExplosion(player.x, player.y, "playerHit"); //create explosion at player.x, player.y coordinates
-                player.body.reset(this.game.config.width * 0.5, this.game.config.height - 50); //reset player to opening position
-                this.onLifeDown(); //start lifeDown function to lose life and check if GAME OVER
-            }
+            this.destroyShieldTile(tile, "ENEMY_LASER_SHIELD_HIT"); //enemy fire destroys one shield tile
         }, null, this); //processCallback set to null and context set to this
 
         this.physics.add.overlap(this.player, this.enemyLasers, function(player, laser) { //create a physics overlap event between object1 and object2, followed by collideCallback function
-            if (player) { //if player hit by enemyLaser
-                this.createExplosion(player.x, player.y, "playerHit"); //create explosion at player.x, player.y coordinates
-                player.body.reset(this.game.config.width * 0.5, this.game.config.height - 50); //reset player to opening position
-                this.onLifeDown(); //start lifeDown function to lose life and check if GAME OVER
-            }
-
-            if (laser) { //if an enemyLaser
-                laser.destroy(); //destroy laser
-            }
+            ggResolveEnemyLaserPlayerHit(this, laser, player);
         }, null, this); //processCallback set to null and context set to this
+
+        this.physics.add.overlap(this.player, this.enemies, function(player, enemy) {
+            ggResolveHostileBodyPlayerHit(this, enemy, player);
+        }, null, this);
+
+        this.physics.add.overlap(this.player, this.asteroids, function(player, asteroid) {
+            ggResolveHostileBodyPlayerHit(this, asteroid, player);
+        }, null, this);
+
+        this.physics.add.overlap(this.player, this.comets, function(player, comet) {
+            ggResolveHostileBodyPlayerHit(this, comet, player);
+        }, null, this);
+        this.physics.add.overlap(this.playerLasers, this.shieldTiles, function(laser, tile) {
+            ggResolvePlayerLaserShieldHit(this, laser, tile);
+        }, null, this);
+        this.physics.add.overlap(this.playerLasers, this.enemyLasers, function(playerLaser, hostileLaser) {
+            ggResolveProjectileClash(this, playerLaser, hostileLaser);
+        }, null, this);
         ggInstallCometCollisions(this); //install supplied comet collision rules
-        ggInstallSweptCollisionContracts(this); //install stable swept projectile collision contracts
+        ggInstallSweptCollisionContracts(this); //install projectile tunneling safety net
+        ggInstallGameplayTestControls(this); //install gated semantic QA controls
         // END COLLISION DETECTION
 
 
@@ -419,7 +354,7 @@ class Level2 extends Phaser.Scene { //creates a scene in the Phaser Object calle
     //create loseLives function
     loseLives(amount) { //loseLives method passed with parameter amount
         currentLives -= amount; // currentLives drop by amount
-        textLives.setText('Lives: ' + currentLives); //sets lives remaining
+        ggRefreshHud(this); //refresh authoritative HUD state
     }
     //END loseLives function
 
@@ -437,6 +372,7 @@ class Level2 extends Phaser.Scene { //creates a scene in the Phaser Object calle
             this.game.config.width * 0.5, //set playerShip to center of screen on x axis
             this.game.config.height - 50 //set playerShip to position 50 pixels up from bottom on y axis
         );
+        ggRefreshHud(this); //sync HUD after player creation
     }
     //END createPlayer function
 
@@ -513,10 +449,10 @@ class Level2 extends Phaser.Scene { //creates a scene in the Phaser Object calle
             callback: function() { //create callback function on time event
                 for (var i = 0; i < this.enemies.getChildren().length; i++) { //for each enemy in the enemies array
                     var enemy = this.enemies.getChildren()[i]; //select this enemy with index[i]
+                    if (this.ggSuppressEnemyFire) continue;
 
                     if (Phaser.Math.Between(0, 1000) > 995) { //for each enemy, if number generated is greater than 995 FIRE (lower the number the higher the fire rate)
-                        var laser = new EnemyLaser(this, enemy.x, enemy.y); //add a new EnemyLaser object
-                        this.enemyLasers.add(laser); //draw a new enemyLaser
+                        ggSpawnEnemyLaser(this, enemy, EnemyLaser); //spawn a governed enemy laser
 
                         this.sfx.laserEnemy.play(); //play the sound laserEnemy
                     }
@@ -555,6 +491,7 @@ class Level2 extends Phaser.Scene { //creates a scene in the Phaser Object calle
                         moved = true;
                     }
                 }
+                ggClampPlayerToWorld(this);
                 ggSetPlayerMovementState(this, moved);
             },
             callbackScope: this, //set call back scope to this function
@@ -598,6 +535,7 @@ class Level2 extends Phaser.Scene { //creates a scene in the Phaser Object calle
                             this.player.y += this.game.config.height * 0.007; //move player down
                         }
                     }
+                    ggClampPlayerToWorld(this);
                 }
                 else {
                     this.player.disableInteractive();
@@ -617,28 +555,7 @@ class Level2 extends Phaser.Scene { //creates a scene in the Phaser Object calle
                 var fireDown = this.keySpace.isDown || controllerActionDown("fire");
                 var nukeDown = this.keyN.isDown || controllerActionDown("nuke");
 
-                if (fireDown && this.player.active) { //if SPACE is down && player is active still
-                    if (this.playerShootTick < this.playerShootDelay) { //if playerShootTick is less than the playerShootDelay
-                        this.playerShootTick++; //add 1 to Tick count, which will repeat until it hits 30
-                    }
-                    else {
-                        ggFirePlayerLaser(this);
-                        this.playerShootTick = 0; //set shootTick back to 0
-                    }
-                }
-                if (nukeDown && this.player.active && currentNukes > 0) { //if N is down && player is active still && nukes available
-                    if (this.playerNukeTick < this.playerNukeDelay) { //if playerNukeTick is less than the playernukeDelay
-                        this.playerNukeTick++; //add 1 to Tick count, which will repeat until it hits 150
-                        textNukesLoad.setText('ReArm: ' + this.playerNukeTick + '/' + this.playerNukeDelay); //set rearm text to count the nuke tick number
-                    }
-                    else {
-                        ggFirePlayerNuke(this);
-                        this.playerNukeTick = 0; //set nukeTick back to 0
-                    }
-                }
-                if (nukeDown && this.player.active && currentNukes == 0) { //if SPACE is down && no nukes left
-                    textNukesLoad.setText('ReArm: OUT'); //set nukes rearming text to out
-                }
+                ggHandlePlayerFiring(this, fireDown, nukeDown);
             },
             callbackScope: this, //set call back scope to this function
             loop: true //set loop to true
@@ -654,8 +571,8 @@ class Level2 extends Phaser.Scene { //creates a scene in the Phaser Object calle
                 for (var i = 0; i < this.starNukes.getChildren().length; i++) { //for each enemy in the enemies array
                     var nuke = this.starNukes.getChildren()[i]; //this nuke = starNukes[i]
                     if (nuke.y < 10) { //if laser is less than 5 away from screen edge
-                        this.createNukeExplosion(nuke.x, nuke.y); //create an explosion at this nuke.x and nuke.y
-                        emitter.stop(); //stope emitting particles
+                        nuke.ggDestructionReason = "OUT_OF_BOUNDS_QUIET_CULL";
+                        if (emitter && emitter.stop) emitter.stop(); //stop emitting particles
                         if (nuke) { //if nuke         
                             nuke.destroy(); //destroy this nuke
                         }
@@ -676,12 +593,8 @@ class Level2 extends Phaser.Scene { //creates a scene in the Phaser Object calle
                 for (var i = 0; i < this.playerLasers.getChildren().length; i++) { //for each enemy in the enemies array
                     var laser = this.playerLasers.getChildren()[i]; //this laser = playerLaser[i]
 
-                    if (laser.y < 10) { //if laser is less than 10 away from screen edge
-                        this.createExplosion(laser.x, laser.y); //create an explosion at this laser.x and laser.y
-
-                        if (laser) { //if laser         
-                            laser.destroy(); //destroy this laser
-                        }
+                    if (laser.y < 10 && laser.active) { //if laser is less than 10 away from screen edge
+                        laser.destroy(); //destroy this laser
                     }
                 }
             },
@@ -695,12 +608,8 @@ class Level2 extends Phaser.Scene { //creates a scene in the Phaser Object calle
                 for (var i = 0; i < this.enemyLasers.getChildren().length; i++) { //for each enemyLaser in the enemyLaser group
                     var laser = this.enemyLasers.getChildren()[i]; //set
 
-                    if (laser.y > this.game.config.height - 10) { //if laser is less than 10 away from screen edge
-                        this.createExplosion(laser.x, laser.y); //create an explosion at this laser.x and laser.y
-
-                        if (laser) { //if laser         
-                            laser.destroy(); //destroy this laser
-                        }
+                    if (laser.y > this.game.config.height - 10 && laser.active) { //if laser is less than 10 away from screen edge
+                        laser.destroy(); //destroy this laser
                     }
                 }
             },
@@ -728,10 +637,13 @@ class Level2 extends Phaser.Scene { //creates a scene in the Phaser Object calle
     //END addSheild function
 
     //create destroySheildTile function
-    destroyShieldTile(tile, enemyHit) {
+    destroyShieldTile(tile, eventSource) {
         if (tile) { //if(tile)
+            var source = eventSource === true ? "ENEMY_LASER_SHIELD_HIT" : eventSource;
+            var enemyHit = source !== "PLAYER_LASER_HIT_SHIELD";
+            var shieldEvent = ggShieldExplosionEvent(source, "ShieldTile", source);
             if (enemyHit) ggScoreEvent(this, "SHIELD_TILE_ENEMY_HIT"); //locked shield penalty only for enemy hits
-            this.createExplosion(tile.x, tile.y, "shieldHit"); //create explosion at x and y of tile
+            this.createExplosion(tile.x, tile.y, shieldEvent); //create explosion at x and y of tile
 
             for (var i = 0; i < Phaser.Math.Between(10, 20); i++) { //for loop to iterate through sheildtile array randomly
                 var shieldHole = this.add.graphics({ //create sheildhole var and add graphics
@@ -771,14 +683,17 @@ class Level2 extends Phaser.Scene { //creates a scene in the Phaser Object calle
 
     //create Explosion function
     createExplosion(x, y, audioEvent) {
-        if (audioEvent !== false) {
-            if (audioEvent == "playerHit") this.sfx.playerHit.play();
-            else if (audioEvent == "shieldHit") this.sfx.shieldHit.play();
-            else if (audioEvent == "large") this.sfx.explosionLarge.play();
+        var scoreBefore = score;
+        var resolvedAudioEvent = ggExplosionAudioEvent(audioEvent);
+        if (resolvedAudioEvent !== false) {
+            if (resolvedAudioEvent == "playerHit") this.sfx.playerHit.play();
+            else if (resolvedAudioEvent == "shieldHit") this.sfx.shieldHit.play();
+            else if (resolvedAudioEvent == "large") this.sfx.explosionLarge.play();
             else this.sfx.explosionSmall.play();
         }
-        var explosion = new Explosion(this, x, y, audioEvent == "large" || audioEvent == "mothershipHit"); //create a new instance of explosion
+        var explosion = new Explosion(this, x, y, resolvedAudioEvent == "large" || resolvedAudioEvent == "mothershipHit"); //create a new instance of explosion
         this.explosions.add(explosion); //add it to the explosions group
+        ggRecordExplosionEvent(this, x, y, audioEvent, true, scoreBefore);
         if (totalEnemyShips == enemyDeaths) { //if totalEnemyShips is same as totalDeaths
             this.win(); //start win method
             levelWon = true;
@@ -791,6 +706,7 @@ class Level2 extends Phaser.Scene { //creates a scene in the Phaser Object calle
         if (audioEvent !== false) this.sfx.nukeBurst.play(); //play sound fx
         var nukeExplosion = new NukeExplosion(this, x, y); //create a new instance of nukeExplosion
         this.nukeExplosions.add(nukeExplosion); //add it to the nukeExplosions group
+        ggRecordExplosionEvent(this, x, y, audioEvent, !!(audioEvent && audioEvent.targetObject), typeof score === "number" ? score : 0);
         if (totalEnemyShips == enemyDeaths) { // if totalEnemyShips is same as totalDeaths
             this.win(); //start win method
             levelWon = true;

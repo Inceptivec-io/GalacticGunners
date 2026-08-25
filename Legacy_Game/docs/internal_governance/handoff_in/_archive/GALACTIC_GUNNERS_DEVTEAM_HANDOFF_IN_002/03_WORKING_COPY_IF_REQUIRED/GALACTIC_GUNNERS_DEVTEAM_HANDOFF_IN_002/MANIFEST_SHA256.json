@@ -1,0 +1,37 @@
+[
+  {
+    "file": "00_COMMISSION/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_002.md",
+    "bytes": 14959,
+    "sha256": "2a892d420b56313819e3d8ec6f483f4256880f3d7da567286665d94e6bb5ada7"
+  },
+  {
+    "file": "01_AUTHORITY_AND_CONTEXT/DEVTEAM_002_AUTHORITY_AND_BOUNDARY.md",
+    "bytes": 864,
+    "sha256": "b2adf175f7f50765d68d8ab492552f1d8fba16d0207515bb428dc0e3b3638e15"
+  },
+  {
+    "file": "02_EXECUTION_SPECIFICATION/DEVTEAM_002_EXACT_EXECUTION_SEQUENCE.md",
+    "bytes": 1808,
+    "sha256": "4841e9d9a863fe162ffa29e7cf12e3373ce9882f663849b360dea30446226fa1"
+  },
+  {
+    "file": "03_GOVERNANCE_AND_EVIDENCE/DEVTEAM_002_REQUIRED_EVIDENCE.md",
+    "bytes": 735,
+    "sha256": "32e242bd590bff3645b2176e9ac9f992ea6a3e927226331d697fb6c87e3ec1f5"
+  },
+  {
+    "file": "04_TEST_AND_ACCEPTANCE/DEVTEAM_002_ACCEPTANCE_MATRIX.md",
+    "bytes": 1137,
+    "sha256": "a05c1dbcf5c5b0177158266c925fac623f9780e960a36a017dd3fc019a113e5d"
+  },
+  {
+    "file": "05_ROUTING/ROUTING_MESSAGE.md",
+    "bytes": 3397,
+    "sha256": "1c7177f5f756ac96c2c280f22934a96dc9e51c77c3664e91522afa20e104ebb9"
+  },
+  {
+    "file": "README_PACK.md",
+    "bytes": 335,
+    "sha256": "535d31080fd7c0362341462e0a1b25d8add259a84a24da189ddd4df5eee9810d"
+  }
+]

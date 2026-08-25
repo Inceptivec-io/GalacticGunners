@@ -1,0 +1,111 @@
+{
+  "runtimeUrl": "http://localhost:8027/",
+  "consoleEvents": [
+    {
+      "type": "log",
+      "text": "%c %c %c %c %c Phaser v3.16.2 (WebGL | Web Audio) %c https://phaser.io background: #ff0000 background: #ffff00 background: #00ff00 background: #00ffff color: #ffffff; background: #000000 background: #fff"
+    }
+  ],
+  "networkFailures": [],
+  "badResponses": [],
+  "textureCheck": [
+    [
+      "playerShip",
+      true
+    ],
+    [
+      "alienscout",
+      true
+    ],
+    [
+      "enemyCruiser",
+      true
+    ],
+    [
+      "enemyShip",
+      true
+    ],
+    [
+      "motherShip",
+      true
+    ],
+    [
+      "asteroid",
+      true
+    ],
+    [
+      "comet",
+      true
+    ],
+    [
+      "nuke",
+      true
+    ],
+    [
+      "nukeBurst",
+      true
+    ],
+    [
+      "sprExplosion",
+      true
+    ],
+    [
+      "sprLaserPlayer",
+      true
+    ],
+    [
+      "sprLaserEnemy",
+      true
+    ],
+    [
+      "sprShieldTile",
+      true
+    ],
+    [
+      "backgroundstars",
+      true
+    ],
+    [
+      "sound",
+      true
+    ],
+    [
+      "mute",
+      true
+    ],
+    [
+      "BtnInfo",
+      true
+    ],
+    [
+      "BtnPoint",
+      true
+    ],
+    [
+      "logoPrimary",
+      true
+    ],
+    [
+      "menuTitlecard",
+      true
+    ],
+    [
+      "gameOver",
+      true
+    ],
+    [
+      "fireworks",
+      true
+    ],
+    [
+      "hudLife",
+      true
+    ],
+    [
+      "hudNuke",
+      true
+    ]
+  ],
+  "missingTextures": [],
+  "status": "PASS"
+}

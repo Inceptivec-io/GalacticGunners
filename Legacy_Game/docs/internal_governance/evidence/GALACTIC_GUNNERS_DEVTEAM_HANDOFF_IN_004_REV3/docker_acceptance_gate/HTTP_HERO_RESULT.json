@@ -1,0 +1,15 @@
+{
+    "StatusCode":  200,
+    "StatusDescription":  "OK",
+    "Headers":  {
+                    "Connection":  "keep-alive",
+                    "Accept-Ranges":  "bytes",
+                    "Content-Length":  "3605457",
+                    "Cache-Control":  "no-store",
+                    "Content-Type":  "image/png",
+                    "Date":  "Mon, 24 Aug 2026 19:42:28 GMT",
+                    "ETag":  "\"6a8c7e4e-3703d1\"",
+                    "Last-Modified":  "Mon, 24 Aug 2026 17:24:30 GMT",
+                    "Server":  "nginx/1.27.5"
+                }
+}

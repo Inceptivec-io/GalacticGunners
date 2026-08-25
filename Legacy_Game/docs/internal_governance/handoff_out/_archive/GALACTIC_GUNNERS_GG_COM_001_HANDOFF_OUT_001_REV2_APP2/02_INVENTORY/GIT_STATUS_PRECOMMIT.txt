@@ -1,0 +1,7 @@
+﻿## feature/GG-COM-001...origin/feature/GG-COM-001
+ M docs/internal_governance/currentness/CURRENT_STATE.md
+ M docs/internal_governance/registers/GG_REGISTER_HANDOFF_COMMISSION.md
+ M docs/internal_governance/registers/GG_REGISTER_PROJECT_STATE.md
+?? docs/internal_governance/evidence/GALACTIC_GUNNERS_GG_COM_001_HANDOFF_IN_001_REV2_APP2/
+?? docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_GG_COM_001_HANDOFF_IN_001_REV2_APP2/
+?? docs/internal_governance/handoff_out/_archive/GALACTIC_GUNNERS_GG_COM_001_HANDOFF_OUT_001_REV2_APP2/

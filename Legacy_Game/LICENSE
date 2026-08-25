@@ -1,0 +1,12 @@
+# Galactic Gunners Licence Position
+
+Galactic Gunners proprietary product code, documentation, product-specific material and Inceptivec-owned content are reserved to Inceptivec / the applicable Galactic Gunners rights owner except where a separate written licence or agreement says otherwise.
+
+This repository also contains identified third-party components distributed under their own licence terms. Those third-party rights are preserved and are not overridden by this product licence-position file.
+
+Known retained third-party MIT components are recorded in `THIRD_PARTY_NOTICES.md` and `docs/commercial/GG-COM-001/THIRD_PARTY_NOTICES.md`, including:
+
+- Jared York / CourseSaucerInvaders material under the MIT License.
+- Phaser `3.16.2` under the MIT License.
+
+Do not treat this file as a bare MIT licence for the whole Galactic Gunners product. Final legal/entity wording must be confirmed before commercial store release.

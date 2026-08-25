@@ -1,35 +1,44 @@
 Active Handoff:
-GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV2
+GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_006_REV1
 
 Programme:
-IP_FREEDOM_LICENSE_PROTECTION_ASSET_CREATION
+STEP 3 - LEGACY GAME CONTAINMENT FOR FOUNDER PR REVIEW
 
 Stage:
-GGF-1 FOUNDATIONAL CONVERGENCE COMPLETE / PENDING FOUNDER ACCEPTANCE
+LEGACY GAME CONTAINMENT CI BOOTSTRAP CORRECTED / PENDING FOUNDER PR REVIEW
 
 Branch:
-feature/GG-COM-001
+feature/legacy-game-containment
 
-DEVTEAM_004 Entry SHA:
-be5bb36235c8c9ccd81917a3e33b0fbd808581b8
+DEVTEAM_006 Entry SHA:
+1579a03aa38aa9242107d808636a1582b4373b9d
 
-DEVTEAM_004_REV2 Entry SHA:
-75c5a109b1f231440dd15d09d3dd3fe7384bd08f
+DEVTEAM_006_REV1 Entry SHA:
+921af6566cb9784f5db7e7b803549010a0578e5b
+
+Legacy Source Authority:
+feature/GG-COM-001 @ 6cda67a3c539ae85d769a571eb4f5299ed9bc4e6
+
+Accepted v0.1 Behavioural Coordinate:
+1539395a6e2eb3a8a0a571692c5425122ae0b82e
+
+Production Architecture Base:
+feature/production-architecture-foundation @ 039aa132a4166cc257edb6be3f3e49a01aecdfe3
 
 Current Repository Head Authority:
-origin/feature/GG-COM-001
+origin/feature/legacy-game-containment
 
 Local/Remote Reconciliation At Return:
-RECORDED IN EXTERNAL DEVTEAM-004 REV2 HANDOFF-OUT AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
+RECORDED IN EXTERNAL DEVTEAM-006 HANDOFF-OUT AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
 
 Worktree At Return:
-RECORDED IN EXTERNAL DEVTEAM-004 REV2 HANDOFF-OUT AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
+RECORDED IN EXTERNAL DEVTEAM-006 HANDOFF-OUT AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
 
 POST_BOX:
 CLEAN AT CLOSURE - boundary controls only / active payload zero
 
 Internal Governance:
-COMPLETE / CURRENT
+CURRENT
 
 Registers:
 CURRENT
@@ -37,50 +46,26 @@ CURRENT
 Evidence:
 DURABLE
 
-Docker Local Founder Acceptance Runtime:
-AVAILABLE - rebuilt for Handoff 004 REV2 preview at http://localhost:8027/
+Legacy Containment:
+PASS - complete closed legacy source estate contained under Legacy_Game/ with authorised containment metadata differences only.
 
-QA Toolchain:
-AVAILABLE - pinned npm development-only QA layer
+Source-vs-Contained Reconciliation:
+PASS - machine-readable inventory records 1148 preserved files, 2 intentional metadata differences, 0 missing, 0 unexpected and 0 differing files.
 
-Handoff 004 QA Gate:
-PASS - npm run qa:all
+Production Isolation:
+PASS - production code imports/dependencies from Legacy_Game/ = 0.
 
-Handoff 004 REV1 QA Gate:
-PASS - npm run qa:all
+CI Bootstrap:
+PASS TARGET - root package-lock.json generated from declared production npm workspace dependency graph for setup-node npm cache and deterministic installs; final GitHub Actions quality result recorded externally after final push.
 
-Handoff 004 REV2 QA Gate:
-PASS - npm run qa:all
+External Asset/IP Package:
+NOT TOUCHED - Step 4 asset/IP package remains out of scope.
 
-Foundational Convergence:
-PASS - minimum score clamp, player scale/body normalization, stable swept projectile collision contracts, shared HUD, Game Over/Victory result freeze, pause component and planning v1.1 admission complete.
-
-Planning Currentness:
-PASS - Roadmap v1.1 and Playlist v1.1 admitted as live planning authority; v1.0 and DEVTEAM-003 implementation planning archived.
-
-Collision Fidelity:
-PASS - deterministic player/enemy paths, mothership/nuke specials and swept projectile contracts verified.
-
-Sprite / Atlas Geometry:
-PASS - Sharp atlas and sprite geometry verification retained.
-
-Visual / Surface Regression:
-PASS - Playwright browser and pixel visual checks retained with REV2 pause and shared HUD coverage.
-
-Founder Visual Acceptance:
-PENDING
-
-Founder Functional Acceptance:
-PENDING
-
-Founder Audio-In-Context Acceptance:
-PENDING
-
-Controller Hardware:
-NOT EXECUTED - no Xbox/Haute hardware attached; controller runtime paths retained from prior verified baseline and browser/controller-path assertions retained
-
-Closure:
-PASS TARGET - FINAL PUSH / SAFE EXIT PROOF RECORDED IN EXTERNAL DEVTEAM-004 REV2 HANDOFF-OUT
+Production Feature Work:
+NOT PERFORMED
 
 Founder Acceptance:
 PENDING
+
+PR Review:
+PENDING FOUNDER REVIEW / MERGE PROHIBITED BY DEVELOPMENT

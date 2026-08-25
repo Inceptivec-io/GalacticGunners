@@ -10,7 +10,7 @@ const mode = modeArg ? modeArg.split("=")[1] : "all";
 const url = process.env.GG_RUNTIME_URL || "http://localhost:8027/";
 const evidenceRoot = path.resolve(process.env.GG_HANDOFF_ID
   ? `docs/internal_governance/evidence/${process.env.GG_HANDOFF_ID}`
-  : "docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV2");
+  : "docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV5");
 const runtimeDir = path.join(evidenceRoot, "runtime_playwright");
 
 function ensureDir(dir) {
@@ -427,8 +427,8 @@ async function main() {
       report.browser.level1.playerScale === 0.036 &&
       Math.abs(Math.abs(report.browser.level1.enemyAngle) - 180) < 0.01 && report.browser.level1.enemyBounds.minLeft >= -1 &&
       report.browser.level1.enemyBounds.maxRight <= 1367 && report.browser.level1.nukeHud.iconTexture === "hudNuke" &&
-      report.browser.level1.hudContract.scoreText.indexOf("Score:") === 0 &&
-      report.browser.level1.hudContract.livesText.indexOf("Lives:") === 0 &&
+      report.browser.level1.hudContract.scoreText.indexOf("SCORE") === 0 &&
+      report.browser.level1.hudContract.livesText === "LIVES" &&
       report.browser.level1.hudContract.hasMute &&
       !report.browser.level1.hudContract.hasReplay &&
       report.browser.level1.playerAnimation.idleFrame === "0" &&

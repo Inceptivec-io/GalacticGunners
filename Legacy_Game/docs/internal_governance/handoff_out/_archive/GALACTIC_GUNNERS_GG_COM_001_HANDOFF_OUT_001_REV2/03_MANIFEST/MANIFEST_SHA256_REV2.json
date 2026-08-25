@@ -1,0 +1,37 @@
+﻿[
+    {
+        "path":  "docs\\internal_governance\\handoff_out\\_archive\\GALACTIC_GUNNERS_GG_COM_001_HANDOFF_OUT_001_REV2\\00_HANDOFF_OUT_REV2.md",
+        "sha256":  "C6B08D27B9616D2E902A70153A46648EBACB3BB60A8EB8514352DACA2710BA1E",
+        "bytes":  2954
+    },
+    {
+        "path":  "docs\\internal_governance\\handoff_out\\_archive\\GALACTIC_GUNNERS_GG_COM_001_HANDOFF_OUT_001_REV2\\02_INVENTORY\\CANONICAL_GOVERNANCE_TREE_INVENTORY.txt",
+        "sha256":  "6069D2F42E304380015BAA5C7E8DE1A9671D7F330E9259DCD6DD5EF9C2E0DB5D",
+        "bytes":  21152
+    },
+    {
+        "path":  "docs\\internal_governance\\handoff_out\\_archive\\GALACTIC_GUNNERS_GG_COM_001_HANDOFF_OUT_001_REV2\\02_INVENTORY\\GIT_STATUS_PRECOMMIT.txt",
+        "sha256":  "209603847CAFCEA0006930637F7B2459375A280B6BF3EEFA094ACC9F0FE19FEC",
+        "bytes":  10962
+    },
+    {
+        "path":  "docs\\internal_governance\\handoff_out\\_archive\\GALACTIC_GUNNERS_GG_COM_001_HANDOFF_OUT_001_REV2\\02_INVENTORY\\LOCAL_HEAD_PRECOMMIT.txt",
+        "sha256":  "53913257288BDECA20A400DBBAB5BF52EB95FDFF28F2A9906C7BAAD11EE6E605",
+        "bytes":  45
+    },
+    {
+        "path":  "docs\\internal_governance\\handoff_out\\_archive\\GALACTIC_GUNNERS_GG_COM_001_HANDOFF_OUT_001_REV2\\02_INVENTORY\\POST_BOX_CLOSED_STATE_INVENTORY.txt",
+        "sha256":  "4E051469645B86CEFF000EF12E5A9B1465B85144E65010688352D44252B82AA2",
+        "bytes":  518
+    },
+    {
+        "path":  "docs\\internal_governance\\handoff_out\\_archive\\GALACTIC_GUNNERS_GG_COM_001_HANDOFF_OUT_001_REV2\\02_INVENTORY\\REMOTE_FEATURE_HEAD_PRECOMMIT.txt",
+        "sha256":  "3C67F4F3283DAE9CAFAE8769BED09E567BADEEE14A070351839C58AD7C9D0E13",
+        "bytes":  75
+    },
+    {
+        "path":  "docs\\internal_governance\\handoff_out\\_archive\\GALACTIC_GUNNERS_GG_COM_001_HANDOFF_OUT_001_REV2\\03_MANIFEST\\MANIFEST_SHA256_REV2.json",
+        "sha256":  "5DCB9E258CCDE4E20C91AB435D05B29380CAE5B2BE56E0830087C46B13C8E327",
+        "bytes":  1746
+    }
+]

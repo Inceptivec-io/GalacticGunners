@@ -1,0 +1,2083 @@
+{
+  "titleState": {
+    "title": "Galactic Gunners",
+    "faviconCount": 4,
+    "overflowX": 0,
+    "overflowY": 0
+  },
+  "level1State": {
+    "active": true,
+    "playerFrame": 2,
+    "playerScaleX": 0.10213259668508287,
+    "playerBody": {
+      "w": 31.056479999999997,
+      "h": 36.972
+    },
+    "canvas": {
+      "w": 1422,
+      "h": 804,
+      "cssW": 1422,
+      "cssH": 804
+    }
+  },
+  "cometState": {
+    "created": 12,
+    "uniqueVariants": [
+      0,
+      1
+    ],
+    "frames": [
+      0,
+      1,
+      0,
+      1,
+      1,
+      0,
+      1,
+      1,
+      0,
+      1,
+      0,
+      1
+    ],
+    "activeBodies": 12
+  },
+  "gameOverState": {
+    "texts": [
+      "Final Score: 1234",
+      "Lives: GAME OVER",
+      "ReArm: 150/150",
+      "Nukes: 2",
+      "GAME OVER",
+      "Final Score: 1234"
+    ],
+    "zones": 3,
+    "score": 1234,
+    "finalScore": 1234,
+    "hudVisible": false,
+    "hasDuplicateRestartMenu": false
+  },
+  "errorCount": 52,
+  "errors": [
+    {
+      "method": "Log.entryAdded",
+      "params": {
+        "entry": {
+          "source": "rendering",
+          "level": "warning",
+          "text": "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently",
+          "timestamp": 1787529812640.913,
+          "url": "http://localhost:8027/assets/js/phaser.js",
+          "lineNumber": 96775,
+          "stackTrace": {
+            "callFrames": [
+              {
+                "functionName": "checkInverseAlpha",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 96775,
+                "columnNumber": 21
+              },
+              {
+                "functionName": "init",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 96786,
+                "columnNumber": 45
+              },
+              {
+                "functionName": "",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 96792,
+                "columnNumber": 17
+              },
+              {
+                "functionName": "__webpack_require__",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 29,
+                "columnNumber": 29
+              },
+              {
+                "functionName": "",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 96837,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "__webpack_require__",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 29,
+                "columnNumber": 29
+              },
+              {
+                "functionName": "",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 96854,
+                "columnNumber": 13
+              },
+              {
+                "functionName": "__webpack_require__",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 29,
+                "columnNumber": 29
+              },
+              {
+                "functionName": "",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 159504,
+                "columnNumber": 12
+              },
+              {
+                "functionName": "__webpack_require__",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 29,
+                "columnNumber": 29
+              },
+              {
+                "functionName": "",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 183300,
+                "columnNumber": 10
+              },
+              {
+                "functionName": "",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 183354,
+                "columnNumber": 29
+              },
+              {
+                "functionName": "__webpack_require__",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 29,
+                "columnNumber": 29
+              },
+              {
+                "functionName": "",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 93,
+                "columnNumber": 17
+              },
+              {
+                "functionName": "",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 96,
+                "columnNumber": 9
+              },
+              {
+                "functionName": "webpackUniversalModuleDefinition",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 8,
+                "columnNumber": 19
+              },
+              {
+                "functionName": "",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 9,
+                "columnNumber": 2
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "method": "Log.entryAdded",
+      "params": {
+        "entry": {
+          "source": "rendering",
+          "level": "warning",
+          "text": "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently",
+          "timestamp": 1787529812744.625,
+          "url": "http://localhost:8027/assets/js/phaser.js",
+          "lineNumber": 96738,
+          "stackTrace": {
+            "callFrames": [
+              {
+                "functionName": "yellow.onload",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 96738,
+                "columnNumber": 31
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "method": "Log.entryAdded",
+      "params": {
+        "entry": {
+          "source": "rendering",
+          "level": "warning",
+          "text": "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently",
+          "timestamp": 1787529815282.275,
+          "url": "http://localhost:8027/assets/js/phaser.js",
+          "lineNumber": 140286,
+          "stackTrace": {
+            "callFrames": [
+              {
+                "functionName": "MeasureText",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 140286,
+                "columnNumber": 28
+              },
+              {
+                "functionName": "TextStyle",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 140702,
+                "columnNumber": 27
+              },
+              {
+                "functionName": "Text",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 33958,
+                "columnNumber": 21
+              },
+              {
+                "functionName": "",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 137044,
+                "columnNumber": 32
+              },
+              {
+                "functionName": "create",
+                "scriptId": "13",
+                "url": "http://localhost:8027/assets/js/mainmenu.js",
+                "lineNumber": 46,
+                "columnNumber": 30
+              },
+              {
+                "functionName": "create",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 81070,
+                "columnNumber": 25
+              },
+              {
+                "functionName": "bootScene",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 80943,
+                "columnNumber": 21
+              },
+              {
+                "functionName": "start",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 81622,
+                "columnNumber": 17
+              },
+              {
+                "functionName": "processQueue",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 80751,
+                "columnNumber": 26
+              },
+              {
+                "functionName": "update",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 81011,
+                "columnNumber": 13
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 152465,
+                "columnNumber": 19
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 92731,
+                "columnNumber": 13
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 92078,
+                "columnNumber": 18
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "method": "Log.entryAdded",
+      "params": {
+        "entry": {
+          "source": "rendering",
+          "level": "warning",
+          "text": "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently",
+          "timestamp": 1787529815315.895,
+          "url": "http://localhost:8027/assets/js/phaser.js",
+          "lineNumber": 140286,
+          "stackTrace": {
+            "callFrames": [
+              {
+                "functionName": "MeasureText",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 140286,
+                "columnNumber": 28
+              },
+              {
+                "functionName": "TextStyle",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 140702,
+                "columnNumber": 27
+              },
+              {
+                "functionName": "Text",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 33958,
+                "columnNumber": 21
+              },
+              {
+                "functionName": "",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 137044,
+                "columnNumber": 32
+              },
+              {
+                "functionName": "create",
+                "scriptId": "13",
+                "url": "http://localhost:8027/assets/js/mainmenu.js",
+                "lineNumber": 64,
+                "columnNumber": 31
+              },
+              {
+                "functionName": "create",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 81070,
+                "columnNumber": 25
+              },
+              {
+                "functionName": "bootScene",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 80943,
+                "columnNumber": 21
+              },
+              {
+                "functionName": "start",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 81622,
+                "columnNumber": 17
+              },
+              {
+                "functionName": "processQueue",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 80751,
+                "columnNumber": 26
+              },
+              {
+                "functionName": "update",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 81011,
+                "columnNumber": 13
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 152465,
+                "columnNumber": 19
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 92731,
+                "columnNumber": 13
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 92078,
+                "columnNumber": 18
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "method": "Log.entryAdded",
+      "params": {
+        "entry": {
+          "source": "rendering",
+          "level": "warning",
+          "text": "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently",
+          "timestamp": 1787529815330.149,
+          "url": "http://localhost:8027/assets/js/phaser.js",
+          "lineNumber": 140286,
+          "stackTrace": {
+            "callFrames": [
+              {
+                "functionName": "MeasureText",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 140286,
+                "columnNumber": 28
+              },
+              {
+                "functionName": "TextStyle",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 140702,
+                "columnNumber": 27
+              },
+              {
+                "functionName": "Text",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 33958,
+                "columnNumber": 21
+              },
+              {
+                "functionName": "",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 137044,
+                "columnNumber": 32
+              },
+              {
+                "functionName": "create",
+                "scriptId": "13",
+                "url": "http://localhost:8027/assets/js/mainmenu.js",
+                "lineNumber": 115,
+                "columnNumber": 29
+              },
+              {
+                "functionName": "create",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 81070,
+                "columnNumber": 25
+              },
+              {
+                "functionName": "bootScene",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 80943,
+                "columnNumber": 21
+              },
+              {
+                "functionName": "start",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 81622,
+                "columnNumber": 17
+              },
+              {
+                "functionName": "processQueue",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 80751,
+                "columnNumber": 26
+              },
+              {
+                "functionName": "update",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 81011,
+                "columnNumber": 13
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 152465,
+                "columnNumber": 19
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 92731,
+                "columnNumber": 13
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 92078,
+                "columnNumber": 18
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "method": "Log.entryAdded",
+      "params": {
+        "entry": {
+          "source": "rendering",
+          "level": "warning",
+          "text": "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently",
+          "timestamp": 1787529815344.245,
+          "url": "http://localhost:8027/assets/js/phaser.js",
+          "lineNumber": 140286,
+          "stackTrace": {
+            "callFrames": [
+              {
+                "functionName": "MeasureText",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 140286,
+                "columnNumber": 28
+              },
+              {
+                "functionName": "TextStyle",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 140702,
+                "columnNumber": 27
+              },
+              {
+                "functionName": "Text",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 33958,
+                "columnNumber": 21
+              },
+              {
+                "functionName": "",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 137044,
+                "columnNumber": 32
+              },
+              {
+                "functionName": "create",
+                "scriptId": "13",
+                "url": "http://localhost:8027/assets/js/mainmenu.js",
+                "lineNumber": 158,
+                "columnNumber": 30
+              },
+              {
+                "functionName": "create",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 81070,
+                "columnNumber": 25
+              },
+              {
+                "functionName": "bootScene",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 80943,
+                "columnNumber": 21
+              },
+              {
+                "functionName": "start",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 81622,
+                "columnNumber": 17
+              },
+              {
+                "functionName": "processQueue",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 80751,
+                "columnNumber": 26
+              },
+              {
+                "functionName": "update",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 81011,
+                "columnNumber": 13
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 152465,
+                "columnNumber": 19
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 92731,
+                "columnNumber": 13
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 92078,
+                "columnNumber": 18
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "method": "Log.entryAdded",
+      "params": {
+        "entry": {
+          "source": "rendering",
+          "level": "warning",
+          "text": "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently",
+          "timestamp": 1787529819920.952,
+          "url": "http://localhost:8027/assets/js/phaser.js",
+          "lineNumber": 140286,
+          "stackTrace": {
+            "callFrames": [
+              {
+                "functionName": "MeasureText",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 140286,
+                "columnNumber": 28
+              },
+              {
+                "functionName": "TextStyle",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 140702,
+                "columnNumber": 27
+              },
+              {
+                "functionName": "Text",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 33958,
+                "columnNumber": 21
+              },
+              {
+                "functionName": "",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 137044,
+                "columnNumber": 32
+              },
+              {
+                "functionName": "create",
+                "scriptId": "16",
+                "url": "http://localhost:8027/assets/js/level1.js",
+                "lineNumber": 47,
+                "columnNumber": 29
+              },
+              {
+                "functionName": "create",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 81070,
+                "columnNumber": 25
+              },
+              {
+                "functionName": "bootScene",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 80958,
+                "columnNumber": 17
+              },
+              {
+                "functionName": "start",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 81622,
+                "columnNumber": 17
+              },
+              {
+                "functionName": "",
+                "scriptId": "24",
+                "url": "",
+                "lineNumber": 0,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "",
+                "scriptId": "24",
+                "url": "",
+                "lineNumber": 0,
+                "columnNumber": 52
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "method": "Log.entryAdded",
+      "params": {
+        "entry": {
+          "source": "rendering",
+          "level": "warning",
+          "text": "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently",
+          "timestamp": 1787529819924.73,
+          "url": "http://localhost:8027/assets/js/phaser.js",
+          "lineNumber": 140286,
+          "stackTrace": {
+            "callFrames": [
+              {
+                "functionName": "MeasureText",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 140286,
+                "columnNumber": 28
+              },
+              {
+                "functionName": "TextStyle",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 140702,
+                "columnNumber": 27
+              },
+              {
+                "functionName": "Text",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 33958,
+                "columnNumber": 21
+              },
+              {
+                "functionName": "",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 137044,
+                "columnNumber": 32
+              },
+              {
+                "functionName": "create",
+                "scriptId": "16",
+                "url": "http://localhost:8027/assets/js/level1.js",
+                "lineNumber": 51,
+                "columnNumber": 29
+              },
+              {
+                "functionName": "create",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 81070,
+                "columnNumber": 25
+              },
+              {
+                "functionName": "bootScene",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 80958,
+                "columnNumber": 17
+              },
+              {
+                "functionName": "start",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 81622,
+                "columnNumber": 17
+              },
+              {
+                "functionName": "",
+                "scriptId": "24",
+                "url": "",
+                "lineNumber": 0,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "",
+                "scriptId": "24",
+                "url": "",
+                "lineNumber": 0,
+                "columnNumber": 52
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "method": "Log.entryAdded",
+      "params": {
+        "entry": {
+          "source": "rendering",
+          "level": "warning",
+          "text": "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently",
+          "timestamp": 1787529819928.527,
+          "url": "http://localhost:8027/assets/js/phaser.js",
+          "lineNumber": 140286,
+          "stackTrace": {
+            "callFrames": [
+              {
+                "functionName": "MeasureText",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 140286,
+                "columnNumber": 28
+              },
+              {
+                "functionName": "TextStyle",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 140702,
+                "columnNumber": 27
+              },
+              {
+                "functionName": "Text",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 33958,
+                "columnNumber": 21
+              },
+              {
+                "functionName": "",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 137044,
+                "columnNumber": 32
+              },
+              {
+                "functionName": "create",
+                "scriptId": "16",
+                "url": "http://localhost:8027/assets/js/level1.js",
+                "lineNumber": 55,
+                "columnNumber": 33
+              },
+              {
+                "functionName": "create",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 81070,
+                "columnNumber": 25
+              },
+              {
+                "functionName": "bootScene",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 80958,
+                "columnNumber": 17
+              },
+              {
+                "functionName": "start",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 81622,
+                "columnNumber": 17
+              },
+              {
+                "functionName": "",
+                "scriptId": "24",
+                "url": "",
+                "lineNumber": 0,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "",
+                "scriptId": "24",
+                "url": "",
+                "lineNumber": 0,
+                "columnNumber": 52
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "method": "Log.entryAdded",
+      "params": {
+        "entry": {
+          "source": "rendering",
+          "level": "warning",
+          "text": "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently",
+          "timestamp": 1787529819933.577,
+          "url": "http://localhost:8027/assets/js/phaser.js",
+          "lineNumber": 140286,
+          "stackTrace": {
+            "callFrames": [
+              {
+                "functionName": "MeasureText",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 140286,
+                "columnNumber": 28
+              },
+              {
+                "functionName": "TextStyle",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 140702,
+                "columnNumber": 27
+              },
+              {
+                "functionName": "Text",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 33958,
+                "columnNumber": 21
+              },
+              {
+                "functionName": "",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 137044,
+                "columnNumber": 32
+              },
+              {
+                "functionName": "create",
+                "scriptId": "16",
+                "url": "http://localhost:8027/assets/js/level1.js",
+                "lineNumber": 60,
+                "columnNumber": 29
+              },
+              {
+                "functionName": "create",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 81070,
+                "columnNumber": 25
+              },
+              {
+                "functionName": "bootScene",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 80958,
+                "columnNumber": 17
+              },
+              {
+                "functionName": "start",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 81622,
+                "columnNumber": 17
+              },
+              {
+                "functionName": "",
+                "scriptId": "24",
+                "url": "",
+                "lineNumber": 0,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "",
+                "scriptId": "24",
+                "url": "",
+                "lineNumber": 0,
+                "columnNumber": 52
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "method": "Log.entryAdded",
+      "params": {
+        "entry": {
+          "source": "other",
+          "level": "warning",
+          "text": "The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio",
+          "timestamp": 1787529820701.413,
+          "url": "http://localhost:8027/assets/js/phaser.js",
+          "lineNumber": 77412,
+          "stackTrace": {
+            "callFrames": [
+              {
+                "functionName": "createAndStartBufferSource",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 77412,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "play",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 77301,
+                "columnNumber": 13
+              },
+              {
+                "functionName": "play",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 24174,
+                "columnNumber": 29
+              },
+              {
+                "functionName": "ggPlayAudio",
+                "scriptId": "10",
+                "url": "http://localhost:8027/assets/js/gg_runtime.js",
+                "lineNumber": 94,
+                "columnNumber": 16
+              },
+              {
+                "functionName": "play",
+                "scriptId": "10",
+                "url": "http://localhost:8027/assets/js/gg_runtime.js",
+                "lineNumber": 108,
+                "columnNumber": 12
+              },
+              {
+                "functionName": "callback",
+                "scriptId": "16",
+                "url": "http://localhost:8027/assets/js/level1.js",
+                "lineNumber": 763,
+                "columnNumber": 44
+              },
+              {
+                "functionName": "update",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 110736,
+                "columnNumber": 35
+              },
+              {
+                "functionName": "emit",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 2356,
+                "columnNumber": 32
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 41028,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "update",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 81022,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 152465,
+                "columnNumber": 19
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 92731,
+                "columnNumber": 13
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 92078,
+                "columnNumber": 18
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "method": "Log.entryAdded",
+      "params": {
+        "entry": {
+          "source": "other",
+          "level": "warning",
+          "text": "The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio",
+          "timestamp": 1787529821313.652,
+          "url": "http://localhost:8027/assets/js/phaser.js",
+          "lineNumber": 77412,
+          "stackTrace": {
+            "callFrames": [
+              {
+                "functionName": "createAndStartBufferSource",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 77412,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "play",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 77301,
+                "columnNumber": 13
+              },
+              {
+                "functionName": "play",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 24174,
+                "columnNumber": 29
+              },
+              {
+                "functionName": "ggPlayAudio",
+                "scriptId": "10",
+                "url": "http://localhost:8027/assets/js/gg_runtime.js",
+                "lineNumber": 94,
+                "columnNumber": 16
+              },
+              {
+                "functionName": "play",
+                "scriptId": "10",
+                "url": "http://localhost:8027/assets/js/gg_runtime.js",
+                "lineNumber": 108,
+                "columnNumber": 12
+              },
+              {
+                "functionName": "callback",
+                "scriptId": "16",
+                "url": "http://localhost:8027/assets/js/level1.js",
+                "lineNumber": 763,
+                "columnNumber": 44
+              },
+              {
+                "functionName": "update",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 110736,
+                "columnNumber": 35
+              },
+              {
+                "functionName": "emit",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 2356,
+                "columnNumber": 32
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 41028,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "update",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 81022,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 152465,
+                "columnNumber": 19
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 92731,
+                "columnNumber": 13
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 92078,
+                "columnNumber": 18
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "method": "Log.entryAdded",
+      "params": {
+        "entry": {
+          "source": "other",
+          "level": "warning",
+          "text": "The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio",
+          "timestamp": 1787529822389.386,
+          "url": "http://localhost:8027/assets/js/phaser.js",
+          "lineNumber": 77412,
+          "stackTrace": {
+            "callFrames": [
+              {
+                "functionName": "createAndStartBufferSource",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 77412,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "play",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 77301,
+                "columnNumber": 13
+              },
+              {
+                "functionName": "play",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 24174,
+                "columnNumber": 29
+              },
+              {
+                "functionName": "ggPlayAudio",
+                "scriptId": "10",
+                "url": "http://localhost:8027/assets/js/gg_runtime.js",
+                "lineNumber": 94,
+                "columnNumber": 16
+              },
+              {
+                "functionName": "play",
+                "scriptId": "10",
+                "url": "http://localhost:8027/assets/js/gg_runtime.js",
+                "lineNumber": 108,
+                "columnNumber": 12
+              },
+              {
+                "functionName": "callback",
+                "scriptId": "16",
+                "url": "http://localhost:8027/assets/js/level1.js",
+                "lineNumber": 763,
+                "columnNumber": 44
+              },
+              {
+                "functionName": "update",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 110736,
+                "columnNumber": 35
+              },
+              {
+                "functionName": "emit",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 2356,
+                "columnNumber": 32
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 41028,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "update",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 81022,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 152465,
+                "columnNumber": 19
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 92731,
+                "columnNumber": 13
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 92078,
+                "columnNumber": 18
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "method": "Log.entryAdded",
+      "params": {
+        "entry": {
+          "source": "other",
+          "level": "warning",
+          "text": "The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio",
+          "timestamp": 1787529822891.261,
+          "url": "http://localhost:8027/assets/js/phaser.js",
+          "lineNumber": 77412,
+          "stackTrace": {
+            "callFrames": [
+              {
+                "functionName": "createAndStartBufferSource",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 77412,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "play",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 77301,
+                "columnNumber": 13
+              },
+              {
+                "functionName": "play",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 24174,
+                "columnNumber": 29
+              },
+              {
+                "functionName": "ggPlayAudio",
+                "scriptId": "10",
+                "url": "http://localhost:8027/assets/js/gg_runtime.js",
+                "lineNumber": 94,
+                "columnNumber": 16
+              },
+              {
+                "functionName": "play",
+                "scriptId": "10",
+                "url": "http://localhost:8027/assets/js/gg_runtime.js",
+                "lineNumber": 108,
+                "columnNumber": 12
+              },
+              {
+                "functionName": "callback",
+                "scriptId": "16",
+                "url": "http://localhost:8027/assets/js/level1.js",
+                "lineNumber": 763,
+                "columnNumber": 44
+              },
+              {
+                "functionName": "update",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 110736,
+                "columnNumber": 35
+              },
+              {
+                "functionName": "emit",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 2356,
+                "columnNumber": 32
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 41028,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "update",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 81022,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 152465,
+                "columnNumber": 19
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 92731,
+                "columnNumber": 13
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 92078,
+                "columnNumber": 18
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "method": "Log.entryAdded",
+      "params": {
+        "entry": {
+          "source": "other",
+          "level": "warning",
+          "text": "The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio",
+          "timestamp": 1787529823631.975,
+          "url": "http://localhost:8027/assets/js/phaser.js",
+          "lineNumber": 77412,
+          "stackTrace": {
+            "callFrames": [
+              {
+                "functionName": "createAndStartBufferSource",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 77412,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "play",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 77301,
+                "columnNumber": 13
+              },
+              {
+                "functionName": "play",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 24174,
+                "columnNumber": 29
+              },
+              {
+                "functionName": "ggPlayAudio",
+                "scriptId": "10",
+                "url": "http://localhost:8027/assets/js/gg_runtime.js",
+                "lineNumber": 94,
+                "columnNumber": 16
+              },
+              {
+                "functionName": "play",
+                "scriptId": "10",
+                "url": "http://localhost:8027/assets/js/gg_runtime.js",
+                "lineNumber": 108,
+                "columnNumber": 12
+              },
+              {
+                "functionName": "callback",
+                "scriptId": "16",
+                "url": "http://localhost:8027/assets/js/level1.js",
+                "lineNumber": 763,
+                "columnNumber": 44
+              },
+              {
+                "functionName": "update",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 110736,
+                "columnNumber": 35
+              },
+              {
+                "functionName": "emit",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 2356,
+                "columnNumber": 32
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 41028,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "update",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 81022,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 152465,
+                "columnNumber": 19
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 92731,
+                "columnNumber": 13
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 92078,
+                "columnNumber": 18
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "method": "Log.entryAdded",
+      "params": {
+        "entry": {
+          "source": "other",
+          "level": "warning",
+          "text": "The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio",
+          "timestamp": 1787529824083.16,
+          "url": "http://localhost:8027/assets/js/phaser.js",
+          "lineNumber": 77412,
+          "stackTrace": {
+            "callFrames": [
+              {
+                "functionName": "createAndStartBufferSource",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 77412,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "play",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 77301,
+                "columnNumber": 13
+              },
+              {
+                "functionName": "play",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 24174,
+                "columnNumber": 29
+              },
+              {
+                "functionName": "ggPlayAudio",
+                "scriptId": "10",
+                "url": "http://localhost:8027/assets/js/gg_runtime.js",
+                "lineNumber": 94,
+                "columnNumber": 16
+              },
+              {
+                "functionName": "play",
+                "scriptId": "10",
+                "url": "http://localhost:8027/assets/js/gg_runtime.js",
+                "lineNumber": 108,
+                "columnNumber": 12
+              },
+              {
+                "functionName": "callback",
+                "scriptId": "16",
+                "url": "http://localhost:8027/assets/js/level1.js",
+                "lineNumber": 763,
+                "columnNumber": 44
+              },
+              {
+                "functionName": "update",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 110736,
+                "columnNumber": 35
+              },
+              {
+                "functionName": "emit",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 2356,
+                "columnNumber": 32
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 41028,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "update",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 81022,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 152465,
+                "columnNumber": 19
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 92731,
+                "columnNumber": 13
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 92078,
+                "columnNumber": 18
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "method": "Log.entryAdded",
+      "params": {
+        "entry": {
+          "source": "other",
+          "level": "warning",
+          "text": "The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio",
+          "timestamp": 1787529824224.207,
+          "url": "http://localhost:8027/assets/js/phaser.js",
+          "lineNumber": 77412,
+          "stackTrace": {
+            "callFrames": [
+              {
+                "functionName": "createAndStartBufferSource",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 77412,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "play",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 77301,
+                "columnNumber": 13
+              },
+              {
+                "functionName": "play",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 24174,
+                "columnNumber": 29
+              },
+              {
+                "functionName": "ggPlayAudio",
+                "scriptId": "10",
+                "url": "http://localhost:8027/assets/js/gg_runtime.js",
+                "lineNumber": 94,
+                "columnNumber": 16
+              },
+              {
+                "functionName": "play",
+                "scriptId": "10",
+                "url": "http://localhost:8027/assets/js/gg_runtime.js",
+                "lineNumber": 108,
+                "columnNumber": 12
+              },
+              {
+                "functionName": "callback",
+                "scriptId": "16",
+                "url": "http://localhost:8027/assets/js/level1.js",
+                "lineNumber": 763,
+                "columnNumber": 44
+              },
+              {
+                "functionName": "update",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 110736,
+                "columnNumber": 35
+              },
+              {
+                "functionName": "emit",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 2356,
+                "columnNumber": 32
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 41028,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "update",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 81022,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 152465,
+                "columnNumber": 19
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 92731,
+                "columnNumber": 13
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 92078,
+                "columnNumber": 18
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "method": "Log.entryAdded",
+      "params": {
+        "entry": {
+          "source": "other",
+          "level": "warning",
+          "text": "The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio",
+          "timestamp": 1787529825051.862,
+          "url": "http://localhost:8027/assets/js/phaser.js",
+          "lineNumber": 77412,
+          "stackTrace": {
+            "callFrames": [
+              {
+                "functionName": "createAndStartBufferSource",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 77412,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "play",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 77301,
+                "columnNumber": 13
+              },
+              {
+                "functionName": "play",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 24174,
+                "columnNumber": 29
+              },
+              {
+                "functionName": "ggPlayAudio",
+                "scriptId": "10",
+                "url": "http://localhost:8027/assets/js/gg_runtime.js",
+                "lineNumber": 94,
+                "columnNumber": 16
+              },
+              {
+                "functionName": "play",
+                "scriptId": "10",
+                "url": "http://localhost:8027/assets/js/gg_runtime.js",
+                "lineNumber": 108,
+                "columnNumber": 12
+              },
+              {
+                "functionName": "callback",
+                "scriptId": "16",
+                "url": "http://localhost:8027/assets/js/level1.js",
+                "lineNumber": 763,
+                "columnNumber": 44
+              },
+              {
+                "functionName": "update",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 110736,
+                "columnNumber": 35
+              },
+              {
+                "functionName": "emit",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 2356,
+                "columnNumber": 32
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 41028,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "update",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 81022,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 152465,
+                "columnNumber": 19
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 92731,
+                "columnNumber": 13
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 92078,
+                "columnNumber": 18
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "method": "Log.entryAdded",
+      "params": {
+        "entry": {
+          "source": "other",
+          "level": "warning",
+          "text": "The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio",
+          "timestamp": 1787529825312.212,
+          "url": "http://localhost:8027/assets/js/phaser.js",
+          "lineNumber": 77412,
+          "stackTrace": {
+            "callFrames": [
+              {
+                "functionName": "createAndStartBufferSource",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 77412,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "play",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 77301,
+                "columnNumber": 13
+              },
+              {
+                "functionName": "play",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 24174,
+                "columnNumber": 29
+              },
+              {
+                "functionName": "ggPlayAudio",
+                "scriptId": "10",
+                "url": "http://localhost:8027/assets/js/gg_runtime.js",
+                "lineNumber": 94,
+                "columnNumber": 16
+              },
+              {
+                "functionName": "play",
+                "scriptId": "10",
+                "url": "http://localhost:8027/assets/js/gg_runtime.js",
+                "lineNumber": 108,
+                "columnNumber": 12
+              },
+              {
+                "functionName": "callback",
+                "scriptId": "16",
+                "url": "http://localhost:8027/assets/js/level1.js",
+                "lineNumber": 763,
+                "columnNumber": 44
+              },
+              {
+                "functionName": "update",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 110736,
+                "columnNumber": 35
+              },
+              {
+                "functionName": "emit",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 2356,
+                "columnNumber": 32
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 41028,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "update",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 81022,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 152465,
+                "columnNumber": 19
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 92731,
+                "columnNumber": 13
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 92078,
+                "columnNumber": 18
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "method": "Log.entryAdded",
+      "params": {
+        "entry": {
+          "source": "other",
+          "level": "warning",
+          "text": "The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio",
+          "timestamp": 1787529826340.9,
+          "url": "http://localhost:8027/assets/js/phaser.js",
+          "lineNumber": 77412,
+          "stackTrace": {
+            "callFrames": [
+              {
+                "functionName": "createAndStartBufferSource",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 77412,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "play",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 77301,
+                "columnNumber": 13
+              },
+              {
+                "functionName": "play",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 24174,
+                "columnNumber": 29
+              },
+              {
+                "functionName": "ggPlayAudio",
+                "scriptId": "10",
+                "url": "http://localhost:8027/assets/js/gg_runtime.js",
+                "lineNumber": 94,
+                "columnNumber": 16
+              },
+              {
+                "functionName": "play",
+                "scriptId": "10",
+                "url": "http://localhost:8027/assets/js/gg_runtime.js",
+                "lineNumber": 108,
+                "columnNumber": 12
+              },
+              {
+                "functionName": "callback",
+                "scriptId": "16",
+                "url": "http://localhost:8027/assets/js/level1.js",
+                "lineNumber": 763,
+                "columnNumber": 44
+              },
+              {
+                "functionName": "update",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 110736,
+                "columnNumber": 35
+              },
+              {
+                "functionName": "emit",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 2356,
+                "columnNumber": 32
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 41028,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "update",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 81022,
+                "columnNumber": 20
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 152465,
+                "columnNumber": 19
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 92731,
+                "columnNumber": 13
+              },
+              {
+                "functionName": "step",
+                "scriptId": "5",
+                "url": "http://localhost:8027/assets/js/phaser.js",
+                "lineNumber": 92078,
+                "columnNumber": 18
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}
