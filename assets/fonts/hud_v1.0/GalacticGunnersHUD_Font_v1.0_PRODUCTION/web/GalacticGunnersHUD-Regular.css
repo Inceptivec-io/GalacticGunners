@@ -1,0 +1,15 @@
+@font-face {
+  font-family: 'Galactic Gunners HUD';
+  src: url('./GalacticGunnersHUD-Regular.woff') format('woff'),
+       url('../fonts/GalacticGunnersHUD-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+.gg-hud-type {
+  font-family: 'Galactic Gunners HUD', sans-serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}

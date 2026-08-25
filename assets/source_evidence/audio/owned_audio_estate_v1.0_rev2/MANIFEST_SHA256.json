@@ -1,0 +1,98 @@
+[
+  {
+    "file": "gg_ui_select_v001.wav",
+    "sha256": "bb382b07d808043ecd484de8f92c154596f7da95a11dce60fb770e2862af0618",
+    "bytes": 20204,
+    "format": "WAV PCM 24-bit stereo 48 kHz"
+  },
+  {
+    "file": "gg_ui_confirm_v001.wav",
+    "sha256": "5126059176e8d15623c5eff70dcd8eaf39ed092156e8c5efa3d55468c5317b93",
+    "bytes": 46124,
+    "format": "WAV PCM 24-bit stereo 48 kHz"
+  },
+  {
+    "file": "gg_ui_back_v001.wav",
+    "sha256": "f75a5c541aaa73618c2aa75bbb28b7b94e86790a3b4c8d5f20deaa8efc8ff9db",
+    "bytes": 40364,
+    "format": "WAV PCM 24-bit stereo 48 kHz"
+  },
+  {
+    "file": "gg_player_laser_v001.wav",
+    "sha256": "9eda7cf68f47e307ab3f7041e1dd59ac5f07e279c32cb1a9c9d3405905247aff",
+    "bytes": 57644,
+    "format": "WAV PCM 24-bit stereo 48 kHz"
+  },
+  {
+    "file": "gg_enemy_laser_v001.wav",
+    "sha256": "fce8f2c8853ff92a6ef2f80d9418c11b34f9601b5efda385377080999e6d5942",
+    "bytes": 77804,
+    "format": "WAV PCM 24-bit stereo 48 kHz"
+  },
+  {
+    "file": "gg_shield_hit_v001.wav",
+    "sha256": "098bc70f5f2919dc1ed089d377f5b7e18b43d551ea3649e9a0161e4aa1252178",
+    "bytes": 89324,
+    "format": "WAV PCM 24-bit stereo 48 kHz"
+  },
+  {
+    "file": "gg_player_hit_v001.wav",
+    "sha256": "049d14bd1353957d2a859ff4f5c56e5b854b6d75b9d136310559ca45810bf311",
+    "bytes": 103724,
+    "format": "WAV PCM 24-bit stereo 48 kHz"
+  },
+  {
+    "file": "gg_explosion_small_v001.wav",
+    "sha256": "aeffdb12344846f6207c61f0a70f19f9fdf5835d621745a75bd4707012f94fe4",
+    "bytes": 167078,
+    "format": "WAV PCM 24-bit stereo 48 kHz"
+  },
+  {
+    "file": "gg_explosion_large_v001.wav",
+    "sha256": "e94572901d77bcfe9f36f47304a7bc4105d9576453ec390bae2807b1ac08b202",
+    "bytes": 368684,
+    "format": "WAV PCM 24-bit stereo 48 kHz"
+  },
+  {
+    "file": "gg_nuke_fire_v001.wav",
+    "sha256": "cdeccacb879343a5d3772efe6abf6a514f8e7b2cc5c5486c123d4b8906898e1c",
+    "bytes": 253484,
+    "format": "WAV PCM 24-bit stereo 48 kHz"
+  },
+  {
+    "file": "gg_nuke_burst_v001.wav",
+    "sha256": "46e97a344cbcef9e775b9fcc81b0895858d29e975c32c416c6e3cd91c8da6d2b",
+    "bytes": 648044,
+    "format": "WAV PCM 24-bit stereo 48 kHz"
+  },
+  {
+    "file": "gg_comet_destroyed_v001.wav",
+    "sha256": "058659619c7d4a79728858b337801b0501b0978474aaa32b0a40f26eaa678908",
+    "bytes": 265004,
+    "format": "WAV PCM 24-bit stereo 48 kHz"
+  },
+  {
+    "file": "gg_mothership_hit_v001.wav",
+    "sha256": "626e414b8bf821ef6f05c43f8ba3fae04e8c1823873e65fe603bf1f5308ede36",
+    "bytes": 167078,
+    "format": "WAV PCM 24-bit stereo 48 kHz"
+  },
+  {
+    "file": "gg_mothership_destroyed_v001.wav",
+    "sha256": "f127e1fe61b10384c5c33f300e5c3fc6b9ff713b15bea78faf0c7e89f3244dd4",
+    "bytes": 964844,
+    "format": "WAV PCM 24-bit stereo 48 kHz"
+  },
+  {
+    "file": "gg_victory_stinger_v001.wav",
+    "sha256": "31079ac766de4768d40dee244ece536601b74c0e8c91aaf74ab7e8fe995a021b",
+    "bytes": 417644,
+    "format": "WAV PCM 24-bit stereo 48 kHz"
+  },
+  {
+    "file": "gg_game_over_stinger_v001.wav",
+    "sha256": "92b78af0fd4401e56fbe807494e406b7b45844a79c7e810b60f89bcbe6021ca8",
+    "bytes": 446444,
+    "format": "WAV PCM 24-bit stereo 48 kHz"
+  }
+]

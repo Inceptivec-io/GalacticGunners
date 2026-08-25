@@ -1,0 +1,8 @@
+@font-face {
+  font-family: "Galactic Gunners Gold Display";
+  src: url("./GalacticGunnersGoldDisplay-Regular.woff2") format("woff2"),
+       url("./GalacticGunnersGoldDisplay-Regular.woff") format("woff");
+  font-style: normal; font-weight: 400 900; font-display: swap;
+}
+.gg-gold { font-family: "Galactic Gunners Gold Display", sans-serif; text-transform: uppercase; letter-spacing: .045em; color: #ffb000; }
+.gg-gold-cinematic { font-family: "Galactic Gunners Gold Display", sans-serif; text-transform: uppercase; letter-spacing: .035em; color: transparent; background: linear-gradient(180deg,#fff3a6 0%,#ffc42b 18%,#f06b00 53%,#ffd34d 72%,#7d1600 100%); -webkit-background-clip:text; background-clip:text; -webkit-text-stroke:1px #ffcc3a; filter:drop-shadow(0 5px 0 #541000) drop-shadow(0 10px 0 #230300) drop-shadow(0 14px 16px rgba(0,0,0,.75)); }

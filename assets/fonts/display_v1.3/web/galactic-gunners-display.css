@@ -1,0 +1,14 @@
+@font-face {
+  font-family: "Galactic Gunners Display";
+  src: url("../GalacticGunnersDisplay-Regular-v1.3.woff2") format("woff2"),
+       url("../GalacticGunnersDisplay-Regular-v1.3.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+.gg-display {
+  font-family: "Galactic Gunners Display", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}

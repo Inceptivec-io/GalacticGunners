@@ -1,38 +1,29 @@
 Active Handoff:
-GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_006_REV1
+GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_007
 
 Programme:
-STEP 3 - LEGACY GAME CONTAINMENT FOR FOUNDER PR REVIEW
+STEP 4 - ASSET / IP BASELINE
 
 Stage:
-LEGACY GAME CONTAINMENT CI BOOTSTRAP CORRECTED / PENDING FOUNDER PR REVIEW
+ASSET / IP BASELINE ESTABLISHED / PENDING FOUNDER PR REVIEW
 
 Branch:
-feature/legacy-game-containment
+feature/asset-ip-baseline
 
-DEVTEAM_006 Entry SHA:
-1579a03aa38aa9242107d808636a1582b4373b9d
-
-DEVTEAM_006_REV1 Entry SHA:
-921af6566cb9784f5db7e7b803549010a0578e5b
-
-Legacy Source Authority:
-feature/GG-COM-001 @ 6cda67a3c539ae85d769a571eb4f5299ed9bc4e6
-
-Accepted v0.1 Behavioural Coordinate:
-1539395a6e2eb3a8a0a571692c5425122ae0b82e
+DEVTEAM_007 Entry SHA:
+28cb3a9596962e4e29a0f959351d6b467613a2d3
 
 Production Architecture Base:
-feature/production-architecture-foundation @ 039aa132a4166cc257edb6be3f3e49a01aecdfe3
+feature/production-architecture-foundation @ 28cb3a9596962e4e29a0f959351d6b467613a2d3
 
 Current Repository Head Authority:
-origin/feature/legacy-game-containment
+origin/feature/asset-ip-baseline
 
 Local/Remote Reconciliation At Return:
-RECORDED IN EXTERNAL DEVTEAM-006 HANDOFF-OUT AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
+RECORDED IN EXTERNAL DEVTEAM-007 HANDOFF-OUT AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
 
 Worktree At Return:
-RECORDED IN EXTERNAL DEVTEAM-006 HANDOFF-OUT AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
+RECORDED IN EXTERNAL DEVTEAM-007 HANDOFF-OUT AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
 
 POST_BOX:
 CLEAN AT CLOSURE - boundary controls only / active payload zero
@@ -46,23 +37,23 @@ CURRENT
 Evidence:
 DURABLE
 
-Legacy Containment:
-PASS - complete closed legacy source estate contained under Legacy_Game/ with authorised containment metadata differences only.
+Asset / IP Baseline:
+PASS - canonical root asset estate, Asset Register, Asset Provenance Register, Filename Rename Log and validation tooling established under assets/.
 
-Source-vs-Contained Reconciliation:
-PASS - machine-readable inventory records 1148 preserved files, 2 intentional metadata differences, 0 missing, 0 unexpected and 0 differing files.
+Source Package:
+GalacticGunners.zip SHA-256 DC1F9BA259075364CF2A19C9BE2AA48A83EA61735DBB3C2C248E0041005B8FCA
 
-Production Isolation:
-PASS - production code imports/dependencies from Legacy_Game/ = 0.
+Source Package Inventory:
+PASS - 283 files / 324 ZIP entries inventoried.
 
-CI Bootstrap:
-PASS TARGET - root package-lock.json generated from declared production npm workspace dependency graph for setup-node npm cache and deterministic installs; final GitHub Actions quality result recorded externally after final push.
+Transport ZIP Repository Policy:
+PASS - transport ZIPs are not committed as permanent repository evidence.
 
-External Asset/IP Package:
-NOT TOUCHED - Step 4 asset/IP package remains out of scope.
+Runtime Integration:
+NOT PERFORMED - Step 4 establishes the asset/IP baseline only.
 
-Production Feature Work:
-NOT PERFORMED
+Legacy_Game Mutation:
+NO
 
 Founder Acceptance:
 PENDING

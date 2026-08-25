@@ -13,6 +13,7 @@
 | Environments | `architecture/BRANCH_AND_ENVIRONMENT_MODEL.md` | CURRENT ON ARCHITECTURE BRANCH | branch/environment model change |
 | Legacy behavioural authority | `architecture/BEHAVIOURAL_BASELINE_REGISTER.md` | PROVISIONAL | Founder accepts REV3 |
 | Developer guides | `docs/internal_governance/guides/` | CURRENT ON ARCHITECTURE BRANCH | affected workflow change |
+| Asset/IP baseline | `assets/` and `assets/registers/` | CURRENT ON ASSET/IP BASELINE BRANCH | asset admission, rename, rights/provenance or derivative change |
 | Governance debt | `governance_debt/GOVERNANCE_DEBT_REGISTER.md` | ZERO | any governed drift discovered |
 
 Every material change updates all affected concerns before closure.
