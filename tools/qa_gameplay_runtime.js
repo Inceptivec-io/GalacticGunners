@@ -55,6 +55,7 @@ async function resetTraces(page) {
     window.ggPlayerDamageTrace = [];
     window.ggProjectileSpawnTrace = [];
     window.ggProjectileClashTrace = [];
+    window.ggGameOverTrace = [];
   });
 }
 
@@ -314,6 +315,64 @@ async function bossHostileCollisionMatrix(page) {
   return matrix;
 }
 
+async function startGameplayScene(page, sceneKey) {
+  await page.evaluate((key) => {
+    ["Level1", "Level2", "BossLevel", "MainMenu", "Paused"].forEach((activeKey) => {
+      if (game.scene.keys[activeKey]) game.scene.stop(activeKey);
+    });
+    RIP = false;
+    levelWon = false;
+    currentLives = 3;
+    game.scene.start(key);
+  }, sceneKey);
+  await page.waitForFunction((key) => {
+    return game.scene.keys[key] && game.scene.keys[key].scene.isActive() &&
+      window.ggGameplayTestControls && window.ggGameplayTestControls[key];
+  }, sceneKey, { timeout: 15000 });
+  await page.waitForTimeout(300);
+}
+
+async function hostileBottomBreachMatrix(page) {
+  const cases = [
+    { sceneKey: "Level1", ctorName: "Enemy", groupName: "enemies", texture: "enemyShip", label: "level1Enemy" },
+    { sceneKey: "Level2", ctorName: "EnemyCruiser", groupName: "enemies", texture: "enemyCruiser", label: "level2Cruiser" },
+    { sceneKey: "BossLevel", ctorName: "EnemyCruiser", groupName: "enemies", texture: "enemyCruiser", label: "bossCruiser" },
+    { sceneKey: "BossLevel", ctorName: "AlienScout", groupName: "alienscouts", texture: "alienScout", label: "bossScout" }
+  ];
+  const matrix = {};
+  for (const testCase of cases) {
+    await startGameplayScene(page, testCase.sceneKey);
+    await resetTraces(page);
+    matrix[testCase.label] = await page.evaluate((config) => {
+      const scene = game.scene.keys[config.sceneKey];
+      window.ggGameplayTestControls[config.sceneKey].clearRuntimeCollisionField();
+      RIP = false;
+      levelWon = false;
+      currentLives = 3;
+      scene.ggBottomBreachGameOver = false;
+      const y = scene.game.config.height + 8;
+      let hostile;
+      if (config.ctorName === "AlienScout") hostile = new AlienScout(scene, scene.game.config.width * 0.5, y);
+      else if (config.ctorName === "EnemyCruiser") hostile = new EnemyCruiser(scene, scene.game.config.width * 0.5, y, config.texture);
+      else hostile = new Enemy(scene, scene.game.config.width * 0.5, y, config.texture);
+      hostile.ggTestFixture = true;
+      ggAssignEntityId(scene, hostile, `${config.label}_BOTTOM_BREACH`);
+      if (hostile.body) hostile.body.setVelocity(0, 0);
+      scene[config.groupName].add(hostile);
+      ggRunSweptCollisionContracts(scene);
+      const trace = (window.ggGameOverTrace || []).find((item) => item.reason === "HOSTILE_BOTTOM_BREACH");
+      return {
+        rip: RIP,
+        currentLives,
+        traceReason: trace ? trace.reason : null,
+        hostileType: trace ? trace.hostileType : null,
+        hostileBottom: trace && trace.hostileBounds ? trace.hostileBounds.bottom : null
+      };
+    }, testCase);
+  }
+  return matrix;
+}
+
 async function runBrowser(extraParams = {}) {
   ensureDir(evidenceRoot);
   const browser = await chromium.launch({ headless: true });
@@ -350,9 +409,10 @@ async function gameplayAudit() {
     report.checks.PROJECTILE_SWEPT_COLLISION_LOOP = initial.sweptCollisionLoopInstalled === true ? "ON" : "OFF";
     report.checks.NORMAL_RUNTIME_COLLISION_AUTHORITY = "ARCADE_OVERLAP_PLUS_PROJECTILE_SWEEP";
 
+    await cleanup(page);
+    await resetTraces(page);
     await page.evaluate(() => window.ggGameplayTestControls.Level1.placePlayerClearOfShields());
-    await fireKey(page, "Space");
-    await page.waitForTimeout(120);
+    await fireUntil(page, () => window.ggGameplayTestControls.Level1.state().playerLasers.length > 0, 3);
     const shotOne = await getState(page);
     const laser = shotOne.playerLasers[shotOne.playerLasers.length - 1];
     report.checks.PLAYER_LASER_VISIBLE = !!laser;
@@ -516,6 +576,13 @@ async function gameplayAudit() {
     report.checks.BOSS_SCOUT_BODY_PLAYER_CONTACT = bossMatrix.scoutBodyPlayer && bossMatrix.scoutBodyPlayer.scoutActive === false && bossMatrix.scoutBodyPlayer.damageCount > 0;
     report.checks.BOSS_MOTHERSHIP_HIT_FRAME_CROP = bossMatrix.mothershipHitFrame && bossMatrix.mothershipHitFrame.hitWidth === 362 && bossMatrix.mothershipHitFrame.hitCutX === 362;
 
+    const bottomBreachMatrix = await hostileBottomBreachMatrix(page);
+    report.hostileBottomBreachMatrix = bottomBreachMatrix;
+    report.checks.HOSTILE_BOTTOM_BREACH_LEVEL1 = bottomBreachMatrix.level1Enemy && bottomBreachMatrix.level1Enemy.rip === true && bottomBreachMatrix.level1Enemy.currentLives === 0 && bottomBreachMatrix.level1Enemy.traceReason === "HOSTILE_BOTTOM_BREACH";
+    report.checks.HOSTILE_BOTTOM_BREACH_LEVEL2 = bottomBreachMatrix.level2Cruiser && bottomBreachMatrix.level2Cruiser.rip === true && bottomBreachMatrix.level2Cruiser.currentLives === 0 && bottomBreachMatrix.level2Cruiser.traceReason === "HOSTILE_BOTTOM_BREACH";
+    report.checks.HOSTILE_BOTTOM_BREACH_BOSS_CRUISER = bottomBreachMatrix.bossCruiser && bottomBreachMatrix.bossCruiser.rip === true && bottomBreachMatrix.bossCruiser.currentLives === 0 && bottomBreachMatrix.bossCruiser.traceReason === "HOSTILE_BOTTOM_BREACH";
+    report.checks.HOSTILE_BOTTOM_BREACH_BOSS_SCOUT = bottomBreachMatrix.bossScout && bottomBreachMatrix.bossScout.rip === true && bottomBreachMatrix.bossScout.currentLives === 0 && bottomBreachMatrix.bossScout.traceReason === "HOSTILE_BOTTOM_BREACH";
+
     const allTraces = await page.evaluate(() => window.ggExplosionTrace || []);
     report.checks.UNKNOWN_EXPLOSION_SOURCE = allTraces.filter((item) => !item.eventSource || /UNKNOWN|UNDEFINED|NULL|UNATTRIBUTED/.test(item.eventSource)).length;
     report.checks.PROJECTILE_CULL_EXPLOSIONS = allTraces.filter((item) => item.eventSource === "PROJECTILE_CULL_EXPLOSION").length;
@@ -581,6 +648,10 @@ function assertReport(report) {
     assert(report.checks.BOSS_NUKE_CRUISER_HITS === 3, "BOSS_NUKE_CRUISER_HITS");
     assert(report.checks.BOSS_SCOUT_BODY_PLAYER_CONTACT === true, "BOSS_SCOUT_BODY_PLAYER_CONTACT");
     assert(report.checks.BOSS_MOTHERSHIP_HIT_FRAME_CROP === true, "BOSS_MOTHERSHIP_HIT_FRAME_CROP");
+    assert(report.checks.HOSTILE_BOTTOM_BREACH_LEVEL1 === true, "HOSTILE_BOTTOM_BREACH_LEVEL1");
+    assert(report.checks.HOSTILE_BOTTOM_BREACH_LEVEL2 === true, "HOSTILE_BOTTOM_BREACH_LEVEL2");
+    assert(report.checks.HOSTILE_BOTTOM_BREACH_BOSS_CRUISER === true, "HOSTILE_BOTTOM_BREACH_BOSS_CRUISER");
+    assert(report.checks.HOSTILE_BOTTOM_BREACH_BOSS_SCOUT === true, "HOSTILE_BOTTOM_BREACH_BOSS_SCOUT");
     assert(report.checks.ENEMY_LASER_PLAYER === true, "ENEMY_LASER_PLAYER");
     assert(report.checks.ENEMY_LASER_VISIBLE === true, "ENEMY_LASER_VISIBLE");
     assert(report.checks.ENEMY_LASER_MOVES_DOWN === true, "ENEMY_LASER_MOVES_DOWN");

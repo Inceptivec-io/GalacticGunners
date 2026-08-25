@@ -960,7 +960,7 @@ function ggBoundsFor(item) {
     if (item.getBounds) {
         var bounds = item.getBounds();
         var current = { left: bounds.left, top: bounds.top, right: bounds.right, bottom: bounds.bottom };
-        if (item.ggProjectileType === "PLAYER_LASER" || item.ggProjectileType === "ENEMY_LASER" || item.ggProjectileType === "MOTHERSHIP_LASER") return expand(current, 36, 32);
+        if (item.ggProjectileType === "PLAYER_LASER" || item.ggProjectileType === "ENEMY_LASER" || item.ggProjectileType === "MOTHERSHIP_LASER") return expand(current, 58, 36);
         if (item.ggProjectileType === "PLAYER_NUKE") return expand(current, 44, 44);
         return current;
     }
@@ -1089,6 +1089,39 @@ function ggResolvePlayerLaserShieldHit(scene, laser, tile) {
     return true;
 }
 
+function ggTriggerHostileBottomBreach(scene, hostile) {
+    if (!scene || RIP || levelWon || scene.ggBottomBreachGameOver) return false;
+    scene.ggBottomBreachGameOver = true;
+    if (!window.ggGameOverTrace) window.ggGameOverTrace = [];
+    window.ggGameOverTrace.push({
+        eventId: ggRuntimeEventId(scene, "GAME_OVER"),
+        scene: scene && scene.scene && scene.scene.key ? scene.scene.key : "UNKNOWN",
+        timestamp: Date.now(),
+        reason: "HOSTILE_BOTTOM_BREACH",
+        hostileType: hostile && (hostile.ggEntityType || hostile.ggScoreEvent || (hostile.constructor ? hostile.constructor.name : "HOSTILE_BODY")),
+        hostileBounds: ggBoundsFor(hostile),
+        scoreBefore: typeof score === "number" ? score : null,
+        livesBefore: typeof currentLives === "number" ? currentLives : null
+    });
+    currentLives = 0;
+    if (scene.gameOver) scene.gameOver();
+    return true;
+}
+
+function ggCheckHostileBottomBreach(scene) {
+    if (!scene || RIP || levelWon) return false;
+    var bottomLimit = scene.game && scene.game.config ? scene.game.config.height : null;
+    if (typeof bottomLimit !== "number") return false;
+    var hostileGroups = [scene.enemies, scene.alienscouts];
+    return hostileGroups.some(function(group) {
+        return ggGroupChildren(group).slice().some(function(hostile) {
+            if (!hostile || !hostile.active) return false;
+            var bounds = ggBoundsFor(hostile);
+            return bounds && bounds.bottom >= bottomLimit && ggTriggerHostileBottomBreach(scene, hostile);
+        });
+    });
+}
+
 function ggSweepProjectilesAgainst(scene, projectileGroup, targetGroup, hitCallback) {
     ggGroupChildren(projectileGroup).slice().forEach(function(projectile) {
         if (!projectile || !projectile.active) return;
@@ -1103,6 +1136,7 @@ function ggSweepProjectilesAgainst(scene, projectileGroup, targetGroup, hitCallb
 
 function ggRunSweptCollisionContracts(scene) {
     if (!scene || RIP || levelWon) return;
+    if (ggCheckHostileBottomBreach(scene)) return;
     var playerGroup = { getChildren: function() { return scene.player && scene.player.active ? [scene.player] : []; } };
     ggSweepProjectilesAgainst(scene, scene.playerLasers, scene.enemyLasers, function(playerLaser, hostileLaser) {
         return ggResolveProjectileClash(scene, playerLaser, hostileLaser);

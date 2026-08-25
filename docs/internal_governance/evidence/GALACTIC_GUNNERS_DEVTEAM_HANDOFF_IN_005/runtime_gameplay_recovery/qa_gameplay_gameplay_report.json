@@ -35,6 +35,10 @@
     "BOSS_NUKE_CRUISER_HITS": 3,
     "BOSS_SCOUT_BODY_PLAYER_CONTACT": true,
     "BOSS_MOTHERSHIP_HIT_FRAME_CROP": true,
+    "HOSTILE_BOTTOM_BREACH_LEVEL1": true,
+    "HOSTILE_BOTTOM_BREACH_LEVEL2": true,
+    "HOSTILE_BOTTOM_BREACH_BOSS_CRUISER": true,
+    "HOSTILE_BOTTOM_BREACH_BOSS_SCOUT": true,
     "UNKNOWN_EXPLOSION_SOURCE": 0,
     "PROJECTILE_CULL_EXPLOSIONS": 0,
     "UNEXPLAINED_BASE_EXPLOSIONS": 0,
@@ -203,6 +207,36 @@
       "hitWidth": 362,
       "hitHeight": 724,
       "hitCutX": 362
+    }
+  },
+  "hostileBottomBreachMatrix": {
+    "level1Enemy": {
+      "rip": true,
+      "currentLives": 0,
+      "traceReason": "HOSTILE_BOTTOM_BREACH",
+      "hostileType": "level1Enemy_BOTTOM_BREACH",
+      "hostileBottom": 688.6301183098592
+    },
+    "level2Cruiser": {
+      "rip": true,
+      "currentLives": 0,
+      "traceReason": "HOSTILE_BOTTOM_BREACH",
+      "hostileType": "level2Cruiser_BOTTOM_BREACH",
+      "hostileBottom": 725.2772775119618
+    },
+    "bossCruiser": {
+      "rip": true,
+      "currentLives": 0,
+      "traceReason": "HOSTILE_BOTTOM_BREACH",
+      "hostileType": "bossCruiser_BOTTOM_BREACH",
+      "hostileBottom": 725.2772775119618
+    },
+    "bossScout": {
+      "rip": true,
+      "currentLives": 0,
+      "traceReason": "HOSTILE_BOTTOM_BREACH",
+      "hostileType": "bossScout_BOTTOM_BREACH",
+      "hostileBottom": 688.9943037974683
     }
   },
   "pass": true,

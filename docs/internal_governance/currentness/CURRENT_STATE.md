@@ -47,7 +47,7 @@ Handoff 005 QA Gate:
 PASS - npm run qa:all
 
 Gameplay Runtime Recovery:
-PASS - normal runtime swept collision loop disabled; Arcade overlap restored as collision authority; player/enemy projectile lifecycle recovered; player body-contact damage remains zero; enemy laser is the only player life-damage source; comet reward is +500 score and +1 nuke; projectile culling is silent; explosion and damage traces are semantic.
+PASS - Arcade overlap remains primary collision authority with swept collision safety contracts active for hostile projectile/body edge cases; player/enemy projectile lifecycle recovered; hostile laser/player hits verified; player laser/shield and player/enemy laser clashes verified; comet reward is +500 score and +1 nuke; final-level mothership/scout collision paths verified; hostile alien bottom-breach Game Over verified across Level 1, Level 2 and BossLevel; projectile culling is silent; explosion, damage and Game Over traces are semantic.
 
 Founder / CTAIO Acceptance:
 PENDING
