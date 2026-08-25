@@ -58,6 +58,14 @@
       "runtime_sha256": "C25388AA4C1BAA3123AFCAB5B820718150806749E4AE5F6D8B99331C793578AC"
     },
     {
+      "key": "projectile.nuke",
+      "asset_id": "GG-SPRITE-SPRITES-OBJECTS-GG-NUKE-PROJECTILE-V002-SHEET",
+      "canonical_path": "assets/sprites/objects/gg_nuke_projectile_v002_sheet.png",
+      "canonical_sha256": "811291512550286B626EA37CEF6EB4135F7B570DE78777FEB26537761883B008",
+      "runtime_path": "/gg-runtime-assets/sprites/objects/gg_nuke_projectile_v002_sheet.png",
+      "runtime_sha256": "811291512550286B626EA37CEF6EB4135F7B570DE78777FEB26537761883B008"
+    },
+    {
       "key": "shield.tile",
       "asset_id": "GG-SPRITE-SPRITES-OBJECTS-GG-SHIELD-TILE-V002",
       "canonical_path": "assets/sprites/objects/gg_shield_tile_v002.png",
@@ -74,12 +82,44 @@
       "runtime_sha256": "3F8FF2BB76214E234828AB9BE559A21BC5935CC4E6336E558AC35B6380E39049"
     },
     {
+      "key": "fx.nukeBurst",
+      "asset_id": "GG-SPRITE-SPRITES-OBJECTS-GG-NUKE-BURST-V002-SHEET",
+      "canonical_path": "assets/sprites/objects/gg_nuke_burst_v002_sheet.png",
+      "canonical_sha256": "0758B63ABB31A3BB164106F180F3E423C2FAFCD98631AB05A3A8855BBC3E1743",
+      "runtime_path": "/gg-runtime-assets/sprites/objects/gg_nuke_burst_v002_sheet.png",
+      "runtime_sha256": "0758B63ABB31A3BB164106F180F3E423C2FAFCD98631AB05A3A8855BBC3E1743"
+    },
+    {
       "key": "ui.lifeIcon",
       "asset_id": "GG-UI-UI-ICONS-GG-HUD-LIFE-ICON-V002",
       "canonical_path": "assets/ui/icons/gg_hud_life_icon_v002.png",
       "canonical_sha256": "9E0F8607F264ACB9614958D7043C5F69F4A4EBB303D57049203FD481D1EB0408",
       "runtime_path": "/gg-runtime-assets/ui/icons/gg_hud_life_icon_v002.png",
       "runtime_sha256": "9E0F8607F264ACB9614958D7043C5F69F4A4EBB303D57049203FD481D1EB0408"
+    },
+    {
+      "key": "ui.nukeIcon",
+      "asset_id": "GG-UI-UI-ICONS-GG-HUD-NUKE-ICON-V002",
+      "canonical_path": "assets/ui/icons/gg_hud_nuke_icon_v002.png",
+      "canonical_sha256": "3D0A6A32EEEC514D7E4BE36B474B5E059347F3C74C5032093D58BA8C3633E08C",
+      "runtime_path": "/gg-runtime-assets/ui/icons/gg_hud_nuke_icon_v002.png",
+      "runtime_sha256": "3D0A6A32EEEC514D7E4BE36B474B5E059347F3C74C5032093D58BA8C3633E08C"
+    },
+    {
+      "key": "ui.pauseIcon",
+      "asset_id": "GG-UI-UI-ICONS-GG-UI-PAUSE-V002",
+      "canonical_path": "assets/ui/icons/gg_ui_pause_v002.png",
+      "canonical_sha256": "E2ECCAAB8AF581266AA849322B067304C1BBC0A419D795A34A906090492EA9EA",
+      "runtime_path": "/gg-runtime-assets/ui/icons/gg_ui_pause_v002.png",
+      "runtime_sha256": "E2ECCAAB8AF581266AA849322B067304C1BBC0A419D795A34A906090492EA9EA"
+    },
+    {
+      "key": "pause.screen",
+      "asset_id": "GG-KEYART-KEY-ART-POSTERS-GG-PAUSE-SCREEN-V2-1-4K-UHD-MASTER",
+      "canonical_path": "assets/key_art/posters/gg_pause_screen_v2.1_4k_uhd_master.png",
+      "canonical_sha256": "751008091C1144B657A54EE3B8EBD47C9B3823EFFB679420D5F96E39E7438937",
+      "runtime_path": "/gg-runtime-assets/key_art/gg_pause_screen_v2.1_4k_uhd_master.png",
+      "runtime_sha256": "751008091C1144B657A54EE3B8EBD47C9B3823EFFB679420D5F96E39E7438937"
     },
     {
       "key": "font.goldDisplay",
@@ -152,6 +192,22 @@
       "canonical_sha256": "049D14BD1353957D2A859FF4F5C56E5B854B6D75B9D136310559CA45810BF311",
       "runtime_path": "/gg-runtime-assets/audio/gg_player_hit_v001.wav",
       "runtime_sha256": "049D14BD1353957D2A859FF4F5C56E5B854B6D75B9D136310559CA45810BF311"
+    },
+    {
+      "key": "audio.nukeFire",
+      "asset_id": "GG-AUDIO-AUDIO-OWNED-REV2-GG-NUKE-FIRE-V001",
+      "canonical_path": "assets/audio/owned/rev2/gg_nuke_fire_v001.wav",
+      "canonical_sha256": "CDECCACB879343A5D3772EFE6ABF6A514F8E7B2CC5C5486C123D4B8906898E1C",
+      "runtime_path": "/gg-runtime-assets/audio/gg_nuke_fire_v001.wav",
+      "runtime_sha256": "CDECCACB879343A5D3772EFE6ABF6A514F8E7B2CC5C5486C123D4B8906898E1C"
+    },
+    {
+      "key": "audio.nukeBurst",
+      "asset_id": "GG-AUDIO-AUDIO-OWNED-REV2-GG-NUKE-BURST-V001",
+      "canonical_path": "assets/audio/owned/rev2/gg_nuke_burst_v001.wav",
+      "canonical_sha256": "46E97A344CBCEF9E775B9FCC81B0895858D29E975C32C416C6E3CD91C8DA6D2B",
+      "runtime_path": "/gg-runtime-assets/audio/gg_nuke_burst_v001.wav",
+      "runtime_sha256": "46E97A344CBCEF9E775B9FCC81B0895858D29E975C32C416C6E3CD91C8DA6D2B"
     }
   ]
 }

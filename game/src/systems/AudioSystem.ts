@@ -4,7 +4,9 @@ export type AudioCue =
   | 'playerLaser'
   | 'enemyLaser'
   | 'explosionSmall'
-  | 'playerHit';
+  | 'playerHit'
+  | 'nukeFire'
+  | 'nukeBurst';
 
 export class AudioSystem {
   #muted = false;

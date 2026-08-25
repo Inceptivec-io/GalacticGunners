@@ -27,10 +27,13 @@ export interface PlayfieldLayout {
   scoutSize: Size;
   shieldTileSize: Size;
   projectileSize: Size;
+  nukeProjectileSize: Size;
+  nukeBurstSize: Size;
   playerBodySize: Size;
   scoutBodySize: Size;
   shieldBodySize: Size;
   projectileBodySize: Size;
+  nukeProjectileBodySize: Size;
 }
 
 function clamp(value: number, min: number, max: number): number {
@@ -53,18 +56,20 @@ export function createPlayfieldLayout(width: number, height: number): PlayfieldL
     height: Math.max(48, height * 0.08),
   };
 
-  const scoutWidth = clamp(gameplayRect.width / 35, 10, 34);
+  const scoutWidth = clamp((gameplayRect.width / 35) * 1.075, 10.75, 36.55);
   const scoutSize = { width: scoutWidth, height: scoutWidth * 0.92 };
-  const playerHeight = clamp(height * 0.15, 86, 132);
+  const playerHeight = clamp(height * 0.15, 86, 132) * 0.6;
   const playerSize = { width: playerHeight * 0.75, height: playerHeight };
-  const projectileHeight = clamp(height * 0.105, 60, 96);
-  const projectileSize = { width: clamp(projectileHeight * 0.24, 14, 24), height: projectileHeight };
-  const shieldTile = clamp(gameplayRect.width / 112, 6, 12);
+  const projectileLength = clamp(height * 0.068, 42, 58);
+  const projectileThickness = clamp(projectileLength * 0.18, 7, 11);
+  const projectileSize = { width: projectileLength, height: projectileThickness };
+  const shieldTile = clamp(gameplayRect.width / 176, 5, 8);
 
   const playerSpawn = {
     x: width / 2,
     y: gameplayRect.y + gameplayRect.height - playerSize.height / 2 - 10,
   };
+  const shieldY = playerSpawn.y - playerSize.height * 2.12 - shieldTile * 5;
 
   return {
     viewport: { width, height },
@@ -85,7 +90,7 @@ export function createPlayfieldLayout(width: number, height: number): PlayfieldL
     },
     shieldZone: {
       x: gameplayRect.x,
-      y: gameplayRect.y + gameplayRect.height * 0.66,
+      y: shieldY,
       width: gameplayRect.width,
       height: shieldTile * 5,
     },
@@ -93,9 +98,12 @@ export function createPlayfieldLayout(width: number, height: number): PlayfieldL
     scoutSize,
     shieldTileSize: { width: shieldTile, height: shieldTile },
     projectileSize,
+    nukeProjectileSize: { width: clamp(playerSize.height * 0.8, 48, 68), height: clamp(playerSize.height * 0.26, 16, 24) },
+    nukeBurstSize: { width: clamp(playerSize.height * 2.6, 150, 220), height: clamp(playerSize.height * 2.6, 150, 220) },
     playerBodySize: { width: playerSize.width * 0.48, height: playerSize.height * 0.62 },
     scoutBodySize: { width: scoutSize.width * 0.74, height: scoutSize.height * 0.62 },
     shieldBodySize: { width: shieldTile * 0.92, height: shieldTile * 0.92 },
-    projectileBodySize: { width: projectileSize.width * 0.72, height: projectileSize.height * 0.78 },
+    projectileBodySize: { width: projectileSize.height * 0.78, height: projectileSize.width * 0.86 },
+    nukeProjectileBodySize: { width: clamp(playerSize.height * 0.22, 14, 21), height: clamp(playerSize.height * 0.72, 44, 62) },
   };
 }

@@ -10,4 +10,7 @@ export const LEVEL_ONE_SLICE = {
   scoutHorizontalSpeed: 48,
   scoutDropDistance: 10,
   playerDamageCooldownMs: 850,
+  bunkerCount: 8,
+  maxNukes: 2,
+  nukeRearmMax: 150,
 } as const;

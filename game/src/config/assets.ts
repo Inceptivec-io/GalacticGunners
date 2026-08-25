@@ -67,6 +67,13 @@ export const RUNTIME_ASSETS = {
       sha256: 'C25388AA4C1BAA3123AFCAB5B820718150806749E4AE5F6D8B99331C793578AC',
       runtimePath: '/gg-runtime-assets/sprites/objects/gg_enemy_laser_v002.png',
     },
+    nuke: {
+      key: 'projectile.nuke',
+      assetId: 'GG-SPRITE-SPRITES-OBJECTS-GG-NUKE-PROJECTILE-V002-SHEET',
+      canonicalPath: 'assets/sprites/objects/gg_nuke_projectile_v002_sheet.png',
+      sha256: '811291512550286B626EA37CEF6EB4135F7B570DE78777FEB26537761883B008',
+      runtimePath: '/gg-runtime-assets/sprites/objects/gg_nuke_projectile_v002_sheet.png',
+    },
   },
   shield: {
     tile: {
@@ -85,6 +92,13 @@ export const RUNTIME_ASSETS = {
       sha256: '3F8FF2BB76214E234828AB9BE559A21BC5935CC4E6336E558AC35B6380E39049',
       runtimePath: '/gg-runtime-assets/sprites/objects/gg_explosion_small_v002_sheet.png',
     },
+    nukeBurst: {
+      key: 'fx.nukeBurst',
+      assetId: 'GG-SPRITE-SPRITES-OBJECTS-GG-NUKE-BURST-V002-SHEET',
+      canonicalPath: 'assets/sprites/objects/gg_nuke_burst_v002_sheet.png',
+      sha256: '0758B63ABB31A3BB164106F180F3E423C2FAFCD98631AB05A3A8855BBC3E1743',
+      runtimePath: '/gg-runtime-assets/sprites/objects/gg_nuke_burst_v002_sheet.png',
+    },
   },
   ui: {
     lifeIcon: {
@@ -93,6 +107,29 @@ export const RUNTIME_ASSETS = {
       canonicalPath: 'assets/ui/icons/gg_hud_life_icon_v002.png',
       sha256: '9E0F8607F264ACB9614958D7043C5F69F4A4EBB303D57049203FD481D1EB0408',
       runtimePath: '/gg-runtime-assets/ui/icons/gg_hud_life_icon_v002.png',
+    },
+    nukeIcon: {
+      key: 'ui.nukeIcon',
+      assetId: 'GG-UI-UI-ICONS-GG-HUD-NUKE-ICON-V002',
+      canonicalPath: 'assets/ui/icons/gg_hud_nuke_icon_v002.png',
+      sha256: '3D0A6A32EEEC514D7E4BE36B474B5E059347F3C74C5032093D58BA8C3633E08C',
+      runtimePath: '/gg-runtime-assets/ui/icons/gg_hud_nuke_icon_v002.png',
+    },
+    pauseIcon: {
+      key: 'ui.pauseIcon',
+      assetId: 'GG-UI-UI-ICONS-GG-UI-PAUSE-V002',
+      canonicalPath: 'assets/ui/icons/gg_ui_pause_v002.png',
+      sha256: 'E2ECCAAB8AF581266AA849322B067304C1BBC0A419D795A34A906090492EA9EA',
+      runtimePath: '/gg-runtime-assets/ui/icons/gg_ui_pause_v002.png',
+    },
+  },
+  pause: {
+    screen: {
+      key: 'pause.screen',
+      assetId: 'GG-KEYART-KEY-ART-POSTERS-GG-PAUSE-SCREEN-V2-1-4K-UHD-MASTER',
+      canonicalPath: 'assets/key_art/posters/gg_pause_screen_v2.1_4k_uhd_master.png',
+      sha256: '751008091C1144B657A54EE3B8EBD47C9B3823EFFB679420D5F96E39E7438937',
+      runtimePath: '/gg-runtime-assets/key_art/gg_pause_screen_v2.1_4k_uhd_master.png',
     },
   },
   audio: {
@@ -138,6 +175,20 @@ export const RUNTIME_ASSETS = {
       sha256: '049D14BD1353957D2A859FF4F5C56E5B854B6D75B9D136310559CA45810BF311',
       runtimePath: '/gg-runtime-assets/audio/gg_player_hit_v001.wav',
     },
+    nukeFire: {
+      key: 'audio.nukeFire',
+      assetId: 'GG-AUDIO-AUDIO-OWNED-REV2-GG-NUKE-FIRE-V001',
+      canonicalPath: 'assets/audio/owned/rev2/gg_nuke_fire_v001.wav',
+      sha256: 'CDECCACB879343A5D3772EFE6ABF6A514F8E7B2CC5C5486C123D4B8906898E1C',
+      runtimePath: '/gg-runtime-assets/audio/gg_nuke_fire_v001.wav',
+    },
+    nukeBurst: {
+      key: 'audio.nukeBurst',
+      assetId: 'GG-AUDIO-AUDIO-OWNED-REV2-GG-NUKE-BURST-V001',
+      canonicalPath: 'assets/audio/owned/rev2/gg_nuke_burst_v001.wav',
+      sha256: '46E97A344CBCEF9E775B9FCC81B0895858D29E975C32C416C6E3CD91C8DA6D2B',
+      runtimePath: '/gg-runtime-assets/audio/gg_nuke_burst_v001.wav',
+    },
   },
 } as const;
 
@@ -149,15 +200,22 @@ export const REQUIRED_RUNTIME_ASSETS: RuntimeAsset[] = [
   RUNTIME_ASSETS.enemy.scout,
   RUNTIME_ASSETS.projectile.playerLaser,
   RUNTIME_ASSETS.projectile.enemyLaser,
+  RUNTIME_ASSETS.projectile.nuke,
   RUNTIME_ASSETS.shield.tile,
   RUNTIME_ASSETS.fx.explosionSmall,
+  RUNTIME_ASSETS.fx.nukeBurst,
   RUNTIME_ASSETS.ui.lifeIcon,
+  RUNTIME_ASSETS.ui.nukeIcon,
+  RUNTIME_ASSETS.ui.pauseIcon,
+  RUNTIME_ASSETS.pause.screen,
   RUNTIME_ASSETS.audio.uiConfirm,
   RUNTIME_ASSETS.audio.uiSelect,
   RUNTIME_ASSETS.audio.playerLaser,
   RUNTIME_ASSETS.audio.enemyLaser,
   RUNTIME_ASSETS.audio.explosionSmall,
   RUNTIME_ASSETS.audio.playerHit,
+  RUNTIME_ASSETS.audio.nukeFire,
+  RUNTIME_ASSETS.audio.nukeBurst,
 ];
 
 export const FRAME_RECTS = {
@@ -174,4 +232,6 @@ export const FRAME_RECTS = {
     { name: 'stable-3', x: 1503, y: 0, width: 480, height: 793 },
   ],
   explosionSmall: { frameWidth: 493, frameHeight: 797, endFrame: 3 },
+  nukeProjectile: { frameWidth: 512, frameHeight: 768, endFrame: 3 },
+  nukeBurst: { frameWidth: 512, frameHeight: 512, endFrame: 5 },
 } as const;

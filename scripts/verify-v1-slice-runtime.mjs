@@ -3,7 +3,7 @@ import path from 'node:path';
 import { chromium } from 'playwright';
 
 const baseUrl = process.env.GG_RUNTIME_URL ?? 'http://localhost:3002';
-const handoffId = process.env.GG_HANDOFF_ID ?? 'GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_010_REV2';
+const handoffId = process.env.GG_HANDOFF_ID ?? 'GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_010_REV3';
 const outputDir = process.env.GG_EVIDENCE_DIR
   ? path.resolve(process.env.GG_EVIDENCE_DIR)
   : path.resolve(`docs/internal_governance/evidence/${handoffId}/browser_runtime`);
@@ -28,6 +28,17 @@ const viewports = [
   { name: '1024x768', width: 1024, height: 768 },
   { name: 'mobile-portrait', width: 390, height: 844 },
 ];
+
+function rev2PlayerSize(viewport) {
+  const height = Math.max(86, Math.min(132, viewport.height * 0.15));
+  return { width: height * 0.75, height };
+}
+
+function rev2ScoutSize(viewport) {
+  const gameplayWidth = Math.min(viewport.width * 0.94, 1120);
+  const width = Math.max(10, Math.min(34, gameplayWidth / 35));
+  return { width, height: width * 0.92 };
+}
 
 mkdirSync(outputDir, { recursive: true });
 
@@ -144,7 +155,12 @@ async function runVisualMatrix(browser) {
     const state = await getGameState(page);
     assert(state.viewport.width === viewport.width && state.viewport.height === viewport.height, `Level1 ${viewport.name} did not resize to viewport`);
     assert(state.activeScouts === 58, `Level1 ${viewport.name} enemy count was ${state.activeScouts}, expected 58`);
-    assert(state.activeShieldTiles === 128, `Level1 ${viewport.name} shield tile count was ${state.activeShieldTiles}, expected 128`);
+    assert(state.activeShieldTiles === 256, `Level1 ${viewport.name} shield tile count was ${state.activeShieldTiles}, expected 256`);
+    const playerRatio = state.playerSize.height / rev2PlayerSize(viewport).height;
+    const scoutRatio = state.scoutSize.width / rev2ScoutSize(viewport).width;
+    assert(playerRatio >= 0.55 && playerRatio <= 0.65, `Level1 ${viewport.name} player scale ratio ${playerRatio} outside REV3 tolerance`);
+    assert(scoutRatio >= 1.05 && scoutRatio <= 1.10, `Level1 ${viewport.name} scout scale ratio ${scoutRatio} outside REV3 tolerance`);
+    assert(state.shieldBottomGapPlayerHeights >= 2.0 && state.shieldBottomGapPlayerHeights <= 2.25, `Level1 ${viewport.name} shield gap ${state.shieldBottomGapPlayerHeights} outside REV3 target`);
     assert(state.gameplayRect.width < viewport.width || viewport.width <= 480, `Level1 ${viewport.name} gameplay rect did not differ from viewport on desktop`);
     assert(bodiesInsideViewport(state.scoutBodies, viewport.width, viewport.height), `Level1 ${viewport.name} scout body clipped`);
     assert(Number(state.playerBody?.x ?? -1) >= 0, `Level1 ${viewport.name} player clipped left`);
@@ -158,11 +174,15 @@ async function runVisualMatrix(browser) {
       duplicate_canvas: 0,
       scout_count: state.activeScouts,
       shield_tile_count: state.activeShieldTiles,
+      bunker_count: state.bunkerCount,
       gameplay_width: Math.round(state.gameplayRect.width),
       viewport_width: viewport.width,
       player_size: state.playerSize,
+      player_scale_relative_rev2: Number(playerRatio.toFixed(3)),
       scout_size: state.scoutSize,
+      scout_scale_relative_rev2: Number(scoutRatio.toFixed(3)),
       projectile_size: state.projectileSize,
+      shield_bottom_gap_player_heights: Number(state.shieldBottomGapPlayerHeights.toFixed(3)),
       hud_clipped: 0,
       player_enemy_clipped: 0,
       console_errors: consoleEntries.filter((entry) => entry.type === 'error').length,
@@ -171,6 +191,36 @@ async function runVisualMatrix(browser) {
     await page.close();
   }
   return matrix;
+}
+
+function firstLaser(state, type) {
+  return type === 'player' ? state.playerLaserBodies[0] : state.enemyLaserBodies[0];
+}
+
+function laserVisualAndBodyValid(laser) {
+  return Boolean(laser)
+    && laser.angle !== 0
+    && laser.display.width >= 42
+    && laser.display.width <= 58
+    && laser.display.height >= 7
+    && laser.display.height <= 11
+    && laser.worldBounds.height > laser.worldBounds.width
+    && laser.body.height > laser.body.width
+    && laser.body.width >= 5
+    && laser.body.width <= 12
+    && laser.body.height >= 35
+    && laser.body.height <= 55;
+}
+
+function findScoutClearOfShield(state) {
+  for (let index = 0; index < state.scoutBodies.length; index += 1) {
+    const scout = state.scoutBodies[index];
+    const intersectsShield = state.shieldBodies.some((shield) => Math.abs(shield.x - scout.x) <= (shield.body.width / 2 + state.projectileSize.height / 2 + 2));
+    if (!intersectsShield) {
+      return index;
+    }
+  }
+  return 0;
 }
 
 async function movementProbe(page, keys, duration = 350) {
@@ -209,7 +259,9 @@ async function runHostileCases(browser) {
   await loadGame(page);
   let state = await getGameState(page);
   cases.level1_enemy_count_58 = state.activeScouts === 58;
-  cases.shield_zone_present = state.activeShieldTiles === 128;
+  cases.level1_bunkers_8 = state.bunkerCount === 8;
+  cases.shield_zone_present = state.activeShieldTiles === 256;
+  cases.shield_lower_lane_gap = state.shieldBottomGapPlayerHeights >= 2.0 && state.shieldBottomGapPlayerHeights <= 2.25;
   cases.playfield_layout_authority = state.gameplayRect.width < state.viewport.width
     && state.movementBounds.left > state.gameplayRect.x
     && state.formationBounds.width === state.gameplayRect.width;
@@ -221,6 +273,8 @@ async function runHostileCases(browser) {
   cases.formation_descent_not_rush_bottom = state.terminalState === null
     && formationYAfterThreeSeconds - formationStartY <= 20
     && state.activeScouts === 58;
+  cases.rev3_player_scale = Math.abs((state.playerSize.height / 115.2) - 0.6) <= 0.05;
+  cases.rev3_scout_scale = (state.scoutSize.width / 32) >= 1.05 && (state.scoutSize.width / 32) <= 1.10;
 
   const right = await movementProbe(page, ['ArrowRight']);
   const left = await movementProbe(page, ['ArrowLeft']);
@@ -255,20 +309,27 @@ async function runHostileCases(browser) {
     && state.playerBody.y + state.playerBody.height <= state.movementBounds.bottom + state.playerBody.height / 2 + 2;
 
   await loadGame(page);
-  await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__.firePlayerLaserAtScout(0, 0));
-  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__.state().score === 25, null, { timeout: 3000 });
+  state = await getGameState(page);
+  const clearScoutIndex = findScoutClearOfShield(state);
+  await page.evaluate((index) => window.__GALACTIC_GUNNERS_HOSTILE__.setPlayerUnderScout(index, 0), clearScoutIndex);
+  await page.keyboard.press('Space');
+  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__.state().score === 25, null, { timeout: 6500 });
   await page.waitForTimeout(250);
   state = await getGameState(page);
   cases.direct_player_laser_hit_score_once = state.score === 25 && state.activeScouts === 57;
+  cases.real_origin_player_laser_direct_hit = cases.direct_player_laser_hit_score_once;
   cases.one_laser_multi_scout_score_zero = state.score === 25;
   cases.one_scout_double_score_zero = state.score === 25;
   await page.screenshot({ path: path.join(outputDir, 'active-combat-direct-hit.png'), fullPage: true });
 
   await loadGame(page);
-  await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__.firePlayerLaserAtScout(0, -30));
-  await page.waitForTimeout(550);
+  state = await getGameState(page);
+  await page.evaluate((index) => window.__GALACTIC_GUNNERS_HOSTILE__.setPlayerUnderScout(index, -30), findScoutClearOfShield(state));
+  await page.keyboard.press('Space');
+  await page.waitForTimeout(3600);
   state = await getGameState(page);
   cases.player_laser_near_miss_score_zero = state.score === 0 && state.activeScouts === 58;
+  cases.real_origin_player_laser_near_miss = cases.player_laser_near_miss_score_zero;
 
   await loadGame(page);
   const preHit = await getGameState(page);
@@ -298,15 +359,28 @@ async function runHostileCases(browser) {
   cases.enemy_laser_near_miss_zero_damage = state.lives === 3;
 
   await loadGame(page);
-  await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__.fireEnemyLaserAtShield(0));
-  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__.state().activeShieldTiles === 127, null, { timeout: 3000 });
+  await page.keyboard.press('Space');
+  await page.waitForTimeout(400);
   state = await getGameState(page);
-  cases.enemy_shield_hit_score_minus_one = state.activeShieldTiles === 127 && state.score === 0;
+  cases.player_laser_visual_body_mapping = laserVisualAndBodyValid(firstLaser(state, 'player')) && firstLaser(state, 'player').angle === -90;
+  await page.screenshot({ path: path.join(outputDir, 'player-laser-mid-flight.png'), fullPage: true });
+  await loadGame(page);
+  await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__.fireEnemyLaserAtPlayer(90));
+  await page.waitForTimeout(400);
+  state = await getGameState(page);
+  cases.enemy_laser_visual_body_mapping = laserVisualAndBodyValid(firstLaser(state, 'enemy')) && firstLaser(state, 'enemy').angle === 90;
+  await page.screenshot({ path: path.join(outputDir, 'enemy-laser-mid-flight.png'), fullPage: true });
+
+  await loadGame(page);
+  await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__.fireEnemyLaserAtShield(0));
+  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__.state().activeShieldTiles === 255, null, { timeout: 3000 });
+  state = await getGameState(page);
+  cases.enemy_shield_hit_score_minus_one = state.activeShieldTiles === 255 && state.score === 0;
   await loadGame(page);
   await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__.firePlayerLaserAtShield(0));
-  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__.state().activeShieldTiles === 127, null, { timeout: 3000 });
+  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__.state().activeShieldTiles === 255, null, { timeout: 3000 });
   state = await getGameState(page);
-  cases.player_laser_shield_score_zero = state.activeShieldTiles === 127 && state.score === 0;
+  cases.player_laser_shield_score_zero = state.activeShieldTiles === 255 && state.score === 0;
 
   await loadGame(page);
   const beforeResize = await getGameState(page);
@@ -315,7 +389,7 @@ async function runHostileCases(browser) {
   const afterResize = await getGameState(page);
   cases.resize_recalculates_layout_bodies = afterResize.viewport.width === 1440
     && afterResize.activeScouts === 58
-    && afterResize.activeShieldTiles === 128
+    && afterResize.activeShieldTiles === 256
     && afterResize.playerBody.width !== beforeResize.playerBody.width
     && bodiesInsideViewport(afterResize.scoutBodies, 1440, 900);
   await page.screenshot({ path: path.join(outputDir, 'active-resize-layout.png'), fullPage: true });
@@ -332,13 +406,65 @@ async function runHostileCases(browser) {
     && state.enemyLaserBodies.every((laser) => laser.angle === 90);
 
   await loadGame(page);
+  state = await getGameState(page);
+  cases.nuke_initial_count = state.currentNukes === 2 && state.maxNukes === 2 && state.rearmProgress === 150 && state.rearmMax === 150;
+  await page.evaluate((index) => window.__GALACTIC_GUNNERS_HOSTILE__.setPlayerUnderScout(index, 0), findScoutClearOfShield(state));
+  await page.keyboard.press('N');
+  await page.waitForFunction(() => {
+    const s = window.__GALACTIC_GUNNERS_HOSTILE__.state();
+    return s.currentNukes === 1 && s.nukeProjectileCount >= 1;
+  }, null, { timeout: 2000 });
+  const nukeFiredState = await getGameState(page);
+  await page.screenshot({ path: path.join(outputDir, 'nuke-projectile-mid-flight.png'), fullPage: true });
+  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__.state().score >= 25, null, { timeout: 6000 });
+  state = await getGameState(page);
+  cases.nuke_fire_decrements_once = nukeFiredState.currentNukes === 1 && nukeFiredState.rearmProgress < 150;
+  cases.nuke_projectile_visible = nukeFiredState.nukeProjectileCount >= 1 && nukeFiredState.nukeBodies.length >= 1;
+  cases.nuke_burst_multikill_score_exact = state.score % 25 === 0 && state.score >= 25 && state.activeScouts <= 57;
+  cases.nuke_rearm_progresses = state.rearmProgress > nukeFiredState.rearmProgress && state.rearmProgress <= 150;
+  cases.nuke_hud_live = state.visibleTexts.some((text) => text.includes(`NUKES ${state.currentNukes}/2`))
+    && state.visibleTexts.some((text) => text.includes(`REARM ${state.rearmProgress}/150`));
+  await page.screenshot({ path: path.join(outputDir, 'nuke-burst-after-hit.png'), fullPage: true });
+  await page.keyboard.press('N');
+  await page.keyboard.press('N');
+  await page.keyboard.press('N');
+  await page.waitForTimeout(500);
+  state = await getGameState(page);
+  cases.nuke_count_never_negative = state.currentNukes >= 0;
+  await loadGame(page);
+  const gamepadResult = await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__.gamepadY());
+  cases.gamepad_y_nuke_path = gamepadResult.consumed === true && gamepadResult.currentNukes === 1;
+
+  await loadGame(page);
+  const prePause = await getGameState(page);
+  await page.keyboard.press('P');
+  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_PAUSE_QA__?.scene === 'PauseScene', null, { timeout: 3000 });
+  await page.waitForTimeout(900);
+  const pausedState = await getGameState(page);
+  cases.pause_freezes_state = Math.abs(pausedState.playerX - prePause.playerX) <= 1
+    && Math.abs(pausedState.playerY - prePause.playerY) <= 1
+    && pausedState.score === prePause.score
+    && pausedState.lives === prePause.lives
+    && pausedState.formationDropY === prePause.formationDropY;
+  await page.screenshot({ path: path.join(outputDir, 'pause-overlay.png'), fullPage: true });
+  await page.keyboard.press('P');
+  await page.waitForFunction(() => !window.__GALACTIC_GUNNERS_PAUSE_QA__ && window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.scene === 'Level1Scene', null, { timeout: 3000 });
+  const resumedState = await getGameState(page);
+  cases.pause_resume_exact_state = resumedState.score === prePause.score && resumedState.lives === prePause.lives;
+  await page.keyboard.press('P');
+  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_PAUSE_QA__?.scene === 'PauseScene', null, { timeout: 3000 });
+  await page.keyboard.press('P');
+  await page.waitForFunction(() => !window.__GALACTIC_GUNNERS_PAUSE_QA__, null, { timeout: 3000 });
+  cases.repeat_pause_resume_clean = true;
+
+  await loadGame(page);
   await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__.forceComplete());
   await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__.state().terminalState === 'complete', null, { timeout: 3000 });
   await page.screenshot({ path: path.join(outputDir, 'mission-complete.png'), fullPage: true });
   await clickTerminalButton(page, 'left');
   await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__.state().terminalState === null, null, { timeout: 5000 });
   state = await getGameState(page);
-  cases.complete_replay_reset = state.score === 0 && state.activeScouts === 58 && state.playerLaserCount === 0 && state.enemyLaserCount === 0;
+  cases.complete_replay_reset = state.score === 0 && state.activeScouts === 58 && state.activeShieldTiles === 256 && state.playerLaserCount === 0 && state.enemyLaserCount === 0;
   await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__.forceComplete());
   await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__.state().terminalState === 'complete', null, { timeout: 3000 });
   await clickTerminalButton(page, 'right');
@@ -406,7 +532,12 @@ try {
       && entry.hud_clipped === 0
       && entry.player_enemy_clipped === 0
       && entry.scout_count === 58
-      && entry.shield_tile_count === 128),
+      && entry.shield_tile_count === 256
+      && entry.bunker_count === 8
+      && entry.player_scale_relative_rev2 >= 0.55
+      && entry.player_scale_relative_rev2 <= 0.65
+      && entry.scout_scale_relative_rev2 >= 1.05
+      && entry.scout_scale_relative_rev2 <= 1.10),
     no_console_errors: unexpectedConsoleErrors.length === 0 && visualMatrix.every((entry) => entry.console_errors === 0),
     no_network_failures: unexpectedNetworkFailures.length === 0 && visualMatrix.every((entry) => entry.network_failures === 0),
     no_visible_dev_terms: true,

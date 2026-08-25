@@ -6,6 +6,8 @@ export interface ActionState {
   up: boolean;
   down: boolean;
   fire: boolean;
+  nuke: boolean;
+  pause: boolean;
   confirm: boolean;
   back: boolean;
 }
@@ -16,6 +18,8 @@ export const EMPTY_ACTION_STATE: ActionState = {
   up: false,
   down: false,
   fire: false,
+  nuke: false,
+  pause: false,
   confirm: false,
   back: false,
 };
@@ -23,7 +27,9 @@ export const EMPTY_ACTION_STATE: ActionState = {
 export function normalizeGamepadButtons(buttons: readonly { pressed: boolean }[] = []): ActionState {
   return {
     ...EMPTY_ACTION_STATE,
-    fire: Boolean(buttons[0]?.pressed || buttons[2]?.pressed),
+    fire: Boolean(buttons[0]?.pressed),
+    nuke: Boolean(buttons[3]?.pressed),
+    pause: Boolean(buttons[9]?.pressed),
     confirm: Boolean(buttons[0]?.pressed || buttons[9]?.pressed),
     back: Boolean(buttons[1]?.pressed || buttons[8]?.pressed),
     left: Boolean(buttons[14]?.pressed),
@@ -46,10 +52,12 @@ export function normalizeGamepadAxes(axes: readonly number[] = [], deadzone = 0.
 
 export class InputSystem {
   readonly #cursors: Phaser.Types.Input.Keyboard.CursorKeys | undefined;
-  readonly #keys: Record<'a' | 'd' | 'w' | 's' | 'm' | 'enter' | 'escape', Phaser.Input.Keyboard.Key | undefined>;
+  readonly #keys: Record<'a' | 'd' | 'w' | 's' | 'm' | 'n' | 'p' | 'enter' | 'escape', Phaser.Input.Keyboard.Key | undefined>;
   readonly #pointerState = { left: false, right: false, up: false, down: false, fire: false };
   readonly #gamepadPlugin: Phaser.Input.Gamepad.GamepadPlugin | null | undefined;
   #mutePressed = false;
+  #nukePressed = false;
+  #pausePressed = false;
 
   constructor(private readonly scene: Phaser.Scene) {
     this.#cursors = scene.input.keyboard?.createCursorKeys();
@@ -59,6 +67,8 @@ export class InputSystem {
       w: scene.input.keyboard?.addKey('W'),
       s: scene.input.keyboard?.addKey('S'),
       m: scene.input.keyboard?.addKey('M'),
+      n: scene.input.keyboard?.addKey('N'),
+      p: scene.input.keyboard?.addKey('P'),
       enter: scene.input.keyboard?.addKey('ENTER'),
       escape: scene.input.keyboard?.addKey('ESC'),
     };
@@ -82,6 +92,8 @@ export class InputSystem {
       up: Boolean(this.#cursors?.up.isDown || this.#keys.w?.isDown || this.#pointerState.up || gamepadButtons.up || gamepadAxes.up),
       down: Boolean(this.#cursors?.down.isDown || this.#keys.s?.isDown || this.#pointerState.down || gamepadButtons.down || gamepadAxes.down),
       fire: Boolean(this.#cursors?.space.isDown || this.#pointerState.fire || gamepadButtons.fire),
+      nuke: Boolean(this.#keys.n?.isDown || gamepadButtons.nuke),
+      pause: Boolean(this.#keys.p?.isDown || gamepadButtons.pause),
       confirm: Boolean(this.#keys.enter?.isDown || this.#cursors?.space.isDown || this.#pointerState.fire || gamepadButtons.confirm),
       back: Boolean(this.#keys.escape?.isDown || gamepadButtons.back),
     };
@@ -92,6 +104,20 @@ export class InputSystem {
     const toggled = isDown && !this.#mutePressed;
     this.#mutePressed = isDown;
     return toggled;
+  }
+
+  consumeNuke(): boolean {
+    const isDown = this.actions.nuke;
+    const consumed = isDown && !this.#nukePressed;
+    this.#nukePressed = isDown;
+    return consumed;
+  }
+
+  consumePauseToggle(): boolean {
+    const isDown = this.actions.pause;
+    const consumed = isDown && !this.#pausePressed;
+    this.#pausePressed = isDown;
+    return consumed;
   }
 
   destroy(): void {

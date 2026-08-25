@@ -61,6 +61,8 @@ test('input capability model supports coexistence without manual mode selection'
     up: false,
     down: false,
     fire: true,
+    nuke: false,
+    pause: false,
     confirm: true,
     back: false,
   });

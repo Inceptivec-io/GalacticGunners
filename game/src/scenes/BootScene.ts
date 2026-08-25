@@ -11,7 +11,9 @@ export class BootScene extends Phaser.Scene {
   preload(): void {
     this.registry.set('runtimeConfig', this.runtimeConfig);
     for (const asset of REQUIRED_RUNTIME_ASSETS) {
-      if (asset.key === RUNTIME_ASSETS.fx.explosionSmall.key) {
+      if (asset.key === RUNTIME_ASSETS.fx.explosionSmall.key
+        || asset.key === RUNTIME_ASSETS.projectile.nuke.key
+        || asset.key === RUNTIME_ASSETS.fx.nukeBurst.key) {
         continue;
       }
       if (asset.key.startsWith('audio.')) {
@@ -24,6 +26,16 @@ export class BootScene extends Phaser.Scene {
       RUNTIME_ASSETS.fx.explosionSmall.key,
       RUNTIME_ASSETS.fx.explosionSmall.runtimePath,
       { frameWidth: 493, frameHeight: 797 },
+    );
+    this.load.spritesheet(
+      RUNTIME_ASSETS.projectile.nuke.key,
+      RUNTIME_ASSETS.projectile.nuke.runtimePath,
+      { frameWidth: 512, frameHeight: 768 },
+    );
+    this.load.spritesheet(
+      RUNTIME_ASSETS.fx.nukeBurst.key,
+      RUNTIME_ASSETS.fx.nukeBurst.runtimePath,
+      { frameWidth: 512, frameHeight: 512 },
     );
   }
 
@@ -49,6 +61,19 @@ export class BootScene extends Phaser.Scene {
     this.anims.create({
       key: 'fx.explosionSmall.play',
       frames: this.anims.generateFrameNumbers(RUNTIME_ASSETS.fx.explosionSmall.key, { start: 0, end: 3 }),
+      frameRate: 14,
+      repeat: 0,
+      hideOnComplete: true,
+    });
+    this.anims.create({
+      key: 'projectile.nuke.fly',
+      frames: this.anims.generateFrameNumbers(RUNTIME_ASSETS.projectile.nuke.key, { start: 0, end: 3 }),
+      frameRate: 10,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: 'fx.nukeBurst.play',
+      frames: this.anims.generateFrameNumbers(RUNTIME_ASSETS.fx.nukeBurst.key, { start: 0, end: 5 }),
       frameRate: 14,
       repeat: 0,
       hideOnComplete: true,

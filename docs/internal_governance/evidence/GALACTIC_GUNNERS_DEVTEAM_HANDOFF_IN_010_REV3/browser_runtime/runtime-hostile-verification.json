@@ -1,0 +1,294 @@
+{
+  "url": "http://localhost:3002",
+  "handoff_id": "GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_010_REV3",
+  "generated_at": "2026-08-25T15:49:36.276Z",
+  "banned_visible_terms": [
+    "LEVEL 1 VERTICAL SLICE",
+    "VERTICAL SLICE",
+    "SLICE COMPLETE",
+    "SLICE FAILED",
+    "REPLAY SLICE",
+    "RETRY SLICE",
+    "HANDOFF",
+    "SPRINT",
+    "DEVELOPMENT"
+  ],
+  "hostile": {
+    "cases": {
+      "home_play_menu_level1": true,
+      "level1_enemy_count_58": true,
+      "level1_bunkers_8": true,
+      "shield_zone_present": true,
+      "shield_lower_lane_gap": true,
+      "playfield_layout_authority": true,
+      "formation_descent_not_rush_bottom": true,
+      "rev3_player_scale": true,
+      "rev3_scout_scale": true,
+      "four_direction_player_movement": true,
+      "diagonal_speed_normalization": true,
+      "all_edge_clamp_top_left": true,
+      "all_edge_clamp_bottom_right": true,
+      "direct_player_laser_hit_score_once": true,
+      "real_origin_player_laser_direct_hit": true,
+      "one_laser_multi_scout_score_zero": true,
+      "one_scout_double_score_zero": true,
+      "player_laser_near_miss_score_zero": true,
+      "real_origin_player_laser_near_miss": true,
+      "direct_enemy_laser_hit_one_damage": true,
+      "player_regenerates": true,
+      "player_respawns": true,
+      "respawn_velocity_reset": true,
+      "no_duplicate_player": true,
+      "no_ghost_body": true,
+      "life_cascade_zero": true,
+      "respawn_body_relocated": true,
+      "enemy_laser_near_miss_zero_damage": true,
+      "player_laser_visual_body_mapping": true,
+      "enemy_laser_visual_body_mapping": true,
+      "enemy_shield_hit_score_minus_one": true,
+      "player_laser_shield_score_zero": true,
+      "resize_recalculates_layout_bodies": true,
+      "sustained_fire": true,
+      "projectile_cleanup": true,
+      "projectile_mapping": true,
+      "nuke_initial_count": true,
+      "nuke_fire_decrements_once": true,
+      "nuke_projectile_visible": true,
+      "nuke_burst_multikill_score_exact": true,
+      "nuke_rearm_progresses": true,
+      "nuke_hud_live": true,
+      "nuke_count_never_negative": true,
+      "gamepad_y_nuke_path": true,
+      "pause_freezes_state": true,
+      "pause_resume_exact_state": true,
+      "repeat_pause_resume_clean": true,
+      "complete_replay_reset": true,
+      "complete_main_menu": true,
+      "fail_retry": true,
+      "fail_main_menu": true,
+      "online_game_run_start": true,
+      "online_complete_once": true,
+      "replay_new_run": true,
+      "backend_offline_playable": true,
+      "no_fabricated_run_id": true
+    },
+    "console_errors": [
+      {
+        "type": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED"
+      }
+    ],
+    "console_warnings": [],
+    "network_failures_or_4xx_5xx": [
+      {
+        "url": "http://127.0.0.1:8999/api/v1/game-runs/",
+        "failure": "net::ERR_CONNECTION_REFUSED"
+      }
+    ]
+  },
+  "expected_offline_backend_probe": {
+    "console_errors": [
+      {
+        "type": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED"
+      }
+    ],
+    "network_failures": [
+      {
+        "url": "http://127.0.0.1:8999/api/v1/game-runs/",
+        "failure": "net::ERR_CONNECTION_REFUSED"
+      }
+    ]
+  },
+  "unexpected_console_errors": [],
+  "unexpected_network_failures_or_4xx_5xx": [],
+  "visual_matrix": [
+    {
+      "viewport": "1365x768",
+      "landing_full_viewport": true,
+      "canvas_full_viewport": true,
+      "duplicate_canvas": 0,
+      "scout_count": 58,
+      "shield_tile_count": 256,
+      "bunker_count": 8,
+      "gameplay_width": 1120,
+      "viewport_width": 1365,
+      "player_size": {
+        "width": 51.83999999999999,
+        "height": 69.11999999999999
+      },
+      "player_scale_relative_rev2": 0.6,
+      "scout_size": {
+        "width": 34.4,
+        "height": 31.648
+      },
+      "scout_scale_relative_rev2": 1.075,
+      "projectile_size": {
+        "width": 52.224000000000004,
+        "height": 9.40032
+      },
+      "shield_bottom_gap_player_heights": 2.12,
+      "hud_clipped": 0,
+      "player_enemy_clipped": 0,
+      "console_errors": 0,
+      "network_failures": 0
+    },
+    {
+      "viewport": "1440x900",
+      "landing_full_viewport": true,
+      "canvas_full_viewport": true,
+      "duplicate_canvas": 0,
+      "scout_count": 58,
+      "shield_tile_count": 256,
+      "bunker_count": 8,
+      "gameplay_width": 1120,
+      "viewport_width": 1440,
+      "player_size": {
+        "width": 59.400000000000006,
+        "height": 79.2
+      },
+      "player_scale_relative_rev2": 0.6,
+      "scout_size": {
+        "width": 34.4,
+        "height": 31.648
+      },
+      "scout_scale_relative_rev2": 1.075,
+      "projectile_size": {
+        "width": 58,
+        "height": 10.44
+      },
+      "shield_bottom_gap_player_heights": 2.12,
+      "hud_clipped": 0,
+      "player_enemy_clipped": 0,
+      "console_errors": 0,
+      "network_failures": 0
+    },
+    {
+      "viewport": "1920x1080",
+      "landing_full_viewport": true,
+      "canvas_full_viewport": true,
+      "duplicate_canvas": 0,
+      "scout_count": 58,
+      "shield_tile_count": 256,
+      "bunker_count": 8,
+      "gameplay_width": 1120,
+      "viewport_width": 1920,
+      "player_size": {
+        "width": 59.400000000000006,
+        "height": 79.2
+      },
+      "player_scale_relative_rev2": 0.6,
+      "scout_size": {
+        "width": 34.4,
+        "height": 31.648
+      },
+      "scout_scale_relative_rev2": 1.075,
+      "projectile_size": {
+        "width": 58,
+        "height": 10.44
+      },
+      "shield_bottom_gap_player_heights": 2.12,
+      "hud_clipped": 0,
+      "player_enemy_clipped": 0,
+      "console_errors": 0,
+      "network_failures": 0
+    },
+    {
+      "viewport": "2560x1440",
+      "landing_full_viewport": true,
+      "canvas_full_viewport": true,
+      "duplicate_canvas": 0,
+      "scout_count": 58,
+      "shield_tile_count": 256,
+      "bunker_count": 8,
+      "gameplay_width": 1120,
+      "viewport_width": 2560,
+      "player_size": {
+        "width": 59.400000000000006,
+        "height": 79.2
+      },
+      "player_scale_relative_rev2": 0.6,
+      "scout_size": {
+        "width": 34.4,
+        "height": 31.648
+      },
+      "scout_scale_relative_rev2": 1.075,
+      "projectile_size": {
+        "width": 58,
+        "height": 10.44
+      },
+      "shield_bottom_gap_player_heights": 2.12,
+      "hud_clipped": 0,
+      "player_enemy_clipped": 0,
+      "console_errors": 0,
+      "network_failures": 0
+    },
+    {
+      "viewport": "1024x768",
+      "landing_full_viewport": true,
+      "canvas_full_viewport": true,
+      "duplicate_canvas": 0,
+      "scout_count": 58,
+      "shield_tile_count": 256,
+      "bunker_count": 8,
+      "gameplay_width": 963,
+      "viewport_width": 1024,
+      "player_size": {
+        "width": 51.83999999999999,
+        "height": 69.11999999999999
+      },
+      "player_scale_relative_rev2": 0.6,
+      "scout_size": {
+        "width": 29.564342857142854,
+        "height": 27.19919542857143
+      },
+      "scout_scale_relative_rev2": 1.075,
+      "projectile_size": {
+        "width": 52.224000000000004,
+        "height": 9.40032
+      },
+      "shield_bottom_gap_player_heights": 2.12,
+      "hud_clipped": 0,
+      "player_enemy_clipped": 0,
+      "console_errors": 0,
+      "network_failures": 0
+    },
+    {
+      "viewport": "mobile-portrait",
+      "landing_full_viewport": true,
+      "canvas_full_viewport": true,
+      "duplicate_canvas": 0,
+      "scout_count": 58,
+      "shield_tile_count": 256,
+      "bunker_count": 8,
+      "gameplay_width": 367,
+      "viewport_width": 390,
+      "player_size": {
+        "width": 56.97,
+        "height": 75.96
+      },
+      "player_scale_relative_rev2": 0.6,
+      "scout_size": {
+        "width": 11.259857142857141,
+        "height": 10.35906857142857
+      },
+      "scout_scale_relative_rev2": 1.075,
+      "projectile_size": {
+        "width": 57.392,
+        "height": 10.33056
+      },
+      "shield_bottom_gap_player_heights": 2.12,
+      "hud_clipped": 0,
+      "player_enemy_clipped": 0,
+      "console_errors": 0,
+      "network_failures": 0
+    }
+  ],
+  "assertions": {
+    "hostile_cases": true,
+    "visual_matrix": true,
+    "no_console_errors": true,
+    "no_network_failures": true,
+    "no_visible_dev_terms": true
+  }
+}

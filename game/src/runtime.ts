@@ -7,11 +7,12 @@ export interface GalacticGunnersGameOptions extends GameRuntimeConfig {
 }
 
 export async function createGalacticGunnersGame(options: GalacticGunnersGameOptions): Promise<Phaser.Game> {
-  const [PhaserRuntime, { BootScene }, { MainMenuScene }, { Level1Scene }] = await Promise.all([
+  const [PhaserRuntime, { BootScene }, { MainMenuScene }, { Level1Scene }, { PauseScene }] = await Promise.all([
     import('phaser'),
     import('./scenes/BootScene'),
     import('./scenes/MainMenuScene'),
     import('./scenes/Level1Scene'),
+    import('./scenes/PauseScene'),
   ]);
 
   const config: Phaser.Types.Core.GameConfig = {
@@ -35,7 +36,7 @@ export async function createGalacticGunnersGame(options: GalacticGunnersGameOpti
     input: {
       gamepad: true,
     },
-    scene: [new BootScene(options), MainMenuScene, Level1Scene],
+    scene: [new BootScene(options), MainMenuScene, Level1Scene, PauseScene],
     callbacks: {
       postBoot: () => options.onReady?.(),
     },
