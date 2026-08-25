@@ -58,12 +58,16 @@ test('input capability model supports coexistence without manual mode selection'
   assert.deepEqual(normalizeGamepadButtons([{ pressed: true }]), {
     left: false,
     right: false,
+    up: false,
+    down: false,
     fire: true,
     confirm: true,
     back: false,
   });
-  assert.deepEqual(normalizeGamepadAxes([-0.6]), { left: true, right: false });
-  assert.deepEqual(normalizeGamepadAxes([0.6]), { left: false, right: true });
+  assert.deepEqual(normalizeGamepadAxes([-0.6]), { left: true, right: false, up: false, down: false });
+  assert.deepEqual(normalizeGamepadAxes([0.6]), { left: false, right: true, up: false, down: false });
+  assert.deepEqual(normalizeGamepadAxes([0, -0.6]), { left: false, right: false, up: true, down: false });
+  assert.deepEqual(normalizeGamepadAxes([0, 0.6]), { left: false, right: false, up: false, down: true });
 });
 
 test('life system preserves Level 1 denominator and clamps damage at zero', () => {

@@ -5,9 +5,9 @@ export const LEVEL_ONE_SLICE = {
   playerLaserSpeed: 760,
   enemyLaserSpeed: 300,
   scoutRows: 2,
-  scoutColumns: 7,
+  scoutColumns: 29,
   scoutFireIntervalMs: 1500,
-  scoutHorizontalSpeed: 70,
-  scoutDropDistance: 22,
+  scoutHorizontalSpeed: 48,
+  scoutDropDistance: 10,
   playerDamageCooldownMs: 850,
 } as const;

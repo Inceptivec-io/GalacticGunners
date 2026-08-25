@@ -68,6 +68,15 @@ export const RUNTIME_ASSETS = {
       runtimePath: '/gg-runtime-assets/sprites/objects/gg_enemy_laser_v002.png',
     },
   },
+  shield: {
+    tile: {
+      key: 'shield.tile',
+      assetId: 'GG-SPRITE-SPRITES-OBJECTS-GG-SHIELD-TILE-V002',
+      canonicalPath: 'assets/sprites/objects/gg_shield_tile_v002.png',
+      sha256: 'ECE44E993871F2A474215BDAD8DEC6C5097861F487AF66D685FA1DA2A44402B3',
+      runtimePath: '/gg-runtime-assets/sprites/objects/gg_shield_tile_v002.png',
+    },
+  },
   fx: {
     explosionSmall: {
       key: 'fx.explosionSmall',
@@ -140,6 +149,7 @@ export const REQUIRED_RUNTIME_ASSETS: RuntimeAsset[] = [
   RUNTIME_ASSETS.enemy.scout,
   RUNTIME_ASSETS.projectile.playerLaser,
   RUNTIME_ASSETS.projectile.enemyLaser,
+  RUNTIME_ASSETS.shield.tile,
   RUNTIME_ASSETS.fx.explosionSmall,
   RUNTIME_ASSETS.ui.lifeIcon,
   RUNTIME_ASSETS.audio.uiConfirm,

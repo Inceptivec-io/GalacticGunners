@@ -2,29 +2,64 @@ import * as Phaser from 'phaser';
 
 import { RUNTIME_ASSETS } from '../config/assets';
 import { LEVEL_ONE_SLICE } from '../config/levelOneSlice';
+import type { PlayfieldLayout } from '../systems/PlayfieldLayout';
+
+export interface MovementVector {
+  x: -1 | 0 | 1;
+  y: -1 | 0 | 1;
+}
 
 export class Player {
   readonly sprite: Phaser.Physics.Arcade.Sprite;
   #lastFireAtMs = Number.NEGATIVE_INFINITY;
 
-  constructor(private readonly scene: Phaser.Scene, x: number, y: number) {
-    this.sprite = scene.physics.add.sprite(x, y, RUNTIME_ASSETS.player.ship.key, 'stable-0');
+  constructor(scene: Phaser.Scene, layout: PlayfieldLayout) {
+    this.sprite = scene.physics.add.sprite(layout.playerSpawn.x, layout.playerSpawn.y, RUNTIME_ASSETS.player.ship.key, 'stable-0');
     this.sprite.setName('player');
-    this.sprite.setDisplaySize(112, 150);
-    this.sprite.setCollideWorldBounds(true);
+    this.applyLayout(layout);
+    this.sprite.setCollideWorldBounds(false);
     this.sprite.setDepth(5);
     this.sprite.play('player.ship.idle');
+  }
+
+  applyLayout(layout: PlayfieldLayout): void {
+    this.sprite.setDisplaySize(layout.playerSize.width, layout.playerSize.height);
     const body = this.sprite.body as Phaser.Physics.Arcade.Body;
-    body.setSize(54 / this.sprite.scaleX, 92 / this.sprite.scaleY, true);
+    body.setSize(layout.playerBodySize.width / this.sprite.scaleX, layout.playerBodySize.height / this.sprite.scaleY, true);
+    this.clampToPlayfield(layout);
   }
 
-  move(direction: -1 | 0 | 1): void {
-    this.sprite.x = Phaser.Math.Clamp(this.sprite.x, 58, this.scene.scale.width - 58);
-    this.sprite.setVelocityX(direction * LEVEL_ONE_SLICE.playerSpeed);
+  move(vector: MovementVector, layout: PlayfieldLayout): void {
+    this.clampToPlayfield(layout);
+    const length = Math.hypot(vector.x, vector.y) || 1;
+    let velocityX = (vector.x / length) * LEVEL_ONE_SLICE.playerSpeed;
+    let velocityY = (vector.y / length) * LEVEL_ONE_SLICE.playerSpeed;
+    if ((this.sprite.x <= layout.movementBounds.left && velocityX < 0)
+      || (this.sprite.x >= layout.movementBounds.right && velocityX > 0)) {
+      velocityX = 0;
+    }
+    if ((this.sprite.y <= layout.movementBounds.top && velocityY < 0)
+      || (this.sprite.y >= layout.movementBounds.bottom && velocityY > 0)) {
+      velocityY = 0;
+    }
+    this.sprite.setVelocity(velocityX, velocityY);
+    this.clampToPlayfield(layout);
   }
 
-  clampToPlayfield(): void {
-    this.sprite.x = Phaser.Math.Clamp(this.sprite.x, 58, this.scene.scale.width - 58);
+  stop(): void {
+    this.sprite.setVelocity(0, 0);
+  }
+
+  respawn(layout: PlayfieldLayout): void {
+    this.sprite.enableBody(true, layout.playerSpawn.x, layout.playerSpawn.y, true, true);
+    this.sprite.setAlpha(1);
+    this.stop();
+    this.applyLayout(layout);
+  }
+
+  clampToPlayfield(layout: PlayfieldLayout): void {
+    this.sprite.x = Phaser.Math.Clamp(this.sprite.x, layout.movementBounds.left, layout.movementBounds.right);
+    this.sprite.y = Phaser.Math.Clamp(this.sprite.y, layout.movementBounds.top, layout.movementBounds.bottom);
   }
 
   canFire(nowMs: number): boolean {

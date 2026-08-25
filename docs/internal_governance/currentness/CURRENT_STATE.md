@@ -1,11 +1,11 @@
 Active Handoff:
-GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_010_REV1
+GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_010_REV2
 
 Programme:
 v1.0 BUILD - SPRINT 001
 
 Stage:
-COMMERCIAL RUNTIME QUALITY GATE CORRECTION COMPLETE / PENDING CTO AND FOUNDER REVIEW
+PLAYFIELD BEHAVIOUR CORRECTION COMPLETE / PENDING CTO AND FOUNDER REVIEW
 
 Branch:
 feature/v1-level1-vertical-slice
@@ -15,6 +15,9 @@ DEVTEAM_010 Entry SHA:
 
 DEVTEAM_010_REV1 Entry SHA:
 fd7a7e00b6ccd4683e90cff9f41676e19f04517d
+
+DEVTEAM_010_REV2 Entry SHA:
+6c1964a3148ab7743552c4f608ea8117730b499f
 
 Current Repository Head Authority:
 origin/feature/v1-level1-vertical-slice
@@ -38,7 +41,7 @@ Evidence:
 DURABLE
 
 Runtime Gameplay:
-PASS - BootScene, MainMenuScene and bounded Level1 playable runtime corrected for commercial copy, full viewport, hero key art, frame animation, input authority, Arcade collision authority and hostile runtime/composition verification.
+PASS - BootScene, MainMenuScene and bounded Level1 playable runtime corrected for semantic PlayfieldLayout authority, 58-enemy Level1 formation, four-direction player movement, respawn/regeneration, shield bunker zone, semantic movement bounds, stable formation descent, Arcade collision authority and hostile runtime/composition verification.
 
 Full Level 1:
 NOT CLAIMED

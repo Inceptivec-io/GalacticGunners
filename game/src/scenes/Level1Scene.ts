@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 
-import { Player } from '../entities/Player';
+import { Player, type MovementVector } from '../entities/Player';
 import { Scout } from '../entities/Scout';
 import { RUNTIME_ASSETS } from '../config/assets';
 import { type GameRuntimeConfig } from '../config/gameConfig';
@@ -10,13 +10,25 @@ import { AudioSystem } from '../systems/AudioSystem';
 import { GameSession } from '../systems/GameSession';
 import { InputSystem } from '../systems/InputSystem';
 import { LifeSystem } from '../systems/LifeSystem';
+import { createPlayfieldLayout, type PlayfieldLayout } from '../systems/PlayfieldLayout';
 import { ScoreSystem } from '../systems/ScoreSystem';
 
 type TerminalState = 'complete' | 'failed';
+type PlayerState = 'active' | 'hit' | 'regenerating';
+
+const SHIELD_MATRIX = [
+  [1, 1, 1, 1, 1, 1, 1, 1],
+  [1, 1, 1, 1, 1, 1, 1, 1],
+  [1, 1, 1, 1, 1, 1, 1, 1],
+  [1, 1, 0, 0, 0, 0, 1, 1],
+  [1, 1, 0, 0, 0, 0, 1, 1],
+] as const;
 
 interface HostileQaApi {
   firePlayerLaserAtScout: (index?: number, offsetX?: number) => Record<string, unknown>;
   fireEnemyLaserAtPlayer: (offsetX?: number) => Record<string, unknown>;
+  fireEnemyLaserAtShield: (index?: number) => Record<string, unknown>;
+  firePlayerLaserAtShield: (index?: number) => Record<string, unknown>;
   forceComplete: () => void;
   forceFail: () => void;
   replay: () => void;
@@ -38,15 +50,21 @@ export class Level1Scene extends Phaser.Scene {
   #audio!: AudioSystem;
   #session!: GameSession;
   #inputSystem!: InputSystem;
+  #layout!: PlayfieldLayout;
   #background!: Phaser.GameObjects.Image;
   #scouts!: Phaser.Physics.Arcade.Group;
+  #shieldTiles!: Phaser.Physics.Arcade.Group;
   #playerLasers!: Phaser.Physics.Arcade.Group;
   #enemyLasers!: Phaser.Physics.Arcade.Group;
   #scoreText!: Phaser.GameObjects.Text;
   #lifeText!: Phaser.GameObjects.Text;
   #lastDamageAtMs = Number.NEGATIVE_INFINITY;
   #formationDirection: 1 | -1 = 1;
+  #formationOffsetX = 0;
+  #formationDropY = 0;
   #terminalState: TerminalState | null = null;
+  #playerState: PlayerState = 'active';
+  #invulnerableUntilMs = Number.NEGATIVE_INFINITY;
   #runtimeConfig: GameRuntimeConfig = {};
 
   constructor() {
@@ -55,9 +73,14 @@ export class Level1Scene extends Phaser.Scene {
 
   create(): void {
     this.#runtimeConfig = this.registry.get('runtimeConfig') as GameRuntimeConfig | undefined ?? {};
+    this.#layout = createPlayfieldLayout(this.scale.width, this.scale.height);
     this.#terminalState = null;
+    this.#playerState = 'active';
     this.#lastDamageAtMs = Number.NEGATIVE_INFINITY;
+    this.#invulnerableUntilMs = Number.NEGATIVE_INFINITY;
     this.#formationDirection = 1;
+    this.#formationOffsetX = 0;
+    this.#formationDropY = 0;
     this.physics.world.setBounds(0, 0, this.scale.width, this.scale.height);
 
     this.#score = new ScoreSystem();
@@ -71,11 +94,13 @@ export class Level1Scene extends Phaser.Scene {
       .setDisplaySize(this.scale.width, this.scale.height)
       .setDepth(0);
 
-    this.#player = new Player(this, this.scale.width / 2, this.scale.height - 98);
-    this.#playerLasers = this.physics.add.group({ maxSize: 32 });
-    this.#enemyLasers = this.physics.add.group({ maxSize: 32 });
+    this.#player = new Player(this, this.#layout);
+    this.#playerLasers = this.physics.add.group({ maxSize: 48 });
+    this.#enemyLasers = this.physics.add.group({ maxSize: 48 });
     this.#scouts = this.physics.add.group();
+    this.#shieldTiles = this.physics.add.group();
     this.createScoutWave();
+    this.createShieldZone();
     this.createHud();
     this.createCollisions();
     this.installHostileQa();
@@ -105,46 +130,136 @@ export class Level1Scene extends Phaser.Scene {
       }
       return;
     }
+
+    if (this.#playerState === 'regenerating' && time >= this.#invulnerableUntilMs) {
+      this.#playerState = 'active';
+      this.#player.sprite.setAlpha(1);
+    } else if (this.#playerState === 'regenerating') {
+      this.#player.sprite.setAlpha(Math.floor(time / 120) % 2 === 0 ? 0.52 : 1);
+    }
+
     this.handleInput(time);
-    this.#player.clampToPlayfield();
-    this.updateScouts();
+    this.#player.clampToPlayfield(this.#layout);
+    this.updateScouts(time);
     this.cleanupProjectiles();
     this.checkTerminalConditions();
     this.publishQaState();
   }
 
   private handleResize(gameSize: Phaser.Structs.Size): void {
+    this.#layout = createPlayfieldLayout(gameSize.width, gameSize.height);
     this.physics.world.setBounds(0, 0, gameSize.width, gameSize.height);
     this.#background.setPosition(gameSize.width / 2, gameSize.height / 2).setDisplaySize(gameSize.width, gameSize.height);
-    this.#player.sprite.y = gameSize.height - 98;
-    this.#player.clampToPlayfield();
-    this.#scoreText.setPosition(gameSize.width - 36, 22);
+    this.#player.applyLayout(this.#layout);
+    this.#player.clampToPlayfield(this.#layout);
+    this.#scoreText.setPosition(this.#layout.hudSafeRect.x + this.#layout.hudSafeRect.width, this.#layout.hudSafeRect.y + 8);
+    this.reflowScoutWave();
+    this.reflowShieldZone();
+    this.reflowActiveProjectiles();
+    this.publishQaState();
   }
 
   private createScoutWave(): void {
-    const columns = LEVEL_ONE_SLICE.scoutColumns;
-    const rows = LEVEL_ONE_SLICE.scoutRows;
-    const margin = Math.max(86, this.scale.width * 0.12);
-    const gapX = (this.scale.width - margin * 2) / (columns - 1);
-    const startY = Math.max(114, this.scale.height * 0.18);
-    for (let row = 0; row < rows; row += 1) {
-      for (let col = 0; col < columns; col += 1) {
-        const scout = new Scout(this, margin + col * gapX, startY + row * 86);
+    for (let row = 0; row < LEVEL_ONE_SLICE.scoutRows; row += 1) {
+      for (let col = 0; col < LEVEL_ONE_SLICE.scoutColumns; col += 1) {
+        const position = this.scoutPosition(row, col);
+        const scout = new Scout(this, position.x, position.y, this.#layout);
+        scout.sprite.setData('row', row);
+        scout.sprite.setData('col', col);
         this.#scouts.add(scout.sprite);
       }
     }
   }
 
+  private reflowScoutWave(): void {
+    for (const scout of this.#scouts.getChildren() as Phaser.Physics.Arcade.Sprite[]) {
+      if (!scout.active) {
+        continue;
+      }
+      const row = Number(scout.getData('row'));
+      const col = Number(scout.getData('col'));
+      const position = this.scoutPosition(row, col);
+      scout.setPosition(position.x, position.y);
+      scout.setDisplaySize(this.#layout.scoutSize.width, this.#layout.scoutSize.height);
+      const body = scout.body as Phaser.Physics.Arcade.Body;
+      body.setSize(this.#layout.scoutBodySize.width / scout.scaleX, this.#layout.scoutBodySize.height / scout.scaleY, true);
+    }
+  }
+
+  private scoutPosition(row: number, col: number): Phaser.Math.Vector2 {
+    const travelMargin = this.formationTravelMargin();
+    const usableWidth = Math.max(
+      this.#layout.formationBounds.width - travelMargin * 2,
+      this.#layout.scoutSize.width * (LEVEL_ONE_SLICE.scoutColumns - 1),
+    );
+    const gapX = usableWidth / (LEVEL_ONE_SLICE.scoutColumns - 1);
+    const gapY = Math.max(this.#layout.scoutSize.height * 1.8, 30);
+    return new Phaser.Math.Vector2(
+      this.#layout.formationBounds.x + travelMargin + col * gapX + this.#formationOffsetX,
+      this.#layout.formationBounds.y + row * gapY + this.#formationDropY,
+    );
+  }
+
+  private formationTravelMargin(): number {
+    return Math.max(this.#layout.scoutSize.width * 2.2, this.#layout.formationBounds.width * 0.055);
+  }
+
+  private createShieldZone(): void {
+    const bunkerCount = 4;
+    const tileW = this.#layout.shieldTileSize.width;
+    const tileH = this.#layout.shieldTileSize.height;
+    for (let bunker = 0; bunker < bunkerCount; bunker += 1) {
+      const bunkerCenterX = this.#layout.shieldZone.x + (this.#layout.shieldZone.width * (bunker + 0.5)) / bunkerCount;
+      const startX = bunkerCenterX - tileW * 4;
+      for (let row = 0; row < SHIELD_MATRIX.length; row += 1) {
+        for (let col = 0; col < SHIELD_MATRIX[row].length; col += 1) {
+          if (SHIELD_MATRIX[row][col] !== 1) {
+            continue;
+          }
+          const tile = this.physics.add.image(startX + col * tileW + tileW / 2, this.#layout.shieldZone.y + row * tileH + tileH / 2, RUNTIME_ASSETS.shield.tile.key);
+          tile.setName('shield-tile');
+          tile.setData('bunker', bunker);
+          tile.setData('row', row);
+          tile.setData('col', col);
+          tile.setDisplaySize(tileW, tileH);
+          tile.setDepth(4);
+          const body = tile.body as Phaser.Physics.Arcade.Body;
+          body.setSize(this.#layout.shieldBodySize.width / tile.scaleX, this.#layout.shieldBodySize.height / tile.scaleY, true);
+          this.#shieldTiles.add(tile);
+        }
+      }
+    }
+  }
+
+  private reflowShieldZone(): void {
+    const tileW = this.#layout.shieldTileSize.width;
+    const tileH = this.#layout.shieldTileSize.height;
+    for (const tile of this.#shieldTiles.getChildren() as Phaser.Physics.Arcade.Image[]) {
+      if (!tile.active) {
+        continue;
+      }
+      const bunker = Number(tile.getData('bunker'));
+      const row = Number(tile.getData('row'));
+      const col = Number(tile.getData('col'));
+      const bunkerCenterX = this.#layout.shieldZone.x + (this.#layout.shieldZone.width * (bunker + 0.5)) / 4;
+      const startX = bunkerCenterX - tileW * 4;
+      tile.setPosition(startX + col * tileW + tileW / 2, this.#layout.shieldZone.y + row * tileH + tileH / 2);
+      tile.setDisplaySize(tileW, tileH);
+      const body = tile.body as Phaser.Physics.Arcade.Body;
+      body.setSize(this.#layout.shieldBodySize.width / tile.scaleX, this.#layout.shieldBodySize.height / tile.scaleY, true);
+    }
+  }
+
   private createHud(): void {
-    this.add.image(44, 38, RUNTIME_ASSETS.ui.lifeIcon.key)
+    this.add.image(this.#layout.hudSafeRect.x + 18, this.#layout.hudSafeRect.y + 24, RUNTIME_ASSETS.ui.lifeIcon.key)
       .setDisplaySize(34, 34)
       .setDepth(10);
-    this.#lifeText = this.add.text(72, 22, `LIVES ${this.#lives.value}/${this.#lives.maxLives}`, {
+    this.#lifeText = this.add.text(this.#layout.hudSafeRect.x + 46, this.#layout.hudSafeRect.y + 8, `LIVES ${this.#lives.value}/${this.#lives.maxLives}`, {
       color: '#d7e9ff',
       fontFamily: 'GalacticGunnersHUD, monospace',
       fontSize: '24px',
     }).setDepth(10);
-    this.#scoreText = this.add.text(this.scale.width - 36, 22, 'SCORE 0', {
+    this.#scoreText = this.add.text(this.#layout.hudSafeRect.x + this.#layout.hudSafeRect.width, this.#layout.hudSafeRect.y + 8, 'SCORE 0', {
       color: '#f7d56a',
       fontFamily: 'GalacticGunnersHUD, monospace',
       fontSize: '24px',
@@ -162,13 +277,28 @@ export class Level1Scene extends Phaser.Scene {
       this.destroyScoutBody(scout as Phaser.Physics.Arcade.Sprite, false);
       this.damagePlayer(true);
     });
+    this.physics.add.overlap(this.#enemyLasers, this.#shieldTiles, (laser, tile) => {
+      this.destroyProjectile(laser as Phaser.Physics.Arcade.Image);
+      this.destroyShieldTile(tile as Phaser.Physics.Arcade.Image, true);
+    });
+    this.physics.add.overlap(this.#playerLasers, this.#shieldTiles, (laser, tile) => {
+      this.destroyProjectile(laser as Phaser.Physics.Arcade.Image);
+      this.destroyShieldTile(tile as Phaser.Physics.Arcade.Image, false);
+    });
   }
 
   private handleInput(time: number): void {
     const actions = this.#inputSystem.actions;
-    const direction = actions.left ? -1 : actions.right ? 1 : 0;
-    this.#player.move(direction);
-    if (actions.fire && this.#player.canFire(time)) {
+    const vector: MovementVector = {
+      x: actions.left ? -1 : actions.right ? 1 : 0,
+      y: actions.up ? -1 : actions.down ? 1 : 0,
+    };
+    if (this.#playerState === 'hit') {
+      this.#player.stop();
+    } else {
+      this.#player.move(vector, this.#layout);
+    }
+    if (actions.fire && this.#playerState !== 'hit' && this.#player.canFire(time)) {
       this.firePlayerLaser(time);
     }
     if (this.#inputSystem.consumeMuteToggle()) {
@@ -176,30 +306,36 @@ export class Level1Scene extends Phaser.Scene {
     }
   }
 
-  private updateScouts(): void {
+  private updateScouts(time: number): void {
     const active = this.getActiveScouts();
     if (active.length === 0) {
       return;
     }
-    const minX = Math.min(...active.map((scout) => scout.x));
-    const maxX = Math.max(...active.map((scout) => scout.x));
-    const hitEdge = (this.#formationDirection === 1 && maxX > this.scale.width - 58)
-      || (this.#formationDirection === -1 && minX < 58);
+    const maxTravel = this.formationTravelMargin();
+    const deltaSeconds = Math.max(this.game.loop.delta, 0) / 1000;
+    this.#formationOffsetX += LEVEL_ONE_SLICE.scoutHorizontalSpeed * this.#formationDirection * deltaSeconds;
+    const hitEdge = Math.abs(this.#formationOffsetX) >= maxTravel;
     if (hitEdge) {
+      this.#formationOffsetX = Phaser.Math.Clamp(this.#formationOffsetX, -maxTravel, maxTravel);
       this.#formationDirection *= -1;
-      active.forEach((scout) => {
-        scout.y += LEVEL_ONE_SLICE.scoutDropDistance;
-      });
+      this.#formationDropY += LEVEL_ONE_SLICE.scoutDropDistance;
     }
     active.forEach((scout) => {
-      scout.setVelocityX(LEVEL_ONE_SLICE.scoutHorizontalSpeed * this.#formationDirection);
-      if (scout.y > this.scale.height - 92) {
+      const row = Number(scout.getData('row'));
+      const col = Number(scout.getData('col'));
+      const position = this.scoutPosition(row, col);
+      scout.setPosition(position.x, position.y);
+      scout.setVelocity(0, 0);
+      if (scout.y > this.#layout.movementBounds.bottom) {
         this.showTerminal('failed');
       }
     });
+    if (time % 250 < this.game.loop.delta) {
+      this.publishQaState();
+    }
   }
 
-  private firePlayerLaser(nowMs = this.time.now, x = this.#player.sprite.x, y = this.#player.sprite.y - 82): Phaser.Physics.Arcade.Image | null {
+  private firePlayerLaser(nowMs = this.time.now, x = this.#player.sprite.x, y = this.#player.sprite.y - this.#layout.playerSize.height * 0.52): Phaser.Physics.Arcade.Image | null {
     if (!this.#player.canFire(nowMs)) {
       return null;
     }
@@ -210,7 +346,7 @@ export class Level1Scene extends Phaser.Scene {
     if (Number.isFinite(nowMs)) {
       this.#player.markFired(nowMs);
     }
-    this.configureLaser(laser, 'player-laser', -90, 22, 92, -LEVEL_ONE_SLICE.playerLaserSpeed);
+    this.configureLaser(laser, 'player-laser', -90, -LEVEL_ONE_SLICE.playerLaserSpeed);
     this.#audio.play('playerLaser');
     return laser;
   }
@@ -221,11 +357,11 @@ export class Level1Scene extends Phaser.Scene {
       return null;
     }
     const scout = active[Math.floor(Math.random() * active.length)];
-    const laser = this.#enemyLasers.get(scout.x, scout.y + 48, RUNTIME_ASSETS.projectile.enemyLaser.key) as Phaser.Physics.Arcade.Image | null;
+    const laser = this.#enemyLasers.get(scout.x, scout.y + this.#layout.scoutSize.height * 0.55, RUNTIME_ASSETS.projectile.enemyLaser.key) as Phaser.Physics.Arcade.Image | null;
     if (!laser) {
       return null;
     }
-    this.configureLaser(laser, 'enemy-laser', 90, 22, 92, LEVEL_ONE_SLICE.enemyLaserSpeed);
+    this.configureLaser(laser, 'enemy-laser', 90, LEVEL_ONE_SLICE.enemyLaserSpeed);
     this.#audio.play('enemyLaser');
     return laser;
   }
@@ -234,20 +370,29 @@ export class Level1Scene extends Phaser.Scene {
     laser: Phaser.Physics.Arcade.Image,
     name: string,
     angle: number,
-    width: number,
-    height: number,
     velocityY: number,
   ): void {
     laser.setActive(true).setVisible(true);
     laser.setName(name);
     laser.setAngle(angle);
-    laser.setDisplaySize(width, height);
+    laser.setDisplaySize(this.#layout.projectileSize.width, this.#layout.projectileSize.height);
     laser.setDepth(3);
     laser.setData('spent', false);
     laser.setVelocity(0, velocityY);
     const body = laser.body as Phaser.Physics.Arcade.Body;
     body.enable = true;
-    body.setSize(16 / laser.scaleX, 70 / laser.scaleY, true);
+    body.setSize(this.#layout.projectileBodySize.width / laser.scaleX, this.#layout.projectileBodySize.height / laser.scaleY, true);
+  }
+
+  private reflowActiveProjectiles(): void {
+    for (const laser of [...this.#playerLasers.getChildren(), ...this.#enemyLasers.getChildren()] as Phaser.Physics.Arcade.Image[]) {
+      if (!laser.active) {
+        continue;
+      }
+      laser.setDisplaySize(this.#layout.projectileSize.width, this.#layout.projectileSize.height);
+      const body = laser.body as Phaser.Physics.Arcade.Body;
+      body.setSize(this.#layout.projectileBodySize.width / laser.scaleX, this.#layout.projectileBodySize.height / laser.scaleY, true);
+    }
   }
 
   private handlePlayerLaserScoutOverlap(laser: Phaser.Physics.Arcade.Image, scout: Phaser.Physics.Arcade.Sprite): void {
@@ -279,24 +424,61 @@ export class Level1Scene extends Phaser.Scene {
       this.#scoreText.setText(`SCORE ${this.#score.value}`);
     }
     this.#audio.play('explosionSmall');
-    const explosion = this.add.sprite(scout.x, scout.y, RUNTIME_ASSETS.fx.explosionSmall.key)
-      .setDisplaySize(96, 96)
-      .setDepth(6);
-    explosion.play('fx.explosionSmall.play');
+    this.createExplosion(scout.x, scout.y, 70);
+  }
+
+  private destroyShieldTile(tile: Phaser.Physics.Arcade.Image, scorePenalty: boolean): void {
+    if (tile.getData('destroyed')) {
+      return;
+    }
+    tile.setData('destroyed', true);
+    tile.disableBody(true, true);
+    if (scorePenalty) {
+      this.#score.apply('shield_tile_hit', this.time.now, { source: 'enemy_laser' });
+      this.#scoreText.setText(`SCORE ${this.#score.value}`);
+    }
   }
 
   private damagePlayer(force = false): void {
+    if (this.#playerState !== 'active') {
+      return;
+    }
     if (!force && this.time.now - this.#lastDamageAtMs < LEVEL_ONE_SLICE.playerDamageCooldownMs) {
       return;
     }
     this.#lastDamageAtMs = this.time.now;
+    this.#playerState = 'hit';
     this.#lives.damage(1);
     this.#lifeText.setText(`LIVES ${this.#lives.value}/${this.#lives.maxLives}`);
     this.#audio.play('playerHit');
+    this.createExplosion(this.#player.sprite.x, this.#player.sprite.y, this.#layout.playerSize.height * 0.78);
     this.cameras.main.shake(120, 0.006);
+    this.#player.sprite.disableBody(true, false);
+    this.#player.stop();
+    this.#inputSystem.resetPointerState();
     if (this.#lives.isDepleted) {
       this.showTerminal('failed');
+      return;
     }
+    this.time.delayedCall(420, () => this.respawnPlayer());
+  }
+
+  private respawnPlayer(): void {
+    if (this.#terminalState) {
+      return;
+    }
+    this.#playerState = 'regenerating';
+    this.#player.respawn(this.#layout);
+    this.#inputSystem.resetPointerState();
+    this.#invulnerableUntilMs = this.time.now + 1200;
+    this.publishQaState();
+  }
+
+  private createExplosion(x: number, y: number, size: number): void {
+    const explosion = this.add.sprite(x, y, RUNTIME_ASSETS.fx.explosionSmall.key)
+      .setDisplaySize(size, size)
+      .setDepth(6);
+    explosion.play('fx.explosionSmall.play');
   }
 
   private cleanupProjectiles(): void {
@@ -325,7 +507,7 @@ export class Level1Scene extends Phaser.Scene {
       return;
     }
     this.#terminalState = state;
-    this.#player.move(0);
+    this.#player.stop();
     this.#playerLasers.clear(true, true);
     this.#enemyLasers.clear(true, true);
     const title = state === 'complete' ? 'MISSION CLEARED' : 'MISSION FAILED';
@@ -377,16 +559,36 @@ export class Level1Scene extends Phaser.Scene {
         if (!scout) {
           return { fired: false, reason: 'no-scout' };
         }
-        const laser = this.firePlayerLaser(Number.POSITIVE_INFINITY, scout.x + offsetX, scout.y + 74);
+        const laser = this.firePlayerLaser(Number.POSITIVE_INFINITY, scout.x + offsetX, scout.y + this.#layout.scoutSize.height * 0.95);
         return { fired: Boolean(laser), scoutX: scout.x, laserX: laser?.x, offsetX };
       },
       fireEnemyLaserAtPlayer: (offsetX = 0) => {
-        const laser = this.#enemyLasers.get(this.#player.sprite.x + offsetX, this.#player.sprite.y - 74, RUNTIME_ASSETS.projectile.enemyLaser.key) as Phaser.Physics.Arcade.Image | null;
+        const laser = this.#enemyLasers.get(this.#player.sprite.x + offsetX, this.#player.sprite.y - this.#layout.playerSize.height * 0.42, RUNTIME_ASSETS.projectile.enemyLaser.key) as Phaser.Physics.Arcade.Image | null;
         if (!laser) {
           return { fired: false, reason: 'no-laser' };
         }
-        this.configureLaser(laser, 'enemy-laser', 90, 22, 92, LEVEL_ONE_SLICE.enemyLaserSpeed);
+        this.configureLaser(laser, 'enemy-laser', 90, LEVEL_ONE_SLICE.enemyLaserSpeed);
         return { fired: true, playerX: this.#player.sprite.x, laserX: laser.x, offsetX };
+      },
+      fireEnemyLaserAtShield: (index = 0) => {
+        const tile = this.getActiveShieldTiles()[index];
+        if (!tile) {
+          return { fired: false, reason: 'no-shield' };
+        }
+        const laser = this.#enemyLasers.get(tile.x, tile.y - this.#layout.projectileSize.height * 0.62, RUNTIME_ASSETS.projectile.enemyLaser.key) as Phaser.Physics.Arcade.Image | null;
+        if (!laser) {
+          return { fired: false, reason: 'no-laser' };
+        }
+        this.configureLaser(laser, 'enemy-laser', 90, LEVEL_ONE_SLICE.enemyLaserSpeed);
+        return { fired: true, tileX: tile.x, laserX: laser.x };
+      },
+      firePlayerLaserAtShield: (index = 0) => {
+        const tile = this.getActiveShieldTiles()[index];
+        if (!tile) {
+          return { fired: false, reason: 'no-shield' };
+        }
+        const laser = this.firePlayerLaser(Number.POSITIVE_INFINITY, tile.x, tile.y + this.#layout.projectileSize.height * 0.62);
+        return { fired: Boolean(laser), tileX: tile.x, laserX: laser?.x };
       },
       forceComplete: () => {
         this.getActiveScouts().forEach((scout) => scout.disableBody(true, true));
@@ -403,6 +605,10 @@ export class Level1Scene extends Phaser.Scene {
     return this.#scouts.getChildren().filter((child) => child.active) as Phaser.Physics.Arcade.Sprite[];
   }
 
+  private getActiveShieldTiles(): Phaser.Physics.Arcade.Image[] {
+    return this.#shieldTiles.getChildren().filter((child) => child.active) as Phaser.Physics.Arcade.Image[];
+  }
+
   private publishQaState(): void {
     if (typeof window === 'undefined') {
       return;
@@ -415,6 +621,7 @@ export class Level1Scene extends Phaser.Scene {
     const visibleTexts = this.children.list
       .filter((child): child is Phaser.GameObjects.Text => child instanceof Phaser.GameObjects.Text)
       .map((text) => text.text);
+    const playerVelocity = playerBody?.velocity;
 
     return {
       scene: 'Level1Scene',
@@ -422,32 +629,59 @@ export class Level1Scene extends Phaser.Scene {
       lives: this.#lives.value,
       maxLives: this.#lives.maxLives,
       activeScouts: this.getActiveScouts().length,
+      activeShieldTiles: this.getActiveShieldTiles().length,
       playerLaserCount: this.#playerLasers?.getChildren().filter((child) => child.active).length ?? 0,
       enemyLaserCount: this.#enemyLasers?.getChildren().filter((child) => child.active).length ?? 0,
       playerX: this.#player?.sprite.x,
+      playerY: this.#player?.sprite.y,
+      playerState: this.#playerState,
+      playerVisible: this.#player?.sprite.visible,
+      playerAlpha: this.#player?.sprite.alpha,
+      playerVelocity: playerVelocity ? { x: Math.round(playerVelocity.x), y: Math.round(playerVelocity.y), speed: Math.round(Math.hypot(playerVelocity.x, playerVelocity.y)) } : null,
       terminalState: this.#terminalState,
       gameRunId: this.#session.runId,
       offlineRunMode: this.#session.offline,
       gameRunCompleteAttempted: this.#session.completeAttempted,
-      viewport: { width: this.scale.width, height: this.scale.height },
+      viewport: this.#layout.viewport,
+      gameplayRect: this.#layout.gameplayRect,
+      hudSafeRect: this.#layout.hudSafeRect,
+      movementBounds: this.#layout.movementBounds,
+      formationBounds: this.#layout.formationBounds,
+      formationOffsetX: Math.round(this.#formationOffsetX),
+      formationDropY: Math.round(this.#formationDropY),
+      formationDirection: this.#formationDirection,
+      formationTravelMargin: Math.round(this.formationTravelMargin()),
+      shieldZone: this.#layout.shieldZone,
+      playerSpawn: this.#layout.playerSpawn,
+      playerSize: this.#layout.playerSize,
+      scoutSize: this.#layout.scoutSize,
+      projectileSize: this.#layout.projectileSize,
+      shieldTileSize: this.#layout.shieldTileSize,
       visibleTexts,
-      playerBody: playerBody ? { x: Math.round(playerBody.x), y: Math.round(playerBody.y), width: playerBody.width, height: playerBody.height } : null,
-      scoutBodies: this.getActiveScouts().slice(0, 14).map((scout) => {
+      playerBody: playerBody ? { x: Math.round(playerBody.x), y: Math.round(playerBody.y), width: Math.round(playerBody.width), height: Math.round(playerBody.height) } : null,
+      playerCount: this.children.list.filter((child) => child.name === 'player').length,
+      scoutBodies: this.getActiveScouts().map((scout) => {
         const body = scout.body as Phaser.Physics.Arcade.Body;
         return {
           x: Math.round(scout.x),
           y: Math.round(scout.y),
-          body: { x: Math.round(body.x), y: Math.round(body.y), width: body.width, height: body.height },
+          body: { x: Math.round(body.x), y: Math.round(body.y), width: Math.round(body.width), height: Math.round(body.height) },
           frame: scout.frame.name,
+          row: scout.getData('row'),
+          col: scout.getData('col'),
         };
+      }),
+      shieldBodies: this.getActiveShieldTiles().slice(0, 120).map((tile) => {
+        const body = tile.body as Phaser.Physics.Arcade.Body;
+        return { x: Math.round(tile.x), y: Math.round(tile.y), body: { x: Math.round(body.x), y: Math.round(body.y), width: Math.round(body.width), height: Math.round(body.height) } };
       }),
       playerLaserBodies: (this.#playerLasers?.getChildren().filter((child) => child.active) as Phaser.Physics.Arcade.Image[] ?? []).map((laser) => {
         const body = laser.body as Phaser.Physics.Arcade.Body;
-        return { x: Math.round(laser.x), y: Math.round(laser.y), angle: laser.angle, body: { width: body.width, height: body.height } };
+        return { x: Math.round(laser.x), y: Math.round(laser.y), angle: laser.angle, body: { width: Math.round(body.width), height: Math.round(body.height) } };
       }),
       enemyLaserBodies: (this.#enemyLasers?.getChildren().filter((child) => child.active) as Phaser.Physics.Arcade.Image[] ?? []).map((laser) => {
         const body = laser.body as Phaser.Physics.Arcade.Body;
-        return { x: Math.round(laser.x), y: Math.round(laser.y), angle: laser.angle, body: { width: body.width, height: body.height } };
+        return { x: Math.round(laser.x), y: Math.round(laser.y), angle: laser.angle, body: { width: Math.round(body.width), height: Math.round(body.height) } };
       }),
     };
   }

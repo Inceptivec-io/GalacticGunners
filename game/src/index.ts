@@ -5,6 +5,7 @@ export * from './config/levelOneSlice';
 export * from './systems/ScoreSystem';
 export * from './systems/LifeSystem';
 export * from './systems/InputSystem';
+export * from './systems/PlayfieldLayout';
 export * from './systems/AudioSystem';
 export * from './systems/GameSession';
 export * from './services/GameApiClient';

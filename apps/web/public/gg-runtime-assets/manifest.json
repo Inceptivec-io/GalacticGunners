@@ -58,6 +58,14 @@
       "runtime_sha256": "C25388AA4C1BAA3123AFCAB5B820718150806749E4AE5F6D8B99331C793578AC"
     },
     {
+      "key": "shield.tile",
+      "asset_id": "GG-SPRITE-SPRITES-OBJECTS-GG-SHIELD-TILE-V002",
+      "canonical_path": "assets/sprites/objects/gg_shield_tile_v002.png",
+      "canonical_sha256": "ECE44E993871F2A474215BDAD8DEC6C5097861F487AF66D685FA1DA2A44402B3",
+      "runtime_path": "/gg-runtime-assets/sprites/objects/gg_shield_tile_v002.png",
+      "runtime_sha256": "ECE44E993871F2A474215BDAD8DEC6C5097861F487AF66D685FA1DA2A44402B3"
+    },
+    {
       "key": "fx.explosionSmall",
       "asset_id": "GG-SPRITE-SPRITES-OBJECTS-GG-EXPLOSION-SMALL-V002-SHEET",
       "canonical_path": "assets/sprites/objects/gg_explosion_small_v002_sheet.png",

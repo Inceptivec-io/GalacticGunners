@@ -1,0 +1,22 @@
+[
+  {
+    "path": "00_COMMISSION.md",
+    "bytes": 652,
+    "sha256": "26a3547d6f3f0aaa7c9e69f6b38cc4c7848351a193882883c643a5d49bc9eac3"
+  },
+  {
+    "path": "01_SPEC.md",
+    "bytes": 4825,
+    "sha256": "c46d27495f8d53a43584cd6b838c6201235ac7506336b620209356babc4e0fa3"
+  },
+  {
+    "path": "02_ACCEPTANCE.md",
+    "bytes": 1783,
+    "sha256": "0213dc69839b9ee18b9266f786c2fcd08ec2bd9a872af46f3d57b837da5640fc"
+  },
+  {
+    "path": "03_ROUTING_MESSAGE.md",
+    "bytes": 2495,
+    "sha256": "5c62e64058b52aaa176d888cf5df9e2709f9b1a632d0d88bdee959cc974e4df7"
+  }
+]

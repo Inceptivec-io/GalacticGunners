@@ -57,6 +57,13 @@ const runtimeAssets = [
     sha256: 'C25388AA4C1BAA3123AFCAB5B820718150806749E4AE5F6D8B99331C793578AC',
   },
   {
+    key: 'shield.tile',
+    assetId: 'GG-SPRITE-SPRITES-OBJECTS-GG-SHIELD-TILE-V002',
+    source: 'assets/sprites/objects/gg_shield_tile_v002.png',
+    runtime: 'sprites/objects/gg_shield_tile_v002.png',
+    sha256: 'ECE44E993871F2A474215BDAD8DEC6C5097861F487AF66D685FA1DA2A44402B3',
+  },
+  {
     key: 'fx.explosionSmall',
     assetId: 'GG-SPRITE-SPRITES-OBJECTS-GG-EXPLOSION-SMALL-V002-SHEET',
     source: 'assets/sprites/objects/gg_explosion_small_v002_sheet.png',

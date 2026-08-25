@@ -3,6 +3,8 @@ import type * as Phaser from 'phaser';
 export interface ActionState {
   left: boolean;
   right: boolean;
+  up: boolean;
+  down: boolean;
   fire: boolean;
   confirm: boolean;
   back: boolean;
@@ -11,6 +13,8 @@ export interface ActionState {
 export const EMPTY_ACTION_STATE: ActionState = {
   left: false,
   right: false,
+  up: false,
+  down: false,
   fire: false,
   confirm: false,
   back: false,
@@ -24,21 +28,26 @@ export function normalizeGamepadButtons(buttons: readonly { pressed: boolean }[]
     back: Boolean(buttons[1]?.pressed || buttons[8]?.pressed),
     left: Boolean(buttons[14]?.pressed),
     right: Boolean(buttons[15]?.pressed),
+    up: Boolean(buttons[12]?.pressed),
+    down: Boolean(buttons[13]?.pressed),
   };
 }
 
-export function normalizeGamepadAxes(axes: readonly number[] = [], deadzone = 0.35): Pick<ActionState, 'left' | 'right'> {
-  const axis = axes[0] ?? 0;
+export function normalizeGamepadAxes(axes: readonly number[] = [], deadzone = 0.35): Pick<ActionState, 'left' | 'right' | 'up' | 'down'> {
+  const axisX = axes[0] ?? 0;
+  const axisY = axes[1] ?? 0;
   return {
-    left: axis < -deadzone,
-    right: axis > deadzone,
+    left: axisX < -deadzone,
+    right: axisX > deadzone,
+    up: axisY < -deadzone,
+    down: axisY > deadzone,
   };
 }
 
 export class InputSystem {
   readonly #cursors: Phaser.Types.Input.Keyboard.CursorKeys | undefined;
-  readonly #keys: Record<'a' | 'd' | 'w' | 'm' | 'enter' | 'escape', Phaser.Input.Keyboard.Key | undefined>;
-  readonly #pointerState = { left: false, right: false, fire: false };
+  readonly #keys: Record<'a' | 'd' | 'w' | 's' | 'm' | 'enter' | 'escape', Phaser.Input.Keyboard.Key | undefined>;
+  readonly #pointerState = { left: false, right: false, up: false, down: false, fire: false };
   readonly #gamepadPlugin: Phaser.Input.Gamepad.GamepadPlugin | null | undefined;
   #mutePressed = false;
 
@@ -48,6 +57,7 @@ export class InputSystem {
       a: scene.input.keyboard?.addKey('A'),
       d: scene.input.keyboard?.addKey('D'),
       w: scene.input.keyboard?.addKey('W'),
+      s: scene.input.keyboard?.addKey('S'),
       m: scene.input.keyboard?.addKey('M'),
       enter: scene.input.keyboard?.addKey('ENTER'),
       escape: scene.input.keyboard?.addKey('ESC'),
@@ -69,7 +79,9 @@ export class InputSystem {
     return {
       left: Boolean(this.#cursors?.left.isDown || this.#keys.a?.isDown || this.#pointerState.left || gamepadButtons.left || gamepadAxes.left),
       right: Boolean(this.#cursors?.right.isDown || this.#keys.d?.isDown || this.#pointerState.right || gamepadButtons.right || gamepadAxes.right),
-      fire: Boolean(this.#cursors?.space.isDown || this.#keys.w?.isDown || this.#pointerState.fire || gamepadButtons.fire),
+      up: Boolean(this.#cursors?.up.isDown || this.#keys.w?.isDown || this.#pointerState.up || gamepadButtons.up || gamepadAxes.up),
+      down: Boolean(this.#cursors?.down.isDown || this.#keys.s?.isDown || this.#pointerState.down || gamepadButtons.down || gamepadAxes.down),
+      fire: Boolean(this.#cursors?.space.isDown || this.#pointerState.fire || gamepadButtons.fire),
       confirm: Boolean(this.#keys.enter?.isDown || this.#cursors?.space.isDown || this.#pointerState.fire || gamepadButtons.confirm),
       back: Boolean(this.#keys.escape?.isDown || gamepadButtons.back),
     };
@@ -102,12 +114,21 @@ export class InputSystem {
   private handlePointerUp(): void {
     this.#pointerState.left = false;
     this.#pointerState.right = false;
+    this.#pointerState.up = false;
+    this.#pointerState.down = false;
     this.#pointerState.fire = false;
+  }
+
+  resetPointerState(): void {
+    this.handlePointerUp();
   }
 
   private updatePointer(pointer: Phaser.Input.Pointer): void {
     const center = this.scene.scale.width / 2;
+    const verticalCenter = this.scene.scale.height * 0.72;
     this.#pointerState.left = pointer.x < center - 28;
     this.#pointerState.right = pointer.x > center + 28;
+    this.#pointerState.up = pointer.y < verticalCenter - 28;
+    this.#pointerState.down = pointer.y > verticalCenter + 28;
   }
 }
