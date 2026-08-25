@@ -120,6 +120,13 @@ export class InputSystem {
     return consumed;
   }
 
+  syncOneShotState(): void {
+    const actions = this.actions;
+    this.#mutePressed = Boolean(this.#keys.m?.isDown);
+    this.#nukePressed = actions.nuke;
+    this.#pausePressed = actions.pause;
+  }
+
   destroy(): void {
     this.scene.input.off('pointerdown', this.handlePointerDown, this);
     this.scene.input.off('pointermove', this.handlePointerMove, this);

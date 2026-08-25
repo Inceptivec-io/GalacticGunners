@@ -72,6 +72,7 @@ export class Level1Scene extends Phaser.Scene {
   #rearmProgress: number = LEVEL_ONE_SLICE.nukeRearmMax;
   #nukesFired = 0;
   #lastUpdateAtMs = 0;
+  #pauseInputBlockedUntilMs = 0;
   #terminalState: TerminalState | null = null;
   #playerState: PlayerState = 'active';
   #invulnerableUntilMs = Number.NEGATIVE_INFINITY;
@@ -95,6 +96,7 @@ export class Level1Scene extends Phaser.Scene {
     this.#rearmProgress = LEVEL_ONE_SLICE.nukeRearmMax;
     this.#nukesFired = 0;
     this.#lastUpdateAtMs = 0;
+    this.#pauseInputBlockedUntilMs = 0;
     this.physics.world.setBounds(0, 0, this.scale.width, this.scale.height);
 
     this.#score = new ScoreSystem();
@@ -127,8 +129,12 @@ export class Level1Scene extends Phaser.Scene {
     });
 
     this.scale.on('resize', this.handleResize, this);
+    this.input.keyboard?.on('keydown-P', this.handlePauseKeyDown, this);
+    this.events.on('resume', this.handleResume, this);
     this.events.once('shutdown', () => {
       this.scale.off('resize', this.handleResize, this);
+      this.input.keyboard?.off('keydown-P', this.handlePauseKeyDown, this);
+      this.events.off('resume', this.handleResume, this);
       if (typeof window !== 'undefined') {
         delete window.__GALACTIC_GUNNERS_HOSTILE__;
       }
@@ -338,7 +344,9 @@ export class Level1Scene extends Phaser.Scene {
     if (this.#inputSystem.consumeNuke() && this.#playerState !== 'hit') {
       this.fireNuke();
     }
-    if (this.#inputSystem.consumePauseToggle()) {
+    if (time < this.#pauseInputBlockedUntilMs) {
+      this.#inputSystem.syncOneShotState();
+    } else if (this.#inputSystem.consumePauseToggle()) {
       this.pauseLevel();
     }
     if (this.#inputSystem.consumeMuteToggle()) {
@@ -575,9 +583,27 @@ export class Level1Scene extends Phaser.Scene {
   }
 
   private pauseLevel(): void {
+    if (this.scene.isSleeping()) {
+      return;
+    }
     this.#player.stop();
     this.scene.launch('PauseScene');
     this.scene.sleep();
+  }
+
+  private handlePauseKeyDown(): void {
+    if (this.#terminalState || this.time.now < this.#pauseInputBlockedUntilMs) {
+      return;
+    }
+    this.#inputSystem.syncOneShotState();
+    this.pauseLevel();
+  }
+
+  private handleResume(): void {
+    this.input.keyboard?.resetKeys();
+    this.#inputSystem.syncOneShotState();
+    this.#lastUpdateAtMs = 0;
+    this.#pauseInputBlockedUntilMs = this.time.now + 250;
   }
 
   private damagePlayer(force = false): void {

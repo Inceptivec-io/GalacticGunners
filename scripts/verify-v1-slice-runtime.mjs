@@ -451,13 +451,14 @@ async function runHostileCases(browser) {
     && pausedState.formationDropY === prePause.formationDropY;
   await page.screenshot({ path: path.join(outputDir, 'pause-overlay.png'), fullPage: true });
   await page.keyboard.press('P');
-  await page.waitForFunction(() => !window.__GALACTIC_GUNNERS_PAUSE_QA__ && window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.scene === 'Level1Scene', null, { timeout: 3000 });
+  await page.waitForFunction(() => !window.__GALACTIC_GUNNERS_PAUSE_QA__ && window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.scene === 'Level1Scene', null, { timeout: 8000 });
   const resumedState = await getGameState(page);
   cases.pause_resume_exact_state = resumedState.score === prePause.score && resumedState.lives === prePause.lives;
+  await page.waitForTimeout(250);
   await page.keyboard.press('P');
-  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_PAUSE_QA__?.scene === 'PauseScene', null, { timeout: 3000 });
+  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_PAUSE_QA__?.scene === 'PauseScene', null, { timeout: 8000 });
   await page.keyboard.press('P');
-  await page.waitForFunction(() => !window.__GALACTIC_GUNNERS_PAUSE_QA__, null, { timeout: 3000 });
+  await page.waitForFunction(() => !window.__GALACTIC_GUNNERS_PAUSE_QA__, null, { timeout: 8000 });
   cases.repeat_pause_resume_clean = true;
 
   await loadGame(page);

@@ -55,6 +55,7 @@ export class PauseScene extends Phaser.Scene {
   }
 
   private resumeLevel(): void {
+    this.input.keyboard?.resetKeys();
     this.scene.stop();
     this.scene.resume('Level1Scene');
   }
