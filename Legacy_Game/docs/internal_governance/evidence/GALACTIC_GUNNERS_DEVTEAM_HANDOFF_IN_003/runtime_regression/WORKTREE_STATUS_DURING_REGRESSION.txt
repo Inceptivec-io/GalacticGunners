@@ -1,0 +1,68 @@
+﻿ M assets/css/style.css
+ M assets/js/bosslevel.js
+ M assets/js/entities.js
+ M assets/js/game.js
+ M assets/js/info.js
+ M assets/js/level1.js
+ M assets/js/level2.js
+ M assets/js/mainmenu.js
+ M assets/js/paused.js
+ M assets/js/preloader.js
+ M assets/js/titles.js
+ M assets/js/victory.js
+ M docs/internal_governance/currentness/CURRENT_STATE.md
+ D docs/internal_governance/planning/GG_COM_MASTER_ROADMAP_v1.0.md
+ M docs/internal_governance/registers/GG_REGISTER_ASSET_IP_PROVENANCE.md
+ M docs/internal_governance/registers/GG_REGISTER_CURRENTNESS_AND_GOVERNANCE_DEBT.md
+ M docs/internal_governance/registers/GG_REGISTER_EVIDENCE.md
+ M docs/internal_governance/registers/GG_REGISTER_HANDOFF_COMMISSION.md
+ M docs/internal_governance/registers/GG_REGISTER_PROJECT_STATE.md
+ M index.html
+ M tools/verify_docker_founder_runtime.ps1
+?? _EXTERNAL_GalacticGunners/_GalacticGunners_MAIN_POST_BOX/_WORK_00000001_POST_BOX/GALACTIC_GUNNERS_ASSET_ALIGNMENT_AND_IMPLEMENTATION_PACK_v1.0.zip
+?? _EXTERNAL_GalacticGunners/_GalacticGunners_MAIN_POST_BOX/_WORK_00000001_POST_BOX/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003.zip
+?? _EXTERNAL_GalacticGunners/_GalacticGunners_MAIN_POST_BOX/_WORK_00000001_POST_BOX/GALACTIC_GUNNERS_MASTER_ROADMAP_AND_PLAYLIST_v1.0.zip
+?? _EXTERNAL_GalacticGunners/_GalacticGunners_MAIN_POST_BOX/_WORK_00000001_POST_BOX/GalacticGunners_ASSETS.zip
+?? assets/fonts/
+?? assets/images/owned/backgrounds/Galaxy_Landscape_different.png
+?? assets/images/owned/backgrounds/gg_bg_starfield_portrait_v002.png
+?? assets/images/owned/backgrounds/gg_bg_starfield_v002.png
+?? assets/images/owned/branding/gg_game_over_panel_v002.png
+?? assets/images/owned/branding/gg_logo_compact_v002.png
+?? assets/images/owned/branding/gg_logo_primary_v002.png
+?? assets/images/owned/branding/gg_logo_primary_words_v002.png
+?? assets/images/owned/branding/gg_victory_panel_v002.png
+?? assets/images/owned/sprites/gg_asteroid_v002_sheet.png
+?? assets/images/owned/sprites/gg_boss_mothership_v002_sheet.png
+?? assets/images/owned/sprites/gg_comet_v002_sheet.png
+?? assets/images/owned/sprites/gg_enemy_cruiser_v002_sheet.png
+?? assets/images/owned/sprites/gg_enemy_destroyer_v002_sheet.png
+?? assets/images/owned/sprites/gg_enemy_laser_v002.png
+?? assets/images/owned/sprites/gg_enemy_scout_v002_sheet.png
+?? assets/images/owned/sprites/gg_explosion_large_v002_sheet.png
+?? assets/images/owned/sprites/gg_explosion_small_v002_sheet.png
+?? assets/images/owned/sprites/gg_nuke_burst_v002_sheet.png
+?? assets/images/owned/sprites/gg_nuke_projectile_v002_sheet.png
+?? assets/images/owned/sprites/gg_player_laser_v002.png
+?? assets/images/owned/sprites/gg_player_ship_v002_sheet.png
+?? assets/images/owned/sprites/gg_shield_tile_v002.png
+?? assets/images/owned/ui/gg_hud_life_icon_v002.png
+?? assets/images/owned/ui/gg_hud_nuke_icon_v002.png
+?? assets/images/owned/ui/gg_touch_selector_v002_sheet.png
+?? assets/images/owned/ui/gg_ui_arrow_v002.png
+?? assets/images/owned/ui/gg_ui_back_v002.png
+?? assets/images/owned/ui/gg_ui_info_v002.png
+?? assets/images/owned/ui/gg_ui_pause_v002.png
+?? assets/images/owned/ui/gg_ui_pointer_v002_sheet.png
+?? assets/images/owned/ui/gg_ui_restart_v002.png
+?? assets/images/owned/ui/gg_ui_resume_v002.png
+?? assets/images/owned/ui/gg_ui_sound_off_v002.png
+?? assets/images/owned/ui/gg_ui_sound_on_v002.png
+?? assets/js/gg_runtime.js
+?? docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003/
+?? docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003/
+?? docs/internal_governance/planning/DEVTEAM_003_IMPLEMENTATION_SPECIFICATION/
+?? docs/internal_governance/planning/GALACTIC_GUNNERS_MASTER_PLAYLIST_v1.0.md
+?? docs/internal_governance/planning/GALACTIC_GUNNERS_MASTER_ROADMAP_v1.0.md
+?? docs/internal_governance/planning/_archive/
+?? docs/internal_governance/planning/programme_baseline_v1.0/

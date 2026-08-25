@@ -1,0 +1,10 @@
+﻿01_main_menu.png | 148031 bytes | docs\internal_governance\evidence\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_002\runtime_regression\01_main_menu.png
+02_info.png | 277365 bytes | docs\internal_governance\evidence\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_002\runtime_regression\02_info.png
+03_level1.png | 107460 bytes | docs\internal_governance\evidence\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_002\runtime_regression\03_level1.png
+04_level1_nuke.png | 113856 bytes | docs\internal_governance\evidence\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_002\runtime_regression\04_level1_nuke.png
+05_paused.png | 128915 bytes | docs\internal_governance\evidence\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_002\runtime_regression\05_paused.png
+06_resumed_level1.png | 108837 bytes | docs\internal_governance\evidence\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_002\runtime_regression\06_resumed_level1.png
+07_level2.png | 119427 bytes | docs\internal_governance\evidence\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_002\runtime_regression\07_level2.png
+08_boss.png | 143491 bytes | docs\internal_governance\evidence\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_002\runtime_regression\08_boss.png
+09_game_over.png | 142265 bytes | docs\internal_governance\evidence\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_002\runtime_regression\09_game_over.png
+10_victory.png | 135120 bytes | docs\internal_governance\evidence\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_002\runtime_regression\10_victory.png

@@ -1,0 +1,92 @@
+[
+  {
+    "file": "00_COMMISSION/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV3.md",
+    "bytes": 1369,
+    "sha256": "940f35a70996528543ab5facdf75a76cf49f763b110e2ad820e34c9756a7e82d"
+  },
+  {
+    "file": "01_PLAYABILITY_BLOCKERS/01_REV3_BLOCKER_REGISTER.md",
+    "bytes": 810,
+    "sha256": "ca7506764307cbb0c610616d72acc3d719b66369a0a6c26518ffb24eb21d1acb"
+  },
+  {
+    "file": "02_PHASER_DEBUG_RAILS/02_PHASER_ARCADE_DEBUG_MODE.md",
+    "bytes": 837,
+    "sha256": "49a86046861feb8a89e9af4f0a11b804ba30355c8ca8b014c75f24ec02206b83"
+  },
+  {
+    "file": "03_HUD_AND_BASE_EFFECTS/03_NUKE_HUD_FINAL_LAYOUT.md",
+    "bytes": 587,
+    "sha256": "7f956a49172d9c08254e6a9d2a4ff846a78e4d3a7646c4cd4d88bdc0725636d1"
+  },
+  {
+    "file": "03_HUD_AND_BASE_EFFECTS/04_SHIELD_BASE_EXPLOSION_TRACE.md",
+    "bytes": 765,
+    "sha256": "a76cb691e3bd7b174481151264d473a894f5abfd44d4d0990b65255080e5e20c"
+  },
+  {
+    "file": "04_SHOOTING_AND_COLLISION/05_PLAYER_LASER_END_TO_END_CONTRACT.md",
+    "bytes": 780,
+    "sha256": "8ecc81c0de820923fc8b3f4e572881185b1ce178af9c1a4f2c7d77632269638d"
+  },
+  {
+    "file": "04_SHOOTING_AND_COLLISION/06_COLLISION_VISUAL_FIXTURES.md",
+    "bytes": 569,
+    "sha256": "1184f0c2c202dae764b8d00d2517695bb938559e7c531fa66b39cdb6f7bae914"
+  },
+  {
+    "file": "04_SHOOTING_AND_COLLISION/07_PLAYER_FRAME_RUNTIME_PROOF.md",
+    "bytes": 643,
+    "sha256": "f37eff9b79c309ad7b5dda4205f9b9323db0f51709fb3d3dd177bb64553660e8"
+  },
+  {
+    "file": "05_LANDING_AND_FOUNDATION_FREEZE/08_NEW_LANDING_HERO.md",
+    "bytes": 564,
+    "sha256": "5ed025047569c6318bbd915c1afc6b001a0a4a2a89b920bac7d50ce58835f25c"
+  },
+  {
+    "file": "05_LANDING_AND_FOUNDATION_FREEZE/09_PAUSE_CLEANUP.md",
+    "bytes": 333,
+    "sha256": "4ddc5f3f5145dc619d728ae598f369c8952714322d20b2a92269af3eca1a5b9d"
+  },
+  {
+    "file": "05_LANDING_AND_FOUNDATION_FREEZE/10_GGF1_FREEZE_STANDARD.md",
+    "bytes": 527,
+    "sha256": "fe943ba1c82dd73c3385695ac4dfc1b8f3f59051256ac631c22bbe1bf28170ff"
+  },
+  {
+    "file": "06_QA_AND_VISUAL_TESTING/11_VISUAL_TEST_SUITE.md",
+    "bytes": 675,
+    "sha256": "704adb06d5c2fd230ab966a3467c99a4357643b16f01c690f9a3edee61068c8d"
+  },
+  {
+    "file": "06_QA_AND_VISUAL_TESTING/12_FINAL_DENOMINATOR.md",
+    "bytes": 815,
+    "sha256": "663fc739041be707e7fa30fa1e75c146dfc9903d4401a540d4a46d94afb615ee"
+  },
+  {
+    "file": "07_EVIDENCE_AND_CLOSURE/13_REQUIRED_EVIDENCE.md",
+    "bytes": 744,
+    "sha256": "20338742c7362fbbdf64a07d2950c55a96362f77cae8ba59dbeeb99739bfb45c"
+  },
+  {
+    "file": "07_EVIDENCE_AND_CLOSURE/14_REV3_CLOSURE_GATE.md",
+    "bytes": 1066,
+    "sha256": "5d7c92acf0985f65ab62a16217fba5e845bfd9deedfc63c81f9ae6681fc1305f"
+  },
+  {
+    "file": "08_ROUTING/ROUTING_MESSAGE.md",
+    "bytes": 3838,
+    "sha256": "2d4931e1481e3d7b77318257fc9064cb760cd7ffa2fef0d9274903635e3c2a5b"
+  },
+  {
+    "file": "PAYLOAD/assets/gg_hero_image_player_fighting.png",
+    "bytes": 3605457,
+    "sha256": "b04d0df71d1d94a33e9131cb24e03f224fcb1ad7495d02d4e2b036b11e4386a2"
+  },
+  {
+    "file": "README_PACK.md",
+    "bytes": 504,
+    "sha256": "0184314bcb0d4dc70f34a79914d169908d74cc013654d6a1cab8bba625572a16"
+  }
+]

@@ -1,0 +1,506 @@
+﻿
+
+Mode     : d-----
+Length   : 
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GALACTIC_
+           GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1_PACK
+
+Mode     : d-----
+Length   : 
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\gg_game_o
+           ver_buttons_v002_states_corrected
+
+Mode     : d-----
+Length   : 
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Gold_F
+           ont_Production_v1
+
+Mode     : d-----
+Length   : 
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1
+
+Mode     : d-----
+Length   : 
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GALACTIC_
+           GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1_PACK\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1_PACK
+
+Mode     : -a----
+Length   : 629
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GALACTIC_
+           GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1_PACK\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1_PACK\00_READ
+           ME.md
+
+Mode     : -a----
+Length   : 1477
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GALACTIC_
+           GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1_PACK\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1_PACK\01_ROUT
+           ING_MESSAGE.md
+
+Mode     : -a----
+Length   : 11719
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GALACTIC_
+           GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1_PACK\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1_PACK\02_GALA
+           CTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1.md
+
+Mode     : -a----
+Length   : 289
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GALACTIC_
+           GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1_PACK\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1_PACK\MANIFES
+           T_SHA256.txt
+
+Mode     : -a----
+Length   : 92390
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\gg_game_o
+           ver_buttons_v002_states_corrected\gg_button_main_menu_v002_off.png
+
+Mode     : -a----
+Length   : 69154
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\gg_game_o
+           ver_buttons_v002_states_corrected\gg_button_main_menu_v002_onclick.png
+
+Mode     : -a----
+Length   : 118572
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\gg_game_o
+           ver_buttons_v002_states_corrected\gg_button_replay_v002_off.png
+
+Mode     : -a----
+Length   : 90030
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\gg_game_o
+           ver_buttons_v002_states_corrected\gg_button_replay_v002_onclick.png
+
+Mode     : -a----
+Length   : 94740
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\gg_game_o
+           ver_buttons_v002_states_corrected\gg_button_try_again_v002_off.png
+
+Mode     : -a----
+Length   : 75811
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\gg_game_o
+           ver_buttons_v002_states_corrected\gg_button_try_again_v002_onclick.png
+
+Mode     : d-----
+Length   : 
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Gold_F
+           ont_Production_v1\GalacticGunners_Gold_Display_Font_v1.0_PRODUCTION
+
+Mode     : d-----
+Length   : 
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Gold_F
+           ont_Production_v1\GalacticGunners_Gold_Display_Font_v1.0_PRODUCTION\cinematic
+
+Mode     : d-----
+Length   : 
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Gold_F
+           ont_Production_v1\GalacticGunners_Gold_Display_Font_v1.0_PRODUCTION\desktop
+
+Mode     : d-----
+Length   : 
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Gold_F
+           ont_Production_v1\GalacticGunners_Gold_Display_Font_v1.0_PRODUCTION\documentation
+
+Mode     : d-----
+Length   : 
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Gold_F
+           ont_Production_v1\GalacticGunners_Gold_Display_Font_v1.0_PRODUCTION\source
+
+Mode     : d-----
+Length   : 
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Gold_F
+           ont_Production_v1\GalacticGunners_Gold_Display_Font_v1.0_PRODUCTION\specimens
+
+Mode     : d-----
+Length   : 
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Gold_F
+           ont_Production_v1\GalacticGunners_Gold_Display_Font_v1.0_PRODUCTION\web
+
+Mode     : -a----
+Length   : 958
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Gold_F
+           ont_Production_v1\GalacticGunners_Gold_Display_Font_v1.0_PRODUCTION\README.md
+
+Mode     : -a----
+Length   : 2058
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Gold_F
+           ont_Production_v1\GalacticGunners_Gold_Display_Font_v1.0_PRODUCTION\SHA256SUMS.txt
+
+Mode     : -a----
+Length   : 14839
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Gold_F
+           ont_Production_v1\GalacticGunners_Gold_Display_Font_v1.0_PRODUCTION\cinematic\gg_gold_cinematic_GUNNERS.svg
+
+Mode     : -a----
+Length   : 558859
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Gold_F
+           ont_Production_v1\GalacticGunners_Gold_Display_Font_v1.0_PRODUCTION\cinematic\gg_gold_cinematic_GUNNERS_4k.p
+           ng
+
+Mode     : -a----
+Length   : 2418635
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Gold_F
+           ont_Production_v1\GalacticGunners_Gold_Display_Font_v1.0_PRODUCTION\cinematic\gg_gold_GUNNERS_reference_4k_t
+           ransparent.png
+
+Mode     : -a----
+Length   : 5508
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Gold_F
+           ont_Production_v1\GalacticGunners_Gold_Display_Font_v1.0_PRODUCTION\desktop\GalacticGunnersGoldDisplay-Regul
+           ar.otf
+
+Mode     : -a----
+Length   : 6648
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Gold_F
+           ont_Production_v1\GalacticGunners_Gold_Display_Font_v1.0_PRODUCTION\desktop\GalacticGunnersGoldDisplay-Regul
+           ar.ttf
+
+Mode     : -a----
+Length   : 414
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Gold_F
+           ont_Production_v1\GalacticGunners_Gold_Display_Font_v1.0_PRODUCTION\documentation\DESIGN_SYSTEM.md
+
+Mode     : -a----
+Length   : 369
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Gold_F
+           ont_Production_v1\GalacticGunners_Gold_Display_Font_v1.0_PRODUCTION\documentation\IMPLEMENTATION.md
+
+Mode     : -a----
+Length   : 319
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Gold_F
+           ont_Production_v1\GalacticGunners_Gold_Display_Font_v1.0_PRODUCTION\documentation\LICENSE.md
+
+Mode     : -a----
+Length   : 292
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Gold_F
+           ont_Production_v1\GalacticGunners_Gold_Display_Font_v1.0_PRODUCTION\documentation\VALIDATION.txt
+
+Mode     : -a----
+Length   : 2190160
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Gold_F
+           ont_Production_v1\GalacticGunners_Gold_Display_Font_v1.0_PRODUCTION\source\authoritative_logo_reference.png
+
+Mode     : -a----
+Length   : 24536
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Gold_F
+           ont_Production_v1\GalacticGunners_Gold_Display_Font_v1.0_PRODUCTION\source\build_gold_font_pack.py
+
+Mode     : -a----
+Length   : 1412589
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Gold_F
+           ont_Production_v1\GalacticGunners_Gold_Display_Font_v1.0_PRODUCTION\source\selected_gold_treatment_reference
+           .png
+
+Mode     : -a----
+Length   : 523943
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Gold_F
+           ont_Production_v1\GalacticGunners_Gold_Display_Font_v1.0_PRODUCTION\specimens\gg_gold_full_glyph_proof_4k.pn
+           g
+
+Mode     : -a----
+Length   : 19956
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Gold_F
+           ont_Production_v1\GalacticGunners_Gold_Display_Font_v1.0_PRODUCTION\specimens\gg_gold_full_glyph_proof_4k.sv
+           g
+
+Mode     : -a----
+Length   : 207753
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Gold_F
+           ont_Production_v1\GalacticGunners_Gold_Display_Font_v1.0_PRODUCTION\specimens\gg_gold_installed_font_proof_4
+           k.png
+
+Mode     : -a----
+Length   : 3917
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Gold_F
+           ont_Production_v1\GalacticGunners_Gold_Display_Font_v1.0_PRODUCTION\web\demo.html
+
+Mode     : -a----
+Length   : 853
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Gold_F
+           ont_Production_v1\GalacticGunners_Gold_Display_Font_v1.0_PRODUCTION\web\galactic-gunners-gold.css
+
+Mode     : -a----
+Length   : 3720
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Gold_F
+           ont_Production_v1\GalacticGunners_Gold_Display_Font_v1.0_PRODUCTION\web\GalacticGunnersGoldDisplay-Regular.w
+           off
+
+Mode     : -a----
+Length   : 2368
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Gold_F
+           ont_Production_v1\GalacticGunners_Gold_Display_Font_v1.0_PRODUCTION\web\GalacticGunnersGoldDisplay-Regular.w
+           off2
+
+Mode     : d-----
+Length   : 
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION
+
+Mode     : d-----
+Length   : 
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\cinematic
+
+Mode     : d-----
+Length   : 
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\desktop
+
+Mode     : d-----
+Length   : 
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\documentation
+
+Mode     : d-----
+Length   : 
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\game
+
+Mode     : d-----
+Length   : 
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\source
+
+Mode     : d-----
+Length   : 
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\specimens
+
+Mode     : d-----
+Length   : 
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\variable
+
+Mode     : d-----
+Length   : 
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\web
+
+Mode     : -a----
+Length   : 973
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\README.md
+
+Mode     : -a----
+Length   : 4059
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\SHA256SUMS.txt
+
+Mode     : -a----
+Length   : 13418
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\cinematic\gg_silver_cinematic_GALACT
+           IC.svg
+
+Mode     : -a----
+Length   : 364264
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\cinematic\gg_silver_cinematic_GALACT
+           IC_4k.png
+
+Mode     : -a----
+Length   : 2713536
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\cinematic\gg_silver_GALACTIC_referen
+           ce_4k_transparent.png
+
+Mode     : -a----
+Length   : 2903236
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\cinematic\title-emissive-transparent
+           -4k.png
+
+Mode     : -a----
+Length   : 13418
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\cinematic\title-layered-source.svg
+
+Mode     : -a----
+Length   : 2713536
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\cinematic\title-metallic-transparent
+           -4k.png
+
+Mode     : -a----
+Length   : 705644
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\cinematic\title-metallic-transparent
+           -4k.webp
+
+Mode     : -a----
+Length   : 13418
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\cinematic\title-metallic.svg
+
+Mode     : -a----
+Length   : 5536
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\desktop\GalacticGunnersSilverDisplay
+           -Regular.otf
+
+Mode     : -a----
+Length   : 6672
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\desktop\GalacticGunnersSilverDisplay
+           -Regular.ttf
+
+Mode     : -a----
+Length   : 454
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\documentation\DESIGN_SYSTEM.md
+
+Mode     : -a----
+Length   : 1275
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\documentation\GLYPH_MAP.csv
+
+Mode     : -a----
+Length   : 6741
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\documentation\GLYPH_MAP.json
+
+Mode     : -a----
+Length   : 374
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\documentation\IMPLEMENTATION.md
+
+Mode     : -a----
+Length   : 319
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\documentation\LICENSE.md
+
+Mode     : -a----
+Length   : 973
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\documentation\README.md
+
+Mode     : -a----
+Length   : 428
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\documentation\VALIDATION.txt
+
+Mode     : -a----
+Length   : 213
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\documentation\VERSION.json
+
+Mode     : -a----
+Length   : 21941
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\game\msdf-atlas.json
+
+Mode     : -a----
+Length   : 305612
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\game\msdf-atlas.png
+
+Mode     : -a----
+Length   : 269
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\game\README.md
+
+Mode     : -a----
+Length   : 2190160
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\source\authoritative_logo_reference.
+           png
+
+Mode     : -a----
+Length   : 32915
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\source\build_silver_font_pack.py
+
+Mode     : -a----
+Length   : 1196012
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\source\selected_silver_treatment_ref
+           erence.png
+
+Mode     : -a----
+Length   : 566698
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\specimens\full-glyph-sheet.png
+
+Mode     : -a----
+Length   : 566698
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\specimens\gg_silver_full_glyph_proof
+           _4k.png
+
+Mode     : -a----
+Length   : 19970
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\specimens\gg_silver_full_glyph_proof
+           _4k.svg
+
+Mode     : -a----
+Length   : 213549
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\specimens\gg_silver_installed_font_p
+           roof_4k.png
+
+Mode     : -a----
+Length   : 6892
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\specimens\kerning-proof.pdf
+
+Mode     : d-----
+Length   : 
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\variable\masters
+
+Mode     : -a----
+Length   : 10332
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\variable\GalacticGunnersSilverDispla
+           y-VF.ttf
+
+Mode     : -a----
+Length   : 3564
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\variable\GalacticGunnersSilverDispla
+           y-VF.woff2
+
+Mode     : -a----
+Length   : 718
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\variable\masters\GalacticGunnersSilv
+           erDisplay.designspace
+
+Mode     : -a----
+Length   : 6716
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\variable\masters\master-400.ttf
+
+Mode     : -a----
+Length   : 6708
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\variable\masters\master-900.ttf
+
+Mode     : -a----
+Length   : 3940
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\web\demo.html
+
+Mode     : -a----
+Length   : 867
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\web\font-face.css
+
+Mode     : -a----
+Length   : 867
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\web\galactic-gunners-silver.css
+
+Mode     : -a----
+Length   : 3724
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\web\GalacticGunnersSilverDisplay-Reg
+           ular.woff
+
+Mode     : -a----
+Length   : 2384
+FullName : C:\Users\Michael\dev\GalacticGunners\testing\tmp_GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP3_REV1\GG_Silver
+           _Font_Production_v1\GalacticGunners_Silver_Display_Font_v1.0_PRODUCTION\web\GalacticGunnersSilverDisplay-Reg
+           ular.woff2
+
+
+

@@ -1,0 +1,17 @@
+## feature/GG-COM-001...origin/feature/GG-COM-001
+ M assets/images/owned/sprites/gg_player_ship_v002_atlas.json
+ M assets/js/bosslevel.js
+ M assets/js/game.js
+ M assets/js/gg_runtime.js
+ M assets/js/level1.js
+ M assets/js/level2.js
+ M assets/js/mainmenu.js
+ M assets/js/paused.js
+ M assets/js/preloader.js
+ M docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV2/toolchain/sprite_atlas_report.json
+ M package.json
+ M tools/qa_all.js
+?? assets/images/owned/branding/gg_hero_image_player_fighting.png
+?? docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV3/
+?? docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV3/
+?? tools/verify_handoff_004_rev3.js

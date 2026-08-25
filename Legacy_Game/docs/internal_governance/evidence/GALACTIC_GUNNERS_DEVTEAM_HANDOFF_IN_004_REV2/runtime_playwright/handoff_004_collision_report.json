@@ -1,0 +1,58 @@
+{
+  "generatedAt": "2026-08-24T13:09:37.777Z",
+  "mode": "collision",
+  "url": "http://localhost:8027/",
+  "pass": true,
+  "runtimeExceptions": [],
+  "failedRequests": [],
+  "collision": {
+    "level1": {
+      "sceneKey": "Level1",
+      "trials": 100,
+      "hits": 100,
+      "doubleScore": 0
+    },
+    "level2": {
+      "sceneKey": "Level2",
+      "trials": 100,
+      "hits": 100,
+      "doubleScore": 0
+    },
+    "bossCruiser": {
+      "sceneKey": "BossLevel",
+      "trials": 100,
+      "hits": 100,
+      "doubleScore": 0
+    },
+    "enemyToPlayer": {
+      "sceneKey": "Level1",
+      "trials": 100,
+      "hits": 100,
+      "doubleLife": 0
+    },
+    "specials": {
+      "playerToMothership": {
+        "decrementedOnce": true,
+        "scoreDelta": 50,
+        "laserDestroyed": true
+      },
+      "motherLaserToPlayer": {
+        "hit": true,
+        "laserDestroyed": true
+      },
+      "nukeLifecycle": {
+        "projectilesBefore": 1,
+        "projectilesAfter": 0,
+        "burstCount": 1,
+        "nukeProjectileDestroyed": true,
+        "targetDestroyed": true,
+        "particleManagers": 0
+      }
+    },
+    "scoreClamp": {
+      "zeroMinusOne": 0,
+      "oneMinusOne": 0,
+      "fiveMinusOne": 4
+    }
+  }
+}

@@ -1,0 +1,759 @@
+{
+  "generatedAt": "2026-08-24T19:40:53.986Z",
+  "pass": true,
+  "failures": [],
+  "normal": {
+    "mode": "normal",
+    "url": "http://localhost:8027/",
+    "runtimeExceptions": [],
+    "failedRequests": [],
+    "screenshots": {
+      "mainMenu": "C:\\Users\\Michael\\dev\\GalacticGunners\\docs\\internal_governance\\evidence\\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV3\\runtime_playwright\\normal_main_menu.png",
+      "level1Hud": "C:\\Users\\Michael\\dev\\GalacticGunners\\docs\\internal_governance\\evidence\\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV3\\runtime_playwright\\normal_level1_hud.png",
+      "playerLaserFlight": "C:\\Users\\Michael\\dev\\GalacticGunners\\docs\\internal_governance\\evidence\\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV3\\runtime_playwright\\normal_player_laser_flight.png",
+      "laserImpact": "C:\\Users\\Michael\\dev\\GalacticGunners\\docs\\internal_governance\\evidence\\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV3\\runtime_playwright\\normal_laser_impact.png",
+      "shieldNormal": "C:\\Users\\Michael\\dev\\GalacticGunners\\docs\\internal_governance\\evidence\\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV3\\runtime_playwright\\normal_shield_normal.png",
+      "pause": "C:\\Users\\Michael\\dev\\GalacticGunners\\docs\\internal_governance\\evidence\\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV3\\runtime_playwright\\normal_pause.png",
+      "gameOver": "C:\\Users\\Michael\\dev\\GalacticGunners\\docs\\internal_governance\\evidence\\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV3\\runtime_playwright\\normal_game_over.png",
+      "victory": "C:\\Users\\Michael\\dev\\GalacticGunners\\docs\\internal_governance\\evidence\\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV3\\runtime_playwright\\normal_victory.png",
+      "boss": "C:\\Users\\Michael\\dev\\GalacticGunners\\docs\\internal_governance\\evidence\\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV3\\runtime_playwright\\normal_boss.png"
+    },
+    "mainMenu": {
+      "debugEnabled": false,
+      "physicsDrawDebug": false,
+      "backgroundTexture": "hero",
+      "backgroundScaleX": 0.8169856459330144,
+      "backgroundScaleY": 0.8169856459330144,
+      "playTexture": "BtnPlay",
+      "playInteractive": true,
+      "infoInteractive": true,
+      "soundInteractive": true
+    },
+    "level1Hud": {
+      "iconTexture": "hudNuke",
+      "rearmText": "ReArm: 150/150",
+      "countText": "2",
+      "icon": {
+        "left": 1238.7905,
+        "right": 1275.3655,
+        "top": 610.1374999999999,
+        "bottom": 646.7125,
+        "height": 36.575000000000045
+      },
+      "count": {
+        "left": 1292.19,
+        "right": 1318.19,
+        "top": 607.925,
+        "bottom": 648.925,
+        "height": 41
+      },
+      "rearm": {
+        "left": 1046.19,
+        "right": 1318.19,
+        "top": 562.375,
+        "bottom": 601.375
+      },
+      "safe": true,
+      "countRightOfIcon": true,
+      "comparable": true
+    },
+    "lasers": [
+      {
+        "inputSource": "keyboard",
+        "inputTimestamp": 1787600425158,
+        "playerStart": {
+          "x": 683,
+          "y": 518.7
+        },
+        "beforeCount": 0,
+        "afterCount": 1,
+        "fireResult": true,
+        "initial": {
+          "id": "keyboard-1787600425154",
+          "x": 683,
+          "y": 518.7,
+          "visible": true,
+          "active": true,
+          "body": {
+            "x": 683,
+            "y": 518.7,
+            "width": 181,
+            "height": 1185,
+            "velocityY": -221.66666666666666
+          }
+        },
+        "next": {
+          "x": 683,
+          "y": 515.0055555555556
+        },
+        "later": {
+          "x": 683,
+          "y": 503.9222222222222
+        },
+        "spawned": true,
+        "groupAdded": true,
+        "bodyEnabled": true,
+        "upwardVelocity": true,
+        "moved": true,
+        "visiblyRendered": true,
+        "destructionReason": null
+      },
+      {
+        "inputSource": "controller",
+        "inputTimestamp": 1787600425161,
+        "playerStart": {
+          "x": 683,
+          "y": 518.7
+        },
+        "beforeCount": 1,
+        "afterCount": 2,
+        "fireResult": true,
+        "initial": {
+          "id": "controller-1787600425158",
+          "x": 683,
+          "y": 518.7,
+          "visible": true,
+          "active": true,
+          "body": {
+            "x": 683,
+            "y": 518.7,
+            "width": 181,
+            "height": 1185,
+            "velocityY": -221.66666666666666
+          }
+        },
+        "next": {
+          "x": 683,
+          "y": 515.0055555555556
+        },
+        "later": {
+          "x": 683,
+          "y": 500.22777777777776
+        },
+        "spawned": true,
+        "groupAdded": true,
+        "bodyEnabled": true,
+        "upwardVelocity": true,
+        "moved": true,
+        "visiblyRendered": true,
+        "destructionReason": null
+      },
+      {
+        "inputSource": "touch",
+        "inputTimestamp": 1787600425163,
+        "playerStart": {
+          "x": 683,
+          "y": 518.7
+        },
+        "beforeCount": 2,
+        "afterCount": 3,
+        "fireResult": true,
+        "initial": {
+          "id": "touch-1787600425161",
+          "x": 683,
+          "y": 518.7,
+          "visible": true,
+          "active": true,
+          "body": {
+            "x": 683,
+            "y": 518.7,
+            "width": 181,
+            "height": 1185,
+            "velocityY": -221.66666666666666
+          }
+        },
+        "next": {
+          "x": 683,
+          "y": 515.0055555555556
+        },
+        "later": {
+          "x": 683,
+          "y": 500.22777777777776
+        },
+        "spawned": true,
+        "groupAdded": true,
+        "bodyEnabled": true,
+        "upwardVelocity": true,
+        "moved": true,
+        "visiblyRendered": true,
+        "destructionReason": null
+      }
+    ],
+    "fixtures": [
+      {
+        "label": "laser->destroyer",
+        "targetDestroyed": true,
+        "projectileDestroyed": true,
+        "score": 50,
+        "scoreExpected": 50,
+        "laserBody": {
+          "x": 683,
+          "y": 465.95,
+          "width": 181,
+          "height": 1185
+        },
+        "targetBody": {
+          "x": 683,
+          "y": 285.95,
+          "width": 320,
+          "height": 352
+        }
+      },
+      {
+        "label": "laser->scout",
+        "targetDestroyed": true,
+        "projectileDestroyed": true,
+        "score": 25,
+        "scoreExpected": 25,
+        "laserBody": {
+          "x": 683,
+          "y": 465.95,
+          "width": 181,
+          "height": 1185
+        },
+        "targetBody": {
+          "x": 683,
+          "y": 285.95,
+          "width": 199,
+          "height": 213
+        }
+      },
+      {
+        "label": "laser->cruiser",
+        "targetDestroyed": true,
+        "projectileDestroyed": true,
+        "score": 50,
+        "scoreExpected": 50,
+        "laserBody": {
+          "x": 683,
+          "y": 465.95,
+          "width": 181,
+          "height": 1185
+        },
+        "targetBody": {
+          "x": 683,
+          "y": 285.95,
+          "width": 192,
+          "height": 508
+        }
+      },
+      {
+        "label": "laser->asteroid",
+        "targetDestroyed": true,
+        "projectileDestroyed": true,
+        "score": 10,
+        "scoreExpected": 10,
+        "targetBody": {
+          "x": 683,
+          "y": 285.95,
+          "width": 724,
+          "height": 724
+        }
+      },
+      {
+        "label": "laser->shield",
+        "targetDestroyed": true,
+        "projectileDestroyed": true,
+        "score": 0,
+        "scoreExpected": 0,
+        "targetBody": {
+          "x": 683,
+          "y": 518.7,
+          "width": 1254,
+          "height": 1254
+        },
+        "trace": [
+          {
+            "timestamp": 1787600426378,
+            "scene": "Level1",
+            "x": 683,
+            "y": 519,
+            "inShieldRegion": true,
+            "sourceObject": "PLAYER_LASER_HIT_SHIELD",
+            "targetObject": "ShieldTile",
+            "eventSource": "PLAYER_LASER_HIT_SHIELD",
+            "targetDestroyed": true,
+            "scoreDelta": 0
+          }
+        ]
+      },
+      {
+        "label": "nuke->enemy",
+        "targetDestroyed": true,
+        "projectileDestroyed": true,
+        "score": 50,
+        "scoreExpected": 50,
+        "burstCount": 1
+      },
+      {
+        "label": "near-miss",
+        "targetActive": true,
+        "projectileActive": true,
+        "score": 0,
+        "scoreExpected": 0
+      }
+    ],
+    "playerFrames": [
+      {
+        "frame": "0",
+        "frameWidth": 496,
+        "frameHeight": 703,
+        "displayWidth": 49.175999999999995,
+        "displayHeight": 69.69904838709677,
+        "bounds": {
+          "width": 49.176000000000045,
+          "height": 69.69904838709681
+        },
+        "body": {
+          "x": 674.671806451613,
+          "y": 495.3017419354839,
+          "width": 16.755532258064513,
+          "height": 37.67516129032258
+        }
+      },
+      {
+        "frame": "1",
+        "frameWidth": 496,
+        "frameHeight": 703,
+        "displayWidth": 49.175999999999995,
+        "displayHeight": 69.69904838709677,
+        "bounds": {
+          "width": 49.176000000000045,
+          "height": 69.69904838709681
+        },
+        "body": {
+          "x": 674.671806451613,
+          "y": 495.3017419354839,
+          "width": 16.755532258064513,
+          "height": 37.67516129032258
+        }
+      },
+      {
+        "frame": "2",
+        "frameWidth": 496,
+        "frameHeight": 703,
+        "displayWidth": 49.175999999999995,
+        "displayHeight": 69.69904838709677,
+        "bounds": {
+          "width": 49.176000000000045,
+          "height": 69.69904838709681
+        },
+        "body": {
+          "x": 674.671806451613,
+          "y": 495.3017419354839,
+          "width": 16.755532258064513,
+          "height": 37.67516129032258
+        }
+      },
+      {
+        "frame": "3",
+        "frameWidth": 496,
+        "frameHeight": 703,
+        "displayWidth": 49.175999999999995,
+        "displayHeight": 69.69904838709677,
+        "bounds": {
+          "width": 49.176000000000045,
+          "height": 69.69904838709681
+        },
+        "body": {
+          "x": 674.671806451613,
+          "y": 495.3017419354839,
+          "width": 16.755532258064513,
+          "height": 37.67516129032258
+        }
+      }
+    ],
+    "pause": {
+      "backgroundTexture": "pauseScreen",
+      "hasVisibleResumeButton": false,
+      "hasInvisibleResumeZone": true
+    },
+    "boss": {
+      "normalTexture": "motherShip",
+      "hitTexture": "motherShipHit",
+      "body": {
+        "x": 1183.4471810509394,
+        "y": -56.010736842105274,
+        "width": 65.568,
+        "height": 108.1296842105263
+      }
+    }
+  },
+  "debug": {
+    "mode": "debug",
+    "url": "http://localhost:8027/?ggPhysicsDebug=1",
+    "runtimeExceptions": [],
+    "failedRequests": [],
+    "screenshots": {
+      "mainMenu": "C:\\Users\\Michael\\dev\\GalacticGunners\\docs\\internal_governance\\evidence\\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV3\\runtime_playwright\\debug_main_menu.png",
+      "level1Hud": "C:\\Users\\Michael\\dev\\GalacticGunners\\docs\\internal_governance\\evidence\\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV3\\runtime_playwright\\debug_level1_hud.png",
+      "playerLaserFlight": "C:\\Users\\Michael\\dev\\GalacticGunners\\docs\\internal_governance\\evidence\\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV3\\runtime_playwright\\debug_player_laser_flight.png",
+      "laserImpact": "C:\\Users\\Michael\\dev\\GalacticGunners\\docs\\internal_governance\\evidence\\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV3\\runtime_playwright\\debug_laser_impact.png",
+      "shieldNormal": "C:\\Users\\Michael\\dev\\GalacticGunners\\docs\\internal_governance\\evidence\\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV3\\runtime_playwright\\debug_shield_normal.png",
+      "pause": "C:\\Users\\Michael\\dev\\GalacticGunners\\docs\\internal_governance\\evidence\\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV3\\runtime_playwright\\debug_pause.png",
+      "gameOver": "C:\\Users\\Michael\\dev\\GalacticGunners\\docs\\internal_governance\\evidence\\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV3\\runtime_playwright\\debug_game_over.png",
+      "victory": "C:\\Users\\Michael\\dev\\GalacticGunners\\docs\\internal_governance\\evidence\\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV3\\runtime_playwright\\debug_victory.png",
+      "boss": "C:\\Users\\Michael\\dev\\GalacticGunners\\docs\\internal_governance\\evidence\\GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_004_REV3\\runtime_playwright\\debug_boss.png"
+    },
+    "mainMenu": {
+      "debugEnabled": true,
+      "physicsDrawDebug": true,
+      "backgroundTexture": "hero",
+      "backgroundScaleX": 0.8169856459330144,
+      "backgroundScaleY": 0.8169856459330144,
+      "playTexture": "BtnPlay",
+      "playInteractive": true,
+      "infoInteractive": true,
+      "soundInteractive": true
+    },
+    "level1Hud": {
+      "iconTexture": "hudNuke",
+      "rearmText": "ReArm: 150/150",
+      "countText": "2",
+      "icon": {
+        "left": 1238.7905,
+        "right": 1275.3655,
+        "top": 610.1374999999999,
+        "bottom": 646.7125,
+        "height": 36.575000000000045
+      },
+      "count": {
+        "left": 1292.19,
+        "right": 1318.19,
+        "top": 607.925,
+        "bottom": 648.925,
+        "height": 41
+      },
+      "rearm": {
+        "left": 1046.19,
+        "right": 1318.19,
+        "top": 562.375,
+        "bottom": 601.375
+      },
+      "safe": true,
+      "countRightOfIcon": true,
+      "comparable": true
+    },
+    "lasers": [
+      {
+        "inputSource": "keyboard",
+        "inputTimestamp": 1787600443537,
+        "playerStart": {
+          "x": 683,
+          "y": 518.7
+        },
+        "beforeCount": 0,
+        "afterCount": 1,
+        "fireResult": true,
+        "initial": {
+          "id": "keyboard-1787600443534",
+          "x": 683,
+          "y": 518.7,
+          "visible": true,
+          "active": true,
+          "body": {
+            "x": 683,
+            "y": 518.7,
+            "width": 181,
+            "height": 1185,
+            "velocityY": -221.66666666666666
+          }
+        },
+        "next": {
+          "x": 683,
+          "y": 515.0055555555556
+        },
+        "later": {
+          "x": 683,
+          "y": 500.22777777777776
+        },
+        "spawned": true,
+        "groupAdded": true,
+        "bodyEnabled": true,
+        "upwardVelocity": true,
+        "moved": true,
+        "visiblyRendered": true,
+        "destructionReason": null
+      },
+      {
+        "inputSource": "controller",
+        "inputTimestamp": 1787600443540,
+        "playerStart": {
+          "x": 683,
+          "y": 518.7
+        },
+        "beforeCount": 1,
+        "afterCount": 2,
+        "fireResult": true,
+        "initial": {
+          "id": "controller-1787600443538",
+          "x": 683,
+          "y": 518.7,
+          "visible": true,
+          "active": true,
+          "body": {
+            "x": 683,
+            "y": 518.7,
+            "width": 181,
+            "height": 1185,
+            "velocityY": -221.66666666666666
+          }
+        },
+        "next": {
+          "x": 683,
+          "y": 518.7
+        },
+        "later": {
+          "x": 683,
+          "y": 503.9222222222222
+        },
+        "spawned": true,
+        "groupAdded": true,
+        "bodyEnabled": true,
+        "upwardVelocity": true,
+        "moved": true,
+        "visiblyRendered": true,
+        "destructionReason": null
+      },
+      {
+        "inputSource": "touch",
+        "inputTimestamp": 1787600443542,
+        "playerStart": {
+          "x": 683,
+          "y": 518.7
+        },
+        "beforeCount": 2,
+        "afterCount": 3,
+        "fireResult": true,
+        "initial": {
+          "id": "touch-1787600443540",
+          "x": 683,
+          "y": 518.7,
+          "visible": true,
+          "active": true,
+          "body": {
+            "x": 683,
+            "y": 518.7,
+            "width": 181,
+            "height": 1185,
+            "velocityY": -221.66666666666666
+          }
+        },
+        "next": {
+          "x": 683,
+          "y": 515.0055555555556
+        },
+        "later": {
+          "x": 683,
+          "y": 500.22777777777776
+        },
+        "spawned": true,
+        "groupAdded": true,
+        "bodyEnabled": true,
+        "upwardVelocity": true,
+        "moved": true,
+        "visiblyRendered": true,
+        "destructionReason": null
+      }
+    ],
+    "fixtures": [
+      {
+        "label": "laser->destroyer",
+        "targetDestroyed": true,
+        "projectileDestroyed": true,
+        "score": 50,
+        "scoreExpected": 50,
+        "laserBody": {
+          "x": 683,
+          "y": 465.95,
+          "width": 181,
+          "height": 1185
+        },
+        "targetBody": {
+          "x": 683,
+          "y": 285.95,
+          "width": 320,
+          "height": 352
+        }
+      },
+      {
+        "label": "laser->scout",
+        "targetDestroyed": true,
+        "projectileDestroyed": true,
+        "score": 25,
+        "scoreExpected": 25,
+        "laserBody": {
+          "x": 683,
+          "y": 465.95,
+          "width": 181,
+          "height": 1185
+        },
+        "targetBody": {
+          "x": 683,
+          "y": 285.95,
+          "width": 199,
+          "height": 213
+        }
+      },
+      {
+        "label": "laser->cruiser",
+        "targetDestroyed": true,
+        "projectileDestroyed": true,
+        "score": 50,
+        "scoreExpected": 50,
+        "laserBody": {
+          "x": 683,
+          "y": 465.95,
+          "width": 181,
+          "height": 1185
+        },
+        "targetBody": {
+          "x": 683,
+          "y": 285.95,
+          "width": 192,
+          "height": 508
+        }
+      },
+      {
+        "label": "laser->asteroid",
+        "targetDestroyed": true,
+        "projectileDestroyed": true,
+        "score": 10,
+        "scoreExpected": 10,
+        "targetBody": {
+          "x": 683,
+          "y": 285.95,
+          "width": 724,
+          "height": 724
+        }
+      },
+      {
+        "label": "laser->shield",
+        "targetDestroyed": true,
+        "projectileDestroyed": true,
+        "score": 0,
+        "scoreExpected": 0,
+        "targetBody": {
+          "x": 683,
+          "y": 518.7,
+          "width": 1254,
+          "height": 1254
+        },
+        "trace": [
+          {
+            "timestamp": 1787600444785,
+            "scene": "Level1",
+            "x": 683,
+            "y": 519,
+            "inShieldRegion": true,
+            "sourceObject": "PLAYER_LASER_HIT_SHIELD",
+            "targetObject": "ShieldTile",
+            "eventSource": "PLAYER_LASER_HIT_SHIELD",
+            "targetDestroyed": true,
+            "scoreDelta": 0
+          }
+        ]
+      },
+      {
+        "label": "nuke->enemy",
+        "targetDestroyed": true,
+        "projectileDestroyed": true,
+        "score": 50,
+        "scoreExpected": 50,
+        "burstCount": 1
+      },
+      {
+        "label": "near-miss",
+        "targetActive": true,
+        "projectileActive": true,
+        "score": 0,
+        "scoreExpected": 0
+      }
+    ],
+    "playerFrames": [
+      {
+        "frame": "0",
+        "frameWidth": 496,
+        "frameHeight": 703,
+        "displayWidth": 49.175999999999995,
+        "displayHeight": 69.69904838709677,
+        "bounds": {
+          "width": 49.176000000000045,
+          "height": 69.69904838709681
+        },
+        "body": {
+          "x": 674.671806451613,
+          "y": 495.3017419354839,
+          "width": 16.755532258064513,
+          "height": 37.67516129032258
+        }
+      },
+      {
+        "frame": "1",
+        "frameWidth": 496,
+        "frameHeight": 703,
+        "displayWidth": 49.175999999999995,
+        "displayHeight": 69.69904838709677,
+        "bounds": {
+          "width": 49.176000000000045,
+          "height": 69.69904838709681
+        },
+        "body": {
+          "x": 674.671806451613,
+          "y": 495.3017419354839,
+          "width": 16.755532258064513,
+          "height": 37.67516129032258
+        }
+      },
+      {
+        "frame": "2",
+        "frameWidth": 496,
+        "frameHeight": 703,
+        "displayWidth": 49.175999999999995,
+        "displayHeight": 69.69904838709677,
+        "bounds": {
+          "width": 49.176000000000045,
+          "height": 69.69904838709681
+        },
+        "body": {
+          "x": 674.671806451613,
+          "y": 495.3017419354839,
+          "width": 16.755532258064513,
+          "height": 37.67516129032258
+        }
+      },
+      {
+        "frame": "3",
+        "frameWidth": 496,
+        "frameHeight": 703,
+        "displayWidth": 49.175999999999995,
+        "displayHeight": 69.69904838709677,
+        "bounds": {
+          "width": 49.176000000000045,
+          "height": 69.69904838709681
+        },
+        "body": {
+          "x": 674.671806451613,
+          "y": 495.3017419354839,
+          "width": 16.755532258064513,
+          "height": 37.67516129032258
+        }
+      }
+    ],
+    "pause": {
+      "backgroundTexture": "pauseScreen",
+      "hasVisibleResumeButton": false,
+      "hasInvisibleResumeZone": true
+    },
+    "boss": {
+      "normalTexture": "motherShip",
+      "hitTexture": "motherShipHit",
+      "body": {
+        "x": 1181.3863999458606,
+        "y": -56.010736842105274,
+        "width": 65.568,
+        "height": 108.1296842105263
+      }
+    }
+  }
+}

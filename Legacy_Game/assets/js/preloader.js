@@ -12,7 +12,7 @@ class Preloader extends Phaser.Scene {
         this.load.image("BtnPlayHover", "assets/images/owned/branding/gg_logo_compact_v002.png"); //preload the Play Button Hover image
         this.load.image("logoPrimary", "assets/images/owned/branding/gg_logo_primary_v002.png");
         this.load.image("menuTitlecard", "assets/images/owned/branding/gg_logo_primary_words_v002.png");
-        this.load.image("hero", "assets/images/owned/branding/gg_logo_compact_v002.png"); //preload the hero image
+        this.load.image("hero", "assets/images/owned/branding/gg_hero_image_player_fighting_v002_4k_uhd_master.png"); //preload the Founder REV5 4K landing hero
         this.load.image("BtnInfo", "assets/images/owned/ui/gg_ui_info_v002.png"); //preload the Info Button image
         this.load.spritesheet("BtnPoint", "assets/images/owned/ui/gg_ui_pointer_v002_sheet.png", {
             frameWidth: 724,
@@ -47,7 +47,7 @@ class Preloader extends Phaser.Scene {
         this.load.image('alien', "assets/images/owned/branding/gg_game_over_panel_v002.png"); //preload alien image
         this.load.image('mute', "assets/images/owned/ui/gg_ui_sound_off_v002.png"); //preload mute image
         this.load.image('sound', "assets/images/owned/ui/gg_ui_sound_on_v002.png"); //preload sound image
-        this.load.image("pauseScreen", "assets/images/owned/ui/gg_pause_screen_v2.0.png");
+        this.load.image("pauseScreen", "assets/images/owned/ui/gg_pause_screen_v2.1_4k_uhd_master.png");
         this.load.image('gameOver', "assets/images/owned/branding/gg_game_over_panel_v002.png"); //preload gameover shell image
         this.load.image('fireworks', "assets/images/owned/branding/gg_victory_panel_v002.png"); //preload victory panel image
         this.load.image("buttonMenuOff", "assets/images/owned/ui/gg_button_main_menu_v002_off.png");

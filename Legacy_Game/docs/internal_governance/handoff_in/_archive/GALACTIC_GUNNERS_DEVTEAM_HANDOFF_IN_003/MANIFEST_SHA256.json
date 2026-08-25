@@ -1,0 +1,77 @@
+[
+  {
+    "file": "00_COMMISSION/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003.md",
+    "bytes": 4080,
+    "sha256": "fe7e6a55610aee78d1cb049ca26dfc3827bbfa4e18dc6c71dd0495dc27414819"
+  },
+  {
+    "file": "01_AUTHORITY_PRECEDENCE/01_PRODUCT_AND_VISUAL_AUTHORITY_MODEL.md",
+    "bytes": 1215,
+    "sha256": "d90d649aec0c33e39adf79e6a39e63a0fdc539551ffb4c39410d14bab3fdacc9"
+  },
+  {
+    "file": "02_INBOUND_AND_GOVERNANCE/02_INBOUND_PRESERVATION_AND_POST_BOX_CLEARANCE.md",
+    "bytes": 1570,
+    "sha256": "d169c02d4e720781cc27e4b866c1d44a874a7ca7ad14c940d563158fb741aeca"
+  },
+  {
+    "file": "02_INBOUND_AND_GOVERNANCE/03_ROADMAP_PLAYLIST_CURRENTNESS_RECONCILIATION.md",
+    "bytes": 1516,
+    "sha256": "7f28115311282ebd1a6d3c9ae2edd84582444e53b92a5f5769a83f1997feeacd"
+  },
+  {
+    "file": "03_VISUAL_RECONSTRUCTION/04_ASSET_INTEGRATION_REQUIREMENTS.md",
+    "bytes": 2908,
+    "sha256": "f29b4a154e38f941860f698a35f1e06b22f8891a27098addab88179d8fb37385"
+  },
+  {
+    "file": "03_VISUAL_RECONSTRUCTION/05_LAYOUT_AND_HUD_RECONSTRUCTION.md",
+    "bytes": 1047,
+    "sha256": "ab8759ff6971575554719111422a09e35ad88c9455519d6916cc6cf683fc365d"
+  },
+  {
+    "file": "04_EVENT_DRIVEN_SCENES/06_TITLE_SCENE_EVENT_SPEC.md",
+    "bytes": 933,
+    "sha256": "c8396d9f51373e7215a7018012258dc25272f78eacd6f99bc001e4a5eeefb82f"
+  },
+  {
+    "file": "04_EVENT_DRIVEN_SCENES/07_GAME_OVER_AND_VICTORY_EVENT_SPEC.md",
+    "bytes": 1290,
+    "sha256": "385478fca7eca101d1b1b5e631a98dae71f080d642c1d829688c54d5e531d123"
+  },
+  {
+    "file": "04_EVENT_DRIVEN_SCENES/08_UI_EVENT_CONTRACT.md",
+    "bytes": 559,
+    "sha256": "f01d71c02169ca85e47932701f26edc931c18a219370119ce9278cab586190b3"
+  },
+  {
+    "file": "05_SCORING/09_LOCKED_CORE_SCORING_IMPLEMENTATION.md",
+    "bytes": 1290,
+    "sha256": "319753f0de2cdfa433f9d225bee1609a8b695022f6fc0a8a46944c3c64a8f9c5"
+  },
+  {
+    "file": "06_TEST_ACCEPTANCE/10_TEST_MATRIX_AND_FOUNDER_ACCEPTANCE.md",
+    "bytes": 1783,
+    "sha256": "2421f478da107b22bbd14fbcd298d30b332079911a681d237df892f59c520b0b"
+  },
+  {
+    "file": "06_TEST_ACCEPTANCE/11_REQUIRED_EVIDENCE_AND_RETURN.md",
+    "bytes": 1265,
+    "sha256": "11586a5a8792e403989362ab1b3bd89c6a7a43fd0c9453cd19b2e14495699c39"
+  },
+  {
+    "file": "06_TEST_ACCEPTANCE/12_CLOSURE_GATE.md",
+    "bytes": 1101,
+    "sha256": "861612d0422e9023ac4c3ab39e08427961d0ae5e3386c390b2d0f171f840c6c8"
+  },
+  {
+    "file": "07_ROUTING/ROUTING_MESSAGE.md",
+    "bytes": 5958,
+    "sha256": "349b49f33f01cb24030d85084ebb3f870da7a9835c6100749868b2e32ad5818f"
+  },
+  {
+    "file": "README_PACK.md",
+    "bytes": 561,
+    "sha256": "d7d2c43d1d3e9d2bf4bd67021be4017eb8a8f98eceefa296854013350c1f3dec"
+  }
+]

@@ -1,0 +1,1478 @@
+{
+  "generatedAt": "2026-08-24T19:39:10.037Z",
+  "pass": true,
+  "sprites": [
+    {
+      "key": "player",
+      "source": "assets/images/owned/sprites/gg_player_ship_v002_sheet.png",
+      "sourceSha256": "a3e2edbdee85b312ad1766ee00c5a5438f60abf9dfcd006b2bd8474012ddff38",
+      "sourceDimensions": {
+        "width": 2172,
+        "height": 724
+      },
+      "alpha": true,
+      "frameCount": 4,
+      "frames": [
+        {
+          "name": "0",
+          "x": 25,
+          "y": 21,
+          "w": 496,
+          "h": 703,
+          "contentBounds": {
+            "empty": false,
+            "x": 0,
+            "y": 0,
+            "w": 494,
+            "h": 537,
+            "padding": {
+              "left": 0,
+              "top": 0,
+              "right": 2,
+              "bottom": 166
+            }
+          }
+        },
+        {
+          "name": "1",
+          "x": 568,
+          "y": 21,
+          "w": 496,
+          "h": 703,
+          "contentBounds": {
+            "empty": false,
+            "x": 0,
+            "y": 1,
+            "w": 494,
+            "h": 620,
+            "padding": {
+              "left": 0,
+              "top": 1,
+              "right": 2,
+              "bottom": 82
+            }
+          }
+        },
+        {
+          "name": "2",
+          "x": 1110,
+          "y": 21,
+          "w": 496,
+          "h": 703,
+          "contentBounds": {
+            "empty": false,
+            "x": 0,
+            "y": 0,
+            "w": 496,
+            "h": 703,
+            "padding": {
+              "left": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0
+            }
+          }
+        },
+        {
+          "name": "3",
+          "x": 1652,
+          "y": 21,
+          "w": 496,
+          "h": 703,
+          "contentBounds": {
+            "empty": false,
+            "x": 0,
+            "y": 1,
+            "w": 496,
+            "h": 613,
+            "padding": {
+              "left": 0,
+              "top": 1,
+              "right": 0,
+              "bottom": 89
+            }
+          }
+        }
+      ],
+      "overlaps": [],
+      "stableLogicalAnchor": true,
+      "contentSizeRange": {
+        "width": {
+          "min": 494,
+          "max": 496
+        },
+        "height": {
+          "min": 537,
+          "max": 703
+        }
+      },
+      "pass": true
+    },
+    {
+      "key": "standardEnemy",
+      "source": "assets/images/owned/sprites/gg_enemy_destroyer_v002_sheet.png",
+      "sourceSha256": "7e0ba8f3763ee030e6bb23b6d7999e28e8f23a86a73564a1580fbd74d538d88c",
+      "sourceDimensions": {
+        "width": 2172,
+        "height": 724
+      },
+      "alpha": true,
+      "frameCount": 3,
+      "frames": [
+        {
+          "name": "0",
+          "x": 6,
+          "y": 0,
+          "w": 710,
+          "h": 677,
+          "contentBounds": {
+            "empty": false,
+            "x": 0,
+            "y": 0,
+            "w": 710,
+            "h": 677,
+            "padding": {
+              "left": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0
+            }
+          }
+        },
+        {
+          "name": "1",
+          "x": 731,
+          "y": 0,
+          "w": 710,
+          "h": 724,
+          "contentBounds": {
+            "empty": false,
+            "x": 0,
+            "y": 0,
+            "w": 710,
+            "h": 724,
+            "padding": {
+              "left": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0
+            }
+          }
+        },
+        {
+          "name": "2",
+          "x": 1456,
+          "y": 0,
+          "w": 709,
+          "h": 681,
+          "contentBounds": {
+            "empty": false,
+            "x": 0,
+            "y": 0,
+            "w": 709,
+            "h": 681,
+            "padding": {
+              "left": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0
+            }
+          }
+        }
+      ],
+      "overlaps": [],
+      "stableLogicalAnchor": true,
+      "contentSizeRange": {
+        "width": {
+          "min": 709,
+          "max": 710
+        },
+        "height": {
+          "min": 677,
+          "max": 724
+        }
+      },
+      "pass": true
+    },
+    {
+      "key": "cruiser",
+      "source": "assets/images/owned/sprites/gg_enemy_cruiser_v002_sheet.png",
+      "sourceSha256": "05da611a926239711e2310edcdc1d3c4af06497d5b96e70761d5102b9d402ae3",
+      "sourceDimensions": {
+        "width": 1672,
+        "height": 941
+      },
+      "alpha": true,
+      "frameCount": 4,
+      "frames": [
+        {
+          "name": "0",
+          "x": 0,
+          "y": 0,
+          "w": 418,
+          "h": 941,
+          "contentBounds": {
+            "empty": false,
+            "x": 1,
+            "y": 1,
+            "w": 414,
+            "h": 752,
+            "padding": {
+              "left": 1,
+              "top": 1,
+              "right": 3,
+              "bottom": 188
+            }
+          }
+        },
+        {
+          "name": "1",
+          "x": 418,
+          "y": 0,
+          "w": 418,
+          "h": 941,
+          "contentBounds": {
+            "empty": false,
+            "x": 3,
+            "y": 1,
+            "w": 415,
+            "h": 780,
+            "padding": {
+              "left": 3,
+              "top": 1,
+              "right": 0,
+              "bottom": 160
+            }
+          }
+        },
+        {
+          "name": "2",
+          "x": 836,
+          "y": 0,
+          "w": 418,
+          "h": 941,
+          "contentBounds": {
+            "empty": false,
+            "x": 0,
+            "y": 1,
+            "w": 418,
+            "h": 940,
+            "padding": {
+              "left": 0,
+              "top": 1,
+              "right": 0,
+              "bottom": 0
+            }
+          }
+        },
+        {
+          "name": "3",
+          "x": 1254,
+          "y": 0,
+          "w": 418,
+          "h": 941,
+          "contentBounds": {
+            "empty": false,
+            "x": 0,
+            "y": 2,
+            "w": 417,
+            "h": 786,
+            "padding": {
+              "left": 0,
+              "top": 2,
+              "right": 1,
+              "bottom": 153
+            }
+          }
+        }
+      ],
+      "overlaps": [],
+      "stableLogicalAnchor": true,
+      "contentSizeRange": {
+        "width": {
+          "min": 414,
+          "max": 418
+        },
+        "height": {
+          "min": 752,
+          "max": 940
+        }
+      },
+      "pass": true
+    },
+    {
+      "key": "scout",
+      "source": "assets/images/owned/sprites/gg_enemy_scout_v002_sheet.png",
+      "sourceSha256": "fbb60a9eb52346cb57cdf22fa1b6088dd24b08f9132540b05dfd0f1612405a7f",
+      "sourceDimensions": {
+        "width": 1983,
+        "height": 793
+      },
+      "alpha": true,
+      "frameCount": 4,
+      "frames": [
+        {
+          "name": "0",
+          "x": 11,
+          "y": 18,
+          "w": 474,
+          "h": 444,
+          "contentBounds": {
+            "empty": false,
+            "x": 0,
+            "y": 0,
+            "w": 474,
+            "h": 444,
+            "padding": {
+              "left": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0
+            }
+          }
+        },
+        {
+          "name": "1",
+          "x": 508,
+          "y": 26,
+          "w": 473,
+          "h": 492,
+          "contentBounds": {
+            "empty": false,
+            "x": 0,
+            "y": 0,
+            "w": 473,
+            "h": 492,
+            "padding": {
+              "left": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0
+            }
+          }
+        },
+        {
+          "name": "2",
+          "x": 1002,
+          "y": 20,
+          "w": 475,
+          "h": 773,
+          "contentBounds": {
+            "empty": false,
+            "x": 0,
+            "y": 0,
+            "w": 475,
+            "h": 773,
+            "padding": {
+              "left": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0
+            }
+          }
+        },
+        {
+          "name": "3",
+          "x": 1498,
+          "y": 23,
+          "w": 474,
+          "h": 559,
+          "contentBounds": {
+            "empty": false,
+            "x": 0,
+            "y": 0,
+            "w": 474,
+            "h": 559,
+            "padding": {
+              "left": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0
+            }
+          }
+        }
+      ],
+      "overlaps": [],
+      "stableLogicalAnchor": true,
+      "contentSizeRange": {
+        "width": {
+          "min": 473,
+          "max": 475
+        },
+        "height": {
+          "min": 444,
+          "max": 773
+        }
+      },
+      "pass": true
+    },
+    {
+      "key": "mothershipNormal",
+      "source": "assets/images/owned/sprites/gg_boss_mothership_normal_v002_sheet.png",
+      "sourceSha256": "5b49d62be022a2633388bf0f8465cceda9a215d678afbfc5a26e82931df2974a",
+      "sourceDimensions": {
+        "width": 1425,
+        "height": 724
+      },
+      "alpha": true,
+      "frameCount": 3,
+      "frames": [
+        {
+          "name": "0",
+          "x": 0,
+          "y": 0,
+          "w": 475,
+          "h": 724,
+          "contentBounds": {
+            "empty": false,
+            "x": 9,
+            "y": 1,
+            "w": 466,
+            "h": 709,
+            "padding": {
+              "left": 9,
+              "top": 1,
+              "right": 0,
+              "bottom": 14
+            }
+          }
+        },
+        {
+          "name": "1",
+          "x": 475,
+          "y": 0,
+          "w": 475,
+          "h": 724,
+          "contentBounds": {
+            "empty": false,
+            "x": 0,
+            "y": 1,
+            "w": 475,
+            "h": 723,
+            "padding": {
+              "left": 0,
+              "top": 1,
+              "right": 0,
+              "bottom": 0
+            }
+          }
+        },
+        {
+          "name": "2",
+          "x": 950,
+          "y": 0,
+          "w": 475,
+          "h": 724,
+          "contentBounds": {
+            "empty": false,
+            "x": 0,
+            "y": 1,
+            "w": 475,
+            "h": 723,
+            "padding": {
+              "left": 0,
+              "top": 1,
+              "right": 0,
+              "bottom": 0
+            }
+          }
+        }
+      ],
+      "overlaps": [],
+      "stableLogicalAnchor": true,
+      "contentSizeRange": {
+        "width": {
+          "min": 466,
+          "max": 475
+        },
+        "height": {
+          "min": 709,
+          "max": 723
+        }
+      },
+      "pass": true
+    },
+    {
+      "key": "mothershipHit",
+      "source": "assets/images/owned/sprites/gg_boss_mothership_hit_v002_sheet.png",
+      "sourceSha256": "e829b094078363f051f41929f48e92c3288b98e2cd43425e8a0309b52b989088",
+      "sourceDimensions": {
+        "width": 724,
+        "height": 724
+      },
+      "alpha": true,
+      "frameCount": 1,
+      "frames": [
+        {
+          "name": "0",
+          "x": 0,
+          "y": 0,
+          "w": 724,
+          "h": 724,
+          "contentBounds": {
+            "empty": false,
+            "x": 0,
+            "y": 1,
+            "w": 724,
+            "h": 723,
+            "padding": {
+              "left": 0,
+              "top": 1,
+              "right": 0,
+              "bottom": 0
+            }
+          }
+        }
+      ],
+      "overlaps": [],
+      "stableLogicalAnchor": true,
+      "contentSizeRange": {
+        "width": {
+          "min": 724,
+          "max": 724
+        },
+        "height": {
+          "min": 723,
+          "max": 723
+        }
+      },
+      "pass": true
+    },
+    {
+      "key": "asteroid",
+      "source": "assets/images/owned/sprites/gg_asteroid_v002_sheet.png",
+      "sourceSha256": "0421bfd58ea30608adf8e0e684b22419f63f6c57dfcc06b59594be6947625d01",
+      "sourceDimensions": {
+        "width": 2172,
+        "height": 724
+      },
+      "alpha": true,
+      "frameCount": 3,
+      "frames": [
+        {
+          "name": "0",
+          "x": 0,
+          "y": 0,
+          "w": 724,
+          "h": 724,
+          "contentBounds": {
+            "empty": false,
+            "x": 13,
+            "y": 128,
+            "w": 694,
+            "h": 450,
+            "padding": {
+              "left": 13,
+              "top": 128,
+              "right": 17,
+              "bottom": 146
+            }
+          }
+        },
+        {
+          "name": "1",
+          "x": 724,
+          "y": 0,
+          "w": 724,
+          "h": 724,
+          "contentBounds": {
+            "empty": false,
+            "x": 7,
+            "y": 157,
+            "w": 713,
+            "h": 404,
+            "padding": {
+              "left": 7,
+              "top": 157,
+              "right": 4,
+              "bottom": 163
+            }
+          }
+        },
+        {
+          "name": "2",
+          "x": 1448,
+          "y": 0,
+          "w": 724,
+          "h": 724,
+          "contentBounds": {
+            "empty": false,
+            "x": 18,
+            "y": 127,
+            "w": 693,
+            "h": 453,
+            "padding": {
+              "left": 18,
+              "top": 127,
+              "right": 13,
+              "bottom": 144
+            }
+          }
+        }
+      ],
+      "overlaps": [],
+      "stableLogicalAnchor": true,
+      "contentSizeRange": {
+        "width": {
+          "min": 693,
+          "max": 713
+        },
+        "height": {
+          "min": 404,
+          "max": 453
+        }
+      },
+      "pass": true
+    },
+    {
+      "key": "comet",
+      "source": "assets/images/owned/sprites/gg_comet_v002_sheet.png",
+      "sourceSha256": "b9eb2bd211f9a922707cceea4e1eb4eaa5b1205249e38d6bbecb76dfba33978f",
+      "sourceDimensions": {
+        "width": 2688,
+        "height": 448
+      },
+      "alpha": true,
+      "frameCount": 6,
+      "frames": [
+        {
+          "name": "0",
+          "x": 0,
+          "y": 0,
+          "w": 448,
+          "h": 448,
+          "contentBounds": {
+            "empty": false,
+            "x": 187,
+            "y": 34,
+            "w": 242,
+            "h": 374,
+            "padding": {
+              "left": 187,
+              "top": 34,
+              "right": 19,
+              "bottom": 40
+            }
+          }
+        },
+        {
+          "name": "1",
+          "x": 448,
+          "y": 0,
+          "w": 448,
+          "h": 448,
+          "contentBounds": {
+            "empty": false,
+            "x": 165,
+            "y": 15,
+            "w": 269,
+            "h": 400,
+            "padding": {
+              "left": 165,
+              "top": 15,
+              "right": 14,
+              "bottom": 33
+            }
+          }
+        },
+        {
+          "name": "2",
+          "x": 896,
+          "y": 0,
+          "w": 448,
+          "h": 448,
+          "contentBounds": {
+            "empty": false,
+            "x": 167,
+            "y": 21,
+            "w": 260,
+            "h": 397,
+            "padding": {
+              "left": 167,
+              "top": 21,
+              "right": 21,
+              "bottom": 30
+            }
+          }
+        },
+        {
+          "name": "3",
+          "x": 1344,
+          "y": 0,
+          "w": 448,
+          "h": 448,
+          "contentBounds": {
+            "empty": false,
+            "x": 151,
+            "y": 15,
+            "w": 152,
+            "h": 396,
+            "padding": {
+              "left": 151,
+              "top": 15,
+              "right": 145,
+              "bottom": 37
+            }
+          }
+        },
+        {
+          "name": "4",
+          "x": 1792,
+          "y": 0,
+          "w": 448,
+          "h": 448,
+          "contentBounds": {
+            "empty": false,
+            "x": 146,
+            "y": 6,
+            "w": 163,
+            "h": 412,
+            "padding": {
+              "left": 146,
+              "top": 6,
+              "right": 139,
+              "bottom": 30
+            }
+          }
+        },
+        {
+          "name": "5",
+          "x": 2240,
+          "y": 0,
+          "w": 448,
+          "h": 448,
+          "contentBounds": {
+            "empty": false,
+            "x": 15,
+            "y": 20,
+            "w": 279,
+            "h": 395,
+            "padding": {
+              "left": 15,
+              "top": 20,
+              "right": 154,
+              "bottom": 33
+            }
+          }
+        }
+      ],
+      "overlaps": [],
+      "stableLogicalAnchor": true,
+      "contentSizeRange": {
+        "width": {
+          "min": 152,
+          "max": 279
+        },
+        "height": {
+          "min": 374,
+          "max": 412
+        }
+      },
+      "pass": true
+    },
+    {
+      "key": "nukeProjectile",
+      "source": "assets/images/owned/sprites/gg_nuke_projectile_v002_sheet.png",
+      "sourceSha256": "3b826087ad38eb6963046260ec384b9507c80e450dfaa3b302b923875b8b21aa",
+      "sourceDimensions": {
+        "width": 2880,
+        "height": 800
+      },
+      "alpha": true,
+      "frameCount": 6,
+      "frames": [
+        {
+          "name": "0",
+          "x": 0,
+          "y": 0,
+          "w": 480,
+          "h": 800,
+          "contentBounds": {
+            "empty": false,
+            "x": 138,
+            "y": 67,
+            "w": 202,
+            "h": 661,
+            "padding": {
+              "left": 138,
+              "top": 67,
+              "right": 140,
+              "bottom": 72
+            }
+          }
+        },
+        {
+          "name": "1",
+          "x": 480,
+          "y": 0,
+          "w": 480,
+          "h": 800,
+          "contentBounds": {
+            "empty": false,
+            "x": 74,
+            "y": 69,
+            "w": 249,
+            "h": 658,
+            "padding": {
+              "left": 74,
+              "top": 69,
+              "right": 157,
+              "bottom": 73
+            }
+          }
+        },
+        {
+          "name": "2",
+          "x": 960,
+          "y": 0,
+          "w": 480,
+          "h": 800,
+          "contentBounds": {
+            "empty": false,
+            "x": 83,
+            "y": 61,
+            "w": 300,
+            "h": 672,
+            "padding": {
+              "left": 83,
+              "top": 61,
+              "right": 97,
+              "bottom": 67
+            }
+          }
+        },
+        {
+          "name": "3",
+          "x": 1440,
+          "y": 0,
+          "w": 480,
+          "h": 800,
+          "contentBounds": {
+            "empty": false,
+            "x": 7,
+            "y": 30,
+            "w": 360,
+            "h": 735,
+            "padding": {
+              "left": 7,
+              "top": 30,
+              "right": 113,
+              "bottom": 35
+            }
+          }
+        },
+        {
+          "name": "4",
+          "x": 1920,
+          "y": 0,
+          "w": 480,
+          "h": 800,
+          "contentBounds": {
+            "empty": false,
+            "x": 107,
+            "y": 10,
+            "w": 300,
+            "h": 774,
+            "padding": {
+              "left": 107,
+              "top": 10,
+              "right": 73,
+              "bottom": 16
+            }
+          }
+        },
+        {
+          "name": "5",
+          "x": 2400,
+          "y": 0,
+          "w": 480,
+          "h": 800,
+          "contentBounds": {
+            "empty": false,
+            "x": 119,
+            "y": 23,
+            "w": 241,
+            "h": 747,
+            "padding": {
+              "left": 119,
+              "top": 23,
+              "right": 120,
+              "bottom": 30
+            }
+          }
+        }
+      ],
+      "overlaps": [],
+      "stableLogicalAnchor": true,
+      "contentSizeRange": {
+        "width": {
+          "min": 202,
+          "max": 360
+        },
+        "height": {
+          "min": 658,
+          "max": 774
+        }
+      },
+      "pass": true
+    },
+    {
+      "key": "nukeBurst",
+      "source": "assets/images/owned/sprites/gg_nuke_burst_v002_sheet.png",
+      "sourceSha256": "f9e47b6d3875778217620fe0fddacaa515405d377900ba5f7f2d1271f0a96c53",
+      "sourceDimensions": {
+        "width": 5160,
+        "height": 516
+      },
+      "alpha": true,
+      "frameCount": 10,
+      "frames": [
+        {
+          "name": "0",
+          "x": 0,
+          "y": 0,
+          "w": 516,
+          "h": 516,
+          "contentBounds": {
+            "empty": false,
+            "x": 179,
+            "y": 164,
+            "w": 157,
+            "h": 185,
+            "padding": {
+              "left": 179,
+              "top": 164,
+              "right": 180,
+              "bottom": 167
+            }
+          }
+        },
+        {
+          "name": "1",
+          "x": 516,
+          "y": 0,
+          "w": 516,
+          "h": 516,
+          "contentBounds": {
+            "empty": false,
+            "x": 136,
+            "y": 122,
+            "w": 237,
+            "h": 266,
+            "padding": {
+              "left": 136,
+              "top": 122,
+              "right": 143,
+              "bottom": 128
+            }
+          }
+        },
+        {
+          "name": "2",
+          "x": 1032,
+          "y": 0,
+          "w": 516,
+          "h": 516,
+          "contentBounds": {
+            "empty": false,
+            "x": 104,
+            "y": 65,
+            "w": 308,
+            "h": 381,
+            "padding": {
+              "left": 104,
+              "top": 65,
+              "right": 104,
+              "bottom": 70
+            }
+          }
+        },
+        {
+          "name": "3",
+          "x": 1548,
+          "y": 0,
+          "w": 516,
+          "h": 516,
+          "contentBounds": {
+            "empty": false,
+            "x": 97,
+            "y": 10,
+            "w": 325,
+            "h": 497,
+            "padding": {
+              "left": 97,
+              "top": 10,
+              "right": 94,
+              "bottom": 9
+            }
+          }
+        },
+        {
+          "name": "4",
+          "x": 2064,
+          "y": 0,
+          "w": 516,
+          "h": 516,
+          "contentBounds": {
+            "empty": false,
+            "x": 79,
+            "y": 6,
+            "w": 354,
+            "h": 505,
+            "padding": {
+              "left": 79,
+              "top": 6,
+              "right": 83,
+              "bottom": 5
+            }
+          }
+        },
+        {
+          "name": "5",
+          "x": 2580,
+          "y": 0,
+          "w": 516,
+          "h": 516,
+          "contentBounds": {
+            "empty": false,
+            "x": 91,
+            "y": 4,
+            "w": 337,
+            "h": 508,
+            "padding": {
+              "left": 91,
+              "top": 4,
+              "right": 88,
+              "bottom": 4
+            }
+          }
+        },
+        {
+          "name": "6",
+          "x": 3096,
+          "y": 0,
+          "w": 516,
+          "h": 516,
+          "contentBounds": {
+            "empty": false,
+            "x": 110,
+            "y": 17,
+            "w": 299,
+            "h": 488,
+            "padding": {
+              "left": 110,
+              "top": 17,
+              "right": 107,
+              "bottom": 11
+            }
+          }
+        },
+        {
+          "name": "7",
+          "x": 3612,
+          "y": 0,
+          "w": 516,
+          "h": 516,
+          "contentBounds": {
+            "empty": false,
+            "x": 112,
+            "y": 21,
+            "w": 293,
+            "h": 473,
+            "padding": {
+              "left": 112,
+              "top": 21,
+              "right": 111,
+              "bottom": 22
+            }
+          }
+        },
+        {
+          "name": "8",
+          "x": 4128,
+          "y": 0,
+          "w": 516,
+          "h": 516,
+          "contentBounds": {
+            "empty": false,
+            "x": 117,
+            "y": 31,
+            "w": 275,
+            "h": 460,
+            "padding": {
+              "left": 117,
+              "top": 31,
+              "right": 124,
+              "bottom": 25
+            }
+          }
+        },
+        {
+          "name": "9",
+          "x": 4644,
+          "y": 0,
+          "w": 516,
+          "h": 516,
+          "contentBounds": {
+            "empty": false,
+            "x": 116,
+            "y": 24,
+            "w": 285,
+            "h": 465,
+            "padding": {
+              "left": 116,
+              "top": 24,
+              "right": 115,
+              "bottom": 27
+            }
+          }
+        }
+      ],
+      "overlaps": [],
+      "stableLogicalAnchor": true,
+      "contentSizeRange": {
+        "width": {
+          "min": 157,
+          "max": 354
+        },
+        "height": {
+          "min": 185,
+          "max": 508
+        }
+      },
+      "pass": true
+    },
+    {
+      "key": "smallExplosion",
+      "source": "assets/images/owned/sprites/gg_explosion_small_v002_sheet.png",
+      "sourceSha256": "895eceaff03c8390a3f17fa9d829b7b86a6d0ae0b4d73bba3cd2d2a267d569cc",
+      "sourceDimensions": {
+        "width": 3952,
+        "height": 494
+      },
+      "alpha": true,
+      "frameCount": 8,
+      "frames": [
+        {
+          "name": "0",
+          "x": 0,
+          "y": 0,
+          "w": 494,
+          "h": 494,
+          "contentBounds": {
+            "empty": false,
+            "x": 112,
+            "y": 143,
+            "w": 269,
+            "h": 208,
+            "padding": {
+              "left": 112,
+              "top": 143,
+              "right": 113,
+              "bottom": 143
+            }
+          }
+        },
+        {
+          "name": "1",
+          "x": 494,
+          "y": 0,
+          "w": 494,
+          "h": 494,
+          "contentBounds": {
+            "empty": false,
+            "x": 85,
+            "y": 88,
+            "w": 324,
+            "h": 316,
+            "padding": {
+              "left": 85,
+              "top": 88,
+              "right": 85,
+              "bottom": 90
+            }
+          }
+        },
+        {
+          "name": "2",
+          "x": 988,
+          "y": 0,
+          "w": 494,
+          "h": 494,
+          "contentBounds": {
+            "empty": false,
+            "x": 2,
+            "y": 62,
+            "w": 491,
+            "h": 370,
+            "padding": {
+              "left": 2,
+              "top": 62,
+              "right": 1,
+              "bottom": 62
+            }
+          }
+        },
+        {
+          "name": "3",
+          "x": 1482,
+          "y": 0,
+          "w": 494,
+          "h": 494,
+          "contentBounds": {
+            "empty": false,
+            "x": 7,
+            "y": 29,
+            "w": 477,
+            "h": 436,
+            "padding": {
+              "left": 7,
+              "top": 29,
+              "right": 10,
+              "bottom": 29
+            }
+          }
+        },
+        {
+          "name": "4",
+          "x": 1976,
+          "y": 0,
+          "w": 494,
+          "h": 494,
+          "contentBounds": {
+            "empty": false,
+            "x": 26,
+            "y": 59,
+            "w": 443,
+            "h": 374,
+            "padding": {
+              "left": 26,
+              "top": 59,
+              "right": 25,
+              "bottom": 61
+            }
+          }
+        },
+        {
+          "name": "5",
+          "x": 2470,
+          "y": 0,
+          "w": 494,
+          "h": 494,
+          "contentBounds": {
+            "empty": false,
+            "x": 29,
+            "y": 71,
+            "w": 436,
+            "h": 351,
+            "padding": {
+              "left": 29,
+              "top": 71,
+              "right": 29,
+              "bottom": 72
+            }
+          }
+        },
+        {
+          "name": "6",
+          "x": 2964,
+          "y": 0,
+          "w": 494,
+          "h": 494,
+          "contentBounds": {
+            "empty": false,
+            "x": 19,
+            "y": 63,
+            "w": 456,
+            "h": 368,
+            "padding": {
+              "left": 19,
+              "top": 63,
+              "right": 19,
+              "bottom": 63
+            }
+          }
+        },
+        {
+          "name": "7",
+          "x": 3458,
+          "y": 0,
+          "w": 494,
+          "h": 494,
+          "contentBounds": {
+            "empty": false,
+            "x": 41,
+            "y": 80,
+            "w": 413,
+            "h": 332,
+            "padding": {
+              "left": 41,
+              "top": 80,
+              "right": 40,
+              "bottom": 82
+            }
+          }
+        }
+      ],
+      "overlaps": [],
+      "stableLogicalAnchor": true,
+      "contentSizeRange": {
+        "width": {
+          "min": 269,
+          "max": 491
+        },
+        "height": {
+          "min": 208,
+          "max": 436
+        }
+      },
+      "pass": true
+    },
+    {
+      "key": "largeExplosion",
+      "source": "assets/images/owned/sprites/gg_explosion_large_v002_sheet.png",
+      "sourceSha256": "bdb9528f6e2b601f61c265a3e224d815f49ff0c96730d2961f794c8addaccc5c",
+      "sourceDimensions": {
+        "width": 3072,
+        "height": 512
+      },
+      "alpha": true,
+      "frameCount": 6,
+      "frames": [
+        {
+          "name": "0",
+          "x": 0,
+          "y": 0,
+          "w": 512,
+          "h": 512,
+          "contentBounds": {
+            "empty": false,
+            "x": 0,
+            "y": 2,
+            "w": 504,
+            "h": 500,
+            "padding": {
+              "left": 0,
+              "top": 2,
+              "right": 8,
+              "bottom": 10
+            }
+          }
+        },
+        {
+          "name": "1",
+          "x": 512,
+          "y": 0,
+          "w": 512,
+          "h": 512,
+          "contentBounds": {
+            "empty": false,
+            "x": 4,
+            "y": 2,
+            "w": 506,
+            "h": 510,
+            "padding": {
+              "left": 4,
+              "top": 2,
+              "right": 2,
+              "bottom": 0
+            }
+          }
+        },
+        {
+          "name": "2",
+          "x": 1024,
+          "y": 0,
+          "w": 512,
+          "h": 512,
+          "contentBounds": {
+            "empty": false,
+            "x": 6,
+            "y": 2,
+            "w": 506,
+            "h": 510,
+            "padding": {
+              "left": 6,
+              "top": 2,
+              "right": 0,
+              "bottom": 0
+            }
+          }
+        },
+        {
+          "name": "3",
+          "x": 1536,
+          "y": 0,
+          "w": 512,
+          "h": 512,
+          "contentBounds": {
+            "empty": false,
+            "x": 0,
+            "y": 3,
+            "w": 512,
+            "h": 501,
+            "padding": {
+              "left": 0,
+              "top": 3,
+              "right": 0,
+              "bottom": 8
+            }
+          }
+        },
+        {
+          "name": "4",
+          "x": 2048,
+          "y": 0,
+          "w": 512,
+          "h": 512,
+          "contentBounds": {
+            "empty": false,
+            "x": 0,
+            "y": 27,
+            "w": 512,
+            "h": 459,
+            "padding": {
+              "left": 0,
+              "top": 27,
+              "right": 0,
+              "bottom": 26
+            }
+          }
+        },
+        {
+          "name": "5",
+          "x": 2560,
+          "y": 0,
+          "w": 512,
+          "h": 512,
+          "contentBounds": {
+            "empty": false,
+            "x": 6,
+            "y": 0,
+            "w": 500,
+            "h": 494,
+            "padding": {
+              "left": 6,
+              "top": 0,
+              "right": 6,
+              "bottom": 18
+            }
+          }
+        }
+      ],
+      "overlaps": [],
+      "stableLogicalAnchor": true,
+      "contentSizeRange": {
+        "width": {
+          "min": 500,
+          "max": 512
+        },
+        "height": {
+          "min": 459,
+          "max": 510
+        }
+      },
+      "pass": true
+    }
+  ]
+}

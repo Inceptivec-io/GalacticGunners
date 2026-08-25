@@ -1,0 +1,152 @@
+[
+  {
+    "file": "00_COMMISSION/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_003_APP1.md",
+    "bytes": 2726,
+    "sha256": "e8a378f98b9696b723a16756f35962a11d584f8aeeb64d80e252da7d58e1336d"
+  },
+  {
+    "file": "01_AUDIO_AUTHORITY/01_AUDIO_EVENT_AUTHORITY.md",
+    "bytes": 1566,
+    "sha256": "b8f5edcb31445960e021ff05743acc7e52e72c096a438f0cb8171b0a6e126590"
+  },
+  {
+    "file": "01_AUDIO_AUTHORITY/02_AUDIO_SOURCE_AND_REPOSITORY_POLICY.md",
+    "bytes": 1535,
+    "sha256": "20e7aeb78c41f417c08304de18bbba516da7f84eafd8b7289d9d9b154bf9295a"
+  },
+  {
+    "file": "02_IMPLEMENTATION/03_AUDIO_RUNTIME_INTEGRATION_SPEC.md",
+    "bytes": 2940,
+    "sha256": "34b8b74ca383103187783eb8075495f74f9fd334549b3991714ce4f2ea3952d1"
+  },
+  {
+    "file": "02_IMPLEMENTATION/04_AUDIO_PROVENANCE_AND_REGISTER_UPDATE.md",
+    "bytes": 695,
+    "sha256": "8dc6fb002a0b6010cb0097209bdf0f6fad6ba6b81e655744c05d0ba4a9135b47"
+  },
+  {
+    "file": "03_TEST_AND_DOCKER/05_AUDIO_TEST_MATRIX.md",
+    "bytes": 1562,
+    "sha256": "a6a183568c578c96bd8046f4d9fedb79af5f5669ad4fae742d6aa04237d97b45"
+  },
+  {
+    "file": "03_TEST_AND_DOCKER/06_DOCKER_FOUNDER_PREVIEW_GATE.md",
+    "bytes": 1055,
+    "sha256": "a7577c8fbbe5706548af2048c9a6fe59aea3f646c62e32fe86632179014051e8"
+  },
+  {
+    "file": "04_EVIDENCE_AND_CLOSURE/07_REQUIRED_EVIDENCE_AND_HANDOFF_OUT.md",
+    "bytes": 1114,
+    "sha256": "ac49196f63502ce9990dc4d529936ed545590b65088aa29c6ba10fa69d7c35ef"
+  },
+  {
+    "file": "04_EVIDENCE_AND_CLOSURE/08_APP1_CLOSURE_GATE.md",
+    "bytes": 1182,
+    "sha256": "d8aec12d21928c514db5fc6c1240b62af2a3dc3b27af59faf6e689199b272310"
+  },
+  {
+    "file": "05_ROUTING/ROUTING_MESSAGE.md",
+    "bytes": 5234,
+    "sha256": "0d4f34ff4ef511cf23a7900eb22f3e43c64c83641f76719f9d41bd61b9744b73"
+  },
+  {
+    "file": "PAYLOAD/audio/gg_comet_destroyed_v001.wav",
+    "bytes": 265004,
+    "sha256": "058659619c7d4a79728858b337801b0501b0978474aaa32b0a40f26eaa678908"
+  },
+  {
+    "file": "PAYLOAD/audio/gg_enemy_laser_v001.wav",
+    "bytes": 77804,
+    "sha256": "fce8f2c8853ff92a6ef2f80d9418c11b34f9601b5efda385377080999e6d5942"
+  },
+  {
+    "file": "PAYLOAD/audio/gg_explosion_large_v001.wav",
+    "bytes": 368684,
+    "sha256": "e94572901d77bcfe9f36f47304a7bc4105d9576453ec390bae2807b1ac08b202"
+  },
+  {
+    "file": "PAYLOAD/audio/gg_explosion_small_v001.wav",
+    "bytes": 167078,
+    "sha256": "aeffdb12344846f6207c61f0a70f19f9fdf5835d621745a75bd4707012f94fe4"
+  },
+  {
+    "file": "PAYLOAD/audio/gg_game_over_stinger_v001.wav",
+    "bytes": 446444,
+    "sha256": "92b78af0fd4401e56fbe807494e406b7b45844a79c7e810b60f89bcbe6021ca8"
+  },
+  {
+    "file": "PAYLOAD/audio/gg_mothership_destroyed_v001.wav",
+    "bytes": 964844,
+    "sha256": "f127e1fe61b10384c5c33f300e5c3fc6b9ff713b15bea78faf0c7e89f3244dd4"
+  },
+  {
+    "file": "PAYLOAD/audio/gg_mothership_hit_v001.wav",
+    "bytes": 167078,
+    "sha256": "626e414b8bf821ef6f05c43f8ba3fae04e8c1823873e65fe603bf1f5308ede36"
+  },
+  {
+    "file": "PAYLOAD/audio/gg_nuke_burst_v001.wav",
+    "bytes": 648044,
+    "sha256": "46e97a344cbcef9e775b9fcc81b0895858d29e975c32c416c6e3cd91c8da6d2b"
+  },
+  {
+    "file": "PAYLOAD/audio/gg_nuke_fire_v001.wav",
+    "bytes": 253484,
+    "sha256": "cdeccacb879343a5d3772efe6abf6a514f8e7b2cc5c5486c123d4b8906898e1c"
+  },
+  {
+    "file": "PAYLOAD/audio/gg_player_hit_v001.wav",
+    "bytes": 103724,
+    "sha256": "049d14bd1353957d2a859ff4f5c56e5b854b6d75b9d136310559ca45810bf311"
+  },
+  {
+    "file": "PAYLOAD/audio/gg_player_laser_v001.wav",
+    "bytes": 57644,
+    "sha256": "9eda7cf68f47e307ab3f7041e1dd59ac5f07e279c32cb1a9c9d3405905247aff"
+  },
+  {
+    "file": "PAYLOAD/audio/gg_shield_hit_v001.wav",
+    "bytes": 89324,
+    "sha256": "098bc70f5f2919dc1ed089d377f5b7e18b43d551ea3649e9a0161e4aa1252178"
+  },
+  {
+    "file": "PAYLOAD/audio/gg_ui_back_v001.wav",
+    "bytes": 40364,
+    "sha256": "f75a5c541aaa73618c2aa75bbb28b7b94e86790a3b4c8d5f20deaa8efc8ff9db"
+  },
+  {
+    "file": "PAYLOAD/audio/gg_ui_confirm_v001.wav",
+    "bytes": 46124,
+    "sha256": "5126059176e8d15623c5eff70dcd8eaf39ed092156e8c5efa3d55468c5317b93"
+  },
+  {
+    "file": "PAYLOAD/audio/gg_ui_select_v001.wav",
+    "bytes": 20204,
+    "sha256": "bb382b07d808043ecd484de8f92c154596f7da95a11dce60fb770e2862af0618"
+  },
+  {
+    "file": "PAYLOAD/audio/gg_victory_stinger_v001.wav",
+    "bytes": 417644,
+    "sha256": "31079ac766de4768d40dee244ece536601b74c0e8c91aaf74ab7e8fe995a021b"
+  },
+  {
+    "file": "PAYLOAD/audio_provenance/AUDIO_ASSET_REGISTER_v1.0_REV2.md",
+    "bytes": 1041,
+    "sha256": "8907da822bb74b24c67475b756c87ab8b432c01365e27e6661c536e27c822e1a"
+  },
+  {
+    "file": "PAYLOAD/audio_provenance/AUDIO_DESIGN_AUTHORITY_v1.0_REV2.md",
+    "bytes": 727,
+    "sha256": "8db7a288247d894e151399a31fff996435347d11ad881a263a35ef683c775de3"
+  },
+  {
+    "file": "PAYLOAD/audio_provenance/OWNERSHIP_AND_PROVENANCE_v1.0_REV2.md",
+    "bytes": 365,
+    "sha256": "c4395e66199aa3abce524eafb2f3010b77524f41d9a19382e4031e1a5a79e927"
+  },
+  {
+    "file": "README_PACK.md",
+    "bytes": 678,
+    "sha256": "91af59841b8ec9b4f10aa6b3cb0b2b039c139d657766a664185fcd0ab77eeae8"
+  }
+]

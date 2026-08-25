@@ -1,0 +1,132 @@
+{
+  "generatedAt": "2026-08-24T20:35:34.258Z",
+  "mode": "browser",
+  "url": "http://localhost:8027/",
+  "pass": true,
+  "runtimeExceptions": [],
+  "failedRequests": [],
+  "browser": {
+    "fonts": {
+      "goldWoff2": 200,
+      "silverWoff2": 200,
+      "goldCheck": true,
+      "silverCheck": true,
+      "menuCta": "'Galactic Gunners Gold Display', 'GalacticGunnersDisplay', Arial, sans-serif"
+    },
+    "infoFont": "'Galactic Gunners Silver Display', 'GalacticGunnersDisplay', Arial, sans-serif",
+    "level1": {
+      "population": 58,
+      "playerScale": 0.036,
+      "enemyScale": 0.05579436619718311,
+      "baselineEnemyScale": 0.024,
+      "enemyAngle": -180,
+      "enemyBounds": {
+        "minLeft": 47.15299999999999,
+        "maxRight": 1288.847
+      },
+      "nukeHud": {
+        "iconTexture": "hudNuke",
+        "countText": "NUKES"
+      },
+      "playerAnimation": {
+        "idleFrame": "0",
+        "movingAnim": "playerShipThrust",
+        "returnAnim": "playerShipReturn"
+      },
+      "playerLaserScale": 0.026,
+      "enemyLaserScale": 0.023,
+      "hudContract": {
+        "scoreText": "SCORE 0",
+        "livesText": "LIVES",
+        "hasMute": true,
+        "hasReplay": false
+      }
+    },
+    "pauseCycles": {
+      "cycles": 20,
+      "clean": true
+    },
+    "level2Population": 87,
+    "bossPopulation": 72,
+    "bossStateImagery": {
+      "normalTexture": "motherShip",
+      "hitTexture": "motherShipHit",
+      "restoredTexture": "motherShip"
+    },
+    "nukeAndComets": {
+      "nukeFrameTotal": 7,
+      "cometFrameTotal": 7,
+      "cometVariants": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "rightRotation": -1.1525719972156665,
+      "leftRotation": 1.1525719972156665
+    },
+    "victory": {
+      "active": true,
+      "score": 12345,
+      "finalScore": 12345,
+      "hasNoForcedTimer": true,
+      "values": [
+        {
+          "text": "MISSION CLEARED",
+          "x": 683,
+          "y": 126
+        },
+        {
+          "text": "12345",
+          "x": 423,
+          "y": 439
+        },
+        {
+          "text": "FINAL",
+          "x": 683,
+          "y": 439
+        },
+        {
+          "text": "700",
+          "x": 943,
+          "y": 439
+        },
+        {
+          "text": "GALAXY DEFENDED",
+          "x": 683,
+          "y": 505
+        }
+      ],
+      "controls": [
+        {
+          "role": "NEXT",
+          "x": 464,
+          "y": 575,
+          "width": 246,
+          "height": 57
+        },
+        {
+          "role": "MENU",
+          "x": 902,
+          "y": 575,
+          "width": 246,
+          "height": 57
+        },
+        {
+          "role": "REPLAY",
+          "x": 683,
+          "y": 575,
+          "width": 246,
+          "height": 57
+        }
+      ]
+    },
+    "titles": {
+      "active": true,
+      "scorePreserved": true,
+      "timers": 0
+    }
+  }
+}

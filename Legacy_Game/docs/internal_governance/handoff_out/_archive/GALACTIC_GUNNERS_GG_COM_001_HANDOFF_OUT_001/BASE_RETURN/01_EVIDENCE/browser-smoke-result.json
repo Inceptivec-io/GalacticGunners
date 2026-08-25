@@ -1,0 +1,92 @@
+{
+  "checks": [
+    {
+      "name": "document ready",
+      "result": "complete"
+    },
+    {
+      "name": "canvas count",
+      "result": 1
+    },
+    {
+      "name": "body has canvas",
+      "result": true
+    },
+    {
+      "name": "Phaser version",
+      "result": "3.16.2"
+    },
+    {
+      "name": "game exists",
+      "result": true
+    },
+    {
+      "name": "registered scenes",
+      "result": "Preloader,MainMenu,Info,Level1,Level2,BossLevel,Victory,Titles,Paused"
+    },
+    {
+      "name": "main menu active",
+      "result": true
+    },
+    {
+      "name": "audio cache loaded",
+      "result": "true,true,true,true,true"
+    },
+    {
+      "name": "info screen active",
+      "result": true
+    },
+    {
+      "name": "level 1 active",
+      "result": true
+    },
+    {
+      "name": "pause scene active after P",
+      "result": true
+    },
+    {
+      "name": "level 1 visible while pause overlay active",
+      "result": true
+    },
+    {
+      "name": "level 1 resumed",
+      "result": true
+    },
+    {
+      "name": "keyboard/touch events dispatched",
+      "result": true
+    },
+    {
+      "name": "level 2 active",
+      "result": true
+    },
+    {
+      "name": "boss level active",
+      "result": true
+    },
+    {
+      "name": "victory active",
+      "result": true
+    },
+    {
+      "name": "titles active",
+      "result": true
+    },
+    {
+      "name": "game-over/restart state reachable",
+      "result": true
+    }
+  ],
+  "badEvents": [
+    {
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (File not found)",
+        "timestamp": 1787478080517.331,
+        "url": "http://127.0.0.1:8000/favicon.ico",
+        "networkRequestId": "840.125"
+      }
+    }
+  ]
+}

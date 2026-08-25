@@ -1,3 +1,5 @@
+var GG_PHYSICS_DEBUG_ENABLED = new URLSearchParams(window.location.search).get("ggPhysicsDebug") === "1";
+
 var config = { //game configuration parameters
     type: Phaser.AUTO, //set Phaser to Auto, rather than webGL or Canvas
     width: window.innerWidth, //sets the game viewport width
@@ -14,7 +16,9 @@ var config = { //game configuration parameters
                 x: 0, // set to 0
                 y: 0 // set to 0
             },
-            debug: false, //used to debug, if true
+            debug: GG_PHYSICS_DEBUG_ENABLED, //test-only physics body debug via ?ggPhysicsDebug=1
+            debugShowBody: GG_PHYSICS_DEBUG_ENABLED,
+            debugShowVelocity: GG_PHYSICS_DEBUG_ENABLED
         }
     },
     input: {

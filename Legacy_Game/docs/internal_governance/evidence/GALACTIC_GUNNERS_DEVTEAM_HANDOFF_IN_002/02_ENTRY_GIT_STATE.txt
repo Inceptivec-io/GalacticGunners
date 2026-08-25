@@ -1,0 +1,7 @@
+﻿HANDOFF: GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_002
+ENTRY_HEAD: b8bd77ad4c60a6637800b65b9a42b433acc5bce8
+ENTRY_BRANCH: feature/GG-COM-001
+ENTRY_REMOTE_HEAD: b8bd77ad4c60a6637800b65b9a42b433acc5bce8
+ENTRY_WORKTREE: clean except controlled active POST_BOX inbound payload, consumed into governed archive before mutation
+POST_BOX_PRE_MUTATION: boundary/readme controls plus two authorized inbound ZIP payloads
+AGENTS.md: read and applied

@@ -1,0 +1,12 @@
+{
+  "family": "Galactic Gunners Silver Display",
+  "version": "1.0.0",
+  "build": "production",
+  "fontUpm": 1000,
+  "capHeight": 700,
+  "weightAxis": [
+    400,
+    900
+  ],
+  "material": "titanium-silver/cyan"
+}

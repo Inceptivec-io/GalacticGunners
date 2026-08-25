@@ -1,0 +1,338 @@
+{
+  "Founder_Approved_Title_Authority.png": {
+    "sha256": "cf816a20c97ffc2ba7e693d4bd8add47627f14b806047ccc1279d9bf850fa520",
+    "bytes": 2833379
+  },
+  "GalacticGunners_Title_Font-v1.0.otf": {
+    "sha256": "59f17b907e4dfe0f42c06d2ac49bb1f77374f431ccb65da36b534fa42b4cc5bc",
+    "bytes": 14876444
+  },
+  "GalacticGunners_Title_Font-v1.0.woff2": {
+    "sha256": "c5a28a1fcf95246eb0ffc5123c8c4c749fdc25639771aa308899d067f8bf459a",
+    "bytes": 11133180
+  },
+  "OWNERSHIP_DECLARATION.md": {
+    "sha256": "a6ff9b6a657e86c9ae600144b1a727f49da731a751d429be57867b571c4539a0",
+    "bytes": 557
+  },
+  "PREVIEWS/FULL_AZ_09_PRODUCTION_PREVIEW.png": {
+    "sha256": "b8ac9ca2d24875e6ebe7fe98df2b6742bbe2df2ce7c7b13965a88cc289ee4730",
+    "bytes": 428258
+  },
+  "PREVIEWS/TYPE_TEST_PRODUCTION.png": {
+    "sha256": "00de5d0402633a196028d32e2290fef5b590c3d18f49a5a8b59bc5891c2f00bd",
+    "bytes": 590023
+  },
+  "PROVENANCE/ASSET_REGISTER.md": {
+    "sha256": "4793c8aef3432c7ab994a65eef9ab322fbb499cc3eb99b27e9f3cc294aa2b497",
+    "bytes": 546
+  },
+  "PROVENANCE/GLYPH_METRICS.json": {
+    "sha256": "c8d6224d2b5569b503a7bb1a550521d0b6dfa90575413575ee1e6d537d241d15",
+    "bytes": 4144
+  },
+  "PROVENANCE/OWNERSHIP_DECLARATION.md": {
+    "sha256": "a6ff9b6a657e86c9ae600144b1a727f49da731a751d429be57867b571c4539a0",
+    "bytes": 557
+  },
+  "PROVENANCE/SHA256_MANIFEST.json": {
+    "sha256": "df1f945c17bf775b2135aeae27c50c489256520d491b24f0543ab32da96b7758",
+    "bytes": 12326
+  },
+  "README.md": {
+    "sha256": "f268b1eddd1c7a85ae229d66c65dedaed86e79ca30ccc94e9907c68e9f2609cc",
+    "bytes": 718
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/0.png": {
+    "sha256": "18c365eddf1a8061a5901feec9acd26a05f5b535c2b53b95c0fff7ad57a2845c",
+    "bytes": 2353
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/1.png": {
+    "sha256": "d7b22e871de9d5f4d9f7782dd4352c82aa8388d34faaf282939c2f47a317feda",
+    "bytes": 2067
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/2.png": {
+    "sha256": "47e6b10063a6c8a0d161f02d649e2ac9b405d3f988a29f9411568101dac54ac4",
+    "bytes": 2334
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/3.png": {
+    "sha256": "8fd6507b43105a6d253e423b31a91ea0a9bb78b729b963c4d37aede5e3a9a3ee",
+    "bytes": 2182
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/4.png": {
+    "sha256": "024ad09aa10803f7cdf723a1782dcb7eb67f8a7a55ab183f86e14e6436e3ee76",
+    "bytes": 2360
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/5.png": {
+    "sha256": "cfe5e91599578569ff426211a3f231f928cb4af90bcca3fc01a2419e20e6ea76",
+    "bytes": 2209
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/6.png": {
+    "sha256": "45e16f476422644e20359e6c1829719d1a4e4008c046ad3d207c428204e3e00a",
+    "bytes": 2373
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/7.png": {
+    "sha256": "77ba2ede01557b5a3868be34885ba4673b71a97add2f927f65997adf0804ffa3",
+    "bytes": 2297
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/8.png": {
+    "sha256": "fad55bb00235f2c38bf6bcb75d027e3dbe690e113def55d49fb8dab90305976a",
+    "bytes": 2397
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/9.png": {
+    "sha256": "1420443ea78c200d05480c19c5195f41fc3a32f09c29eb371c8e29d7db6b338f",
+    "bytes": 2431
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/A.png": {
+    "sha256": "8eced2ffb4e939ff8dcebcf1ae3c26bc52a8657f8ef0874680754ba3912cdc44",
+    "bytes": 2555
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/B.png": {
+    "sha256": "cb206dc017b61cc6a5c284d461172f9c55710510cf1f68a7ff704794e0e98bc2",
+    "bytes": 2330
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/C.png": {
+    "sha256": "84317d96528f23edd9a2bd523ce8031871366d8388f9010c62b980942e43ae4b",
+    "bytes": 2439
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/D.png": {
+    "sha256": "a6828eea009f53f3cf4a148847b15b8ff31291836acdfa34ede71de929cc8064",
+    "bytes": 2271
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/E.png": {
+    "sha256": "bf397ec312a8665d4f7ecc12686393ff25b49c21a828d1182d0de102e3d801fe",
+    "bytes": 2313
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/F.png": {
+    "sha256": "dced94c6063b91177b72b9e98d8ba414dd2962ac6a54e4d0554bfd5869a43c96",
+    "bytes": 2120
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/G.png": {
+    "sha256": "978463738db618bb7057673f54db4c0828687b7230ffd20233966bdc6ece8311",
+    "bytes": 2322
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/H.png": {
+    "sha256": "f3992377e2eda11ce47244b35983661307486468054900fcd77ab54b479a855c",
+    "bytes": 2221
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/I.png": {
+    "sha256": "f4c1b2de2fd83d2d5629edf0661a1743468744c1666eddbb0ec35b8bf11d1677",
+    "bytes": 1696
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/J.png": {
+    "sha256": "85ffb1d528e2590e4dd2e7cb96d79be50a5bc1ae695ed8d3709b5d08a82a2ff2",
+    "bytes": 2084
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/K.png": {
+    "sha256": "767fdacbf5018f77e939eab7e8d3184e9dccd5f065f9935623f6cc81ff88f80b",
+    "bytes": 2498
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/L.png": {
+    "sha256": "498577cb80b356ededbcfdcb295f3c91edebd3e8e24c86f6799771897c870baa",
+    "bytes": 2194
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/M.png": {
+    "sha256": "7cc5ebe61ad3eff0caec53e6caac16eeecdc90cf60abe14733f3c757dfc43c83",
+    "bytes": 2554
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/N.png": {
+    "sha256": "661ba31f5ed7c8e169722adacfb8154a35476bb9c12824b8e23be5cedba4ded9",
+    "bytes": 2229
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/O.png": {
+    "sha256": "4455d92f3630ce92abc012cab8d2399acea989e38d2772f1ab50e15ebc2eaed5",
+    "bytes": 2505
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/P.png": {
+    "sha256": "1f0e6a5a3d49599c241ee0a669ab1ce3c1cc61b2f0b5bb10ab2fbbf7c101b466",
+    "bytes": 2288
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/Q.png": {
+    "sha256": "82777254140a3936b7978e63e108f1b288a4f94fff9ab84e61f1acd57ee9ff27",
+    "bytes": 2260
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/R.png": {
+    "sha256": "a51c3922d7039d09e162e0b8cf49a1dfd7bbc148bce30fb0a2c0262ca62e3eb3",
+    "bytes": 2306
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/S.png": {
+    "sha256": "dc239d212240e2d4dae2283b3eb9f2d7a5641d3baebf0e03cd5bd7e84b0586ad",
+    "bytes": 2342
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/T.png": {
+    "sha256": "776caad1def1b88028528abd4dc58db8651786aff7699d2077b2eb5451d54172",
+    "bytes": 2117
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/U.png": {
+    "sha256": "37abcdf856f72f2f74d342277728c86716189816abadef492adc461ed3d1906a",
+    "bytes": 2106
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/V.png": {
+    "sha256": "92f8135bb4b60409569322db4ca62e83642fe28f637ec820931a43ab7daee8ae",
+    "bytes": 2503
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/W.png": {
+    "sha256": "53b759fa19273f3b9483dfd3eafdfae8f5a0e4ff3ef3a6297827e5e1c5168b4a",
+    "bytes": 2807
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/X.png": {
+    "sha256": "f2b0490b482d62a4837c7851676ff1c6f534e7a8a1b70010198b03fd4098d9fe",
+    "bytes": 2443
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/Y.png": {
+    "sha256": "04a1fb5d18591c6f251166807d5f63bdf4a48d1b0d734a5d2246ad0576b10a36",
+    "bytes": 2362
+  },
+  "SOURCE/NORMALIZED_GLYPHS_MASK/Z.png": {
+    "sha256": "9f21c4f54b6b8f9315ccae0139f079c7f828ee2e780499d5b007c6c8c14fc099",
+    "bytes": 2240
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/0.png": {
+    "sha256": "5c51f81aacda8c1a9b17cd669aa87fa470ffd041a29165ce94402d50496dc7ad",
+    "bytes": 346230
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/1.png": {
+    "sha256": "128782b2daf9bba79e33d9a6fd90b932b94ff7acc627f3bc2f5cadfbf02d5409",
+    "bytes": 180419
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/2.png": {
+    "sha256": "bc9907189de9a19aa5fa60e45a68049ccf4a292cc0298f12f74bb06ab470346c",
+    "bytes": 365715
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/3.png": {
+    "sha256": "a00be8f36ed609d107ba61c53d159ad6abebe92dfc018b05d630afe71c713173",
+    "bytes": 340978
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/4.png": {
+    "sha256": "5f32f5e9e6eb982ca2b9d467ae215135fbd30df08cef069a86a7466e79c5a8e4",
+    "bytes": 332256
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/5.png": {
+    "sha256": "4d0dac6137f30740f615dd244a80f8ad035eab86ed19d95f5ff4be792b92a3a8",
+    "bytes": 396743
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/6.png": {
+    "sha256": "881121f2212e833e6d5f5804974b63ebdd5144039fb8eca8e4218b8aec6b5f7c",
+    "bytes": 351664
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/7.png": {
+    "sha256": "478ea6d405e7611967f6afb27bff85fd7795e27a694c2bf89ff12d15d8b51e8e",
+    "bytes": 258643
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/8.png": {
+    "sha256": "66be911e3e772c4fce60b63450ad7f3dadcc6a811b5aeea753fb84e9a89a37aa",
+    "bytes": 434278
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/9.png": {
+    "sha256": "d47314f1b7c80598581b83c236007f9da5cab7902614b386da09352a85f4bc2c",
+    "bytes": 368118
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/A.png": {
+    "sha256": "5e094edcf2356bf46175c0b323f9e7ba9221cec7d8836894f1bb452aaa23a346",
+    "bytes": 374826
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/B.png": {
+    "sha256": "58a28ec6dbd4fb4894db88e56ff5c03034c30e67d388f9730b611144a14fb62e",
+    "bytes": 358919
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/C.png": {
+    "sha256": "14153bf7bfc9fea7cd34be82c9ceed6f8b74792efe4be6d6022b4a568ad6fcce",
+    "bytes": 324365
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/D.png": {
+    "sha256": "f01aae69c8b9b11c8967ba939be237572eba8e1d4ae3a3303e2f3549195e3cb7",
+    "bytes": 299246
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/E.png": {
+    "sha256": "32ab2b645561998a485970e4a664713700805773c6d61d18b9b028bf23805ed2",
+    "bytes": 328857
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/F.png": {
+    "sha256": "45630ff753deeb5981791ab2fff2c8f833768921c260e4b26065b243afc7b932",
+    "bytes": 201246
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/G.png": {
+    "sha256": "c984272b3ad4f99ee3e8ddf68d49cb18985af102a7ab3845a791ad8c7526e4cc",
+    "bytes": 368622
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/H.png": {
+    "sha256": "b5688155e30e578e7101c7c83aa50633098924ffd07adf5c42ca645933ee1888",
+    "bytes": 259771
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/I.png": {
+    "sha256": "33ff5b6e0cb4a8f1b979d1b89effa37ba867464566b4a0932bb94904722ff1d1",
+    "bytes": 114826
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/J.png": {
+    "sha256": "93d0f1968036222f9fa01271bab87ad24ec99776047136830fa850128fe30989",
+    "bytes": 185177
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/K.png": {
+    "sha256": "f9d15aef0d0d851000b7db35af8cb102ba907950f4384622826c0e246fa4da9a",
+    "bytes": 430537
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/L.png": {
+    "sha256": "d6c6d445c661df002e76bfc76dc7cac953fda485172a2549ba720605e679a39e",
+    "bytes": 228929
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/M.png": {
+    "sha256": "d7eaa1312bc3203a718b4b42de30073b665e8a866825f2253a0971efe8e9e5be",
+    "bytes": 481647
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/N.png": {
+    "sha256": "4d41f0839236b5ae00a4e8c4d7155661f9349a8739c9d0db504dab814452ddd6",
+    "bytes": 361514
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/O.png": {
+    "sha256": "8f59079f7ec527949792a89abc2b691adb1943b37fbca64fafe590450c4dd9f8",
+    "bytes": 422717
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/P.png": {
+    "sha256": "9dab57605a3a50a9611ac44f58308851ff1c27d39e3da915a494109ef9785b38",
+    "bytes": 287164
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/Q.png": {
+    "sha256": "7e205da2edac79f52788969fc4f7bf8e461b696fa01154ade6c75afa804c1943",
+    "bytes": 320300
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/R.png": {
+    "sha256": "9d58fc482532938ee9b1a1cffc1108a5a998ec0b56a42196186f102c00c6a800",
+    "bytes": 371334
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/S.png": {
+    "sha256": "7d273fcf17bcd223dfe0d9aba06597a5fec3832c35265f0294655982f23ab49a",
+    "bytes": 357711
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/T.png": {
+    "sha256": "f1b0890a795ccad3f8ce008ac7b7edb0f4b6005e4f15c16c9f76a81fa52be7be",
+    "bytes": 160287
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/U.png": {
+    "sha256": "85a75e654a66ed6fe0ae1163efe5656d6c2b42d27daf3d3f0ab36d31fa130e83",
+    "bytes": 201721
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/V.png": {
+    "sha256": "031852d4cb1f5f73269f91c2b19d39d98961d0f10db13c00d7568169958932a6",
+    "bytes": 363701
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/W.png": {
+    "sha256": "eec2e441abac5fb61148000d63c7648696b548e4ac62e595538ee89d4764ae36",
+    "bytes": 555746
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/X.png": {
+    "sha256": "960b0bd9ea4ea484d5a6d56cb1f25c0da72c1ee0cbdd057c61b645a063c6fde0",
+    "bytes": 445194
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/Y.png": {
+    "sha256": "5216716384e506995d7b655a4c726d44a0767cc24f0a7faab74aae6cb71b7d29",
+    "bytes": 283674
+  },
+  "SOURCE/NORMALIZED_GLYPHS_RGBA/Z.png": {
+    "sha256": "8940fb097e1e1118f70dccefaa157d082d50c7c70fda11c80314ab893afcbf07",
+    "bytes": 337443
+  },
+  "WEB/galactic-gunners-title-font.css": {
+    "sha256": "f6cd1416aa37696c6063ec42188dfeeb32046136ba3c028507fb659ed24decf2",
+    "bytes": 269
+  }
+}
