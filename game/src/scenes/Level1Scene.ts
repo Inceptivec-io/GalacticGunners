@@ -3,19 +3,31 @@ import * as Phaser from 'phaser';
 import { Player } from '../entities/Player';
 import { Scout } from '../entities/Scout';
 import { RUNTIME_ASSETS } from '../config/assets';
-import { GAME_HEIGHT, GAME_WIDTH, type GameRuntimeConfig } from '../config/gameConfig';
+import { type GameRuntimeConfig } from '../config/gameConfig';
 import { LEVEL_ONE_SLICE } from '../config/levelOneSlice';
 import { GameApiClient } from '../services/GameApiClient';
 import { AudioSystem } from '../systems/AudioSystem';
 import { GameSession } from '../systems/GameSession';
+import { InputSystem } from '../systems/InputSystem';
 import { LifeSystem } from '../systems/LifeSystem';
 import { ScoreSystem } from '../systems/ScoreSystem';
 
 type TerminalState = 'complete' | 'failed';
 
+interface HostileQaApi {
+  firePlayerLaserAtScout: (index?: number, offsetX?: number) => Record<string, unknown>;
+  fireEnemyLaserAtPlayer: (offsetX?: number) => Record<string, unknown>;
+  forceComplete: () => void;
+  forceFail: () => void;
+  replay: () => void;
+  menu: () => void;
+  state: () => Record<string, unknown>;
+}
+
 declare global {
   interface Window {
     __GALACTIC_GUNNERS_SLICE_QA__?: Record<string, unknown>;
+    __GALACTIC_GUNNERS_HOSTILE__?: HostileQaApi;
   }
 }
 
@@ -25,6 +37,8 @@ export class Level1Scene extends Phaser.Scene {
   #lives!: LifeSystem;
   #audio!: AudioSystem;
   #session!: GameSession;
+  #inputSystem!: InputSystem;
+  #background!: Phaser.GameObjects.Image;
   #scouts!: Phaser.Physics.Arcade.Group;
   #playerLasers!: Phaser.Physics.Arcade.Group;
   #enemyLasers!: Phaser.Physics.Arcade.Group;
@@ -33,30 +47,38 @@ export class Level1Scene extends Phaser.Scene {
   #lastDamageAtMs = Number.NEGATIVE_INFINITY;
   #formationDirection: 1 | -1 = 1;
   #terminalState: TerminalState | null = null;
+  #runtimeConfig: GameRuntimeConfig = {};
 
   constructor() {
     super('Level1Scene');
   }
 
   create(): void {
+    this.#runtimeConfig = this.registry.get('runtimeConfig') as GameRuntimeConfig | undefined ?? {};
+    this.#terminalState = null;
+    this.#lastDamageAtMs = Number.NEGATIVE_INFINITY;
+    this.#formationDirection = 1;
+    this.physics.world.setBounds(0, 0, this.scale.width, this.scale.height);
+
     this.#score = new ScoreSystem();
     this.#lives = new LifeSystem(LEVEL_ONE_SLICE.initialLives);
     this.#audio = new AudioSystem((cue) => this.sound.play(RUNTIME_ASSETS.audio[cue].key));
-    const runtimeConfig = this.registry.get('runtimeConfig') as GameRuntimeConfig | undefined;
-    this.#session = new GameSession(runtimeConfig?.apiBaseUrl ? new GameApiClient(runtimeConfig.apiBaseUrl) : null);
+    this.#session = new GameSession(this.#runtimeConfig.apiBaseUrl ? new GameApiClient(this.#runtimeConfig.apiBaseUrl) : null);
+    this.#inputSystem = new InputSystem(this);
     void this.#session.start().finally(() => this.publishQaState());
 
-    this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, RUNTIME_ASSETS.background.starfield.key)
-      .setDisplaySize(GAME_WIDTH, GAME_HEIGHT)
+    this.#background = this.add.image(this.scale.width / 2, this.scale.height / 2, RUNTIME_ASSETS.background.starfield.key)
+      .setDisplaySize(this.scale.width, this.scale.height)
       .setDepth(0);
 
-    this.#player = new Player(this, GAME_WIDTH / 2, GAME_HEIGHT - 98);
-    this.#playerLasers = this.physics.add.group({ maxSize: 24 });
-    this.#enemyLasers = this.physics.add.group({ maxSize: 24 });
+    this.#player = new Player(this, this.scale.width / 2, this.scale.height - 98);
+    this.#playerLasers = this.physics.add.group({ maxSize: 32 });
+    this.#enemyLasers = this.physics.add.group({ maxSize: 32 });
     this.#scouts = this.physics.add.group();
     this.createScoutWave();
     this.createHud();
     this.createCollisions();
+    this.installHostileQa();
 
     this.time.addEvent({
       delay: LEVEL_ONE_SLICE.scoutFireIntervalMs,
@@ -64,40 +86,50 @@ export class Level1Scene extends Phaser.Scene {
       callback: () => this.fireEnemyLaser(),
     });
 
-    this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-      if (this.#terminalState) {
-        return;
+    this.scale.on('resize', this.handleResize, this);
+    this.events.once('shutdown', () => {
+      this.scale.off('resize', this.handleResize, this);
+      if (typeof window !== 'undefined') {
+        delete window.__GALACTIC_GUNNERS_HOSTILE__;
       }
-      if (pointer.y > GAME_HEIGHT * 0.62) {
-        this.#player.move(pointer.x < this.#player.sprite.x ? -1 : 1);
-      }
-      this.firePlayerLaser();
     });
-    this.input.on('pointerup', () => this.#player.move(0));
-    this.input.keyboard?.on('keydown-M', () => this.#audio.toggleMute());
   }
 
   update(time: number): void {
     if (this.#terminalState) {
+      const actions = this.#inputSystem.actions;
+      if (actions.confirm) {
+        this.scene.restart();
+      } else if (actions.back) {
+        this.scene.start('MainMenuScene');
+      }
       return;
     }
     this.handleInput(time);
     this.#player.clampToPlayfield();
     this.updateScouts();
-    this.resolveProjectileCollisions();
     this.cleanupProjectiles();
     this.checkTerminalConditions();
     this.publishQaState();
   }
 
+  private handleResize(gameSize: Phaser.Structs.Size): void {
+    this.physics.world.setBounds(0, 0, gameSize.width, gameSize.height);
+    this.#background.setPosition(gameSize.width / 2, gameSize.height / 2).setDisplaySize(gameSize.width, gameSize.height);
+    this.#player.sprite.y = gameSize.height - 98;
+    this.#player.clampToPlayfield();
+    this.#scoreText.setPosition(gameSize.width - 36, 22);
+  }
+
   private createScoutWave(): void {
     const columns = LEVEL_ONE_SLICE.scoutColumns;
     const rows = LEVEL_ONE_SLICE.scoutRows;
-    const left = 154;
-    const gapX = (GAME_WIDTH - left * 2) / (columns - 1);
+    const margin = Math.max(86, this.scale.width * 0.12);
+    const gapX = (this.scale.width - margin * 2) / (columns - 1);
+    const startY = Math.max(114, this.scale.height * 0.18);
     for (let row = 0; row < rows; row += 1) {
       for (let col = 0; col < columns; col += 1) {
-        const scout = new Scout(this, left + col * gapX, 126 + row * 84);
+        const scout = new Scout(this, margin + col * gapX, startY + row * 86);
         this.#scouts.add(scout.sprite);
       }
     }
@@ -112,7 +144,7 @@ export class Level1Scene extends Phaser.Scene {
       fontFamily: 'GalacticGunnersHUD, monospace',
       fontSize: '24px',
     }).setDepth(10);
-    this.#scoreText = this.add.text(GAME_WIDTH - 36, 22, 'SCORE 0', {
+    this.#scoreText = this.add.text(this.scale.width - 36, 22, 'SCORE 0', {
       color: '#f7d56a',
       fontFamily: 'GalacticGunnersHUD, monospace',
       fontSize: '24px',
@@ -121,47 +153,38 @@ export class Level1Scene extends Phaser.Scene {
 
   private createCollisions(): void {
     this.physics.add.overlap(this.#playerLasers, this.#scouts, (laser, scout) => {
-      this.destroyProjectile(laser as Phaser.Physics.Arcade.Image);
-      this.destroyScout(scout as Phaser.Physics.Arcade.Image);
+      this.handlePlayerLaserScoutOverlap(laser as Phaser.Physics.Arcade.Image, scout as Phaser.Physics.Arcade.Sprite);
     });
     this.physics.add.overlap(this.#enemyLasers, this.#player.sprite, (laser) => {
-      this.destroyProjectile(laser as Phaser.Physics.Arcade.Image);
-      this.damagePlayer();
+      this.handleEnemyLaserPlayerOverlap(laser as Phaser.Physics.Arcade.Image);
     });
     this.physics.add.overlap(this.#player.sprite, this.#scouts, (_player, scout) => {
-      (scout as Phaser.Physics.Arcade.Image).disableBody(true, true);
+      this.destroyScoutBody(scout as Phaser.Physics.Arcade.Sprite, false);
       this.damagePlayer(true);
     });
   }
 
   private handleInput(time: number): void {
-    const keyboard = this.input.keyboard;
-    const cursors = keyboard?.createCursorKeys();
-    const leftDown = Boolean(cursors?.left.isDown || keyboard?.addKey('A').isDown);
-    const rightDown = Boolean(cursors?.right.isDown || keyboard?.addKey('D').isDown);
-    const fireDown = Boolean(cursors?.space.isDown || keyboard?.addKey('W').isDown);
-    const pad = this.input.gamepad?.getPad(0);
-    const axis = pad?.axes[0]?.getValue() ?? 0;
-    const padLeft = axis < -0.35 || Boolean(pad?.buttons[14]?.pressed);
-    const padRight = axis > 0.35 || Boolean(pad?.buttons[15]?.pressed);
-    const padFire = Boolean(pad?.buttons[0]?.pressed || pad?.buttons[2]?.pressed);
-
-    const direction = leftDown || padLeft ? -1 : rightDown || padRight ? 1 : 0;
+    const actions = this.#inputSystem.actions;
+    const direction = actions.left ? -1 : actions.right ? 1 : 0;
     this.#player.move(direction);
-    if ((fireDown || padFire) && this.#player.canFire(time)) {
+    if (actions.fire && this.#player.canFire(time)) {
       this.firePlayerLaser(time);
+    }
+    if (this.#inputSystem.consumeMuteToggle()) {
+      this.#audio.toggleMute();
     }
   }
 
   private updateScouts(): void {
-    const active = this.#scouts.getChildren().filter((child) => child.active) as Phaser.Physics.Arcade.Image[];
+    const active = this.getActiveScouts();
     if (active.length === 0) {
       return;
     }
     const minX = Math.min(...active.map((scout) => scout.x));
     const maxX = Math.max(...active.map((scout) => scout.x));
-    const hitEdge = (this.#formationDirection === 1 && maxX > GAME_WIDTH - 64)
-      || (this.#formationDirection === -1 && minX < 64);
+    const hitEdge = (this.#formationDirection === 1 && maxX > this.scale.width - 58)
+      || (this.#formationDirection === -1 && minX < 58);
     if (hitEdge) {
       this.#formationDirection *= -1;
       active.forEach((scout) => {
@@ -170,61 +193,91 @@ export class Level1Scene extends Phaser.Scene {
     }
     active.forEach((scout) => {
       scout.setVelocityX(LEVEL_ONE_SLICE.scoutHorizontalSpeed * this.#formationDirection);
-      if (scout.y > GAME_HEIGHT - 112) {
+      if (scout.y > this.scale.height - 92) {
         this.showTerminal('failed');
       }
     });
   }
 
-  private firePlayerLaser(nowMs = this.time.now): void {
+  private firePlayerLaser(nowMs = this.time.now, x = this.#player.sprite.x, y = this.#player.sprite.y - 82): Phaser.Physics.Arcade.Image | null {
     if (!this.#player.canFire(nowMs)) {
-      return;
+      return null;
     }
-    const laser = this.#playerLasers.get(this.#player.sprite.x, this.#player.sprite.y - 78, RUNTIME_ASSETS.projectile.playerLaser.key) as Phaser.Physics.Arcade.Image | null;
+    const laser = this.#playerLasers.get(x, y, RUNTIME_ASSETS.projectile.playerLaser.key) as Phaser.Physics.Arcade.Image | null;
     if (!laser) {
-      return;
+      return null;
     }
-    this.#player.markFired(nowMs);
-    laser.setActive(true).setVisible(true);
-    laser.setName('player-laser');
-    laser.setAngle(-90);
-    laser.setDisplaySize(18, 70);
-    laser.setDepth(3);
-    laser.setVelocityY(-LEVEL_ONE_SLICE.playerLaserSpeed);
-    const body = laser.body as Phaser.Physics.Arcade.Body;
-    body.enable = true;
-    body.setSize(16, 58);
-    body.setOffset(948, 382);
+    if (Number.isFinite(nowMs)) {
+      this.#player.markFired(nowMs);
+    }
+    this.configureLaser(laser, 'player-laser', -90, 22, 92, -LEVEL_ONE_SLICE.playerLaserSpeed);
     this.#audio.play('playerLaser');
+    return laser;
   }
 
-  private fireEnemyLaser(): void {
-    const active = this.#scouts.getChildren().filter((child) => child.active) as Phaser.Physics.Arcade.Image[];
+  private fireEnemyLaser(): Phaser.Physics.Arcade.Image | null {
+    const active = this.getActiveScouts();
     if (active.length === 0 || this.#terminalState) {
-      return;
+      return null;
     }
     const scout = active[Math.floor(Math.random() * active.length)];
     const laser = this.#enemyLasers.get(scout.x, scout.y + 48, RUNTIME_ASSETS.projectile.enemyLaser.key) as Phaser.Physics.Arcade.Image | null;
     if (!laser) {
-      return;
+      return null;
     }
-    laser.setActive(true).setVisible(true);
-    laser.setName('enemy-laser');
-    laser.setAngle(90);
-    laser.setDisplaySize(18, 70);
-    laser.setDepth(3);
-    laser.setVelocityY(LEVEL_ONE_SLICE.enemyLaserSpeed);
-    const body = laser.body as Phaser.Physics.Arcade.Body;
-    body.enable = true;
-    body.setSize(16, 58);
-    body.setOffset(760, 482);
+    this.configureLaser(laser, 'enemy-laser', 90, 22, 92, LEVEL_ONE_SLICE.enemyLaserSpeed);
     this.#audio.play('enemyLaser');
+    return laser;
   }
 
-  private destroyScout(scout: Phaser.Physics.Arcade.Image): void {
+  private configureLaser(
+    laser: Phaser.Physics.Arcade.Image,
+    name: string,
+    angle: number,
+    width: number,
+    height: number,
+    velocityY: number,
+  ): void {
+    laser.setActive(true).setVisible(true);
+    laser.setName(name);
+    laser.setAngle(angle);
+    laser.setDisplaySize(width, height);
+    laser.setDepth(3);
+    laser.setData('spent', false);
+    laser.setVelocity(0, velocityY);
+    const body = laser.body as Phaser.Physics.Arcade.Body;
+    body.enable = true;
+    body.setSize(16 / laser.scaleX, 70 / laser.scaleY, true);
+  }
+
+  private handlePlayerLaserScoutOverlap(laser: Phaser.Physics.Arcade.Image, scout: Phaser.Physics.Arcade.Sprite): void {
+    if (laser.getData('spent') || scout.getData('destroyed')) {
+      return;
+    }
+    laser.setData('spent', true);
+    this.destroyProjectile(laser);
+    this.destroyScoutBody(scout, true);
+  }
+
+  private handleEnemyLaserPlayerOverlap(laser: Phaser.Physics.Arcade.Image): void {
+    if (laser.getData('spent')) {
+      return;
+    }
+    laser.setData('spent', true);
+    this.destroyProjectile(laser);
+    this.damagePlayer();
+  }
+
+  private destroyScoutBody(scout: Phaser.Physics.Arcade.Sprite, awardScore: boolean): void {
+    if (scout.getData('destroyed')) {
+      return;
+    }
+    scout.setData('destroyed', true);
     scout.disableBody(true, true);
-    this.#score.apply('scout_destroyed', this.time.now, { source: 'player_laser' });
-    this.#scoreText.setText(`SCORE ${this.#score.value}`);
+    if (awardScore) {
+      this.#score.apply('scout_destroyed', this.time.now, { source: 'player_laser' });
+      this.#scoreText.setText(`SCORE ${this.#score.value}`);
+    }
     this.#audio.play('explosionSmall');
     const explosion = this.add.sprite(scout.x, scout.y, RUNTIME_ASSETS.fx.explosionSmall.key)
       .setDisplaySize(96, 96)
@@ -249,42 +302,11 @@ export class Level1Scene extends Phaser.Scene {
   private cleanupProjectiles(): void {
     for (const group of [this.#playerLasers, this.#enemyLasers]) {
       for (const child of group.getChildren() as Phaser.Physics.Arcade.Image[]) {
-        if (child.active && (child.y < -80 || child.y > GAME_HEIGHT + 80)) {
+        if (child.active && (child.y < -100 || child.y > this.scale.height + 100)) {
           this.destroyProjectile(child);
         }
       }
     }
-  }
-
-  private resolveProjectileCollisions(): void {
-    const playerLasers = this.#playerLasers.getChildren().filter((child) => child.active) as Phaser.Physics.Arcade.Image[];
-    const enemyLasers = this.#enemyLasers.getChildren().filter((child) => child.active) as Phaser.Physics.Arcade.Image[];
-    const scouts = this.#scouts.getChildren().filter((child) => child.active) as Phaser.Physics.Arcade.Image[];
-
-    for (const laser of playerLasers) {
-      for (const scout of scouts) {
-        if (laser.active && scout.active && this.withinCollisionEnvelope(laser, scout, 116, 96)) {
-          this.destroyProjectile(laser);
-          this.destroyScout(scout);
-        }
-      }
-    }
-
-    for (const laser of enemyLasers) {
-      if (laser.active && this.withinCollisionEnvelope(laser, this.#player.sprite, 82, 118)) {
-        this.destroyProjectile(laser);
-        this.damagePlayer();
-      }
-    }
-  }
-
-  private withinCollisionEnvelope(
-    projectile: Phaser.Physics.Arcade.Image,
-    target: Phaser.Physics.Arcade.Image,
-    halfWidth: number,
-    halfHeight: number,
-  ): boolean {
-    return Math.abs(projectile.x - target.x) <= halfWidth && Math.abs(projectile.y - target.y) <= halfHeight;
   }
 
   private destroyProjectile(projectile: Phaser.Physics.Arcade.Image): void {
@@ -292,7 +314,7 @@ export class Level1Scene extends Phaser.Scene {
   }
 
   private checkTerminalConditions(): void {
-    const activeScouts = this.#scouts.getChildren().filter((child) => child.active).length;
+    const activeScouts = this.getActiveScouts().length;
     if (activeScouts === 0) {
       this.showTerminal('complete');
     }
@@ -306,20 +328,20 @@ export class Level1Scene extends Phaser.Scene {
     this.#player.move(0);
     this.#playerLasers.clear(true, true);
     this.#enemyLasers.clear(true, true);
-    const title = state === 'complete' ? 'SLICE COMPLETE' : 'SLICE FAILED';
-    const panel = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, 620, 330, 0x05101f, 0.9)
+    const title = state === 'complete' ? 'MISSION CLEARED' : 'MISSION FAILED';
+    const panel = this.add.rectangle(this.scale.width / 2, this.scale.height / 2, 620, 330, 0x05101f, 0.9)
       .setStrokeStyle(2, 0x7ee8ff)
       .setDepth(20);
-    const text = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 92, `${title}\nSCORE ${this.#score.value}\nLIVES ${this.#lives.value}/${this.#lives.maxLives}`, {
+    const text = this.add.text(this.scale.width / 2, this.scale.height / 2 - 92, `${title}\nSCORE ${this.#score.value}\nLIVES ${this.#lives.value}/${this.#lives.maxLives}`, {
       color: state === 'complete' ? '#f7d56a' : '#ff8b6e',
       fontFamily: 'GalacticGunnersGoldDisplay, Arial, sans-serif',
       fontSize: '38px',
       align: 'center',
     }).setOrigin(0.5).setDepth(21);
-    const replay = this.createTerminalButton(GAME_WIDTH / 2 - 132, GAME_HEIGHT / 2 + 104, state === 'complete' ? 'REPLAY SLICE' : 'RETRY SLICE', () => {
+    const replay = this.createTerminalButton(this.scale.width / 2 - 132, this.scale.height / 2 + 104, state === 'complete' ? 'PLAY AGAIN' : 'TRY AGAIN', () => {
       this.scene.restart();
     });
-    const menu = this.createTerminalButton(GAME_WIDTH / 2 + 150, GAME_HEIGHT / 2 + 104, 'MAIN MENU', () => {
+    const menu = this.createTerminalButton(this.scale.width / 2 + 150, this.scale.height / 2 + 104, 'MAIN MENU', () => {
       this.scene.start('MainMenuScene');
     });
     panel.setData('qa', 'terminal-panel');
@@ -345,30 +367,88 @@ export class Level1Scene extends Phaser.Scene {
     return button;
   }
 
+  private installHostileQa(): void {
+    if (!this.#runtimeConfig.hostileQa || typeof window === 'undefined') {
+      return;
+    }
+    window.__GALACTIC_GUNNERS_HOSTILE__ = {
+      firePlayerLaserAtScout: (index = 0, offsetX = 0) => {
+        const scout = this.getActiveScouts()[index];
+        if (!scout) {
+          return { fired: false, reason: 'no-scout' };
+        }
+        const laser = this.firePlayerLaser(Number.POSITIVE_INFINITY, scout.x + offsetX, scout.y + 74);
+        return { fired: Boolean(laser), scoutX: scout.x, laserX: laser?.x, offsetX };
+      },
+      fireEnemyLaserAtPlayer: (offsetX = 0) => {
+        const laser = this.#enemyLasers.get(this.#player.sprite.x + offsetX, this.#player.sprite.y - 74, RUNTIME_ASSETS.projectile.enemyLaser.key) as Phaser.Physics.Arcade.Image | null;
+        if (!laser) {
+          return { fired: false, reason: 'no-laser' };
+        }
+        this.configureLaser(laser, 'enemy-laser', 90, 22, 92, LEVEL_ONE_SLICE.enemyLaserSpeed);
+        return { fired: true, playerX: this.#player.sprite.x, laserX: laser.x, offsetX };
+      },
+      forceComplete: () => {
+        this.getActiveScouts().forEach((scout) => scout.disableBody(true, true));
+        this.showTerminal('complete');
+      },
+      forceFail: () => this.showTerminal('failed'),
+      replay: () => this.scene.restart(),
+      menu: () => this.scene.start('MainMenuScene'),
+      state: () => this.buildQaState(),
+    };
+  }
+
+  private getActiveScouts(): Phaser.Physics.Arcade.Sprite[] {
+    return this.#scouts.getChildren().filter((child) => child.active) as Phaser.Physics.Arcade.Sprite[];
+  }
+
   private publishQaState(): void {
     if (typeof window === 'undefined') {
       return;
     }
-    window.__GALACTIC_GUNNERS_SLICE_QA__ = {
+    window.__GALACTIC_GUNNERS_SLICE_QA__ = this.buildQaState();
+  }
+
+  private buildQaState(): Record<string, unknown> {
+    const playerBody = this.#player?.sprite.body as Phaser.Physics.Arcade.Body | undefined;
+    const visibleTexts = this.children.list
+      .filter((child): child is Phaser.GameObjects.Text => child instanceof Phaser.GameObjects.Text)
+      .map((text) => text.text);
+
+    return {
       scene: 'Level1Scene',
       score: this.#score.value,
       lives: this.#lives.value,
       maxLives: this.#lives.maxLives,
-      activeScouts: this.#scouts?.getChildren().filter((child) => child.active).length ?? 0,
+      activeScouts: this.getActiveScouts().length,
       playerLaserCount: this.#playerLasers?.getChildren().filter((child) => child.active).length ?? 0,
       enemyLaserCount: this.#enemyLasers?.getChildren().filter((child) => child.active).length ?? 0,
       playerX: this.#player?.sprite.x,
-      activeScoutPositions: this.#scouts?.getChildren()
-        .filter((child) => child.active)
-        .slice(0, 14)
-        .map((child) => ({ x: Math.round((child as Phaser.Physics.Arcade.Image).x), y: Math.round((child as Phaser.Physics.Arcade.Image).y) })) ?? [],
-      playerLaserPositions: this.#playerLasers?.getChildren()
-        .filter((child) => child.active)
-        .map((child) => ({ x: Math.round((child as Phaser.Physics.Arcade.Image).x), y: Math.round((child as Phaser.Physics.Arcade.Image).y) })) ?? [],
       terminalState: this.#terminalState,
       gameRunId: this.#session.runId,
       offlineRunMode: this.#session.offline,
       gameRunCompleteAttempted: this.#session.completeAttempted,
+      viewport: { width: this.scale.width, height: this.scale.height },
+      visibleTexts,
+      playerBody: playerBody ? { x: Math.round(playerBody.x), y: Math.round(playerBody.y), width: playerBody.width, height: playerBody.height } : null,
+      scoutBodies: this.getActiveScouts().slice(0, 14).map((scout) => {
+        const body = scout.body as Phaser.Physics.Arcade.Body;
+        return {
+          x: Math.round(scout.x),
+          y: Math.round(scout.y),
+          body: { x: Math.round(body.x), y: Math.round(body.y), width: body.width, height: body.height },
+          frame: scout.frame.name,
+        };
+      }),
+      playerLaserBodies: (this.#playerLasers?.getChildren().filter((child) => child.active) as Phaser.Physics.Arcade.Image[] ?? []).map((laser) => {
+        const body = laser.body as Phaser.Physics.Arcade.Body;
+        return { x: Math.round(laser.x), y: Math.round(laser.y), angle: laser.angle, body: { width: body.width, height: body.height } };
+      }),
+      enemyLaserBodies: (this.#enemyLasers?.getChildren().filter((child) => child.active) as Phaser.Physics.Arcade.Image[] ?? []).map((laser) => {
+        const body = laser.body as Phaser.Physics.Arcade.Body;
+        return { x: Math.round(laser.x), y: Math.round(laser.y), angle: laser.angle, body: { width: body.width, height: body.height } };
+      }),
     };
   }
 }

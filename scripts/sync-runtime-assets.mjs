@@ -22,6 +22,13 @@ const runtimeAssets = [
     sha256: '4815BCBF0325CEBC0DE9B61F4CADBD87D6C791EF54F4B537CF2DA196221AAB76',
   },
   {
+    key: 'keyArt.heroBattle',
+    assetId: 'GG-KEYART-KEY-ART-POSTERS-GG-HERO-IMAGE-PLAYER-FIGHTING-V002-4K-UHD-MASTER',
+    source: 'assets/key_art/posters/gg_hero_image_player_fighting_v002_4k_uhd_master.png',
+    runtime: 'key_art/gg_hero_image_player_fighting_v002_4k_uhd_master.png',
+    sha256: '054D150DA322ACCDA4256306DB40B30CC0A098D7B307702C5CCFFA6148A5CE8F',
+  },
+  {
     key: 'player.ship',
     assetId: 'GG-SPRITE-SPRITES-SHIPS-GG-PLAYER-SHIP-V002-SHEET',
     source: 'assets/sprites/ships/gg_player_ship_v002_sheet.png',

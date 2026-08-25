@@ -26,9 +26,14 @@ export function GameHost() {
         if (!active || !hostRef.current) {
           return;
         }
+        const params = new URLSearchParams(window.location.search);
+        const apiBaseUrl = params.get('api') === 'offline'
+          ? 'http://127.0.0.1:8999/api/v1'
+          : publicConfig.apiBaseUrl;
         gameRef.current = await gameModule.createGalacticGunnersGame({
           parent: hostRef.current,
-          apiBaseUrl: publicConfig.apiBaseUrl,
+          apiBaseUrl,
+          hostileQa: params.get('qa') === 'hostile',
           onReady: () => setStatus('ready'),
         });
       } catch (error) {

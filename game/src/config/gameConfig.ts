@@ -8,6 +8,7 @@ export const GAME_HEIGHT = 720;
 export interface GameRuntimeConfig {
   apiBaseUrl?: string;
   physicsDebug?: boolean;
+  hostileQa?: boolean;
   onReady?: () => void;
   onExit?: () => void;
 }

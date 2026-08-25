@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 
-import { REQUIRED_RUNTIME_ASSETS, RUNTIME_ASSETS } from '../config/assets';
+import { FRAME_RECTS, REQUIRED_RUNTIME_ASSETS, RUNTIME_ASSETS } from '../config/assets';
 import type { GameRuntimeConfig } from '../config/gameConfig';
 
 export class BootScene extends Phaser.Scene {
@@ -43,6 +43,9 @@ export class BootScene extends Phaser.Scene {
       return;
     }
 
+    this.registerTextureFrames();
+    this.createShipAnimations();
+
     this.anims.create({
       key: 'fx.explosionSmall.play',
       frames: this.anims.generateFrameNumbers(RUNTIME_ASSETS.fx.explosionSmall.key, { start: 0, end: 3 }),
@@ -52,5 +55,37 @@ export class BootScene extends Phaser.Scene {
     });
 
     this.scene.start('MainMenuScene');
+  }
+
+  private registerTextureFrames(): void {
+    const playerTexture = this.textures.get(RUNTIME_ASSETS.player.ship.key);
+    for (const frame of FRAME_RECTS.player) {
+      if (!playerTexture.has(frame.name)) {
+        playerTexture.add(frame.name, 0, frame.x, frame.y, frame.width, frame.height);
+      }
+    }
+
+    const scoutTexture = this.textures.get(RUNTIME_ASSETS.enemy.scout.key);
+    for (const frame of FRAME_RECTS.scout) {
+      if (!scoutTexture.has(frame.name)) {
+        scoutTexture.add(frame.name, 0, frame.x, frame.y, frame.width, frame.height);
+      }
+    }
+  }
+
+  private createShipAnimations(): void {
+    this.anims.create({
+      key: 'player.ship.idle',
+      frames: FRAME_RECTS.player.map((frame) => ({ key: RUNTIME_ASSETS.player.ship.key, frame: frame.name })),
+      frameRate: 8,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: 'enemy.scout.idle',
+      frames: FRAME_RECTS.scout.map((frame) => ({ key: RUNTIME_ASSETS.enemy.scout.key, frame: frame.name })),
+      frameRate: 6,
+      repeat: -1,
+    });
   }
 }

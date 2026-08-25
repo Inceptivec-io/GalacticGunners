@@ -22,6 +22,7 @@ body {
   color: #d7e9ff;
   margin: 0;
   min-height: 100%;
+  overflow: hidden;
 }
 
 body {
@@ -34,7 +35,7 @@ a {
 
 .home-shell {
   align-items: center;
-  background: #030714 url('/gg-runtime-assets/backgrounds/gg_bg_starfield_v002.png') center / cover no-repeat;
+  background: #030714 url('/gg-runtime-assets/key_art/gg_hero_image_player_fighting_v002_4k_uhd_master.png') center / cover no-repeat;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -43,12 +44,39 @@ a {
   min-height: 100vh;
   overflow: hidden;
   padding: 32px;
+  position: relative;
+}
+
+.home-overlay {
+  background: linear-gradient(90deg, rgba(3, 7, 20, 0.76), rgba(3, 7, 20, 0.2) 52%, rgba(3, 7, 20, 0.78));
+  inset: 0;
+  position: absolute;
+}
+
+.home-content {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(20px, 4vh, 42px);
+  position: relative;
+  width: min(900px, 94vw);
 }
 
 .home-logo {
   height: auto;
-  max-width: min(760px, 92vw);
+  max-width: min(760px, 90vw);
   width: 100%;
+}
+
+.home-tagline {
+  color: #d7e9ff;
+  font-family: GalacticGunnersSilverDisplay, Arial, sans-serif;
+  font-size: clamp(28px, 4vw, 54px);
+  line-height: 1;
+  margin: 0;
+  text-align: center;
+  text-shadow: 0 3px 18px rgba(3, 7, 20, 0.9);
+  text-transform: uppercase;
 }
 
 .home-play-link {
@@ -80,6 +108,8 @@ a {
 
 .game-canvas-host canvas {
   display: block;
+  height: 100% !important;
+  width: 100% !important;
 }
 
 .game-status {

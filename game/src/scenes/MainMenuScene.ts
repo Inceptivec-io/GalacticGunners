@@ -1,58 +1,90 @@
 import * as Phaser from 'phaser';
 
 import { RUNTIME_ASSETS } from '../config/assets';
-import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConfig';
+import { InputSystem } from '../systems/InputSystem';
+
+declare global {
+  interface Window {
+    __GALACTIC_GUNNERS_MENU_QA__?: Record<string, unknown>;
+  }
+}
 
 export class MainMenuScene extends Phaser.Scene {
+  #inputSystem!: InputSystem;
+  #started = false;
+
   constructor() {
     super('MainMenuScene');
   }
 
   create(): void {
-    this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, RUNTIME_ASSETS.background.starfield.key)
-      .setDisplaySize(GAME_WIDTH, GAME_HEIGHT)
-      .setDepth(0);
-    this.add.image(GAME_WIDTH / 2, 152, RUNTIME_ASSETS.branding.primaryLogo.key)
-      .setDisplaySize(640, 214)
-      .setDepth(1);
+    this.#inputSystem = new InputSystem(this);
 
-    const subtitle = this.add.text(GAME_WIDTH / 2, 300, 'LEVEL 1 VERTICAL SLICE', {
+    this.add.image(this.scale.width / 2, this.scale.height / 2, RUNTIME_ASSETS.keyArt.heroBattle.key)
+      .setDisplaySize(this.scale.width, this.scale.height)
+      .setDepth(0);
+    this.add.rectangle(this.scale.width / 2, this.scale.height / 2, this.scale.width, this.scale.height, 0x02050d, 0.22)
+      .setDepth(1);
+    this.add.image(this.scale.width / 2, Math.max(112, this.scale.height * 0.19), RUNTIME_ASSETS.branding.primaryLogo.key)
+      .setDisplaySize(Math.min(700, this.scale.width * 0.72), Math.min(234, this.scale.height * 0.26))
+      .setDepth(2);
+
+    const subtitle = this.add.text(this.scale.width / 2, this.scale.height * 0.48, 'DEFEND THE GALAXY', {
       color: '#d7e9ff',
       fontFamily: 'GalacticGunnersSilverDisplay, Arial, sans-serif',
-      fontSize: '30px',
+      fontSize: `${Math.max(26, Math.min(46, this.scale.width * 0.035))}px`,
       align: 'center',
-    }).setOrigin(0.5);
+    }).setOrigin(0.5).setDepth(3);
     subtitle.setData('qa', 'main-menu-subtitle');
 
-    const start = this.add.text(GAME_WIDTH / 2, 414, 'START', {
+    const start = this.add.text(this.scale.width / 2, this.scale.height * 0.63, 'START', {
       color: '#f7d56a',
       fontFamily: 'GalacticGunnersGoldDisplay, Arial, sans-serif',
-      fontSize: '64px',
+      fontSize: `${Math.max(58, Math.min(92, this.scale.width * 0.07))}px`,
       align: 'center',
-    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+    }).setOrigin(0.5).setDepth(3).setInteractive({ useHandCursor: true });
     start.setData('qa', 'start-button');
 
-    const footer = this.add.text(GAME_WIDTH / 2, 604, 'ENTER / SPACE / TOUCH / GAMEPAD A', {
+    const footer = this.add.text(this.scale.width / 2, this.scale.height * 0.82, 'ENTER / SPACE / TOUCH / GAMEPAD A', {
       color: '#7ee8ff',
       fontFamily: 'GalacticGunnersHUD, monospace',
-      fontSize: '22px',
+      fontSize: `${Math.max(18, Math.min(24, this.scale.width * 0.017))}px`,
       align: 'center',
-    }).setOrigin(0.5);
+    }).setOrigin(0.5).setDepth(3);
     footer.setData('qa', 'input-hint');
 
-    const go = () => {
-      this.sound.play(RUNTIME_ASSETS.audio.uiConfirm.key);
-      this.scene.start('Level1Scene');
-    };
-
     start.on('pointerover', () => this.sound.play(RUNTIME_ASSETS.audio.uiSelect.key));
-    start.on('pointerdown', go);
-    this.input.keyboard?.once('keydown-ENTER', go);
-    this.input.keyboard?.once('keydown-SPACE', go);
-    this.input.on('gamepadbuttondown', (_pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button) => {
-      if (button.index === 0 || button.index === 9) {
-        go();
-      }
-    });
+    start.on('pointerdown', () => this.go());
+    this.publishQaState();
+  }
+
+  update(): void {
+    if (this.#inputSystem.actions.confirm) {
+      this.go();
+    }
+    this.publishQaState();
+  }
+
+  private go(): void {
+    if (this.#started) {
+      return;
+    }
+    this.#started = true;
+    this.sound.play(RUNTIME_ASSETS.audio.uiConfirm.key);
+    this.scene.start('Level1Scene');
+  }
+
+  private publishQaState(): void {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    window.__GALACTIC_GUNNERS_MENU_QA__ = {
+      scene: 'MainMenuScene',
+      viewport: { width: this.scale.width, height: this.scale.height },
+      visibleTexts: this.children.list
+        .filter((child): child is Phaser.GameObjects.Text => child instanceof Phaser.GameObjects.Text)
+        .map((text) => text.text),
+      heroKeyArt: RUNTIME_ASSETS.keyArt.heroBattle.assetId,
+    };
   }
 }

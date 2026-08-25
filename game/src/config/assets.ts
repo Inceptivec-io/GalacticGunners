@@ -16,6 +16,15 @@ export const RUNTIME_ASSETS = {
       runtimePath: '/gg-runtime-assets/backgrounds/gg_bg_starfield_v002.png',
     },
   },
+  keyArt: {
+    heroBattle: {
+      key: 'keyArt.heroBattle',
+      assetId: 'GG-KEYART-KEY-ART-POSTERS-GG-HERO-IMAGE-PLAYER-FIGHTING-V002-4K-UHD-MASTER',
+      canonicalPath: 'assets/key_art/posters/gg_hero_image_player_fighting_v002_4k_uhd_master.png',
+      sha256: '054D150DA322ACCDA4256306DB40B30CC0A098D7B307702C5CCFFA6148A5CE8F',
+      runtimePath: '/gg-runtime-assets/key_art/gg_hero_image_player_fighting_v002_4k_uhd_master.png',
+    },
+  },
   branding: {
     primaryLogo: {
       key: 'branding.primaryLogo',
@@ -125,6 +134,7 @@ export const RUNTIME_ASSETS = {
 
 export const REQUIRED_RUNTIME_ASSETS: RuntimeAsset[] = [
   RUNTIME_ASSETS.background.starfield,
+  RUNTIME_ASSETS.keyArt.heroBattle,
   RUNTIME_ASSETS.branding.primaryLogo,
   RUNTIME_ASSETS.player.ship,
   RUNTIME_ASSETS.enemy.scout,
@@ -141,7 +151,17 @@ export const REQUIRED_RUNTIME_ASSETS: RuntimeAsset[] = [
 ];
 
 export const FRAME_RECTS = {
-  playerStable: { x: 0, y: 0, width: 543, height: 724 },
-  scoutStable: { x: 0, y: 0, width: 480, height: 793 },
+  player: [
+    { name: 'stable-0', x: 0, y: 0, width: 543, height: 724 },
+    { name: 'stable-1', x: 543, y: 0, width: 543, height: 724 },
+    { name: 'stable-2', x: 1086, y: 0, width: 543, height: 724 },
+    { name: 'stable-3', x: 1629, y: 0, width: 543, height: 724 },
+  ],
+  scout: [
+    { name: 'stable-0', x: 0, y: 0, width: 480, height: 793 },
+    { name: 'stable-1', x: 501, y: 0, width: 480, height: 793 },
+    { name: 'stable-2', x: 1002, y: 0, width: 480, height: 793 },
+    { name: 'stable-3', x: 1503, y: 0, width: 480, height: 793 },
+  ],
   explosionSmall: { frameWidth: 493, frameHeight: 797, endFrame: 3 },
 } as const;

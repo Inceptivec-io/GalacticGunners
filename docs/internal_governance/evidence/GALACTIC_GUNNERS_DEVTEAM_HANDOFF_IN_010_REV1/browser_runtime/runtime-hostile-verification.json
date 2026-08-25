@@ -1,0 +1,144 @@
+{
+  "url": "http://localhost:3002",
+  "generated_at": "2026-08-25T06:06:32.152Z",
+  "banned_visible_terms": [
+    "LEVEL 1 VERTICAL SLICE",
+    "VERTICAL SLICE",
+    "SLICE COMPLETE",
+    "SLICE FAILED",
+    "REPLAY SLICE",
+    "RETRY SLICE",
+    "HANDOFF",
+    "SPRINT",
+    "DEVELOPMENT"
+  ],
+  "hostile": {
+    "cases": {
+      "home_play_menu_level1": true,
+      "direct_player_laser_hit_score_once": true,
+      "one_laser_multi_scout_score_zero": true,
+      "one_scout_double_score_zero": true,
+      "player_laser_near_miss_score_zero": true,
+      "direct_enemy_laser_hit_one_damage": true,
+      "damage_cooldown": true,
+      "enemy_laser_near_miss_zero_damage": true,
+      "sustained_fire": true,
+      "projectile_cleanup": true,
+      "left_right_bounds": true,
+      "complete_replay_reset": true,
+      "complete_main_menu": true,
+      "fail_retry": true,
+      "fail_main_menu": true,
+      "online_game_run_start": true,
+      "online_complete_once": true,
+      "replay_new_run": true,
+      "backend_offline_playable": true,
+      "no_fabricated_run_id": true,
+      "keyboard_pointer_touch_gamepad_normalization_path": true
+    },
+    "console_errors": [
+      {
+        "type": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED"
+      }
+    ],
+    "console_warnings": [],
+    "network_failures_or_4xx_5xx": [
+      {
+        "url": "http://127.0.0.1:8999/api/v1/game-runs/",
+        "failure": "net::ERR_CONNECTION_REFUSED"
+      }
+    ]
+  },
+  "expected_offline_backend_probe": {
+    "console_errors": [
+      {
+        "type": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED"
+      }
+    ],
+    "network_failures": [
+      {
+        "url": "http://127.0.0.1:8999/api/v1/game-runs/",
+        "failure": "net::ERR_CONNECTION_REFUSED"
+      }
+    ]
+  },
+  "unexpected_console_errors": [],
+  "unexpected_network_failures_or_4xx_5xx": [],
+  "visual_matrix": [
+    {
+      "viewport": "1365x768",
+      "landing_full_viewport": true,
+      "canvas_full_viewport": true,
+      "duplicate_canvas": 0,
+      "scout_count": 14,
+      "hud_clipped": 0,
+      "player_enemy_clipped": 0,
+      "console_errors": 0,
+      "network_failures": 0
+    },
+    {
+      "viewport": "1440x900",
+      "landing_full_viewport": true,
+      "canvas_full_viewport": true,
+      "duplicate_canvas": 0,
+      "scout_count": 14,
+      "hud_clipped": 0,
+      "player_enemy_clipped": 0,
+      "console_errors": 0,
+      "network_failures": 0
+    },
+    {
+      "viewport": "1920x1080",
+      "landing_full_viewport": true,
+      "canvas_full_viewport": true,
+      "duplicate_canvas": 0,
+      "scout_count": 14,
+      "hud_clipped": 0,
+      "player_enemy_clipped": 0,
+      "console_errors": 0,
+      "network_failures": 0
+    },
+    {
+      "viewport": "2560x1440",
+      "landing_full_viewport": true,
+      "canvas_full_viewport": true,
+      "duplicate_canvas": 0,
+      "scout_count": 14,
+      "hud_clipped": 0,
+      "player_enemy_clipped": 0,
+      "console_errors": 0,
+      "network_failures": 0
+    },
+    {
+      "viewport": "1024x768",
+      "landing_full_viewport": true,
+      "canvas_full_viewport": true,
+      "duplicate_canvas": 0,
+      "scout_count": 14,
+      "hud_clipped": 0,
+      "player_enemy_clipped": 0,
+      "console_errors": 0,
+      "network_failures": 0
+    },
+    {
+      "viewport": "mobile-portrait",
+      "landing_full_viewport": true,
+      "canvas_full_viewport": true,
+      "duplicate_canvas": 0,
+      "scout_count": 14,
+      "hud_clipped": 0,
+      "player_enemy_clipped": 0,
+      "console_errors": 0,
+      "network_failures": 0
+    }
+  ],
+  "assertions": {
+    "hostile_cases": true,
+    "visual_matrix": true,
+    "no_console_errors": true,
+    "no_network_failures": true,
+    "no_visible_dev_terms": true
+  }
+}

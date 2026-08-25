@@ -21,8 +21,8 @@ export async function createGalacticGunnersGame(options: GalacticGunnersGameOpti
     width: GAME_WIDTH,
     height: GAME_HEIGHT,
     scale: {
-      mode: PhaserRuntime.Scale.FIT,
-      autoCenter: PhaserRuntime.Scale.CENTER_BOTH,
+      mode: PhaserRuntime.Scale.RESIZE,
+      autoCenter: PhaserRuntime.Scale.NO_CENTER,
       width: GAME_WIDTH,
       height: GAME_HEIGHT,
     },
