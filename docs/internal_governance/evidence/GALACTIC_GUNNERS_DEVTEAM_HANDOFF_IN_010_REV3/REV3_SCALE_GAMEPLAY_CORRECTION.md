@@ -71,7 +71,7 @@ Runtime trace:
 ## Evidence
 
 - Hostile runtime report: `docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_010_REV3/browser_runtime/runtime-hostile-verification.json`.
-- Hostile runtime report SHA-256: `7CC89EF2C67B036B3AE46BB0398C8E802E2CCEBEB3F64A7BCE3E8BBD65EAED7A`.
+- Hostile runtime report SHA-256: `B2F60C25AF54E3F631155F684CE9CB168BFB30A783513822513AE5CC1D601658`.
 - Screenshots include player/enemy laser mid-flight, nuke projectile, nuke burst, pause overlay, viewport matrix, mission complete/failed and active resize.
 - Transport receiving record: `docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_010_REV3/TRANSPORT_RECEIVING_RECORD.md`.
 - Transport member inventory: `docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_010_REV3/transport_pack_member_inventory.json`.

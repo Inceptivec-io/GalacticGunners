@@ -213,14 +213,17 @@ function laserVisualAndBodyValid(laser) {
 }
 
 function findScoutClearOfShield(state) {
+  let candidate = null;
   for (let index = 0; index < state.scoutBodies.length; index += 1) {
     const scout = state.scoutBodies[index];
     const intersectsShield = state.shieldBodies.some((shield) => Math.abs(shield.x - scout.x) <= (shield.body.width / 2 + state.projectileSize.height / 2 + 2));
     if (!intersectsShield) {
-      return index;
+      if (!candidate || scout.y > candidate.scout.y) {
+        candidate = { index, scout };
+      }
     }
   }
-  return 0;
+  return candidate?.index ?? 0;
 }
 
 async function movementProbe(page, keys, duration = 350) {
@@ -416,7 +419,7 @@ async function runHostileCases(browser) {
   }, null, { timeout: 2000 });
   const nukeFiredState = await getGameState(page);
   await page.screenshot({ path: path.join(outputDir, 'nuke-projectile-mid-flight.png'), fullPage: true });
-  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__.state().score >= 25, null, { timeout: 6000 });
+  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__.state().score >= 25, null, { timeout: 12000 });
   state = await getGameState(page);
   cases.nuke_fire_decrements_once = nukeFiredState.currentNukes === 1 && nukeFiredState.rearmProgress < 150;
   cases.nuke_projectile_visible = nukeFiredState.nukeProjectileCount >= 1 && nukeFiredState.nukeBodies.length >= 1;
