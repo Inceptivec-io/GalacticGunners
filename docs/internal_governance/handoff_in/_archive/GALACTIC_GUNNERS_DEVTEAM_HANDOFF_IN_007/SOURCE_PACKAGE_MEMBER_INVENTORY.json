@@ -1,0 +1,1983 @@
+[
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/GalacticGunners_Visual_Asset_Rights_Pack_v1.0/GalacticGunners_Visual_Asset_Rights_Pack_v1.0/README.md",
+    "size_bytes": 859,
+    "sha256": "9904BB6C20658BEC91B1FEE508D0C3FB80CFF3D7CB4B2C833EED5D93EE5A8DE6",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/GalacticGunners_Visual_Asset_Rights_Pack_v1.0/GalacticGunners_Visual_Asset_Rights_Pack_v1.0/SHA256SUMS.txt",
+    "size_bytes": 1401,
+    "sha256": "D32ABD1B1F4A625C28F44B8FA3D96EB0EF7F9532A70ED4095DF7CE8A6DACC002",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/GalacticGunners_Visual_Asset_Rights_Pack_v1.0/GalacticGunners_Visual_Asset_Rights_Pack_v1.0/documents/01_GG_ASSET_OWNERSHIP_AND_PROVENANCE_STATEMENT_v1.0.docx",
+    "size_bytes": 40781,
+    "sha256": "A5A6727DA70DDA03EE97830BB07F45B000B004E9182227EC6186762AD4227472",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/GalacticGunners_Visual_Asset_Rights_Pack_v1.0/GalacticGunners_Visual_Asset_Rights_Pack_v1.0/documents/01_GG_ASSET_OWNERSHIP_AND_PROVENANCE_STATEMENT_v1.0.pdf",
+    "size_bytes": 98199,
+    "sha256": "B6E1E40811880A5F65753B970CC6D9D8055920FAEACBC6B0C085D9838451E508",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/GalacticGunners_Visual_Asset_Rights_Pack_v1.0/GalacticGunners_Visual_Asset_Rights_Pack_v1.0/documents/02_GG_COMMERCIAL_VISUAL_ASSET_LICENCE_v1.0.docx",
+    "size_bytes": 40808,
+    "sha256": "A72F1A9E333C7EC735354E18E7754353BD744956F66FDF231C6814E30AFE70F0",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/GalacticGunners_Visual_Asset_Rights_Pack_v1.0/GalacticGunners_Visual_Asset_Rights_Pack_v1.0/documents/02_GG_COMMERCIAL_VISUAL_ASSET_LICENCE_v1.0.pdf",
+    "size_bytes": 91490,
+    "sha256": "9F8B363F65D0CB5DDD7084AF86DB3E11ECD53333D945A92A0BCEF4B2EA77243C",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/GalacticGunners_Visual_Asset_Rights_Pack_v1.0/GalacticGunners_Visual_Asset_Rights_Pack_v1.0/documents/03_GG_CONTRIBUTOR_IP_ASSIGNMENT_TEMPLATE_v1.0.docx",
+    "size_bytes": 40360,
+    "sha256": "6F92668DE1B54F06773396DA4892943070DF6E7AAD9F144B12E5CCA1E779A41A",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/GalacticGunners_Visual_Asset_Rights_Pack_v1.0/GalacticGunners_Visual_Asset_Rights_Pack_v1.0/documents/03_GG_CONTRIBUTOR_IP_ASSIGNMENT_TEMPLATE_v1.0.pdf",
+    "size_bytes": 95174,
+    "sha256": "E5D50BDC1851418DF7543AD33444D50C7D12292891DF75C83F5F98A783A906E8",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/GalacticGunners_Visual_Asset_Rights_Pack_v1.0/GalacticGunners_Visual_Asset_Rights_Pack_v1.0/documents/04_GG_FILENAME_AND_ASSET_REGISTER_GUIDE_v1.0.docx",
+    "size_bytes": 40196,
+    "sha256": "82AD365C78461AA058A5E42B7C4A353310654781C4B3D0561AC9B1A6415224B9",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/GalacticGunners_Visual_Asset_Rights_Pack_v1.0/GalacticGunners_Visual_Asset_Rights_Pack_v1.0/documents/04_GG_FILENAME_AND_ASSET_REGISTER_GUIDE_v1.0.pdf",
+    "size_bytes": 88063,
+    "sha256": "D58D6AD7B92C0BBA6340629ACC45BEED83EBA193D4FC16AAEF22D88274AF5F63",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/GalacticGunners_Visual_Asset_Rights_Pack_v1.0/GalacticGunners_Visual_Asset_Rights_Pack_v1.0/registers/GG_ASSET_REGISTER_v1.0.csv",
+    "size_bytes": 3928,
+    "sha256": "7B27261CFB2141AC73353CB466FF8945EBB031872F3E96686B2E7FA9447D01C8",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/GalacticGunners_Visual_Asset_Rights_Pack_v1.0/GalacticGunners_Visual_Asset_Rights_Pack_v1.0/registers/GG_FILENAME_RENAME_LOG_v1.0.csv",
+    "size_bytes": 97,
+    "sha256": "5398F4706912C2C570DDD5B0D99E7D01F13A5FB6268FC7C631BFFBF8C0679603",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/GalacticGunners_Visual_Asset_Rights_Pack_v1.0/GalacticGunners_Visual_Asset_Rights_Pack_v1.0/tools/UPDATE_ASSET_REGISTER.ps1",
+    "size_bytes": 2263,
+    "sha256": "882CD0BE5B312D62D865E77C25D612831BA6A261D9E21F5F826432C484B57C8E",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/GalacticGunners_Visual_Asset_Rights_Pack_v1.0/README.md",
+    "size_bytes": 5041,
+    "sha256": "A63C82CCD6DF9533445AF08F3BBA04B407891C1F187E576F9A723E28EF4805F9",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/audio/GALACTIC_GUNNERS_OWNED_AUDIO_ESTATE_v1.0_REV2/MANIFEST_SHA256.json",
+    "size_bytes": 3155,
+    "sha256": "49C28420738445BFF3E2EDE739B65F7F4C40B4CBC52F0E76662D7E2777799AB2",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/audio/GALACTIC_GUNNERS_OWNED_AUDIO_ESTATE_v1.0_REV2/audio/gg_comet_destroyed_v001.wav",
+    "size_bytes": 265004,
+    "sha256": "058659619C7D4A79728858B337801B0501B0978474AAA32B0A40F26EAA678908",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/audio/GALACTIC_GUNNERS_OWNED_AUDIO_ESTATE_v1.0_REV2/audio/gg_enemy_laser_v001.wav",
+    "size_bytes": 77804,
+    "sha256": "FCE8F2C8853FF92A6EF2F80D9418C11B34F9601B5EFDA385377080999E6D5942",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/audio/GALACTIC_GUNNERS_OWNED_AUDIO_ESTATE_v1.0_REV2/audio/gg_explosion_large_v001.wav",
+    "size_bytes": 368684,
+    "sha256": "E94572901D77BCFE9F36F47304A7BC4105D9576453EC390BAE2807B1AC08B202",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/audio/GALACTIC_GUNNERS_OWNED_AUDIO_ESTATE_v1.0_REV2/audio/gg_explosion_small_v001.wav",
+    "size_bytes": 167078,
+    "sha256": "AEFFDB12344846F6207C61F0A70F19F9FDF5835D621745A75BD4707012F94FE4",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/audio/GALACTIC_GUNNERS_OWNED_AUDIO_ESTATE_v1.0_REV2/audio/gg_game_over_stinger_v001.wav",
+    "size_bytes": 446444,
+    "sha256": "92B78AF0FD4401E56FBE807494E406B7B45844A79C7E810B60F89BCBE6021CA8",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/audio/GALACTIC_GUNNERS_OWNED_AUDIO_ESTATE_v1.0_REV2/audio/gg_mothership_destroyed_v001.wav",
+    "size_bytes": 964844,
+    "sha256": "F127E1FE61B10384C5C33F300E5C3FC6B9FF713B15BEA78FAF0C7E89F3244DD4",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/audio/GALACTIC_GUNNERS_OWNED_AUDIO_ESTATE_v1.0_REV2/audio/gg_mothership_hit_v001.wav",
+    "size_bytes": 167078,
+    "sha256": "626E414B8BF821EF6F05C43F8BA3FAE04E8C1823873E65FE603BF1F5308EDE36",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/audio/GALACTIC_GUNNERS_OWNED_AUDIO_ESTATE_v1.0_REV2/audio/gg_nuke_burst_v001.wav",
+    "size_bytes": 648044,
+    "sha256": "46E97A344CBCEF9E775B9FCC81B0895858D29E975C32C416C6E3CD91C8DA6D2B",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/audio/GALACTIC_GUNNERS_OWNED_AUDIO_ESTATE_v1.0_REV2/audio/gg_nuke_fire_v001.wav",
+    "size_bytes": 253484,
+    "sha256": "CDECCACB879343A5D3772EFE6ABF6A514F8E7B2CC5C5486C123D4B8906898E1C",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/audio/GALACTIC_GUNNERS_OWNED_AUDIO_ESTATE_v1.0_REV2/audio/gg_player_hit_v001.wav",
+    "size_bytes": 103724,
+    "sha256": "049D14BD1353957D2A859FF4F5C56E5B854B6D75B9D136310559CA45810BF311",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/audio/GALACTIC_GUNNERS_OWNED_AUDIO_ESTATE_v1.0_REV2/audio/gg_player_laser_v001.wav",
+    "size_bytes": 57644,
+    "sha256": "9EDA7CF68F47E307AB3F7041E1DD59AC5F07E279C32CB1A9C9D3405905247AFF",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/audio/GALACTIC_GUNNERS_OWNED_AUDIO_ESTATE_v1.0_REV2/audio/gg_shield_hit_v001.wav",
+    "size_bytes": 89324,
+    "sha256": "098BC70F5F2919DC1ED089D377F5B7E18B43D551EA3649E9A0161E4AA1252178",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/audio/GALACTIC_GUNNERS_OWNED_AUDIO_ESTATE_v1.0_REV2/audio/gg_ui_back_v001.wav",
+    "size_bytes": 40364,
+    "sha256": "F75A5C541AAA73618C2AA75BBB28B7B94E86790A3B4C8D5F20DEAA8EFC8FF9DB",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/audio/GALACTIC_GUNNERS_OWNED_AUDIO_ESTATE_v1.0_REV2/audio/gg_ui_confirm_v001.wav",
+    "size_bytes": 46124,
+    "sha256": "5126059176E8D15623C5EFF70DCD8EAF39ED092156E8C5EFA3D55468C5317B93",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/audio/GALACTIC_GUNNERS_OWNED_AUDIO_ESTATE_v1.0_REV2/audio/gg_ui_select_v001.wav",
+    "size_bytes": 20204,
+    "sha256": "BB382B07D808043ECD484DE8F92C154596F7DA95A11DCE60FB770E2862AF0618",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/audio/GALACTIC_GUNNERS_OWNED_AUDIO_ESTATE_v1.0_REV2/audio/gg_victory_stinger_v001.wav",
+    "size_bytes": 417644,
+    "sha256": "31079AC766DE4768D40DEE244ECE536601B74C0E8C91AAF74AB7E8FE995A021B",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/audio/GALACTIC_GUNNERS_OWNED_AUDIO_ESTATE_v1.0_REV2/docs/AUDIO_ASSET_REGISTER_v1.0_REV2.md",
+    "size_bytes": 1041,
+    "sha256": "8907DA822BB74B24C67475B756C87AB8B432C01365E27E6661C536E27C822E1A",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/audio/GALACTIC_GUNNERS_OWNED_AUDIO_ESTATE_v1.0_REV2/docs/AUDIO_DESIGN_AUTHORITY_v1.0_REV2.md",
+    "size_bytes": 727,
+    "sha256": "8DB7A288247D894E151399A31FFF996435347D11AD881A263A35EF683C775DE3",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/audio/GALACTIC_GUNNERS_OWNED_AUDIO_ESTATE_v1.0_REV2/docs/OWNERSHIP_AND_PROVENANCE_v1.0_REV2.md",
+    "size_bytes": 365,
+    "sha256": "C4395E66199AA3ABCE524EAFB2F3010B77524F41D9A19382E4031E1A5A79E927",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GG_Gold_Font_Production_v1.zip",
+    "size_bytes": 7247001,
+    "sha256": "FB5E50093E77EB6AA9DE8099DBD2E6A6ADC0E05F993293D93C88D743839C593A",
+    "disposition": "NESTED_TRANSPORT_ZIP_UNPACKED_INSPECTABLY_NOT_COMMITTED"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GG_Silver_Font_Production_v1.zip",
+    "size_bytes": 14351082,
+    "sha256": "2C6570ED0AD83CFBC739F36FC670CEA10D5AF9998DE5E72B88D2E9BC30706036",
+    "disposition": "NESTED_TRANSPORT_ZIP_UNPACKED_INSPECTABLY_NOT_COMMITTED"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/Galactic Gunners Sci-Fi Title Card.png",
+    "size_bytes": 1933883,
+    "sha256": "640C8E8BC402CFF92C4291A882558281E6486652E78D09C489B1A5DE4420D41E",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/GalacticGunnersDisplay-Regular-v1.3.otf",
+    "size_bytes": 15139232,
+    "sha256": "074DCC663779AE3AC6C32E7A9438F7414C7E4F0182F814FBE99ED6F997120A05",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/GalacticGunnersDisplay-Regular-v1.3.woff2",
+    "size_bytes": 11330556,
+    "sha256": "D23C79A3A42199A7DB98FED82C90752F14C61FE2D13B82DAB51EAA1BC312BDAD",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/GalacticGunnersDisplay-Specimen-v1.3.png",
+    "size_bytes": 2833379,
+    "sha256": "CF816A20C97FFC2BA7E693D4BD8ADD47627F14B806047CCC1279D9BF850FA520",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/MANIFEST_SHA256.json",
+    "size_bytes": 12808,
+    "sha256": "32F37582A4FDFED2F18839F56C1E3D482A7EBE015005FEB10B35A05BDD140605",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/OWNERSHIP_DECLARATION.md",
+    "size_bytes": 554,
+    "sha256": "D6EAFECE31DAEFFA561242C46CDC8D0137F214D847874D9DE648857697C841E7",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/PREVIEWS/FULL_AZ_09_PRODUCTION_PREVIEW.png",
+    "size_bytes": 442664,
+    "sha256": "4F9023D5255B170AE7A6B85E5558BEA00A3397CB5DA4244A135325BC12F8132C",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/PREVIEWS/SIZE_TEST_12_18_24_36_48_72.png",
+    "size_bytes": 470726,
+    "sha256": "087802B6EF0D804EE4BED824B55B9875428B5ACFD329CDC2C09F2CDBBE65DC69",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/PREVIEWS/TYPE_TEST_PRODUCTION.png",
+    "size_bytes": 614428,
+    "sha256": "AF14D6F57863ED7D101408BE1C276C566122F94B9DACF3A736BB5C9454D5AA9D",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/PROVENANCE/ASSET_REGISTER.md",
+    "size_bytes": 548,
+    "sha256": "768CD4DCBDBC280D9856FF6AE92363691722D9851BBBE7C653B3BC62E8CA67A7",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/PROVENANCE/GLYPH_METRICS.json",
+    "size_bytes": 4144,
+    "sha256": "C8D6224D2B5569B503A7BB1A550521D0B6DFA90575413575EE1E6D537D241D15",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/PROVENANCE/OWNERSHIP_DECLARATION.md",
+    "size_bytes": 554,
+    "sha256": "D6EAFECE31DAEFFA561242C46CDC8D0137F214D847874D9DE648857697C841E7",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/PROVENANCE/SHA256_MANIFEST.json",
+    "size_bytes": 12663,
+    "sha256": "E147B67F79930C70F9243BADD8708060011C2EF9A9EAC66B1AC85A5011681411",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/README.md",
+    "size_bytes": 995,
+    "sha256": "360922C68D9A971E840EF5DDCEF548D31C6BD4B703F595D225DDD98CA9767764",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/AUTHORITY/GalacticGunnersDisplay-Specimen-v1.3.png",
+    "size_bytes": 2833379,
+    "sha256": "CF816A20C97FFC2BA7E693D4BD8ADD47627F14B806047CCC1279D9BF850FA520",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/0.png",
+    "size_bytes": 2353,
+    "sha256": "18C365EDDF1A8061A5901FEEC9ACD26A05F5B535C2B53B95C0FFF7AD57A2845C",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/1.png",
+    "size_bytes": 2067,
+    "sha256": "D7B22E871DE9D5F4D9F7782DD4352C82AA8388D34FAAF282939C2F47A317FEDA",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/2.png",
+    "size_bytes": 2334,
+    "sha256": "47E6B10063A6C8A0D161F02D649E2AC9B405D3F988A29F9411568101DAC54AC4",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/3.png",
+    "size_bytes": 2182,
+    "sha256": "8FD6507B43105A6D253E423B31A91EA0A9BB78B729B963C4D37AEDE5E3A9A3EE",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/4.png",
+    "size_bytes": 2360,
+    "sha256": "024AD09AA10803F7CDF723A1782DCB7EB67F8A7A55AB183F86E14E6436E3EE76",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/5.png",
+    "size_bytes": 2209,
+    "sha256": "CFE5E91599578569FF426211A3F231F928CB4AF90BCCA3FC01A2419E20E6EA76",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/6.png",
+    "size_bytes": 2373,
+    "sha256": "45E16F476422644E20359E6C1829719D1A4E4008C046AD3D207C428204E3E00A",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/7.png",
+    "size_bytes": 2297,
+    "sha256": "77BA2EDE01557B5A3868BE34885BA4673B71A97ADD2F927F65997ADF0804FFA3",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/8.png",
+    "size_bytes": 2397,
+    "sha256": "FAD55BB00235F2C38BF6BCB75D027E3DBE690E113DEF55D49FB8DAB90305976A",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/9.png",
+    "size_bytes": 2431,
+    "sha256": "1420443EA78C200D05480C19C5195F41FC3A32F09C29EB371C8E29D7DB6B338F",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/A.png",
+    "size_bytes": 2555,
+    "sha256": "8ECED2FFB4E939FF8DCEBCF1AE3C26BC52A8657F8EF0874680754BA3912CDC44",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/B.png",
+    "size_bytes": 2330,
+    "sha256": "CB206DC017B61CC6A5C284D461172F9C55710510CF1F68A7FF704794E0E98BC2",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/C.png",
+    "size_bytes": 2439,
+    "sha256": "84317D96528F23EDD9A2BD523CE8031871366D8388F9010C62B980942E43AE4B",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/D.png",
+    "size_bytes": 2271,
+    "sha256": "A6828EEA009F53F3CF4A148847B15B8FF31291836ACDFA34EDE71DE929CC8064",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/E.png",
+    "size_bytes": 2313,
+    "sha256": "BF397EC312A8665D4F7ECC12686393FF25B49C21A828D1182D0DE102E3D801FE",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/F.png",
+    "size_bytes": 2120,
+    "sha256": "DCED94C6063B91177B72B9E98D8BA414DD2962AC6A54E4D0554BFD5869A43C96",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/G.png",
+    "size_bytes": 2322,
+    "sha256": "978463738DB618BB7057673F54DB4C0828687B7230FFD20233966BDC6ECE8311",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/H.png",
+    "size_bytes": 2221,
+    "sha256": "F3992377E2EDA11CE47244B35983661307486468054900FCD77AB54B479A855C",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/I.png",
+    "size_bytes": 1696,
+    "sha256": "F4C1B2DE2FD83D2D5629EDF0661A1743468744C1666EDDBB0EC35B8BF11D1677",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/J.png",
+    "size_bytes": 2084,
+    "sha256": "85FFB1D528E2590E4DD2E7CB96D79BE50A5BC1AE695ED8D3709B5D08A82A2FF2",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/K.png",
+    "size_bytes": 2498,
+    "sha256": "767FDACBF5018F77E939EAB7E8D3184E9DCCD5F065F9935623F6CC81FF88F80B",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/L.png",
+    "size_bytes": 2194,
+    "sha256": "498577CB80B356EDEDBCFDCB295F3C91EDEBD3E8E24C86F6799771897C870BAA",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/M.png",
+    "size_bytes": 2554,
+    "sha256": "7CC5EBE61AD3EFF0CAEC53E6CAAC16EEECDC90CF60ABE14733F3C757DFC43C83",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/N.png",
+    "size_bytes": 2229,
+    "sha256": "661BA31F5ED7C8E169722ADACFB8154A35476BB9C12824B8E23BE5CEDBA4DED9",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/O.png",
+    "size_bytes": 2505,
+    "sha256": "4455D92F3630CE92ABC012CAB8D2399ACEA989E38D2772F1AB50E15EBC2EAED5",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/P.png",
+    "size_bytes": 2288,
+    "sha256": "1F0E6A5A3D49599C241EE0A669AB1CE3C1CC61B2F0B5BB10AB2FBBF7C101B466",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/Q.png",
+    "size_bytes": 2260,
+    "sha256": "82777254140A3936B7978E63E108F1B288A4F94FFF9AB84E61F1ACD57EE9FF27",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/R.png",
+    "size_bytes": 2306,
+    "sha256": "A51C3922D7039D09E162E0B8CF49A1DFD7BBC148BCE30FB0A2C0262CA62E3EB3",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/S.png",
+    "size_bytes": 2342,
+    "sha256": "DC239D212240E2D4DAE2283B3EB9F2D7A5641D3BAEBF0E03CD5BD7E84B0586AD",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/T.png",
+    "size_bytes": 2117,
+    "sha256": "776CAAD1DEF1B88028528ABD4DC58DB8651786AFF7699D2077B2EB5451D54172",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/U.png",
+    "size_bytes": 2106,
+    "sha256": "37ABCDF856F72F2F74D342277728C86716189816ABADEF492ADC461ED3D1906A",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/V.png",
+    "size_bytes": 2503,
+    "sha256": "92F8135BB4B60409569322DB4CA62E83642FE28F637EC820931A43AB7DAEE8AE",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/W.png",
+    "size_bytes": 2807,
+    "sha256": "53B759FA19273F3B9483DFD3EAFDFAE8F5A0E4FF3EF3A6297827E5E1C5168B4A",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/X.png",
+    "size_bytes": 2443,
+    "sha256": "F2B0490B482D62A4837C7851676FF1C6F534E7A8A1B70010198B03FD4098D9FE",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/Y.png",
+    "size_bytes": 2362,
+    "sha256": "04A1FB5D18591C6F251166807D5F63BDF4A48D1B0D734A5D2246AD0576B10A36",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/Z.png",
+    "size_bytes": 2240,
+    "sha256": "9F21C4F54B6B8F9315CCAE0139F079C7F828EE2E780499D5B007C6C8C14FC099",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/0.png",
+    "size_bytes": 335214,
+    "sha256": "FA6548D090009C7D57B8547E77276B1AD50D0885E36638E962179122B9DA1E77",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/1.png",
+    "size_bytes": 177521,
+    "sha256": "D046C2FB9AE68A56A7A8251BE41F25761EF6748347055005D5269074512C7372",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/2.png",
+    "size_bytes": 361581,
+    "sha256": "B018346EF0E1C8DAA951ACEE32CD561CC785F6DB2066CCF87916456C6400B099",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/3.png",
+    "size_bytes": 340833,
+    "sha256": "CA89D6772BDE1F4F22B5A61BC3E5E60B6CE021644237B8BD44570E8D06F95C64",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/4.png",
+    "size_bytes": 327959,
+    "sha256": "2C329E4EA6E160554FC4A7150A9880933B9CF65757ABCE669C0EADEF1E9B15BF",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/5.png",
+    "size_bytes": 410414,
+    "sha256": "1E8CE2D4B774BE083A81420A7ADBE232C8D19B21C8DDFAEAD7C69A2F31444DD1",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/6.png",
+    "size_bytes": 350897,
+    "sha256": "D9AEA97DB1A219B4A1CC85D4BEC65B76D7D9E8507978FEDA54A9B874ADCE7678",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/7.png",
+    "size_bytes": 258390,
+    "sha256": "FB8ABC162634EBDBCCD85F82C01ACF2297422596998E9E70D57594A8BF15153E",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/8.png",
+    "size_bytes": 431967,
+    "sha256": "C4F695B3C95FAF553D8C4B4402AB01AA2BB03C082C2401A37673FE60C755D9F9",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/9.png",
+    "size_bytes": 356471,
+    "sha256": "A1F21D15F05E8CA865A5C3CE0343D4F552926F838172605CBA6DF7F33A83FFBE",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/A.png",
+    "size_bytes": 385704,
+    "sha256": "800ADB8740884CAEDC4A3023F7E8A38417FBC7C39A2C37F2AF830E855BE4D6E1",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/B.png",
+    "size_bytes": 349834,
+    "sha256": "38E245F07906445B6C17B389151CFFEFA5139FAB6FD926C8E72635F97DC21B80",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/C.png",
+    "size_bytes": 331620,
+    "sha256": "3DDC2BE19159D68745D1211B6CCBED19AEB11893236E1010EA2BE32D3F8264DA",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/D.png",
+    "size_bytes": 289575,
+    "sha256": "AD1910ACC7566BACA201AD0912EFEE8BA240B2DF2D9F363ACA5F000311D0BB26",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/E.png",
+    "size_bytes": 318786,
+    "sha256": "8854AB037E9E79B572560713F94676EBE6FF583CCB6ECFD5A0010DB26DD08D56",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/F.png",
+    "size_bytes": 198137,
+    "sha256": "88F8292069172C7E619A173F014F0E114129954CBFF2927755853D05E49DEA7C",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/G.png",
+    "size_bytes": 381171,
+    "sha256": "94661DD5DC1CEE04B4BAB123A2E8225640D3A13E2590B06B82B302B4D030F8F3",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/H.png",
+    "size_bytes": 263773,
+    "sha256": "DA510B780BECA3CA484EE9F6B9C3B289BB82E4D614077207387D5CDC00B6D8E8",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/I.png",
+    "size_bytes": 107760,
+    "sha256": "20FF2A7627D240D11FDDAE29FC849FDA7903C1D7B6DF0324E61CD509CCB47D57",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/J.png",
+    "size_bytes": 185293,
+    "sha256": "3BE54E89D7869BBFDD729CA4BFDCFC6C1F14F42E2ECD3E6639F02B35E1EE7A5B",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/K.png",
+    "size_bytes": 468700,
+    "sha256": "77C9DEE58B3BE147BFCC5CA7D9D2BFC1191B7F62E7D0EB622C1D40D089E9FB1A",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/L.png",
+    "size_bytes": 243069,
+    "sha256": "C0133C3555AE2D6B67DC37627FFECE4EF7E0E5E514065737826CD130EF616F3E",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/M.png",
+    "size_bytes": 494118,
+    "sha256": "41ADEF2337A7B0993FF50688576B9480C260CD0B3D9FA3FC22FB6F897C49731A",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/N.png",
+    "size_bytes": 365310,
+    "sha256": "54BC165270820BECDCEC65F36A2B379BF3DA9A289B3E5081BB9CBD54C5911598",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/O.png",
+    "size_bytes": 439574,
+    "sha256": "D481F25C397858A96BF411AD00008E07CAD3D37C7FD28FD1A872396151E0E936",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/P.png",
+    "size_bytes": 291993,
+    "sha256": "27E425C7930254D90B2AC7B67134AC95A171C9C4CC82E9C2BA14F0F730501F03",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/Q.png",
+    "size_bytes": 317708,
+    "sha256": "F86522C6B2B3B3FC88B521B578741FAC83CDA0610A3BC8EB57E28596BF98C7AF",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/R.png",
+    "size_bytes": 370415,
+    "sha256": "CE593AD5FEAE8FB2315240CD368160C1FF46CD451DD81D65309245A9B3473503",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/S.png",
+    "size_bytes": 353270,
+    "sha256": "304654E05BD5CF8F52701DCD84C31C00A6325802C6B7ACEF76B87968363C9779",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/T.png",
+    "size_bytes": 152768,
+    "sha256": "8EF4379977BB3F536E7E710332DCF8CF9041A49076AB6F904F05BEB62791E72F",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/U.png",
+    "size_bytes": 187844,
+    "sha256": "700EAD71CB5B748D73D616A40E2F88B93E41F8E76E2767B8EBF31A076359D6E8",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/V.png",
+    "size_bytes": 373075,
+    "sha256": "1B933A0E29073D6A6CD39E83E858CE0F605C99E3DD6B5A0351A95F4AD5712993",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/W.png",
+    "size_bytes": 575350,
+    "sha256": "8BFB99766B794982AF0315F91787359D4578E539ABB2726CF91F1B6E7E3C0B39",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/X.png",
+    "size_bytes": 450398,
+    "sha256": "B7CC5190AA7461CB805DF9C1C1366F71CAAD1DEEE5011816393F6446B9B72DF5",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/Y.png",
+    "size_bytes": 289614,
+    "sha256": "485F79CD52846D9F05E25114EE4D7E95F78AF9343A98F8CC24BFA9E59FB6283A",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/Z.png",
+    "size_bytes": 345391,
+    "sha256": "F0D30B458D81B9B4A158A9722EF6E29F76D3DCCB65FF3174C17BE77F50EC3ED9",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersDisplay_v1.3_PRODUCTION_COMPLETE/GalacticGunnersDisplay_v1.3_PRODUCTION/WEB/galactic-gunners-display.css",
+    "size_bytes": 402,
+    "sha256": "7F4ABBE6DE195EFFB233ABE861F631F158468B08B056D00243850CDEA2401075",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunnersHUD_Font_v1.0_PRODUCTION.zip",
+    "size_bytes": 3326555,
+    "sha256": "571C184445CD37A4A0ADD209F0E31D7F6893FBD079E43979D986E7DDB4FEF889",
+    "disposition": "NESTED_TRANSPORT_ZIP_UNPACKED_INSPECTABLY_NOT_COMMITTED"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/Founder_Approved_Title_Authority.png",
+    "size_bytes": 2833379,
+    "sha256": "CF816A20C97FFC2BA7E693D4BD8ADD47627F14B806047CCC1279D9BF850FA520",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/GalacticGunners_Title_Font-v1.0.otf",
+    "size_bytes": 14876444,
+    "sha256": "59F17B907E4DFE0F42C06D2AC49BB1F77374F431CCB65DA36B534FA42B4CC5BC",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/GalacticGunners_Title_Font-v1.0.woff2",
+    "size_bytes": 11133180,
+    "sha256": "C5A28A1FCF95246EB0FFC5123C8C4C749FDC25639771AA308899D067F8BF459A",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/MANIFEST_SHA256.json",
+    "size_bytes": 12471,
+    "sha256": "09F7A64BD69EBB4A2D99675FA233D3A25D620768470211C52C0CBB47B56D26F1",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/OWNERSHIP_DECLARATION.md",
+    "size_bytes": 557,
+    "sha256": "A6FF9B6A657E86C9AE600144B1A727F49DA731A751D429BE57867B571C4539A0",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/PREVIEWS/FULL_AZ_09_PRODUCTION_PREVIEW.png",
+    "size_bytes": 428258,
+    "sha256": "B8AC9CA2D24875E6EBE7FE98DF2B6742BBE2DF2CE7C7B13965A88CC289EE4730",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/PREVIEWS/TYPE_TEST_PRODUCTION.png",
+    "size_bytes": 590023,
+    "sha256": "00DE5D0402633A196028D32E2290FEF5B590C3D18F49A5A8B59BC5891C2F00BD",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/PROVENANCE/ASSET_REGISTER.md",
+    "size_bytes": 546,
+    "sha256": "4793C8AEF3432C7AB994A65EEF9AB322FBB499CC3EB99B27E9F3CC294AA2B497",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/PROVENANCE/GLYPH_METRICS.json",
+    "size_bytes": 4144,
+    "sha256": "C8D6224D2B5569B503A7BB1A550521D0B6DFA90575413575EE1E6D537D241D15",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/PROVENANCE/OWNERSHIP_DECLARATION.md",
+    "size_bytes": 557,
+    "sha256": "A6FF9B6A657E86C9AE600144B1A727F49DA731A751D429BE57867B571C4539A0",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/PROVENANCE/SHA256_MANIFEST.json",
+    "size_bytes": 12326,
+    "sha256": "DF1F945C17BF775B2135AEAE27C50C489256520D491B24F0543AB32DA96B7758",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/README.md",
+    "size_bytes": 718,
+    "sha256": "F268B1EDDD1C7A85AE229D66C65DEDAED86E79CA30CCC94E9907C68E9F2609CC",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/0.png",
+    "size_bytes": 2353,
+    "sha256": "18C365EDDF1A8061A5901FEEC9ACD26A05F5B535C2B53B95C0FFF7AD57A2845C",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/1.png",
+    "size_bytes": 2067,
+    "sha256": "D7B22E871DE9D5F4D9F7782DD4352C82AA8388D34FAAF282939C2F47A317FEDA",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/2.png",
+    "size_bytes": 2334,
+    "sha256": "47E6B10063A6C8A0D161F02D649E2AC9B405D3F988A29F9411568101DAC54AC4",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/3.png",
+    "size_bytes": 2182,
+    "sha256": "8FD6507B43105A6D253E423B31A91EA0A9BB78B729B963C4D37AEDE5E3A9A3EE",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/4.png",
+    "size_bytes": 2360,
+    "sha256": "024AD09AA10803F7CDF723A1782DCB7EB67F8A7A55AB183F86E14E6436E3EE76",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/5.png",
+    "size_bytes": 2209,
+    "sha256": "CFE5E91599578569FF426211A3F231F928CB4AF90BCCA3FC01A2419E20E6EA76",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/6.png",
+    "size_bytes": 2373,
+    "sha256": "45E16F476422644E20359E6C1829719D1A4E4008C046AD3D207C428204E3E00A",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/7.png",
+    "size_bytes": 2297,
+    "sha256": "77BA2EDE01557B5A3868BE34885BA4673B71A97ADD2F927F65997ADF0804FFA3",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/8.png",
+    "size_bytes": 2397,
+    "sha256": "FAD55BB00235F2C38BF6BCB75D027E3DBE690E113DEF55D49FB8DAB90305976A",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/9.png",
+    "size_bytes": 2431,
+    "sha256": "1420443EA78C200D05480C19C5195F41FC3A32F09C29EB371C8E29D7DB6B338F",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/A.png",
+    "size_bytes": 2555,
+    "sha256": "8ECED2FFB4E939FF8DCEBCF1AE3C26BC52A8657F8EF0874680754BA3912CDC44",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/B.png",
+    "size_bytes": 2330,
+    "sha256": "CB206DC017B61CC6A5C284D461172F9C55710510CF1F68A7FF704794E0E98BC2",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/C.png",
+    "size_bytes": 2439,
+    "sha256": "84317D96528F23EDD9A2BD523CE8031871366D8388F9010C62B980942E43AE4B",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/D.png",
+    "size_bytes": 2271,
+    "sha256": "A6828EEA009F53F3CF4A148847B15B8FF31291836ACDFA34EDE71DE929CC8064",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/E.png",
+    "size_bytes": 2313,
+    "sha256": "BF397EC312A8665D4F7ECC12686393FF25B49C21A828D1182D0DE102E3D801FE",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/F.png",
+    "size_bytes": 2120,
+    "sha256": "DCED94C6063B91177B72B9E98D8BA414DD2962AC6A54E4D0554BFD5869A43C96",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/G.png",
+    "size_bytes": 2322,
+    "sha256": "978463738DB618BB7057673F54DB4C0828687B7230FFD20233966BDC6ECE8311",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/H.png",
+    "size_bytes": 2221,
+    "sha256": "F3992377E2EDA11CE47244B35983661307486468054900FCD77AB54B479A855C",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/I.png",
+    "size_bytes": 1696,
+    "sha256": "F4C1B2DE2FD83D2D5629EDF0661A1743468744C1666EDDBB0EC35B8BF11D1677",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/J.png",
+    "size_bytes": 2084,
+    "sha256": "85FFB1D528E2590E4DD2E7CB96D79BE50A5BC1AE695ED8D3709B5D08A82A2FF2",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/K.png",
+    "size_bytes": 2498,
+    "sha256": "767FDACBF5018F77E939EAB7E8D3184E9DCCD5F065F9935623F6CC81FF88F80B",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/L.png",
+    "size_bytes": 2194,
+    "sha256": "498577CB80B356EDEDBCFDCB295F3C91EDEBD3E8E24C86F6799771897C870BAA",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/M.png",
+    "size_bytes": 2554,
+    "sha256": "7CC5EBE61AD3EFF0CAEC53E6CAAC16EEECDC90CF60ABE14733F3C757DFC43C83",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/N.png",
+    "size_bytes": 2229,
+    "sha256": "661BA31F5ED7C8E169722ADACFB8154A35476BB9C12824B8E23BE5CEDBA4DED9",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/O.png",
+    "size_bytes": 2505,
+    "sha256": "4455D92F3630CE92ABC012CAB8D2399ACEA989E38D2772F1AB50E15EBC2EAED5",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/P.png",
+    "size_bytes": 2288,
+    "sha256": "1F0E6A5A3D49599C241EE0A669AB1CE3C1CC61B2F0B5BB10AB2FBBF7C101B466",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/Q.png",
+    "size_bytes": 2260,
+    "sha256": "82777254140A3936B7978E63E108F1B288A4F94FFF9AB84E61F1ACD57EE9FF27",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/R.png",
+    "size_bytes": 2306,
+    "sha256": "A51C3922D7039D09E162E0B8CF49A1DFD7BBC148BCE30FB0A2C0262CA62E3EB3",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/S.png",
+    "size_bytes": 2342,
+    "sha256": "DC239D212240E2D4DAE2283B3EB9F2D7A5641D3BAEBF0E03CD5BD7E84B0586AD",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/T.png",
+    "size_bytes": 2117,
+    "sha256": "776CAAD1DEF1B88028528ABD4DC58DB8651786AFF7699D2077B2EB5451D54172",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/U.png",
+    "size_bytes": 2106,
+    "sha256": "37ABCDF856F72F2F74D342277728C86716189816ABADEF492ADC461ED3D1906A",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/V.png",
+    "size_bytes": 2503,
+    "sha256": "92F8135BB4B60409569322DB4CA62E83642FE28F637EC820931A43AB7DAEE8AE",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/W.png",
+    "size_bytes": 2807,
+    "sha256": "53B759FA19273F3B9483DFD3EAFDFAE8F5A0E4FF3EF3A6297827E5E1C5168B4A",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/X.png",
+    "size_bytes": 2443,
+    "sha256": "F2B0490B482D62A4837C7851676FF1C6F534E7A8A1B70010198B03FD4098D9FE",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/Y.png",
+    "size_bytes": 2362,
+    "sha256": "04A1FB5D18591C6F251166807D5F63BDF4A48D1B0D734A5D2246AD0576B10A36",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_MASK/Z.png",
+    "size_bytes": 2240,
+    "sha256": "9F21C4F54B6B8F9315CCAE0139F079C7F828EE2E780499D5B007C6C8C14FC099",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/0.png",
+    "size_bytes": 346230,
+    "sha256": "5C51F81AACDA8C1A9B17CD669AA87FA470FFD041A29165CE94402D50496DC7AD",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/1.png",
+    "size_bytes": 180419,
+    "sha256": "128782B2DAF9BBA79E33D9A6FD90B932B94FF7ACC627F3BC2F5CADFBF02D5409",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/2.png",
+    "size_bytes": 365715,
+    "sha256": "BC9907189DE9A19AA5FA60E45A68049CCF4A292CC0298F12F74BB06AB470346C",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/3.png",
+    "size_bytes": 340978,
+    "sha256": "A00BE8F36ED609D107BA61C53D159AD6ABEBE92DFC018B05D630AFE71C713173",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/4.png",
+    "size_bytes": 332256,
+    "sha256": "5F32F5E9E6EB982CA2B9D467AE215135FBD30DF08CEF069A86A7466E79C5A8E4",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/5.png",
+    "size_bytes": 396743,
+    "sha256": "4D0DAC6137F30740F615DD244A80F8AD035EAB86ED19D95F5FF4BE792B92A3A8",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/6.png",
+    "size_bytes": 351664,
+    "sha256": "881121F2212E833E6D5F5804974B63EBDD5144039FB8ECA8E4218B8AEC6B5F7C",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/7.png",
+    "size_bytes": 258643,
+    "sha256": "478EA6D405E7611967F6AFB27BFF85FD7795E27A694C2BF89FF12D15D8B51E8E",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/8.png",
+    "size_bytes": 434278,
+    "sha256": "66BE911E3E772C4FCE60B63450AD7F3DADCC6A811B5AEEA753FB84E9A89A37AA",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/9.png",
+    "size_bytes": 368118,
+    "sha256": "D47314F1B7C80598581B83C236007F9DA5CAB7902614B386DA09352A85F4BC2C",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/A.png",
+    "size_bytes": 374826,
+    "sha256": "5E094EDCF2356BF46175C0B323F9E7BA9221CEC7D8836894F1BB452AAA23A346",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/B.png",
+    "size_bytes": 358919,
+    "sha256": "58A28EC6DBD4FB4894DB88E56FF5C03034C30E67D388F9730B611144A14FB62E",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/C.png",
+    "size_bytes": 324365,
+    "sha256": "14153BF7BFC9FEA7CD34BE82C9CEED6F8B74792EFE4BE6D6022B4A568AD6FCCE",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/D.png",
+    "size_bytes": 299246,
+    "sha256": "F01AAE69C8B9B11C8967BA939BE237572EBA8E1D4AE3A3303E2F3549195E3CB7",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/E.png",
+    "size_bytes": 328857,
+    "sha256": "32AB2B645561998A485970E4A664713700805773C6D61D18B9B028BF23805ED2",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/F.png",
+    "size_bytes": 201246,
+    "sha256": "45630FF753DEEB5981791AB2FFF2C8F833768921C260E4B26065B243AFC7B932",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/G.png",
+    "size_bytes": 368622,
+    "sha256": "C984272B3AD4F99EE3E8DDF68D49CB18985AF102A7AB3845A791AD8C7526E4CC",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/H.png",
+    "size_bytes": 259771,
+    "sha256": "B5688155E30E578E7101C7C83AA50633098924FFD07ADF5C42CA645933EE1888",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/I.png",
+    "size_bytes": 114826,
+    "sha256": "33FF5B6E0CB4A8F1B979D1B89EFFA37BA867464566B4A0932BB94904722FF1D1",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/J.png",
+    "size_bytes": 185177,
+    "sha256": "93D0F1968036222F9FA01271BAB87AD24EC99776047136830FA850128FE30989",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/K.png",
+    "size_bytes": 430537,
+    "sha256": "F9D15AEF0D0D851000B7DB35AF8CB102BA907950F4384622826C0E246FA4DA9A",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/L.png",
+    "size_bytes": 228929,
+    "sha256": "D6C6D445C661DF002E76BFC76DC7CAC953FDA485172A2549BA720605E679A39E",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/M.png",
+    "size_bytes": 481647,
+    "sha256": "D7EAA1312BC3203A718B4B42DE30073B665E8A866825F2253A0971EFE8E9E5BE",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/N.png",
+    "size_bytes": 361514,
+    "sha256": "4D41F0839236B5AE00A4E8C4D7155661F9349A8739C9D0DB504DAB814452DDD6",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/O.png",
+    "size_bytes": 422717,
+    "sha256": "8F59079F7EC527949792A89ABC2B691ADB1943B37FBCA64FAFE590450C4DD9F8",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/P.png",
+    "size_bytes": 287164,
+    "sha256": "9DAB57605A3A50A9611AC44F58308851FF1C27D39E3DA915A494109EF9785B38",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/Q.png",
+    "size_bytes": 320300,
+    "sha256": "7E205DA2EDAC79F52788969FC4F7BF8E461B696FA01154ADE6C75AFA804C1943",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/R.png",
+    "size_bytes": 371334,
+    "sha256": "9D58FC482532938EE9B1A1CFFC1108A5A998EC0B56A42196186F102C00C6A800",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/S.png",
+    "size_bytes": 357711,
+    "sha256": "7D273FCF17BCD223DFE0D9ABA06597A5FEC3832C35265F0294655982F23AB49A",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/T.png",
+    "size_bytes": 160287,
+    "sha256": "F1B0890A795CCAD3F8CE008AC7B7EDB0F4B6005E4F15C16C9F76A81FA52BE7BE",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/U.png",
+    "size_bytes": 201721,
+    "sha256": "85A75E654A66ED6FE0AE1163EFE5656D6C2B42D27DAF3D3F0AB36D31FA130E83",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/V.png",
+    "size_bytes": 363701,
+    "sha256": "031852D4CB1F5F73269F91C2B19D39D98961D0F10DB13C00D7568169958932A6",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/W.png",
+    "size_bytes": 555746,
+    "sha256": "EEC2E441ABAC5FB61148000D63C7648696B548E4AC62E595538EE89D4764AE36",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/X.png",
+    "size_bytes": 445194,
+    "sha256": "960B0BD9EA4EA484D5A6D56CB1F25C0DA72C1EE0CBDD057C61B645A063C6FDE0",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/Y.png",
+    "size_bytes": 283674,
+    "sha256": "5216716384E506995D7B655A4C726D44A0767CC24F0A7FAAB74AAE6CB71B7D29",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/SOURCE/NORMALIZED_GLYPHS_RGBA/Z.png",
+    "size_bytes": 337443,
+    "sha256": "8940FB097E1E1118F70DCCEFAA157D082D50C7C70FDA11C80314AB893AFCBF07",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/fonts/GalacticGunners_Title_Font_v1.0_PRODUCTION_COMPLETE/GalacticGunners_Title_Font_v1.0_PRODUCTION/WEB/galactic-gunners-title-font.css",
+    "size_bytes": 269,
+    "sha256": "F6CD1416AA37696C6063EC42188DFEEB32046136BA3C028507FB659ED24DECF2",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/background_images/Galaxy_Landscape_different.png",
+    "size_bytes": 2072711,
+    "sha256": "1364B1C4B17451D4CA1B2095C7419FC52583B373398C318B900EB5656F58A5B4",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/background_images/gg_bg_starfield_portrait_v002.png",
+    "size_bytes": 2277461,
+    "sha256": "A861502D9EE33108E47DE27738F042B6BAE954E628DD9B296B385CB5BB9AF015",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/background_images/gg_bg_starfield_v002.png",
+    "size_bytes": 2102643,
+    "sha256": "25BBB12578B10E5AD6E77593656DF3CE8FFD72A15EEABADA8134ED76390301C2",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/buttons/gg_button_main_menu_v002_off.png",
+    "size_bytes": 92390,
+    "sha256": "A0A4191E8648FAD316BF7D0FB8A3A5A9460C77693A1DBC240A0B42ED6F969459",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/buttons/gg_button_main_menu_v002_onclick.png",
+    "size_bytes": 69154,
+    "sha256": "89B557B7C42A18CA67F6828B74F1BCBBFA201167BF70CB6521C6BBCED5907A4B",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/buttons/gg_button_replay_v002_off.png",
+    "size_bytes": 118572,
+    "sha256": "D8FA75ADFCB9FC96CD347DC3E83FE63CD2444C49EADE703D23308FA17D12D54B",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/buttons/gg_button_replay_v002_onclick.png",
+    "size_bytes": 90030,
+    "sha256": "3F6FE051DC570C0256701C87DDFDF08D80C5B8A07A3081990095A557DA47FA89",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/buttons/gg_button_try_again_v002_off.png",
+    "size_bytes": 94740,
+    "sha256": "7621274A675DEE712BBCAD833C6CBAC46869A09DF0B97654F21AF9CF8C4C75E6",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/buttons/gg_button_try_again_v002_onclick.png",
+    "size_bytes": 75811,
+    "sha256": "075772B2DA331FDECEF9B4F4636082EBC67220E0B2D81C8C3394EB559DA67E6E",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/icons/gg_hud_life_icon_v002.png",
+    "size_bytes": 1096643,
+    "sha256": "9E0F8607F264ACB9614958D7043C5F69F4A4EBB303D57049203FD481D1EB0408",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/icons/gg_hud_nuke_icon_v002.png",
+    "size_bytes": 699192,
+    "sha256": "3D0A6A32EEEC514D7E4BE36B474B5E059347F3C74C5032093D58BA8C3633E08C",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/icons/gg_touch_selector_v002_sheet.png",
+    "size_bytes": 1449865,
+    "sha256": "B67E3DE6947E2550E8FB4C84FD272656F8F4860AEB0680BE2940D4678207930E",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/icons/gg_ui_arrow_v002.png",
+    "size_bytes": 1871761,
+    "sha256": "9E92FA5D6D6914179E69B819A8F7F96200C07AAB61F583AF33092F3D6320BB85",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/icons/gg_ui_back_v002.png",
+    "size_bytes": 2325617,
+    "sha256": "702828A35A9A0C2EC7B2D472385FF648EF23D1E362491143E5C1ACCDFCA51154",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/icons/gg_ui_info_v002.png",
+    "size_bytes": 569637,
+    "sha256": "8E9E1793DC1D55DD47434F66B39D17DD6C378F419C79F4174EF5F08902C24CC2",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/icons/gg_ui_pause_v002.png",
+    "size_bytes": 2098575,
+    "sha256": "E2ECCAAB8AF581266AA849322B067304C1BBC0A419D795A34A906090492EA9EA",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/icons/gg_ui_pointer_v002_sheet.png",
+    "size_bytes": 1225760,
+    "sha256": "CD051316F9A17CA6F4B57C6119724D27CD2BB3AFEFFA33DD78E5E944FDF642E7",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/icons/gg_ui_restart_v002.png",
+    "size_bytes": 2328594,
+    "sha256": "C45D9E11AF93A9493842235E32F75929851902DC7998F2518D29294EE1B7D349",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/icons/gg_ui_resume_v002.png",
+    "size_bytes": 2102374,
+    "sha256": "3C4010960942C2AE4CB2F29678CE71A5D35181756FF2DF94876E24BA2D7D6273",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/icons/gg_ui_sound_off_v002.png",
+    "size_bytes": 2041249,
+    "sha256": "9CC310E201C728B5ACC8F4B05E4E8FE3D1A1440F1EF9160190DBAF6CEC678E43",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/icons/gg_ui_sound_on_v002.png",
+    "size_bytes": 2017285,
+    "sha256": "AD65B1C61E0ECA378C3A29DFCB3F7D9FB7AC1D0120104E6C17448D35B1C47D5D",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/logo/gg_logo_compact_v002.png",
+    "size_bytes": 1449766,
+    "sha256": "98CAA83484B8F066AE263DBA391594EF09FBC44A003FF9ED7991B1DF0A63D67B",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/logo/gg_logo_primary_v002.png",
+    "size_bytes": 2196592,
+    "sha256": "4815BCBF0325CEBC0DE9B61F4CADBD87D6C791EF54F4B537CF2DA196221AAB76",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/logo/gg_logo_primary_words_v002.png",
+    "size_bytes": 2146949,
+    "sha256": "CC55C4D087DD02BB4FFC7CD581037D9C9BA17851CFAC1D56E2CB821F9BB29F5F",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/objects/gg_asteroid_v002_sheet.png",
+    "size_bytes": 1537409,
+    "sha256": "0421BFD58EA30608ADF8E0E684B22419F63F6C57DFCC06B59594BE6947625D01",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/objects/gg_comet_v002_horizontal.png",
+    "size_bytes": 1741752,
+    "sha256": "019E1912978FE5789F72AC5BD878300F9B567FADDEED9FFC28EE56BA54CF4199",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/objects/gg_comet_v002_horizontal_vertical_facing.png",
+    "size_bytes": 694282,
+    "sha256": "B9EB2BD211F9A922707CCEEA4E1EB4EAA5B1205249E38D6BBECB76DFBA33978F",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/objects/gg_comet_v002_sheet.png",
+    "size_bytes": 1754203,
+    "sha256": "C6DE9F10EE7B2456D09722E73D45C2CFA21B8CAE431F065094C55121AC4B4CC9",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/objects/gg_enemy_laser_v002.png",
+    "size_bytes": 2374688,
+    "sha256": "C25388AA4C1BAA3123AFCAB5B820718150806749E4AE5F6D8B99331C793578AC",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/objects/gg_explosion_small_v002_horizontal.png",
+    "size_bytes": 1736631,
+    "sha256": "895ECEAFF03C8390A3F17FA9D829B7B86A6D0AE0B4D73BBA3CD2D2A267D569CC",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/objects/gg_explosion_small_v002_sheet.png",
+    "size_bytes": 1825126,
+    "sha256": "3F8FF2BB76214E234828AB9BE559A21BC5935CC4E6336E558AC35B6380E39049",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/objects/gg_nuke_burst_v002_horizontal.png",
+    "size_bytes": 2486712,
+    "sha256": "F9E47B6D3875778217620FE0FDDACAA515405D377900BA5F7F2D1271F0A96C53",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/objects/gg_nuke_burst_v002_sheet.png",
+    "size_bytes": 2914741,
+    "sha256": "0758B63ABB31A3BB164106F180F3E423C2FAFCD98631AB05A3A8855BBC3E1743",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/objects/gg_nuke_projectile_v002_horizontal_upright.png",
+    "size_bytes": 2061937,
+    "sha256": "3B826087AD38EB6963046260EC384B9507C80E450DFAA3B302B923875B8B21AA",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/objects/gg_nuke_projectile_v002_sheet.png",
+    "size_bytes": 2548897,
+    "sha256": "811291512550286B626EA37CEF6EB4135F7B570DE78777FEB26537761883B008",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/objects/gg_player_laser_v002.png",
+    "size_bytes": 985889,
+    "sha256": "D89ED695599F72F4980538E6AB89AEE2BFA85A6307A392C9FC08E2BDA38D1E13",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/objects/gg_shield_tile_v002.png",
+    "size_bytes": 2139303,
+    "sha256": "ECE44E993871F2A474215BDAD8DEC6C5097861F487AF66D685FA1DA2A44402B3",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/panels/gg_game_over_panel_v002.png",
+    "size_bytes": 2308732,
+    "sha256": "270826BE7EB07F9D8D6DFD9CE13BC69F7ACB192DCF28133DC69EC0FB60DB888A",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/panels/gg_victory_panel_v002.png",
+    "size_bytes": 2326827,
+    "sha256": "48C8DE4EEA08984A8E7F78E56891A6FE5DD0FEAD51E999833D638485D88F926C",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/panels/gg_victory_panel_v002_no_values.png",
+    "size_bytes": 2247203,
+    "sha256": "026305F7C0BC39F161A878E2B52F48953686FCCE67EB65043A001D5A2BA38214",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/poster_images/gg_hero_image_player_fighting.png",
+    "size_bytes": 2611840,
+    "sha256": "17EE6D043778A1F7E7ACC01010A041DD541E75DE7A4D278D0BE9DEE4FB8729ED",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/poster_images/gg_hero_image_player_fighting_v002_2x_poster_master.png",
+    "size_bytes": 8431320,
+    "sha256": "EC60E853BA5513727EA50F943A6DC88AB81FE7FF04B4B2E14D2129D96B54C02D",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/poster_images/gg_hero_image_player_fighting_v002_4k_uhd_master.png",
+    "size_bytes": 10422706,
+    "sha256": "054D150DA322ACCDA4256306DB40B30CC0A098D7B307702C5CCFFA6148A5CE8F",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/poster_images/gg_pause_screen_v2.0.png",
+    "size_bytes": 2468752,
+    "sha256": "1C117C3D59B3FC6352148BB512210ACA9314CD85CA1754025E47FD429058FCCF",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/poster_images/gg_pause_screen_v2.1_2x_poster_master.png",
+    "size_bytes": 7922883,
+    "sha256": "6A8289A84D260A1CEEF218DD79850B07718E4971BB2169226B339A83E6C132F1",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/poster_images/gg_pause_screen_v2.1_4k_uhd_master.png",
+    "size_bytes": 9834145,
+    "sha256": "751008091C1144B657A54EE3B8EBD47C9B3823EFFB679420D5F96E39E7438937",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/poster_images/gg_victory_scene_aliens_v001_2x_poster_master.png",
+    "size_bytes": 8046278,
+    "sha256": "234C78B089EC8AF9AC0C0AC528FA6857D5426AA5BCF8B69834D999F1473672B6",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/poster_images/gg_victory_scene_aliens_v001_4k_uhd_master.png",
+    "size_bytes": 9935743,
+    "sha256": "D574DCAB776EF5481F7545F1A055DCA2205F18C92F414C622DA156F3D6CF6AAD",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/poster_images/gg_victory_scene_aliens_v001_source.png",
+    "size_bytes": 2796797,
+    "sha256": "7C2B838B030FF5F841332565D393873D1DDE2E2FB25DB4C1431C0567CD7EE83D",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/poster_images/gg_victory_scene_player_v001_2x_poster_master.png",
+    "size_bytes": 7754448,
+    "sha256": "5A9D1B7DF0639CF50CEBB2C3B5C2B5CF2DADAA250F6E81E3C5D8B6462BE816E4",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/poster_images/gg_victory_scene_player_v001_4k_uhd_master.png",
+    "size_bytes": 9556721,
+    "sha256": "1A757E1E074DF99A6843AC3BFEB7AA5340403398B3C45F9A75E950C760026EC7",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/poster_images/gg_victory_scene_player_v001_source.png",
+    "size_bytes": 2728689,
+    "sha256": "1C3F4868EF3DE7994CD5DFA2EDC1A0E43ADCBD4D027AD55F0122554A237CF787",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/ships/gg_boss_mothership_HIT_v002_sheet.png",
+    "size_bytes": 973527,
+    "sha256": "E829B094078363F051F41929F48E92C3288B98E2CD43425E8A0309B52B989088",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/ships/gg_boss_mothership_normal_v002_sheet.png",
+    "size_bytes": 1631782,
+    "sha256": "5B49D62BE022A2633388BF0F8465CCEDA9A215D678AFBFC5A26E82931DF2974A",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/ships/gg_enemy_cruiser_v002_sheet.png",
+    "size_bytes": 2227097,
+    "sha256": "05DA611A926239711E2310EDCDC1D3C4AF06497D5B96E70761D5102B9D402AE3",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/ships/gg_enemy_destroyer_v002_sheet.png",
+    "size_bytes": 2180249,
+    "sha256": "7E0BA8F3763EE030E6BB23B6D7999E28E8F23A86A73564A1580FBD74D538D88C",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/ships/gg_enemy_scout_v002_sheet.png",
+    "size_bytes": 1662578,
+    "sha256": "FBB60A9EB52346CB57CDF22FA1B6088DD24B08F9132540B05DFD0F1612405A7F",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/ships/gg_explosion_large_v002_sheet.png",
+    "size_bytes": 2995869,
+    "sha256": "5EA12388DB8D9D2FC73A157FCBE773630D83703FAA9BAC2F3D3339E8C7F7D4A2",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/ships/gg_explosion_large_v002_sheet_horizontal.png",
+    "size_bytes": 2585002,
+    "sha256": "BDB9528F6E2B601F61C265A3E224D815F49FF0C96730D2961F794C8ADDACCC5C",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/images/ships/gg_player_ship_v002_sheet.png",
+    "size_bytes": 1526881,
+    "sha256": "A3E2EDBDEE85B312AD1766EE00C5A5438F60ABF9DFCD006B2BD8474012DDFF38",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/platform/alien_platform/ChatGPT Image Aug 24, 2026, 03_54_48 PM (1).png",
+    "size_bytes": 2084842,
+    "sha256": "09DD3C7144A5E6BB7E29C94BCA1244C084C9433CFF5EC3340C954748BFAE2A95",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/platform/alien_platform/ChatGPT Image Aug 24, 2026, 03_54_48 PM (2).png",
+    "size_bytes": 1812045,
+    "sha256": "E92C36E40BFADEE6F08B5AD6AC93752D9130749A8597DD24B8D1C997307FCC78",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/platform/alien_platform/ChatGPT Image Aug 24, 2026, 03_54_49 PM (3).png",
+    "size_bytes": 1333506,
+    "sha256": "17213335C4EBCC1AA885C7BAAB734064DF131A03878FC2D0EE0B90F826144F36",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/platform/alien_platform/ChatGPT Image Aug 24, 2026, 03_54_49 PM (4).png",
+    "size_bytes": 1270463,
+    "sha256": "73AD5C9008F18385E251D4C48BC482D1833B3C7661A79C9F8148E9A0E24E6CC6",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/platform/alien_platform/ChatGPT Image Aug 24, 2026, 03_54_49 PM (5).png",
+    "size_bytes": 1553074,
+    "sha256": "2C6FC62C34612B6D5ED10EC520249E5BC4A9175F89B89A7BCC4F4617615ECD02",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/platform/alien_platform/ChatGPT Image Aug 24, 2026, 03_54_50 PM (6).png",
+    "size_bytes": 1447170,
+    "sha256": "827C22019F3DBD3B0AFE6721C31730A979E14C4B729E6AD87B40E6F404614974",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/platform/player_platform/ChatGPT Image Aug 24, 2026, 03_26_57 PM (1).png",
+    "size_bytes": 1649480,
+    "sha256": "3A476C572620661271AD72BA71F0BFE5453A1CA00F89E220AA05130554C20851",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/platform/player_platform/ChatGPT Image Aug 24, 2026, 03_26_57 PM (2).png",
+    "size_bytes": 1564314,
+    "sha256": "6B40F0B439647AECB70AB67C4E70E335A0430C7B3CC0C83EFFDF5F4EE64D7C68",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/platform/player_platform/ChatGPT Image Aug 24, 2026, 03_26_57 PM (3).png",
+    "size_bytes": 1433914,
+    "sha256": "3C3AAAFB67FB32D9556D8F1D5538040EA906289137156E2A4BA5C48242D4919B",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/platform/player_platform/ChatGPT Image Aug 24, 2026, 03_26_57 PM (4).png",
+    "size_bytes": 1669646,
+    "sha256": "E39F814501776388D652E7AF66D8F5CB9C342B5064A1D81CF15256FE51FD969D",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/platform/player_platform/ChatGPT Image Aug 24, 2026, 03_26_57 PM (5).png",
+    "size_bytes": 1513563,
+    "sha256": "495EE1FE2724905332B662D26221A870DCB95CA0F20F78A3F7FED74588DEAD18",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/platform/player_platform/ChatGPT Image Aug 24, 2026, 03_26_57 PM (6).png",
+    "size_bytes": 1592467,
+    "sha256": "CD9161D66F6EA7B0850D8F9E2D5AE171E0468D0AE0B0AB52FAC0F84ED4FCA808",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  },
+  {
+    "source_package": "GalacticGunners.zip",
+    "member_path": "assets/platform/player_platform/ChatGPT Image Aug 24, 2026, 03_26_57 PM (7).png",
+    "size_bytes": 1180307,
+    "sha256": "60A340172CEADB3F9E02F62788EA81A4B9849ECF6FBC46BBD3ED9163EDE7D240",
+    "disposition": "CLASSIFIED_TO_CANONICAL_ASSET_OR_SOURCE_EVIDENCE"
+  }
+]

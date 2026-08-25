@@ -1,0 +1,57 @@
+[
+  {
+    "path": "00_COMMISSION/COMMISSION.md",
+    "bytes": 1468,
+    "sha256": "1877b63ca60fd6ea338bcd59c9f53c15945956eacdb066987b29069033788905"
+  },
+  {
+    "path": "01_INPUT_AUTHORITY/INSPECTED_INPUT.md",
+    "bytes": 1209,
+    "sha256": "fc6cff41f345ad00e4171f28348fe84e77bd5f484edfc499c6f99e1b6d7a8bbb"
+  },
+  {
+    "path": "02_CANONICAL_STRUCTURE/CANONICAL_STRUCTURE.md",
+    "bytes": 1451,
+    "sha256": "98fbac890a0bfaf9e09ef6902ac2b308d14bb7ef8d3ef843dff9e4e70da7b6cb"
+  },
+  {
+    "path": "03_REGISTER_MODEL/REGISTER_MODEL.md",
+    "bytes": 1533,
+    "sha256": "12aaf30f1a6e6c8abab4e94fc4d038fb9fd14d43389bd2b5545b6f47546a34e2"
+  },
+  {
+    "path": "04_RIGHTS_PROVENANCE/FORMAL_BASELINE_DOCUMENT.md",
+    "bytes": 1055,
+    "sha256": "5a5fdf8818ee3c5a84057ab66f71048e79de41caa6d7ccfded8548de4b1dbebd"
+  },
+  {
+    "path": "04_RIGHTS_PROVENANCE/RIGHTS_MODEL.md",
+    "bytes": 2202,
+    "sha256": "bfb5b8acb94c0a8153feac337c94bbf4d8c5138f407fb68088c83d1b97babd03"
+  },
+  {
+    "path": "05_TOOLING/TOOLING.md",
+    "bytes": 1037,
+    "sha256": "0d1ada07117c891834bd051ac23ebb20fe59191dc3673baea5475259b8f74c14"
+  },
+  {
+    "path": "06_VERIFICATION/ACCEPTANCE.md",
+    "bytes": 1546,
+    "sha256": "8a9c168c7c1e16a4083b5076a8a20a75484f6b2ead71df8dda194ba53628a90e"
+  },
+  {
+    "path": "07_PR_RETURN/PR_AND_RETURN.md",
+    "bytes": 1105,
+    "sha256": "5fed72ee7453f17923cab63dab6d0aa40386e3d1479a5864252194e1503eff12"
+  },
+  {
+    "path": "08_ROUTING/ROUTING_MESSAGE.md",
+    "bytes": 9523,
+    "sha256": "47edfa377b0c6c0fed644e9c44e2384d90ce322437b27025783383b008f674d4"
+  },
+  {
+    "path": "README.md",
+    "bytes": 393,
+    "sha256": "63123b91a231d2b8f80a6e348c4c406c56c347e60097d00093b365ac18536ad3"
+  }
+]
