@@ -1,8 +1,18 @@
 import pytest
 from django.urls import reverse
+from django.utils import timezone
 
 from game_runs.models import GameRun, GameVersion
 from leaderboard.models import LeaderboardEntry
+
+
+def assert_error_envelope(payload, *, code, detail=None):
+    assert set(payload) == {'code', 'detail', 'errors'}
+    assert payload['code'] == code
+    assert isinstance(payload['detail'], str)
+    assert isinstance(payload['errors'], dict)
+    if detail is not None:
+        assert payload['detail'] == detail
 
 
 @pytest.mark.django_db
@@ -60,6 +70,7 @@ def test_duplicate_complete_is_rejected(client):
 
     assert first.status_code == 200
     assert second.status_code == 409
+    assert_error_envelope(second.json(), code='conflict', detail='Game run is already completed.')
     assert LeaderboardEntry.objects.filter(run=run).count() == 1
 
 
@@ -72,6 +83,7 @@ def test_unknown_run_returns_404(client):
     )
 
     assert response.status_code == 404
+    assert_error_envelope(response.json(), code='not_found', detail='Game run not found.')
 
 
 @pytest.mark.django_db
@@ -83,6 +95,10 @@ def test_invalid_payload_returns_400(client):
     )
 
     assert response.status_code == 400
+    payload = response.json()
+    assert_error_envelope(payload, code='invalid_request', detail='Request validation failed.')
+    assert 'game_version' in payload['errors']
+    assert 'client_type' in payload['errors']
 
 
 @pytest.mark.django_db
@@ -93,14 +109,32 @@ def test_leaderboard_lists_only_valid_published_runs(client):
         client_type=GameRun.ClientType.WEB,
         score=100,
         validity=GameRun.Validity.VALID,
+        completed_at=timezone.now(),
     )
     pending_run = GameRun.objects.create(
         game_version=version,
         client_type=GameRun.ClientType.WEB,
         score=999,
         validity=GameRun.Validity.PENDING,
+        completed_at=timezone.now(),
+    )
+    rejected_run = GameRun.objects.create(
+        game_version=version,
+        client_type=GameRun.ClientType.WEB,
+        score=888,
+        validity=GameRun.Validity.REJECTED,
+        completed_at=timezone.now(),
+    )
+    incomplete_valid_run = GameRun.objects.create(
+        game_version=version,
+        client_type=GameRun.ClientType.WEB,
+        score=777,
+        validity=GameRun.Validity.VALID,
     )
     LeaderboardEntry.objects.create(run=valid_run, score=100, display_name='GUEST')
+    LeaderboardEntry.objects.create(run=pending_run, score=999, display_name='STALE_PENDING')
+    LeaderboardEntry.objects.create(run=rejected_run, score=888, display_name='STALE_REJECTED')
+    LeaderboardEntry.objects.create(run=incomplete_valid_run, score=777, display_name='STALE_INCOMPLETE')
 
     response = client.get(reverse('leaderboard'))
     payload = response.json()
@@ -108,7 +142,7 @@ def test_leaderboard_lists_only_valid_published_runs(client):
     assert response.status_code == 200
     assert payload['count'] == 1
     assert payload['results'][0]['run_id'] == str(valid_run.id)
-    assert not LeaderboardEntry.objects.filter(run=pending_run).exists()
+    assert payload['results'][0]['display_name'] == 'GUEST'
 
 
 @pytest.mark.django_db
@@ -116,6 +150,7 @@ def test_leaderboard_rejects_invalid_query_bounds(client):
     response = client.get(reverse('leaderboard'), {'limit': 'not-a-number'})
 
     assert response.status_code == 400
+    assert_error_envelope(response.json(), code='invalid_request', detail='Request validation failed.')
 
 
 @pytest.mark.django_db

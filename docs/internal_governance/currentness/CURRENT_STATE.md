@@ -1,17 +1,20 @@
 Active Handoff:
-GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_008
+GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_008_REV1
 
 Programme:
 STEP 5 - PRODUCTION ARCHITECTURE HARDENING / RECONCILIATION
 
 Stage:
-ARCHITECTURE HARDENING COMPLETE / PR OPEN PENDING FOUNDER REVIEW
+ARCHITECTURE HARDENING REV1 COMPLETE / PR OPEN PENDING CTO AND FOUNDER REVIEW
 
 Branch:
 feature/architecture-hardening-reconciliation
 
 DEVTEAM_008 Entry SHA:
 c49a3108e7084daa1872c15fa3d6641af60c6f2a
+
+DEVTEAM_008_REV1 Entry SHA:
+4947cbfe90dccbc714e26f18e982b83b7d0aecb6
 
 Base Branch:
 feature/production-architecture-foundation
@@ -42,6 +45,9 @@ DURABLE
 
 Architecture Hardening:
 PASS - Django/DRF backend authority, contracts, schemas, web shell API client, Phaser/TypeScript foundation, Docker stack and CI quality gates reconciled.
+
+REV1 Corrections:
+PASS - leaderboard read invariant enforces linked GameRun validity/completion; API error contract aligned to stable code/detail/errors envelope.
 
 Docker Full Stack:
 PASS - web host port 3002, backend host port 8010, container ports web 3000 and backend 8000 retained.

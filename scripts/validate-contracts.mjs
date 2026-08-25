@@ -115,4 +115,59 @@ if (JSON.stringify(openApiClientTypes) !== JSON.stringify(jsonClientTypes)) {
   throw new Error('Client type enums differ between OpenAPI and JSON Schema.');
 }
 
+const errorResponse = openApi.components.schemas.ErrorResponse;
+const expectedErrorRequired = ['code', 'detail', 'errors'];
+if (errorResponse.additionalProperties !== false) {
+  throw new Error('ErrorResponse must close additional properties.');
+}
+if (JSON.stringify(errorResponse.required) !== JSON.stringify(expectedErrorRequired)) {
+  throw new Error('ErrorResponse must require code, detail and errors.');
+}
+if (errorResponse.properties?.code?.type !== 'string') {
+  throw new Error('ErrorResponse.code must be a string.');
+}
+for (const code of ['invalid_request', 'not_found', 'conflict']) {
+  if (!errorResponse.properties.code.enum?.includes(code)) {
+    throw new Error(`ErrorResponse.code enum missing ${code}.`);
+  }
+}
+if (errorResponse.properties?.detail?.type !== 'string') {
+  throw new Error('ErrorResponse.detail must be a string.');
+}
+if (errorResponse.properties?.errors?.type !== 'object') {
+  throw new Error('ErrorResponse.errors must be an object.');
+}
+
+for (const [name, response] of Object.entries(openApi.components.responses)) {
+  const schemaRef = response?.content?.['application/json']?.schema?.$ref;
+  if (['BadRequest', 'NotFound', 'Conflict'].includes(name) && schemaRef !== '#/components/schemas/ErrorResponse') {
+    throw new Error(`${name} must reference ErrorResponse.`);
+  }
+}
+
+const errorStatusRefs = [
+  openApi.paths['/game-runs/']?.post?.responses?.['400']?.$ref,
+  openApi.paths['/game-runs/']?.post?.responses?.['404']?.$ref,
+  openApi.paths['/game-runs/{runId}/complete/']?.post?.responses?.['400']?.$ref,
+  openApi.paths['/game-runs/{runId}/complete/']?.post?.responses?.['404']?.$ref,
+  openApi.paths['/game-runs/{runId}/complete/']?.post?.responses?.['409']?.$ref,
+  openApi.paths['/leaderboard/']?.get?.responses?.['400']?.$ref
+];
+for (const ref of errorStatusRefs) {
+  if (!ref?.startsWith('#/components/responses/')) {
+    throw new Error('API error responses must use shared component response refs.');
+  }
+}
+
+const leaderboardResponse = openApi.components.schemas.LeaderboardResponse;
+if (leaderboardResponse.additionalProperties !== false) {
+  throw new Error('LeaderboardResponse must close additional properties.');
+}
+if (JSON.stringify(leaderboardResponse.required) !== JSON.stringify(['count', 'results'])) {
+  throw new Error('LeaderboardResponse must require count and results.');
+}
+if (leaderboardResponse.properties?.results?.items?.$ref !== '#/components/schemas/LeaderboardEntry') {
+  throw new Error('LeaderboardResponse.results must contain LeaderboardEntry items.');
+}
+
 console.log('Contract validation passed.');

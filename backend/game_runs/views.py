@@ -3,6 +3,8 @@ from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from config.api_errors import build_error_payload, error_response
+
 from .models import GameRun
 from .serializers import (
     CompleteGameRunSerializer,
@@ -38,6 +40,10 @@ class GameRunCompleteView(APIView):
         try:
             completed = serializer.complete(run)
         except ValidationError as exc:
-            return Response(exc.detail, status=status.HTTP_409_CONFLICT)
+            detail = exc.detail.get('detail', 'Lifecycle conflict.') if isinstance(exc.detail, dict) else exc.detail
+            return error_response(
+                build_error_payload(code='conflict', detail=str(detail)),
+                status.HTTP_409_CONFLICT,
+            )
 
         return Response(CompletedGameRunSerializer(completed).data)

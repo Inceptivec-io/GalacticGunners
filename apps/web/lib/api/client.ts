@@ -59,11 +59,17 @@ export interface LeaderboardResponse {
   results: LeaderboardEntry[];
 }
 
+export interface ApiErrorResponse {
+  code: 'invalid_request' | 'not_found' | 'conflict' | 'request_failed';
+  detail: string;
+  errors: Record<string, unknown>;
+}
+
 export class ApiError extends Error {
   constructor(
     message: string,
     readonly status: number,
-    readonly body: unknown,
+    readonly body: ApiErrorResponse | null,
   ) {
     super(message);
   }
@@ -81,7 +87,8 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   });
   const body = await response.json().catch(() => null);
   if (!response.ok) {
-    throw new ApiError(`Galactic Gunners API request failed: ${response.status}`, response.status, body);
+    const detail = typeof body?.detail === 'string' ? body.detail : `HTTP ${response.status}`;
+    throw new ApiError(`Galactic Gunners API request failed: ${detail}`, response.status, body);
   }
   return body as T;
 }

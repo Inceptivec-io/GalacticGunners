@@ -137,14 +137,22 @@ components:
           const: v1
     ErrorResponse:
       type: object
-      additionalProperties: true
-      required: [detail]
+      additionalProperties: false
+      required: [code, detail, errors]
       properties:
+        code:
+          type: string
+          enum: [invalid_request, not_found, conflict, request_failed]
         detail:
-          oneOf:
-            - type: string
-            - type: array
-            - type: object
+          type: string
+        errors:
+          type: object
+          additionalProperties:
+            oneOf:
+              - type: string
+              - type: array
+                items: {}
+              - type: object
     StartGameRunRequest:
       type: object
       additionalProperties: false
