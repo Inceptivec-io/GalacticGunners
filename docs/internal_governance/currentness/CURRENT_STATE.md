@@ -1,68 +1,72 @@
+# GALACTIC GUNNERS — CURRENT STATE
+
 Active Handoff:
-GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_005
+NONE — HANDOFF 005 CLOSED AND ACCEPTED
 
 Programme:
-IP_FREEDOM_LICENSE_PROTECTION_ASSET_CREATION
+GALACTIC GUNNERS v1.0 PRODUCTION PROGRAMME PREPARATION
 
 Stage:
-P0 GAMEPLAY RUNTIME RECOVERY COMPLETE / PENDING FOUNDER AND CTAIO ACCEPTANCE
+v0.1 PLAYABLE LEGACY BEHAVIOURAL BASELINE ACCEPTED / LEGACY CORRECTION CYCLE CLOSED
 
 Branch:
 feature/GG-COM-001
 
-DEVTEAM_005 Entry SHA:
-47787b303abf674536a7d4bb16413aa19291b216
+Canonical v0.1 Behavioural Baseline SHA:
+1539395a6e2eb3a8a0a571692c5425122ae0b82e
 
-Current Repository Head Authority:
-origin/feature/GG-COM-001
+Baseline Acceptance Record:
+docs/internal_governance/currentness/GALACTIC_GUNNERS_v0.1_BEHAVIOURAL_BASELINE_ACCEPTANCE.md
 
-Local/Remote Reconciliation At Return:
-RECORDED IN EXTERNAL DEVTEAM-005 HANDOFF-OUT AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
-
-Worktree At Return:
-RECORDED IN EXTERNAL DEVTEAM-005 HANDOFF-OUT AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
+Baseline Acceptance Documentation Commit:
+ecf1b85cc745a8a0f5a8b6802fe9470b05270fa4
 
 POST_BOX:
-CLEAN AT CLOSURE - boundary controls only / active payload zero
+CLEAN AT HANDOFF 005 CLOSURE — boundary controls only / active payload zero
 
 Internal Governance:
-COMPLETE / CURRENT
+CURRENT FOR LEGACY v0.1 CLOSURE
 
 Registers:
-CURRENT
+CURRENT FOR LEGACY v0.1 CLOSURE
 
 Evidence:
-DURABLE
-
-Docker Local Founder Acceptance Runtime:
-AVAILABLE - rebuilt for Handoff 005 preview at http://localhost:8027/
-
-Physics Debug URL:
-http://localhost:8027/?ggPhysicsDebug=1
-
-QA Toolchain:
-AVAILABLE - permanent npm gameplay QA commands: qa:gameplay, qa:gameplay:visual, qa:gameplay:debug
+HANDOFF 005 DURABLE / SEALED RETURN RECORDED
 
 Handoff 005 QA Gate:
-PASS - npm run qa:all
-
-Gameplay Runtime Recovery:
-PASS - Arcade overlap remains primary collision authority with swept collision safety contracts active for hostile projectile/body edge cases; player/enemy projectile lifecycle recovered; hostile laser/player hits verified; player laser/shield and player/enemy laser clashes verified; comet reward is +500 score and +1 nuke; final-level mothership/scout collision paths verified; hostile alien bottom-breach Game Over verified across Level 1, Level 2 and BossLevel; projectile culling is silent; explosion, damage and Game Over traces are semantic.
+PASS — qa:syntax, qa:lint, qa:gameplay, qa:gameplay:visual, qa:gameplay:debug, qa:all
 
 Founder / CTAIO Acceptance:
-PENDING
+ACCEPTED FOR v0.1 PLAYABLE LEGACY BEHAVIOURAL BASELINE
 
-Founder Visual Acceptance:
-PENDING
+Founder Functional Determination:
+PLAYABLE / SUFFICIENT AS MIGRATION REFERENCE
 
-Founder Functional Acceptance:
-PENDING
+Known Non-Blocking Legacy Limitations:
+- some nuke interaction/lifecycle issues remain;
+- occasional collision-boundary inconsistencies remain.
 
-Founder Audio-In-Context Acceptance:
-PENDING
+Treatment Of Known Limitations:
+MIGRATION / PRODUCTION-BUILD INPUTS — NOT BLOCKERS TO v0.1 ACCEPTANCE AND NOT AUTHORITY TO REOPEN LEGACY CORRECTION BY DEFAULT
+
+Legacy Authority:
+BEHAVIOURAL / HISTORICAL / PROVENANCE REFERENCE ONLY
+
+Future Production Authority:
+NEW PRODUCTION ARCHITECTURE AND STANDARDS ONCE RECONCILED AND ACCEPTED
+
+Migration Principle:
+EXTRACT → TYPE → TEST → PRESERVE BEHAVIOUR
+
+Next Authorised Programme Step:
+APP1 — automatic input capability detection and removal of manual touchscreen selector, to be commissioned separately from the accepted v0.1 baseline.
+
+Subsequent Programme Direction:
+- synchronise exact v0.1 source into Legacy_Game/;
+- establish governed asset/IP ownership and provenance baseline;
+- harden/reconcile production architecture foundation;
+- establish final dev → stage → prod promotion model and retire main cleanly;
+- begin v1.0 build on the new production architecture and standards.
 
 Closure:
-PASS TARGET - FINAL PUSH / SAFE EXIT PROOF RECORDED IN EXTERNAL DEVTEAM-005 HANDOFF-OUT
-
-Founder Acceptance:
-PENDING
+LEGACY v0.1 BASELINE ACCEPTED / HANDOFF 005 CLOSED / NO REVISION REQUIRED FOR RECORDED NON-BLOCKING LIMITATIONS
