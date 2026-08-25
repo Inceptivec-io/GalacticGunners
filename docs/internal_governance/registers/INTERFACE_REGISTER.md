@@ -6,5 +6,6 @@
 | Score event summary | Game core | Django GameRun validation | v1 | `packages/contracts/schemas/score-event.schema.json` | GROUNDWORK |
 | GameRun start/completion | Django | Game core | v1 | OpenAPI + JSON schemas | GROUNDWORK |
 | Phaser GameHost boundary | Game core | Next.js | internal v1 groundwork | GG-STD-008 | GROUNDWORK |
+| Web health | Next.js | Docker/CI | internal v1 | `apps/web/app/api/health/route.ts` | VERIFIED |
 
 Material changes update this register, contract, consumers, tests and currentness together.

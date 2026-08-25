@@ -1,17 +1,35 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://galacticgunners.inceptivec.com/contracts/score-event.schema.json",
-  "title": "ScoreEventSummary",
+  "title": "ScoreEvent",
   "type": "object",
+  "required": ["event_type", "sequence", "occurred_at_ms", "points_delta"],
   "properties": {
-    "laserTargets": { "type": "integer", "minimum": 0 },
-    "asteroids": { "type": "integer", "minimum": 0 },
-    "scouts": { "type": "integer", "minimum": 0 },
-    "ships": { "type": "integer", "minimum": 0 },
-    "mothershipHits": { "type": "integer", "minimum": 0 },
-    "mothershipDestroyed": { "type": "integer", "minimum": 0, "maximum": 1 },
-    "comets": { "type": "integer", "minimum": 0 },
-    "shieldEnemyHits": { "type": "integer", "minimum": 0 }
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "laser_target_hit",
+        "asteroid_destroyed",
+        "scout_destroyed",
+        "ship_destroyed",
+        "mothership_hit",
+        "mothership_destroyed",
+        "comet_destroyed",
+        "comet_nuke_bonus",
+        "shield_tile_hit"
+      ]
+    },
+    "sequence": { "type": "integer", "minimum": 0 },
+    "occurred_at_ms": { "type": "integer", "minimum": 0 },
+    "points_delta": { "type": "integer" },
+    "target_type": {
+      "type": "string",
+      "enum": ["laser_target", "asteroid", "scout", "ship", "mothership", "comet", "shield_tile"]
+    },
+    "metadata": {
+      "type": "object",
+      "maxProperties": 32
+    }
   },
   "additionalProperties": false
 }
