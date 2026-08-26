@@ -2,6 +2,10 @@ import * as Phaser from 'phaser';
 
 import { FRAME_RECTS, REQUIRED_RUNTIME_ASSETS, RUNTIME_ASSETS } from '../config/assets';
 import type { GameRuntimeConfig } from '../config/gameConfig';
+import { levelChecksum } from '../levels/LevelChecksum';
+import { LevelLoader } from '../levels/LevelLoader';
+import { LEVEL_ONE_DEFINITION } from '../levels/levelOneDefinition';
+import { validateLevelDefinition } from '../levels/LevelValidator';
 
 export class BootScene extends Phaser.Scene {
   constructor(private readonly runtimeConfig: GameRuntimeConfig = {}) {
@@ -39,7 +43,7 @@ export class BootScene extends Phaser.Scene {
     );
   }
 
-  create(): void {
+  async create(): Promise<void> {
     const missing = REQUIRED_RUNTIME_ASSETS.filter((asset) => {
       if (asset.key.startsWith('audio.')) {
         return !this.cache.audio.exists(asset.key);
@@ -57,6 +61,10 @@ export class BootScene extends Phaser.Scene {
 
     this.registerTextureFrames();
     this.createShipAnimations();
+    validateLevelDefinition(LEVEL_ONE_DEFINITION);
+    const loader = new LevelLoader(this.runtimeConfig.apiBaseUrl);
+    const fallback = { definition: LEVEL_ONE_DEFINITION, checksum: await levelChecksum(LEVEL_ONE_DEFINITION), source: 'package' as const };
+    this.registry.set('levelRuntime', await loader.load('level-01', fallback.definition).catch(() => fallback));
 
     this.anims.create({
       key: 'fx.explosionSmall.play',

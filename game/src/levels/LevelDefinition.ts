@@ -12,5 +12,6 @@ export interface LevelDefinition {
   player: { x: number; y: number };
   enemy_formations: Array<{ type: 'scout'; rows: number; columns: number; origin: { x: number; y: number }; spacing: { x: number; y: number } }>;
   shields: Array<{ count: number; matrix: number[][] }>;
+  drop_tables?: Array<{ host: 'scout'; entries: Array<{ pickup: 'nuke' | 'life'; weight: number }> }>;
   performance_budget: { max_enemies: number };
 }

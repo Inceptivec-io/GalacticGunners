@@ -1,0 +1,37 @@
+[
+  {
+    "path": "00_EXECUTION_CHARTER.md",
+    "bytes": 1676,
+    "sha256": "f6679e72bbd0e4f21dc8d2ec918b4bac8ead32ce3ad704e55affd1591385e6ac"
+  },
+  {
+    "path": "01_MODELS_CONTRACTS_APIS.md",
+    "bytes": 2196,
+    "sha256": "e689bc51d3ae1074296a59900991588c6ded343af243ef28eb2aef0d3334c7ba"
+  },
+  {
+    "path": "02_RUNTIME_ADMIN_DESIGNER.md",
+    "bytes": 1911,
+    "sha256": "fda4761389865b15cd1d23051608f3e029c8898eaec50001109c6f4f90a817cd"
+  },
+  {
+    "path": "03_BONUS_GENERATOR_LEVELS.md",
+    "bytes": 1780,
+    "sha256": "55b80e56f0ec27a681ae523a1275e51a569642a7b67179a4ffb2ddcf4f1c90f9"
+  },
+  {
+    "path": "04_OFFLINE_SECURITY_HOSTILE.md",
+    "bytes": 1676,
+    "sha256": "dce037d063662c28c1a5a89642ec19199ccf92565f44455a666e73b6f3a2dfcd"
+  },
+  {
+    "path": "05_EXECUTION_GATES_RETURN.md",
+    "bytes": 2447,
+    "sha256": "92bf36f13c0b0ed07055e1ad087f07eb181df0cf518e5745fbb78108bed9c209"
+  },
+  {
+    "path": "06_ROUTING_MESSAGE.md",
+    "bytes": 3850,
+    "sha256": "ccb569a78ff39a7afbfed9aac27c1c3076baddfcf80623e18e93b22fe70ab7d2"
+  }
+]

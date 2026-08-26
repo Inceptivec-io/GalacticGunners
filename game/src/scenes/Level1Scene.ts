@@ -12,6 +12,9 @@ import { InputSystem } from '../systems/InputSystem';
 import { LifeSystem } from '../systems/LifeSystem';
 import { createPlayfieldLayout, type PlayfieldLayout } from '../systems/PlayfieldLayout';
 import { ScoreSystem } from '../systems/ScoreSystem';
+import { CombatLevelScene } from './CombatLevelScene';
+import type { LevelDefinition } from '../levels/LevelDefinition';
+import type { LevelRuntimeConfig } from '../levels/LevelRuntimeConfig';
 
 type TerminalState = 'complete' | 'failed';
 type PlayerState = 'active' | 'hit' | 'regenerating';
@@ -55,7 +58,7 @@ declare global {
   }
 }
 
-export class Level1Scene extends Phaser.Scene {
+export class Level1Scene extends CombatLevelScene {
   #player!: Player;
   #score!: ScoreSystem;
   #lives!: LifeSystem;
@@ -90,6 +93,7 @@ export class Level1Scene extends Phaser.Scene {
   #playerState: PlayerState = 'active';
   #invulnerableUntilMs = Number.NEGATIVE_INFINITY;
   #runtimeConfig: GameRuntimeConfig = {};
+  #definition!: LevelDefinition;
 
   constructor() {
     super('Level1Scene');
@@ -97,6 +101,8 @@ export class Level1Scene extends Phaser.Scene {
 
   create(): void {
     this.#runtimeConfig = this.registry.get('runtimeConfig') as GameRuntimeConfig | undefined ?? {};
+    this.levelRuntime = this.registry.get('levelRuntime') as LevelRuntimeConfig | undefined ?? null;
+    this.#definition = this.levelRuntime?.definition ?? { enemy_formations: [{ rows: LEVEL_ONE_SLICE.scoutRows, columns: LEVEL_ONE_SLICE.scoutColumns }], shields: [{ count: LEVEL_ONE_SLICE.bunkerCount }] } as LevelDefinition;
     this.#layout = createPlayfieldLayout(this.scale.width, this.scale.height);
     this.#terminalState = null;
     this.#playerState = 'active';
@@ -203,8 +209,9 @@ export class Level1Scene extends Phaser.Scene {
   }
 
   private createScoutWave(): void {
-    for (let row = 0; row < LEVEL_ONE_SLICE.scoutRows; row += 1) {
-      for (let col = 0; col < LEVEL_ONE_SLICE.scoutColumns; col += 1) {
+    const formation = this.#definition.enemy_formations[0];
+    for (let row = 0; row < formation.rows; row += 1) {
+      for (let col = 0; col < formation.columns; col += 1) {
         const position = this.scoutPosition(row, col);
         const scout = new Scout(this, position.x, position.y, this.#layout);
         scout.sprite.setData('row', row);
@@ -233,9 +240,9 @@ export class Level1Scene extends Phaser.Scene {
     const travelMargin = this.formationTravelMargin();
     const usableWidth = Math.max(
       this.#layout.formationBounds.width - travelMargin * 2,
-      this.#layout.scoutSize.width * (LEVEL_ONE_SLICE.scoutColumns - 1),
+      this.#layout.scoutSize.width * (this.#definition.enemy_formations[0].columns - 1),
     );
-    const gapX = usableWidth / (LEVEL_ONE_SLICE.scoutColumns - 1);
+    const gapX = usableWidth / (this.#definition.enemy_formations[0].columns - 1);
     const gapY = Math.max(this.#layout.scoutSize.height * 1.8, 30);
     return new Phaser.Math.Vector2(
       this.#layout.formationBounds.x + travelMargin + col * gapX + this.#formationOffsetX,
@@ -248,7 +255,7 @@ export class Level1Scene extends Phaser.Scene {
   }
 
   private createShieldZone(): void {
-    const bunkerCount = LEVEL_ONE_SLICE.bunkerCount;
+    const bunkerCount = this.#definition.shields[0].count;
     const tileW = this.#layout.shieldTileSize.width;
     const tileH = this.#layout.shieldTileSize.height;
     for (let bunker = 0; bunker < bunkerCount; bunker += 1) {
@@ -284,7 +291,7 @@ export class Level1Scene extends Phaser.Scene {
       const bunker = Number(tile.getData('bunker'));
       const row = Number(tile.getData('row'));
       const col = Number(tile.getData('col'));
-      const bunkerCenterX = this.#layout.shieldZone.x + (this.#layout.shieldZone.width * (bunker + 0.5)) / LEVEL_ONE_SLICE.bunkerCount;
+      const bunkerCenterX = this.#layout.shieldZone.x + (this.#layout.shieldZone.width * (bunker + 0.5)) / this.#definition.shields[0].count;
       const startX = bunkerCenterX - tileW * 4;
       tile.setPosition(startX + col * tileW + tileW / 2, this.#layout.shieldZone.y + row * tileH + tileH / 2);
       tile.setDisplaySize(tileW, tileH);
@@ -1149,7 +1156,7 @@ export class Level1Scene extends Phaser.Scene {
       maxLives: this.#lives.maxLives,
       activeScouts: this.getActiveScouts().length,
       activeShieldTiles: this.getActiveShieldTiles().length,
-      bunkerCount: LEVEL_ONE_SLICE.bunkerCount,
+      bunkerCount: this.#definition.shields[0].count,
       playerLaserCount: this.#playerLasers?.getChildren().filter((child) => child.active).length ?? 0,
       enemyLaserCount: this.#enemyLasers?.getChildren().filter((child) => child.active).length ?? 0,
       nukeProjectileCount: this.#nukes?.getChildren().filter((child) => child.active).length ?? 0,
