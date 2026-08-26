@@ -4,4 +4,4 @@ WORKDIR /app
 COPY . .
 RUN pip install --no-cache-dir '.[dev]'
 EXPOSE 8000
-CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"]
+CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py seed_runtime_authority && python manage.py runserver 0.0.0.0:8000"]
