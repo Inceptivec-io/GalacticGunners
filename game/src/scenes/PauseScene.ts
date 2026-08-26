@@ -9,11 +9,10 @@ export class PauseScene extends Phaser.Scene {
 
   create(): void {
     const { width, height } = this.scale;
-    this.add.rectangle(width / 2, height / 2, width, height, 0x020712, 0.72).setDepth(30);
-    this.add.image(width / 2, height / 2, RUNTIME_ASSETS.pause.screen.key)
+    const backdrop = this.add.image(width / 2, height / 2, RUNTIME_ASSETS.pause.screen.key)
       .setDisplaySize(width, height)
-      .setAlpha(0.42)
-      .setDepth(31);
+      .setDepth(30);
+    this.add.rectangle(width / 2, height / 2, width, height, 0x020712, 0.24).setDepth(31);
     this.add.image(width / 2, height / 2 - 56, RUNTIME_ASSETS.ui.pauseIcon.key)
       .setDisplaySize(96, 64)
       .setDepth(32);
@@ -43,6 +42,7 @@ export class PauseScene extends Phaser.Scene {
       window.__GALACTIC_GUNNERS_PAUSE_QA__ = {
         scene: 'PauseScene',
         visibleTexts: ['PAUSED', 'RESUME'],
+        backdrop: { texture: backdrop.texture.key, alpha: backdrop.alpha, visible: backdrop.visible },
       };
     }
 

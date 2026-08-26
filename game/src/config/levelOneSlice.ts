@@ -1,9 +1,10 @@
 export const LEVEL_ONE_SLICE = {
   initialLives: 3,
-  playerSpeed: 420,
+  playerSpeed: 210,
   playerFireCooldownMs: 280,
-  playerLaserSpeed: 760,
+  playerLaserSpeed: 300,
   enemyLaserSpeed: 300,
+  nukeProjectileSpeed: 547.2,
   scoutRows: 2,
   scoutColumns: 29,
   scoutFireIntervalMs: 1500,

@@ -229,6 +229,19 @@ function laserVisualAndBodyValid(laser) {
     && laser.body.height <= 40;
 }
 
+function resetBodyAligned(entry) {
+  return Number.isFinite(entry.expectedX)
+    && Number.isFinite(entry.spriteX)
+    && Number.isFinite(entry.bodyCenterX)
+    && Number.isFinite(entry.bodyCenterY)
+    && Number.isFinite(entry.previousBodyCenterX)
+    && Number.isFinite(entry.previousBodyCenterY)
+    && Math.abs(entry.spriteX - entry.expectedX) <= 2
+    && Math.abs(entry.bodyCenterX - entry.spriteX) <= 2
+    && Math.abs(entry.previousBodyCenterX - entry.bodyCenterX) <= 0.01
+    && Math.abs(entry.previousBodyCenterY - entry.bodyCenterY) <= 0.01;
+}
+
 function findScoutClearOfShield(state) {
   let candidate = null;
   for (let index = 0; index < state.scoutBodies.length; index += 1) {
@@ -283,7 +296,10 @@ async function runHostileCases(browser) {
   cases.shield_zone_present = state.activeShieldTiles === 256;
   cases.shield_lower_lane_gap = state.shieldBottomGapPlayerHeights >= 1.1 && state.shieldBottomGapPlayerHeights <= 1.3;
   cases.playfield_layout_authority = state.gameplayRect.width < state.viewport.width
-    && state.movementBounds.left > state.gameplayRect.x
+    && state.movementBounds.left <= state.playerSize.width / 2 + 1
+    && state.movementBounds.right >= state.viewport.width - state.playerSize.width / 2 - 1
+    && state.movementBounds.top <= state.playerSize.height / 2 + 1
+    && state.movementBounds.bottom >= state.viewport.height - state.playerSize.height / 2 - 1
     && state.formationBounds.width === state.gameplayRect.width;
 
   const formationStartY = Math.max(...state.scoutBodies.map((entry) => entry.y));
@@ -306,7 +322,9 @@ async function runHostileCases(browser) {
     && down.during.playerY > down.before.playerY;
 
   const diagonal = await movementProbe(page, ['ArrowRight', 'ArrowUp']);
-  cases.diagonal_speed_normalization = Math.abs(Number(diagonal.during.playerVelocity.speed) - 420) <= 8;
+  cases.diagonal_speed_normalization = Math.abs(Number(diagonal.during.playerVelocity.speed) - 210) <= 6;
+  cases.player_enemy_laser_speed_match = state.projectileSpeeds.player === state.projectileSpeeds.enemy
+    && state.projectileSpeeds.player === 300;
 
   await loadGame(page);
   await page.keyboard.down('ArrowLeft');
@@ -402,6 +420,40 @@ async function runHostileCases(browser) {
   state = await getGameState(page);
   cases.player_laser_visual_body_mapping = laserVisualAndBodyValid(firstLaser(state, 'player')) && firstLaser(state, 'player').angle === -90;
   await page.screenshot({ path: path.join(outputDir, 'player-laser-mid-flight.png'), fullPage: true });
+  const spawnBodyResults = [];
+  for (const direction of ['ArrowLeft', null, 'ArrowRight']) {
+    await loadGame(page);
+    if (direction) {
+      await page.keyboard.down(direction);
+      await page.waitForTimeout(180);
+      await page.keyboard.up(direction);
+    }
+    // This invokes the same firePlayerLaser activation path immediately after real movement input,
+    // so the body reset can be inspected before the physics step advances the projectile.
+    const activation = await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__.firePlayerLaserForVisual(0));
+    spawnBodyResults.push(Boolean(activation.fired)
+      && Math.abs(activation.laserX - activation.playerX) <= 2
+      && Math.abs(activation.bodyCenterX - activation.laserX) <= 2
+      && Math.abs(activation.previousBodyCenterX - activation.bodyCenterX) <= 0.01
+      && Math.abs(activation.previousBodyCenterY - activation.bodyCenterY) <= 0.01);
+    await page.screenshot({ path: path.join(outputDir, `player-laser-spawn-${direction ?? 'centre'}.png`), fullPage: true });
+  }
+  cases.player_laser_spawn_body_left_centre_right = spawnBodyResults.every(Boolean);
+  const playerPoolEvidence = await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__.verifyPlayerLaserPool());
+  cases.player_laser_pool_reuse_24_cycles = playerPoolEvidence.length === 24 && playerPoolEvidence.every(resetBodyAligned);
+  const nukePoolEvidence = await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__.verifyNukePool());
+  cases.nuke_pool_reuse_multiple_lanes = nukePoolEvidence.length === 3 && nukePoolEvidence.every(resetBodyAligned);
+  const nukeAmmoGuard = await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__.verifyNukeAmmoGuard());
+  cases.nuke_ammo_guard_blocks_zero = nukeAmmoGuard.firstFired === true
+    && nukeAmmoGuard.secondFired === true
+    && nukeAmmoGuard.exhaustedNukes === 0
+    && nukeAmmoGuard.thirdBlocked === true
+    && nukeAmmoGuard.activeProjectiles === 0;
+  const nukeRearmLifecycle = await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__.verifyNukeRearmLifecycle());
+  cases.nuke_rearm_is_cooldown_not_ammunition = nukeRearmLifecycle.firstCompletion.currentNukes === 0
+    && nukeRearmLifecycle.firstCompletion.rearmProgress === 150
+    && nukeRearmLifecycle.cappedCompletion.currentNukes === 1
+    && nukeRearmLifecycle.cappedCompletion.rearmProgress === 150;
   await loadGame(page);
   await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__.fireEnemyLaserAtPlayer(90));
   await page.waitForTimeout(400);
@@ -458,6 +510,10 @@ async function runHostileCases(browser) {
   state = await getGameState(page);
   cases.nuke_fire_decrements_once = nukeFiredState.currentNukes === 1 && nukeFiredState.rearmProgress < 150;
   cases.nuke_projectile_visible = nukeFiredState.nukeProjectileCount >= 1 && nukeFiredState.nukeBodies.length >= 1;
+  cases.nuke_projectile_uses_authoritative_sprite_sheet = nukeFiredState.nukeBodies.every((nuke) => nuke.texture === 'projectile.nuke'
+    && nuke.animation === 'projectile.nuke.fly'
+    && nuke.angle === 0
+    && nuke.display.height > nuke.display.width);
   cases.nuke_burst_multikill_score_exact = state.score % 25 === 0 && state.score >= 25 && state.activeScouts <= 57;
   cases.nuke_rearm_progresses = state.rearmProgress > nukeFiredState.rearmProgress && state.rearmProgress <= 150;
   cases.nuke_hud_live = state.hudPositions.nukes.filter((icon) => icon.visible).length === state.currentNukes
@@ -490,6 +546,12 @@ async function runHostileCases(browser) {
   const prePause = await getGameState(page);
   await page.keyboard.press('P');
   await page.waitForFunction(() => window.__GALACTIC_GUNNERS_PAUSE_QA__?.scene === 'PauseScene', null, { timeout: 3000 });
+  const pauseQa = await page.evaluate(() => window.__GALACTIC_GUNNERS_PAUSE_QA__);
+  cases.pause_surface_visible = pauseQa?.backdrop?.texture === 'pause.screen'
+    && pauseQa.backdrop.alpha === 1
+    && pauseQa.backdrop.visible === true
+    && pauseQa.visibleTexts.includes('PAUSED')
+    && pauseQa.visibleTexts.includes('RESUME');
   await page.waitForTimeout(900);
   const pausedState = await getGameState(page);
   cases.pause_freezes_state = Math.abs(pausedState.playerX - prePause.playerX) <= 1
@@ -563,6 +625,12 @@ async function runHostileCases(browser) {
 
   return {
     cases,
+    projectile_pool_evidence: {
+      player_laser_cycles: playerPoolEvidence,
+      nuke_cycles: nukePoolEvidence,
+      nuke_ammo_guard: nukeAmmoGuard,
+      nuke_rearm_lifecycle: nukeRearmLifecycle,
+    },
     console_errors: consoleEntries.filter((entry) => entry.type === 'error'),
     console_warnings: consoleEntries.filter((entry) => entry.type === 'warning'),
     network_failures_or_4xx_5xx: failedRequests,
