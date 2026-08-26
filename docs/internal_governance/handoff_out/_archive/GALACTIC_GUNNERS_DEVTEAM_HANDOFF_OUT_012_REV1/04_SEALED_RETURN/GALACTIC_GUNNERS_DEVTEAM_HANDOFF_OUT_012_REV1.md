@@ -27,6 +27,6 @@
 
 ## Safe Exit
 
-The final pushed commit SHA, local/remote equality, clean-worktree proof, POST_BOX boundary-only inventory and SHA-256 seal are supplied in the governing external return after push. They are deliberately not self-referenced in this committed record.
+The consumed APP1 transport was hashed, inventoried and unpacked into `docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_012_REV1_APP1/`; its ZIP was then removed from POST_BOX. The final pushed commit SHA, local/remote equality, clean-worktree proof, boundary-only inventory and SHA-256 seal are supplied in the governing external return after push. They are deliberately not self-referenced in this committed record.
 
 Founder acceptance and merge authority remain pending with Michael Leese. PR #8 remains open/draft and unmerged.
