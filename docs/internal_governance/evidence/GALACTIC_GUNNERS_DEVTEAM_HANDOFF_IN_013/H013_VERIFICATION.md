@@ -16,10 +16,11 @@ Executed results:
 
 - `docker compose run --rm backend pytest -q`: PASS, 17 tests.
 - `npm run quality`: PASS: contracts, game typecheck/tests, web typecheck/build.
-- Docker rebuild: PASS on the commit recorded externally at closure.
+- Clean Docker rebuild: PASS. The runtime seed publishes Levels 1-6; Level 1 retains the accepted 58-enemy/256-shield-tile topology.
 - Backend health: PASS, `http://localhost:8010/api/v1/health/`.
 - Web health: PASS, `http://localhost:3002/api/health`.
 - Leaderboard page: PASS, `http://localhost:3002/leaderboard` renders `Global Leaderboard`.
+- `npm run runtime:hostile`: PASS. All semantic hostile cases, desktop/mobile visual matrix checks, unexpected console-error checks and unexpected network-failure checks passed. Final screenshots and the machine-readable result are in `browser_runtime_final/`.
 
 POST_BOX is boundary-controls only. No transport ZIP is retained in the repository.
 

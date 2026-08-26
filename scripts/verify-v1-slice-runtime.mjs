@@ -644,8 +644,12 @@ const browser = await chromium.launch();
 try {
   const visualMatrix = await runVisualMatrix(browser);
   const hostile = await runHostileCases(browser);
-  const expectedOfflineNetworkFailures = hostile.network_failures_or_4xx_5xx.filter((entry) => entry.url?.includes('127.0.0.1:8999/api/v1/game-runs/'));
-  const unexpectedNetworkFailures = hostile.network_failures_or_4xx_5xx.filter((entry) => !entry.url?.includes('127.0.0.1:8999/api/v1/game-runs/'));
+  // The final hostile case deliberately boots with an unreachable API origin
+  // to prove that offline play remains available. All failures from that exact
+  // synthetic origin are expected; every actual runtime request still fails CI.
+  const isExpectedOfflineRequest = (entry) => entry.url?.startsWith('http://127.0.0.1:8999/api/v1/');
+  const expectedOfflineNetworkFailures = hostile.network_failures_or_4xx_5xx.filter(isExpectedOfflineRequest);
+  const unexpectedNetworkFailures = hostile.network_failures_or_4xx_5xx.filter((entry) => !isExpectedOfflineRequest(entry));
   const expectedOfflineConsoleErrors = hostile.console_errors.filter((entry) => entry.text.includes('ERR_CONNECTION_REFUSED'));
   const unexpectedConsoleErrors = hostile.console_errors.filter((entry) => !entry.text.includes('ERR_CONNECTION_REFUSED'));
   const assertions = {
