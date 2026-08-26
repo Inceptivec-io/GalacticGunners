@@ -1,14 +1,14 @@
 Active Handoff:
-GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_010_REV4 / GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_011 INTAKE STOP
+GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_011_APP1_HOTFIX1
 
 Programme:
 v1.0 BUILD - SPRINT 001
 
 Stage:
-REV4 CI REPRODUCIBILITY COMPLETE / HANDOFF 011 ENTRY GATE NOT SATISFIED
+HOTFIX1 COMPLETE / PENDING CTO-FOUNDER GATE
 
 Branch:
-feature/v1-level1-vertical-slice
+feature/v1-config-driven-campaign-platform
 
 DEVTEAM_010 Entry SHA:
 051c7fc9170ae73344a0dc88214c48fc94e0bfdc
@@ -52,8 +52,8 @@ PASS - GitHub Actions run 32894066325 backend/client-and-game/docker-smoke/runti
 REV4 Local Hostile:
 PASS x3 consecutive
 
-Handoff 011:
-STOP - ENTRY_GATE_NOT_SATISFIED; PR #4 not merged into dev, no authorised post-merge dev SHA, implementation not started
+Handoff 011 APP1 HOTFIX1:
+COMPLETE - pooled projectile spawn/body reset, collision regression, full movement bounds, 210 player speed, equal 300 laser speeds, visible pause surface, upright nuke projectile followed only by nuke burst, cooldown-only Energise and zero-ammo blocking. H012 is not started and requires the Founder post-merge gate.
 
 Runtime Gameplay:
 PASS - BootScene, MainMenuScene and bounded Level1 playable runtime corrected for REV3 scale/composition, semantic PlayfieldLayout authority, 58-enemy Level1 formation, four-direction player movement, respawn/regeneration, 8-bunker / 256-tile shield zone, rotated laser geometry/body alignment, widened meaningful body envelopes, swept laser collision checks, normal real-origin laser hits/near-misses, enemy laser left/center/right player-body hits, nuke projectile/burst, bottom-left icon-only lives, bottom-right icon-only nukes with fixed `ENERGISE` bar, top-left score, top-right sound, pause/resume and hostile runtime/composition verification.
