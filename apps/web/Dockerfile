@@ -13,6 +13,9 @@ COPY package.json ./package.json
 COPY package-lock.json ./package-lock.json
 COPY apps/web ./apps/web
 COPY game ./game
+COPY assets ./assets
+COPY scripts ./scripts
+RUN npm run assets:sync
 WORKDIR /workspace/apps/web
 RUN npm run build
 

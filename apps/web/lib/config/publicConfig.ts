@@ -3,7 +3,7 @@ export interface PublicConfig {
 }
 
 function normalizeBaseUrl(value: string | undefined): string {
-  const fallback = 'http://localhost:8000/api/v1';
+  const fallback = 'http://localhost:8010/api/v1';
   const raw = value?.trim() || fallback;
   return raw.replace(/\/+$/, '');
 }

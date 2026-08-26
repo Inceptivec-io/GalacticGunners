@@ -1,0 +1,37 @@
+[
+  {
+    "path": "00_COMMISSION.md",
+    "bytes": 2905,
+    "sha256": "0da0945373a85d9b75f942d09a6b6c535f6f6716da6a51194ee11749e90154a0"
+  },
+  {
+    "path": "01_ARCHITECTURE_CONTRACTS.md",
+    "bytes": 3424,
+    "sha256": "202b432e9bec303ccf4930634837e89d95c2680680a42f2b2ac0ab5fa53d55aa"
+  },
+  {
+    "path": "02_HIDDEN_ADMIN_LEVEL_DESIGNER.md",
+    "bytes": 2556,
+    "sha256": "965f97e1a9fd46fce5923dd3dceff8d648fedc55b4008af3d9775a87c3babfbd"
+  },
+  {
+    "path": "03_BONUS_GENERATION_OFFLINE.md",
+    "bytes": 1909,
+    "sha256": "46ccca2d42337645cb3c8bd39a439064a4cecf23f859ee2100051ba581281f4f"
+  },
+  {
+    "path": "04_SIX_LEVEL_CAMPAIGN.md",
+    "bytes": 810,
+    "sha256": "26bd87844b323bee234394d814531784a28933ed11be0e12abef23eed518af98"
+  },
+  {
+    "path": "05_ASSURANCE_RETURN.md",
+    "bytes": 3093,
+    "sha256": "e414ac3b03718be1ef36cb80bf1bf5b6ebfac3b5f552bd70897140b8bdf48611"
+  },
+  {
+    "path": "06_ROUTING_MESSAGE.md",
+    "bytes": 8822,
+    "sha256": "162924f7743b61af4790802b2ab5cc77465e6a57f753b9ba047f8e0406c1be8c"
+  }
+]
