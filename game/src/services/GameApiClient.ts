@@ -4,27 +4,26 @@ export type GameRunValidity = 'pending' | 'valid' | 'rejected';
 export interface GameRunStartRequest {
   game_version: string;
   client_type: ClientType;
+  level_slug: string;
+  level_version: number;
+  level_checksum: string;
+  seed: number;
 }
 
 export interface GameRunRecord {
   id: string;
-  game_version: string;
-  client_type: ClientType;
+  validation_state: 'ACTIVE';
   started_at: string;
-  completed_at: string | null;
-  score: number;
-  level_reached: string;
-  lives_used: number;
-  nukes_used: number;
-  victory: boolean;
-  validity: GameRunValidity;
+  level: { slug: string; version: number; checksum: string };
+  seed: number;
 }
 
 export interface GameRunCompletionRequest {
-  claimed_score: number;
-  level_reached: string;
-  lives_used: number;
-  nukes_used: number;
+  score: number;
+  level_reached: number;
+  lives_end: number;
+  nukes_end: number;
+  duration_ms: number;
   victory: boolean;
   event_summary: Record<string, unknown>;
   payload_hash?: string;
@@ -32,25 +31,25 @@ export interface GameRunCompletionRequest {
 }
 
 export interface CompletedGameRunRecord {
-  id: string;
-  score: number;
-  level_reached: string;
-  lives_used: number;
-  nukes_used: number;
-  victory: boolean;
-  validity: GameRunValidity;
-  completed_at: string;
+  run_id: string;
+  validation_state: 'VALIDATED' | 'REJECTED';
+  validated_score: number | null;
+  leaderboard_eligible: boolean;
+  rejection_codes: string[];
 }
 
 export interface LeaderboardEntry {
+  rank: number;
   run_id: string;
   display_name: string;
   score: number;
-  published_at: string;
+  campaign_level_reached: number;
+  victory: boolean;
+  accepted_at: string;
 }
 
 export interface LeaderboardResponse {
-  count: number;
+  total: number;
   results: LeaderboardEntry[];
 }
 

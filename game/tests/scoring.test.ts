@@ -107,30 +107,21 @@ class FakeGameRunClient implements GameRunClient {
     this.starts += 1;
     return Promise.resolve({
       id: 'run-001',
-      game_version: 'v1.0-test',
-      client_type: 'web',
+      validation_state: 'ACTIVE',
       started_at: new Date(0).toISOString(),
-      completed_at: null,
-      score: 0,
-      level_reached: 'level_1_slice',
-      lives_used: 0,
-      nukes_used: 0,
-      victory: false,
-      validity: 'pending',
+      level: { slug: 'level-01', version: 1, checksum: '0'.repeat(64) },
+      seed: 11001,
     });
   }
 
   completeGameRun(_runId: string, _request: GameRunCompletionRequest): Promise<CompletedGameRunRecord> {
     this.completions += 1;
     return Promise.resolve({
-      id: 'run-001',
-      score: 25,
-      level_reached: 'level_1_slice',
-      lives_used: 1,
-      nukes_used: 0,
-      victory: false,
-      validity: 'valid',
-      completed_at: new Date(1).toISOString(),
+      run_id: 'run-001',
+      validation_state: 'VALIDATED',
+      validated_score: 25,
+      leaderboard_eligible: false,
+      rejection_codes: [],
     });
   }
 
@@ -141,13 +132,13 @@ class FakeGameRunClient implements GameRunClient {
 
 test('game session starts online runs and completes each run once', async () => {
   const client = new FakeGameRunClient();
-  const session = new GameSession(client);
+  const session = new GameSession(client, { slug: 'level-01', version: 1, checksum: '0'.repeat(64), seed: 11001 });
   await session.start();
   await session.start();
   assert.equal(client.starts, 1);
   assert.equal(session.runId, 'run-001');
-  await session.complete({ score: 25, livesUsed: 1, eventSummary: { scout_destroyed: 1 } });
-  await session.complete({ score: 25, livesUsed: 1, eventSummary: { scout_destroyed: 1 } });
+  await session.complete({ score: 25, livesUsed: 1, livesEnd: 2, nukesEnd: 2, levelReached: 1, victory: false, eventSummary: { scout_destroyed: 1 } });
+  await session.complete({ score: 25, livesUsed: 1, livesEnd: 2, nukesEnd: 2, levelReached: 1, victory: false, eventSummary: { scout_destroyed: 1 } });
   assert.equal(client.completions, 1);
 });
 
@@ -156,5 +147,5 @@ test('game session remains playable offline without fabricated run id', async ()
   await session.start();
   assert.equal(session.offline, true);
   assert.equal(session.runId, null);
-  assert.equal(await session.complete({ score: 25, livesUsed: 0, eventSummary: {} }), null);
+  assert.equal(await session.complete({ score: 25, livesUsed: 0, livesEnd: 3, nukesEnd: 2, levelReached: 1, victory: false, eventSummary: {} }), null);
 });

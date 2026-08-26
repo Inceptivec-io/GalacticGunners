@@ -142,7 +142,12 @@ export class Level1Scene extends CombatLevelScene {
     this.#score = new ScoreSystem();
     this.#lives = new LifeSystem(LEVEL_ONE_SLICE.initialLives);
     this.#audio = new AudioSystem((cue) => this.sound.play(RUNTIME_ASSETS.audio[cue].key));
-    this.#session = new GameSession(this.#runtimeConfig.apiBaseUrl ? new GameApiClient(this.#runtimeConfig.apiBaseUrl) : null);
+    this.#session = new GameSession(this.#runtimeConfig.apiBaseUrl ? new GameApiClient(this.#runtimeConfig.apiBaseUrl) : null, {
+      slug: this.#definition.slug,
+      version: this.#definition.version,
+      checksum: this.levelRuntime?.checksum ?? '',
+      seed: this.#definition.seed,
+    });
     this.#inputSystem = new InputSystem(this);
     void this.#session.start().finally(() => this.publishQaState());
 
@@ -949,6 +954,10 @@ export class Level1Scene extends CombatLevelScene {
     void this.#session.complete({
       score: this.#score.value,
       livesUsed: this.#lives.maxLives - this.#lives.value,
+      livesEnd: this.#lives.value,
+      nukesEnd: this.#currentNukes,
+      levelReached: this.#campaignSequence,
+      victory: isComplete && isFinalLevel,
       eventSummary: this.#score.eventSummary(),
     }).catch(() => undefined).finally(() => this.publishQaState());
     this.publishQaState();
