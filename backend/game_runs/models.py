@@ -57,6 +57,14 @@ class GameRun(models.Model):
     victory = models.BooleanField(default=False)
     validity = models.CharField(max_length=16, choices=Validity.choices, default=Validity.PENDING)
     validation_result = models.JSONField(default=dict, blank=True)
+    duration_ms = models.PositiveIntegerField(null=True, blank=True)
+    lives_start = models.PositiveIntegerField(default=3)
+    lives_end = models.PositiveIntegerField(null=True, blank=True)
+    nukes_start = models.PositiveIntegerField(default=2)
+    nukes_end = models.PositiveIntegerField(null=True, blank=True)
+    submitted_at = models.DateTimeField(null=True, blank=True)
+    accepted_at = models.DateTimeField(null=True, blank=True)
+    validation_code = models.CharField(max_length=64, blank=True)
 
     class Meta:
         indexes = [
@@ -103,6 +111,12 @@ class ScoreSubmission(models.Model):
     ])
     idempotency_key = models.CharField(max_length=128, null=True, blank=True)
     submitted_at = models.DateTimeField(auto_now_add=True)
+    expected_score = models.PositiveIntegerField(default=0)
+    accepted_score = models.PositiveIntegerField(null=True, blank=True)
+    validation_result = models.CharField(max_length=16, default='PENDING')
+    rejection_codes = models.JSONField(default=list, blank=True)
+    validation_detail = models.JSONField(default=dict, blank=True)
+    validated_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         indexes = [
