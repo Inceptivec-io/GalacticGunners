@@ -1,0 +1,516 @@
+HANDOFF / COMMISSION:
+GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_011
+
+PURPOSE:
+CONFIG-DRIVEN CAMPAIGN
++
+HIDDEN FOUNDER ADMIN LEVEL DESIGNER
++
+DATABASE LEVEL VERSIONING
++
+IMPORT / EXPORT
++
+PROCEDURAL DRAFT GENERATION
++
+SIX-LEVEL V1 CAMPAIGN FOUNDATION
+
+REPOSITORY:
+Inceptivec-io/GalacticGunners
+
+EXECUTION BRANCH:
+feature/v1-config-driven-campaign-platform
+
+============================================================
+HARD ENTRY GATE
+============================================================
+
+DO NOT START UNTIL:
+
+HANDOFF 010 FINAL = CTO PASS
+HANDOFF 010 FINAL = FOUNDER ACCEPTED
+PR #4 = MERGED INTO dev
+REMOTE HOSTILE CI = GREEN
+dev = ACCEPTED LEVEL 1 STATE
+ROADMAP v1.2 = SOLE CURRENT
+PLAYLIST v1.2 = SOLE CURRENT
+v1.1 = ARCHIVED
+WORKTREE = CLEAN
+POST_BOX = BOUNDARY CONTROLS ONLY
+
+Record exact post-merge dev SHA.
+
+Create execution branch FROM THAT EXACT SHA ONLY.
+
+FAIL:
+STOP — ENTRY_GATE_NOT_SATISFIED
+
+============================================================
+FOUNDER LOCK — LEVEL 1
+============================================================
+
+MAINTAIN CURRENT ACCEPTED LEVEL 1 TOPOGRAPHY AND SIZING.
+
+NO MATERIAL CHANGE TO:
+
+player scale
+scout scale
+58-enemy 29x2 formation
+formation placement
+8 bunkers
+256 tiles
+bunker spacing/vertical position
+lower flight lane
+player spawn
+HUD
+laser sizing
+nuke HUD
+pause
+movement bounds
+respawn
+playfield proportions
+stellar viewport
+
+LEVEL1_TOPOGRAPHY_REGRESSION = 0
+LEVEL1_SCALE_REGRESSION = 0
+LEVEL1_VISUAL_REGRESSION = 0
+LEVEL1_BEHAVIOUR_REGRESSION = 0
+
+============================================================
+ARCHITECTURE
+============================================================
+
+DO NOT BUILD six duplicated Phaser scenes.
+
+TARGET:
+
+CombatLevelScene
+→ LevelLoader
+→ Validated LevelDefinition
+→ LevelRuntimeConfig
+→ LevelVersion
+
+Ordinary new level = content authoring, not game-engine coding.
+
+============================================================
+LEVEL CONTRACT
+============================================================
+
+Create:
+packages/contracts/schemas/level-definition.schema.json
+
+Include:
+
+identity/version/schema
+campaign/sequence
+seed
+environment
+playfield
+player
+enemy formations
+enemy placements
+shields
+hazards
+projectiles
+waves
+objectives
+bonus rules
+drop tables
+boarding anchors
+themes
+difficulty
+performance budget
+checksum
+
+DECLARATIVE ONLY.
+
+NO:
+JS
+Python
+SQL
+HTML executable content
+shell
+arbitrary code.
+
+additionalProperties=false.
+
+Unknown entity/asset/pickup/hazard = FAIL.
+
+============================================================
+LEVEL 1 MIGRATION
+============================================================
+
+Create config-driven Level 1 reproducing exact accepted H010 final state.
+
+Keep old implementation temporarily for golden comparison.
+
+Run old/new at identical viewport and seed.
+
+ZERO REGRESSION before generic runtime becomes authority.
+
+============================================================
+DATABASE / GAME RUN
+============================================================
+
+Create:
+
+Level
+LevelVersion
+
+Published versions immutable.
+
+GameRun records:
+
+level_id
+level_version
+level_checksum
+seed
+
+============================================================
+HIDDEN ADMIN ROUTE — FOUNDER LOCK
+============================================================
+
+THE ADMIN DESIGNER IS ONLY REACHABLE UNDER:
+
+/inceptivec-gamification-admin
+
+DO NOT CREATE:
+
+/admin
+/admin/game/levels
+/level-editor
+/editor
+
+or public/intuitive aliases.
+
+Permitted subroutes only beneath:
+
+/inceptivec-gamification-admin/*
+
+PUBLIC DISCOVERABILITY = ZERO.
+
+MUST NOT APPEAR IN:
+
+public navigation
+footer
+player profile
+help
+credits
+site search
+sitemap
+public route index
+public menus
+player-facing docs
+public HTML links
+
+Required:
+
+PUBLIC_NAV_LINK = 0
+FOOTER_LINK = 0
+SITEMAP_ENTRY = 0
+PUBLIC_HTML_LINK = 0
+PLAYER_SITE_DISCOVERABILITY = 0
+
+Use noindex/nofollow metadata where applicable.
+
+Do NOT rely on robots.txt as secrecy.
+
+No public redirect may reveal the route.
+
+IMPORTANT:
+
+HIDDEN ROUTE != SECURITY.
+
+Direct URL access still requires:
+
+AUTHENTICATION
++
+ADMIN RBAC/PERMISSION
+
+Required:
+
+ANONYMOUS DIRECT URL = DENIED
+NORMAL PLAYER DIRECT URL = DENIED
+AUTHORIZED ADMIN = PASS
+
+Admin API authorization is server-side independently.
+
+============================================================
+ADMIN DESIGNER
+============================================================
+
+At hidden route provide:
+
+level list
+create
+clone
+2D playfield canvas
+grid
+snap
+entity palette
+drag/drop
+property inspector
+layers
+validation
+same-runtime preview
+save draft
+version
+publish
+rollback
+archive
+import
+export
+generate draft
+
+Layers:
+
+background
+player spawn
+enemies
+shields
+hazards
+bonuses
+boarding
+safe-area guides
+
+============================================================
+AUTHORING
+============================================================
+
+PLAYER:
+place spawn.
+
+ENEMIES:
+registered type,
+individual placement,
+formation rows/columns,
+quantity,
+spacing,
+movement,
+firing,
+wave timing.
+
+SHIELDS:
+bunker count,
+anchor,
+matrix,
+spacing.
+
+HAZARDS:
+registered only.
+
+BONUS:
+hidden destructible bonus host.
+
+DROPS:
+seeded weighted NUKE/LIFE drops.
+
+BOARDING:
+dormant future BoardingAnchor only.
+
+============================================================
+BONUS / DROP
+============================================================
+
+Initial pickup types:
+
+NUKE
+LIFE
+
+Ship destruction can seed-select a drop.
+
+Pickup visibly ejects/jumps from ship.
+
+Deterministic by seed.
+
+No duplicate award.
+
+Respect caps.
+
+============================================================
+IMPORT / EXPORT
+============================================================
+
+JSON.
+
+Import:
+
+UPLOAD
+→ PARSE
+→ SCHEMA
+→ SEMANTIC VALIDATE
+→ SECURITY VALIDATE
+→ PREVIEW
+→ SAVE DRAFT
+
+NEVER AUTO-PUBLISH.
+
+Reject injection/script/oversized/tampered config.
+
+============================================================
+PROCEDURAL GENERATOR
+============================================================
+
+Inputs:
+
+seed
+difficulty
+allowed entity registry
+enemy budget
+shield constraints
+hazards
+bonus/drop constraints
+boarding-anchor constraints
+performance budget
+
+Output:
+
+LevelDefinition DRAFT
+
+Then:
+
+schema
+semantic validation
+performance validation
+hostile simulation
+preview
+admin approval
+
+AUTO-PUBLISH = NO.
+
+============================================================
+SIX CAMPAIGN DRAFTS
+============================================================
+
+Create valid playable config-driven:
+
+Level 1
+Level 2
+Level 3
+Level 4
+Level 5
+Level 6
+
+Level 1 = exact accepted H010 denominator.
+
+Levels 2–6 = progressive Founder-preview drafts.
+
+DO NOT FAKE unsupported mechanics.
+
+============================================================
+OFFLINE
+============================================================
+
+Package six level definitions.
+
+Backend published config:
+validate + cache.
+
+Backend unavailable:
+validated cache OR packaged level.
+
+Invalid remote:
+REJECT + FALLBACK.
+
+============================================================
+HOSTILE / SECURITY
+============================================================
+
+Every publishable level:
+
+schema PASS
+entity refs PASS
+asset refs PASS
+bounds PASS
+spawn PASS
+shield PASS
+objective PASS
+drop PASS
+performance PASS
+hostile PASS
+preview PASS
+
+Admin:
+
+anonymous denied
+normal player denied
+admin allowed
+audit PASS
+public route references = 0
+
+Import hostile:
+script/injection/prototype pollution/oversized input rejected.
+
+============================================================
+QUALITY
+============================================================
+
+npm ci PASS
+npm run quality PASS
+backend tests/migrations PASS
+Docker PASS
+runtime-hostile PASS
+level-hostile PASS
+admin-hostile PASS
+import-hostile PASS
+generator-hostile PASS
+GitHub Actions GREEN
+
+GOVERNANCE_DEBT_COUNT = 0
+
+============================================================
+PR
+============================================================
+
+HEAD:
+feature/v1-config-driven-campaign-platform
+
+BASE:
+dev
+
+TITLE:
+Build Galactic Gunners config-driven campaign and level authoring platform
+
+OPEN / DRAFT / NOT MERGED
+
+============================================================
+RETURN
+============================================================
+
+RETURN:
+
+GALACTIC_GUNNERS_DEVTEAM_HANDOFF_OUT_011
+
+Include:
+
+entry dev SHA
+final SHA
+v1.2 admission
+LevelDefinition schema
+Level 1 golden migration
+zero-regression results
+backend models/migrations
+GameRun level binding
+API
+hidden admin route proof
+non-discoverability audit
+RBAC tests
+designer screenshots
+same-runtime preview
+import/export
+seed/checksum proof
+generator proof
+bonus/drop proof
+dormant BoardingAnchor
+Levels 1–6 inventory
+hostile results
+CI
+governance debt
+PR
+local==remote
+clean worktree
+POST_BOX boundary-only
+sealed SHA-256
+
+DO NOT MERGE.
+
+RETURN FOR CTO / FOUNDER REVIEW.

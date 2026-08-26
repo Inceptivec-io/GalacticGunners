@@ -1,0 +1,253 @@
+export interface RuntimeAsset {
+  key: string;
+  assetId: string;
+  canonicalPath: string;
+  sha256: string;
+  runtimePath: string;
+}
+
+export const RUNTIME_ASSETS = {
+  background: {
+    starfield: {
+      key: 'background.starfield',
+      assetId: 'GG-BACKGROUND-BACKGROUNDS-OWNED-GG-BG-STARFIELD-V002',
+      canonicalPath: 'assets/backgrounds/owned/gg_bg_starfield_v002.png',
+      sha256: '25BBB12578B10E5AD6E77593656DF3CE8FFD72A15EEABADA8134ED76390301C2',
+      runtimePath: '/gg-runtime-assets/backgrounds/gg_bg_starfield_v002.png',
+    },
+  },
+  keyArt: {
+    heroBattle: {
+      key: 'keyArt.heroBattle',
+      assetId: 'GG-KEYART-KEY-ART-POSTERS-GG-HERO-IMAGE-PLAYER-FIGHTING-V002-4K-UHD-MASTER',
+      canonicalPath: 'assets/key_art/posters/gg_hero_image_player_fighting_v002_4k_uhd_master.png',
+      sha256: '054D150DA322ACCDA4256306DB40B30CC0A098D7B307702C5CCFFA6148A5CE8F',
+      runtimePath: '/gg-runtime-assets/key_art/gg_hero_image_player_fighting_v002_4k_uhd_master.png',
+    },
+  },
+  branding: {
+    primaryLogo: {
+      key: 'branding.primaryLogo',
+      assetId: 'GG-BRAND-BRANDING-LOGOS-GG-LOGO-PRIMARY-V002',
+      canonicalPath: 'assets/branding/logos/gg_logo_primary_v002.png',
+      sha256: '4815BCBF0325CEBC0DE9B61F4CADBD87D6C791EF54F4B537CF2DA196221AAB76',
+      runtimePath: '/gg-runtime-assets/branding/gg_logo_primary_v002.png',
+    },
+  },
+  player: {
+    ship: {
+      key: 'player.ship',
+      assetId: 'GG-SPRITE-SPRITES-SHIPS-GG-PLAYER-SHIP-V002-SHEET',
+      canonicalPath: 'assets/sprites/ships/gg_player_ship_v002_sheet.png',
+      sha256: 'A3E2EDBDEE85B312AD1766EE00C5A5438F60ABF9DFCD006B2BD8474012DDFF38',
+      runtimePath: '/gg-runtime-assets/sprites/ships/gg_player_ship_v002_sheet.png',
+    },
+  },
+  enemy: {
+    scout: {
+      key: 'enemy.scout',
+      assetId: 'GG-SPRITE-SPRITES-SHIPS-GG-ENEMY-SCOUT-V002-SHEET',
+      canonicalPath: 'assets/sprites/ships/gg_enemy_scout_v002_sheet.png',
+      sha256: 'FBB60A9EB52346CB57CDF22FA1B6088DD24B08F9132540B05DFD0F1612405A7F',
+      runtimePath: '/gg-runtime-assets/sprites/ships/gg_enemy_scout_v002_sheet.png',
+    },
+  },
+  projectile: {
+    playerLaser: {
+      key: 'projectile.playerLaser',
+      assetId: 'GG-SPRITE-SPRITES-OBJECTS-GG-PLAYER-LASER-V002',
+      canonicalPath: 'assets/sprites/objects/gg_player_laser_v002.png',
+      sha256: 'D89ED695599F72F4980538E6AB89AEE2BFA85A6307A392C9FC08E2BDA38D1E13',
+      runtimePath: '/gg-runtime-assets/sprites/objects/gg_player_laser_v002.png',
+    },
+    enemyLaser: {
+      key: 'projectile.enemyLaser',
+      assetId: 'GG-SPRITE-SPRITES-OBJECTS-GG-ENEMY-LASER-V002',
+      canonicalPath: 'assets/sprites/objects/gg_enemy_laser_v002.png',
+      sha256: 'C25388AA4C1BAA3123AFCAB5B820718150806749E4AE5F6D8B99331C793578AC',
+      runtimePath: '/gg-runtime-assets/sprites/objects/gg_enemy_laser_v002.png',
+    },
+    nuke: {
+      key: 'projectile.nuke',
+      assetId: 'GG-SPRITE-SPRITES-OBJECTS-GG-NUKE-PROJECTILE-V002-SHEET',
+      canonicalPath: 'assets/sprites/objects/gg_nuke_projectile_v002_horizontal_upright.png',
+      sha256: '3B826087AD38EB6963046260EC384B9507C80E450DFAA3B302B923875B8B21AA',
+      runtimePath: '/gg-runtime-assets/sprites/objects/gg_nuke_projectile_v002_horizontal_upright.png',
+    },
+  },
+  shield: {
+    tile: {
+      key: 'shield.tile',
+      assetId: 'GG-SPRITE-SPRITES-OBJECTS-GG-SHIELD-TILE-V002',
+      canonicalPath: 'assets/sprites/objects/gg_shield_tile_v002.png',
+      sha256: 'ECE44E993871F2A474215BDAD8DEC6C5097861F487AF66D685FA1DA2A44402B3',
+      runtimePath: '/gg-runtime-assets/sprites/objects/gg_shield_tile_v002.png',
+    },
+  },
+  fx: {
+    explosionSmall: {
+      key: 'fx.explosionSmall',
+      assetId: 'GG-SPRITE-SPRITES-OBJECTS-GG-EXPLOSION-SMALL-V002-SHEET',
+      canonicalPath: 'assets/sprites/objects/gg_explosion_small_v002_horizontal.png',
+      sha256: '895ECEAFF03C8390A3F17FA9D829B7B86A6D0AE0B4D73BBA3CD2D2A267D569CC',
+      runtimePath: '/gg-runtime-assets/sprites/objects/gg_explosion_small_v002_horizontal.png',
+    },
+    nukeBurst: {
+      key: 'fx.nukeBurst',
+      assetId: 'GG-SPRITE-SPRITES-OBJECTS-GG-NUKE-BURST-V002-SHEET',
+      canonicalPath: 'assets/sprites/objects/gg_nuke_burst_v002_horizontal.png',
+      sha256: 'F9E47B6D3875778217620FE0FDDACAA515405D377900BA5F7F2D1271F0A96C53',
+      runtimePath: '/gg-runtime-assets/sprites/objects/gg_nuke_burst_v002_horizontal.png',
+    },
+  },
+  ui: {
+    lifeIcon: {
+      key: 'ui.lifeIcon',
+      assetId: 'GG-UI-UI-ICONS-GG-HUD-LIFE-ICON-V002',
+      canonicalPath: 'assets/ui/icons/gg_hud_life_icon_v002.png',
+      sha256: '9E0F8607F264ACB9614958D7043C5F69F4A4EBB303D57049203FD481D1EB0408',
+      runtimePath: '/gg-runtime-assets/ui/icons/gg_hud_life_icon_v002.png',
+    },
+    nukeIcon: {
+      key: 'ui.nukeIcon',
+      assetId: 'GG-UI-UI-ICONS-GG-HUD-NUKE-ICON-V002',
+      canonicalPath: 'assets/ui/icons/gg_hud_nuke_icon_v002.png',
+      sha256: '3D0A6A32EEEC514D7E4BE36B474B5E059347F3C74C5032093D58BA8C3633E08C',
+      runtimePath: '/gg-runtime-assets/ui/icons/gg_hud_nuke_icon_v002.png',
+    },
+    pauseIcon: {
+      key: 'ui.pauseIcon',
+      assetId: 'GG-UI-UI-ICONS-GG-UI-PAUSE-V002',
+      canonicalPath: 'assets/ui/icons/gg_ui_pause_v002.png',
+      sha256: 'E2ECCAAB8AF581266AA849322B067304C1BBC0A419D795A34A906090492EA9EA',
+      runtimePath: '/gg-runtime-assets/ui/icons/gg_ui_pause_v002.png',
+    },
+    soundOn: {
+      key: 'ui.soundOn',
+      assetId: 'GG-UI-UI-ICONS-GG-UI-SOUND-ON-V002',
+      canonicalPath: 'assets/ui/icons/gg_ui_sound_on_v002.png',
+      sha256: 'AD65B1C61E0ECA378C3A29DFCB3F7D9FB7AC1D0120104E6C17448D35B1C47D5D',
+      runtimePath: '/gg-runtime-assets/ui/icons/gg_ui_sound_on_v002.png',
+    },
+    soundOff: {
+      key: 'ui.soundOff',
+      assetId: 'GG-UI-UI-ICONS-GG-UI-SOUND-OFF-V002',
+      canonicalPath: 'assets/ui/icons/gg_ui_sound_off_v002.png',
+      sha256: '9CC310E201C728B5ACC8F4B05E4E8FE3D1A1440F1EF9160190DBAF6CEC678E43',
+      runtimePath: '/gg-runtime-assets/ui/icons/gg_ui_sound_off_v002.png',
+    },
+  },
+  pause: {
+    screen: {
+      key: 'pause.screen',
+      assetId: 'GG-KEYART-KEY-ART-POSTERS-GG-PAUSE-SCREEN-V2-1-4K-UHD-MASTER',
+      canonicalPath: 'assets/key_art/posters/gg_pause_screen_v2.1_4k_uhd_master.png',
+      sha256: '751008091C1144B657A54EE3B8EBD47C9B3823EFFB679420D5F96E39E7438937',
+      runtimePath: '/gg-runtime-assets/key_art/gg_pause_screen_v2.1_4k_uhd_master.png',
+    },
+  },
+  audio: {
+    uiConfirm: {
+      key: 'audio.uiConfirm',
+      assetId: 'GG-AUDIO-AUDIO-OWNED-REV2-GG-UI-CONFIRM-V001',
+      canonicalPath: 'assets/audio/owned/rev2/gg_ui_confirm_v001.wav',
+      sha256: '5126059176E8D15623C5EFF70DCD8EAF39ED092156E8C5EFA3D55468C5317B93',
+      runtimePath: '/gg-runtime-assets/audio/gg_ui_confirm_v001.wav',
+    },
+    uiSelect: {
+      key: 'audio.uiSelect',
+      assetId: 'GG-AUDIO-AUDIO-OWNED-REV2-GG-UI-SELECT-V001',
+      canonicalPath: 'assets/audio/owned/rev2/gg_ui_select_v001.wav',
+      sha256: 'BB382B07D808043ECD484DE8F92C154596F7DA95A11DCE60FB770E2862AF0618',
+      runtimePath: '/gg-runtime-assets/audio/gg_ui_select_v001.wav',
+    },
+    playerLaser: {
+      key: 'audio.playerLaser',
+      assetId: 'GG-AUDIO-AUDIO-OWNED-REV2-GG-PLAYER-LASER-V001',
+      canonicalPath: 'assets/audio/owned/rev2/gg_player_laser_v001.wav',
+      sha256: '9EDA7CF68F47E307AB3F7041E1DD59AC5F07E279C32CB1A9C9D3405905247AFF',
+      runtimePath: '/gg-runtime-assets/audio/gg_player_laser_v001.wav',
+    },
+    enemyLaser: {
+      key: 'audio.enemyLaser',
+      assetId: 'GG-AUDIO-AUDIO-OWNED-REV2-GG-ENEMY-LASER-V001',
+      canonicalPath: 'assets/audio/owned/rev2/gg_enemy_laser_v001.wav',
+      sha256: 'FCE8F2C8853FF92A6EF2F80D9418C11B34F9601B5EFDA385377080999E6D5942',
+      runtimePath: '/gg-runtime-assets/audio/gg_enemy_laser_v001.wav',
+    },
+    explosionSmall: {
+      key: 'audio.explosionSmall',
+      assetId: 'GG-AUDIO-AUDIO-OWNED-REV2-GG-EXPLOSION-SMALL-V001',
+      canonicalPath: 'assets/audio/owned/rev2/gg_explosion_small_v001.wav',
+      sha256: 'AEFFDB12344846F6207C61F0A70F19F9FDF5835D621745A75BD4707012F94FE4',
+      runtimePath: '/gg-runtime-assets/audio/gg_explosion_small_v001.wav',
+    },
+    playerHit: {
+      key: 'audio.playerHit',
+      assetId: 'GG-AUDIO-AUDIO-OWNED-REV2-GG-PLAYER-HIT-V001',
+      canonicalPath: 'assets/audio/owned/rev2/gg_player_hit_v001.wav',
+      sha256: '049D14BD1353957D2A859FF4F5C56E5B854B6D75B9D136310559CA45810BF311',
+      runtimePath: '/gg-runtime-assets/audio/gg_player_hit_v001.wav',
+    },
+    nukeFire: {
+      key: 'audio.nukeFire',
+      assetId: 'GG-AUDIO-AUDIO-OWNED-REV2-GG-NUKE-FIRE-V001',
+      canonicalPath: 'assets/audio/owned/rev2/gg_nuke_fire_v001.wav',
+      sha256: 'CDECCACB879343A5D3772EFE6ABF6A514F8E7B2CC5C5486C123D4B8906898E1C',
+      runtimePath: '/gg-runtime-assets/audio/gg_nuke_fire_v001.wav',
+    },
+    nukeBurst: {
+      key: 'audio.nukeBurst',
+      assetId: 'GG-AUDIO-AUDIO-OWNED-REV2-GG-NUKE-BURST-V001',
+      canonicalPath: 'assets/audio/owned/rev2/gg_nuke_burst_v001.wav',
+      sha256: '46E97A344CBCEF9E775B9FCC81B0895858D29E975C32C416C6E3CD91C8DA6D2B',
+      runtimePath: '/gg-runtime-assets/audio/gg_nuke_burst_v001.wav',
+    },
+  },
+} as const;
+
+export const REQUIRED_RUNTIME_ASSETS: RuntimeAsset[] = [
+  RUNTIME_ASSETS.background.starfield,
+  RUNTIME_ASSETS.keyArt.heroBattle,
+  RUNTIME_ASSETS.branding.primaryLogo,
+  RUNTIME_ASSETS.player.ship,
+  RUNTIME_ASSETS.enemy.scout,
+  RUNTIME_ASSETS.projectile.playerLaser,
+  RUNTIME_ASSETS.projectile.enemyLaser,
+  RUNTIME_ASSETS.projectile.nuke,
+  RUNTIME_ASSETS.shield.tile,
+  RUNTIME_ASSETS.fx.explosionSmall,
+  RUNTIME_ASSETS.fx.nukeBurst,
+  RUNTIME_ASSETS.ui.lifeIcon,
+  RUNTIME_ASSETS.ui.nukeIcon,
+  RUNTIME_ASSETS.ui.pauseIcon,
+  RUNTIME_ASSETS.ui.soundOn,
+  RUNTIME_ASSETS.ui.soundOff,
+  RUNTIME_ASSETS.pause.screen,
+  RUNTIME_ASSETS.audio.uiConfirm,
+  RUNTIME_ASSETS.audio.uiSelect,
+  RUNTIME_ASSETS.audio.playerLaser,
+  RUNTIME_ASSETS.audio.enemyLaser,
+  RUNTIME_ASSETS.audio.explosionSmall,
+  RUNTIME_ASSETS.audio.playerHit,
+  RUNTIME_ASSETS.audio.nukeFire,
+  RUNTIME_ASSETS.audio.nukeBurst,
+];
+
+export const FRAME_RECTS = {
+  player: [
+    { name: 'stable-0', x: 0, y: 0, width: 543, height: 724 },
+    { name: 'stable-1', x: 543, y: 0, width: 543, height: 724 },
+    { name: 'stable-2', x: 1086, y: 0, width: 543, height: 724 },
+    { name: 'stable-3', x: 1629, y: 0, width: 543, height: 724 },
+  ],
+  scout: [
+    { name: 'stable-0', x: 0, y: 0, width: 480, height: 793 },
+    { name: 'stable-1', x: 501, y: 0, width: 480, height: 793 },
+    { name: 'stable-2', x: 1002, y: 0, width: 480, height: 793 },
+    { name: 'stable-3', x: 1503, y: 0, width: 480, height: 793 },
+  ],
+  explosionSmall: { frameWidth: 494, frameHeight: 494, endFrame: 7 },
+  nukeProjectile: { frameWidth: 720, frameHeight: 800, endFrame: 3 },
+  nukeBurst: { frameWidth: 516, frameHeight: 516, endFrame: 9 },
+} as const;

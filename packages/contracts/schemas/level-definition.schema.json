@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://inceptivec.io/galactic-gunners/schemas/level-definition.schema.json",
+  "title": "LevelDefinition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "slug", "name", "version", "schema_version", "status", "sequence", "seed", "player", "enemy_formations", "shields", "performance_budget"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9-]{3,64}$" },
+    "slug": { "type": "string", "pattern": "^[a-z0-9-]{3,64}$" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "version": { "type": "integer", "minimum": 1 },
+    "schema_version": { "const": "1.0" },
+    "status": { "enum": ["DRAFT", "VALIDATED", "PUBLISHED", "SUPERSEDED", "ARCHIVED"] },
+    "sequence": { "type": "integer", "minimum": 1, "maximum": 999 },
+    "seed": { "type": "integer", "minimum": 0, "maximum": 2147483647 },
+    "player": { "$ref": "#/$defs/point" },
+    "enemy_formations": { "type": "array", "minItems": 1, "maxItems": 64, "items": { "type": "object", "additionalProperties": false, "required": ["type", "rows", "columns", "origin", "spacing"], "properties": { "type": { "enum": ["scout"] }, "rows": { "type": "integer", "minimum": 1, "maximum": 32 }, "columns": { "type": "integer", "minimum": 1, "maximum": 64 }, "origin": { "$ref": "#/$defs/point" }, "spacing": { "$ref": "#/$defs/point" } } } },
+    "shields": { "type": "array", "minItems": 0, "maxItems": 16, "items": { "type": "object", "additionalProperties": false, "required": ["count", "matrix"], "properties": { "count": { "type": "integer", "minimum": 0, "maximum": 16 }, "matrix": { "type": "array", "maxItems": 16, "items": { "type": "array", "maxItems": 16, "items": { "enum": [0, 1] } } } } } },
+    "performance_budget": { "type": "object", "additionalProperties": false, "required": ["max_enemies"], "properties": { "max_enemies": { "type": "integer", "minimum": 1, "maximum": 512 } } }
+  },
+  "$defs": { "point": { "type": "object", "additionalProperties": false, "required": ["x", "y"], "properties": { "x": { "type": "number", "minimum": 0, "maximum": 1280 }, "y": { "type": "number", "minimum": 0, "maximum": 720 } } } }
+}

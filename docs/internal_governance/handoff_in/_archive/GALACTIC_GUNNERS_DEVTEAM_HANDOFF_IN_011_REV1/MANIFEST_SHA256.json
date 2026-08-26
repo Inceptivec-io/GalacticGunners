@@ -1,0 +1,12 @@
+[
+  {
+    "path": "00_COMMISSION_REV1.md",
+    "bytes": 4406,
+    "sha256": "0891e8a26b894fe15f03976308348fca32cfbb2d60c64e32db58fcc8fd303431"
+  },
+  {
+    "path": "01_ROUTING_MESSAGE_REV1.md",
+    "bytes": 7960,
+    "sha256": "a289a3934701bcdbc92aaf8b4aeae3554ff3621073bbd597a995ed0126f5bcd9"
+  }
+]

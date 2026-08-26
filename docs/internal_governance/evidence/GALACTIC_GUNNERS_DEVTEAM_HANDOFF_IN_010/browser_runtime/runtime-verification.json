@@ -1,0 +1,81 @@
+{
+  "url": "http://localhost:3002/play",
+  "title": "Galactic Gunners",
+  "canvas_count": 1,
+  "qa_state": {
+    "scene": "Level1Scene",
+    "score": 150,
+    "lives": 3,
+    "maxLives": 3,
+    "activeScouts": 8,
+    "playerLaserCount": 0,
+    "enemyLaserCount": 1,
+    "playerX": 640,
+    "activeScoutPositions": [
+      {
+        "x": 148,
+        "y": 170
+      },
+      {
+        "x": 310,
+        "y": 170
+      },
+      {
+        "x": 958,
+        "y": 170
+      },
+      {
+        "x": 1120,
+        "y": 170
+      },
+      {
+        "x": 148,
+        "y": 254
+      },
+      {
+        "x": 310,
+        "y": 254
+      },
+      {
+        "x": 958,
+        "y": 254
+      },
+      {
+        "x": 1120,
+        "y": 254
+      }
+    ],
+    "playerLaserPositions": [],
+    "terminalState": null,
+    "gameRunId": "cee7c01e-cafe-46c0-95da-be185c4e00e6",
+    "offlineRunMode": false,
+    "gameRunCompleteAttempted": false
+  },
+  "console_errors_or_warnings": [
+    {
+      "type": "warning",
+      "text": "[.WebGL-0x60ec001b7a00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels"
+    },
+    {
+      "type": "warning",
+      "text": "[.WebGL-0x60ec001b7a00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels"
+    },
+    {
+      "type": "warning",
+      "text": "[.WebGL-0x60ec001b7a00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels"
+    },
+    {
+      "type": "warning",
+      "text": "[.WebGL-0x60ec001b7a00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+    }
+  ],
+  "network_failures_or_4xx_5xx": [],
+  "assertions": {
+    "canvas_present": true,
+    "level1_started": true,
+    "player_laser_scout_collision_scored": true,
+    "scout_count_decremented": true,
+    "no_console_errors": true,
+    "no_network_failures": true
+  }
+}

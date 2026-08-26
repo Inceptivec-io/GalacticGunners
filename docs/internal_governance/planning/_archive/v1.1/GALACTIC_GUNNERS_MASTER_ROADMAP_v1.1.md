@@ -124,20 +124,18 @@ Historical repository:
 `michael-leese/GallacticGunners` — READ-ONLY provenance/behaviour reference.
 
 Current development line:
-`feature/GG-COM-001`
+`feature/v1-level1-vertical-slice`
 
 Current programme position:
-- governance/provenance established;
-- owned graphics established;
-- owned fonts established;
-- owned modern audio established;
-- scoring model locked;
-- Docker Founder runtime established;
-- current foundation is close but still under visual/structural correction and Founder review;
-- APP2 closes sprite use, animation fidelity, comet/explosion use, scaling, full viewport, result controls, score consistency and product-surface completeness;
+- governed repository and release branch model established;
+- production architecture foundation accepted into the `dev -> stage -> prod` branch model;
+- canonical asset/IP estate established at root `assets/`;
+- v1.0 Sprint 001 is active on `feature/v1-level1-vertical-slice`;
+- Sprint 001 returns a bounded Boot -> Main Menu -> Level 1 playable vertical slice for Founder/CTO review;
+- full Level 1, Level 2, boss/final states, Boarding, auth UI and leaderboard UI are not claimed in Sprint 001;
 - Founder acceptance remains pending.
 
-No production architecture migration starts until this foundation passes.
+Future full Level 1 and later gameplay slices require separate authorised handoffs.
 
 ---
 

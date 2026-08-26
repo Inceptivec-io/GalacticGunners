@@ -1,32 +1,32 @@
 Active Handoff:
-GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_009
+GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_011_APP1_HOTFIX1
 
 Programme:
-STEP 6 - RELEASE BRANCH ESTABLISHMENT AND MAIN-TO-PROD CUTOVER
+v1.0 BUILD - SPRINT 001
 
 Stage:
-RELEASE BRANCH CUTOVER COMPLETE / PENDING FOUNDER ACCEPTANCE
+HOTFIX1 COMPLETE / PENDING CTO-FOUNDER GATE
 
 Branch:
-feature/release-branch-establishment
+feature/v1-config-driven-campaign-platform
 
-DEVTEAM_009 Entry SHA:
-5a522f7076a95ad5d0e17c3d7f79da11a7e0a6bc
+DEVTEAM_010 Entry SHA:
+051c7fc9170ae73344a0dc88214c48fc94e0bfdc
 
-Accepted Foundation Branch:
-feature/production-architecture-foundation
+DEVTEAM_010_REV1 Entry SHA:
+fd7a7e00b6ccd4683e90cff9f41676e19f04517d
 
-Accepted Foundation SHA:
-5a522f7076a95ad5d0e17c3d7f79da11a7e0a6bc
+DEVTEAM_010_REV2 Entry SHA:
+6c1964a3148ab7743552c4f608ea8117730b499f
 
-Branch Model:
-feature/* -> dev -> stage -> prod
+DEVTEAM_010_REV3 Entry SHA:
+771bf384ae3878e292acf8d7e53dca90576b23b3
 
-Default Branch Target:
-prod
+DEVTEAM_010_REV4 Entry SHA:
+5d0f8d04556a51f3398192e011e8b6b41b9bd2bf
 
 Current Repository Head Authority:
-origin/feature/release-branch-establishment
+origin/feature/v1-level1-vertical-slice
 
 Local/Remote Reconciliation At Return:
 RECORDED EXTERNALLY AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
@@ -35,7 +35,7 @@ Worktree At Return:
 RECORDED EXTERNALLY AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
 
 POST_BOX:
-CLEAN AT CLOSURE - boundary controls only / active payload zero
+CLEAN - boundary controls only / active payload zero
 
 Internal Governance:
 CURRENT
@@ -46,14 +46,29 @@ CURRENT
 Evidence:
 DURABLE
 
-Release Cutover:
-PASS - accepted foundation promoted through dev, stage and prod; prod set as default; main retired after fail-closed proof.
+REV4 Remote CI:
+PASS - GitHub Actions run 32894066325 backend/client-and-game/docker-smoke/runtime-hostile all SUCCESS
 
-Docker Full Stack:
-PASS TARGET - web host port 3002, backend host port 8010, container ports web 3000 and backend 8000 retained.
+REV4 Local Hostile:
+PASS x3 consecutive
+
+Handoff 011 APP1 HOTFIX1:
+COMPLETE - pooled projectile spawn/body reset, collision regression, full movement bounds, 210 player speed, equal 300 laser speeds, visible pause surface, upright nuke projectile followed only by nuke burst, cooldown-only Energise and zero-ammo blocking. H012 is not started and requires the Founder post-merge gate.
 
 Runtime Gameplay:
-NOT PERFORMED - Handoff 009 is branch/release authority cutover only.
+PASS - BootScene, MainMenuScene and bounded Level1 playable runtime corrected for REV3 scale/composition, semantic PlayfieldLayout authority, 58-enemy Level1 formation, four-direction player movement, respawn/regeneration, 8-bunker / 256-tile shield zone, rotated laser geometry/body alignment, widened meaningful body envelopes, swept laser collision checks, normal real-origin laser hits/near-misses, enemy laser left/center/right player-body hits, nuke projectile/burst, bottom-left icon-only lives, bottom-right icon-only nukes with fixed `ENERGISE` bar, top-left score, top-right sound, pause/resume and hostile runtime/composition verification.
+
+Full Level 1:
+NOT CLAIMED
+
+Level 2:
+NOT STARTED
+
+Boss / Final Victory / Final Game Over:
+NOT STARTED
+
+Boarding:
+NOT STARTED
 
 Founder Acceptance:
-PENDING
+REV4 PRODUCT STATE ACCEPTED AS-IS AT ENTRY; CTO FINAL MERGE GATE PENDING

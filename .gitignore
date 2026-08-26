@@ -16,12 +16,15 @@ __pycache__/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+*.egg-info/
+*.sqlite3
 staticfiles/
 media/
 
 # Environment / secrets
 .env
 .env.*
+env.*
 !.env.example
 
 # Editors / OS

@@ -88,7 +88,7 @@ export class GameApiClient implements GameRunClient {
 
   private async request<T>(path: string, init: RequestInit = {}): Promise<T> {
     const response = await fetch(`${this.baseUrl.replace(/\/+$/, '')}${path}`, {
-      credentials: 'include',
+      credentials: 'same-origin',
       headers: {
         accept: 'application/json',
         ...(init.body ? { 'content-type': 'application/json' } : {}),
