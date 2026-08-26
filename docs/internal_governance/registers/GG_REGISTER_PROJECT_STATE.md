@@ -36,3 +36,4 @@
 | Founder Acceptance Authority | Michael Leese |
 | Founder Acceptance | PENDING |
 | Handoff 011 APP1 HOTFIX1 | PASS TARGET - corrections complete; CTO / Founder gate required before merge and H012 entry |
+| Handoff 013 | COMPLETE / PENDING FOUNDER REVIEW - validated GameRuns, public leaderboard, moderator controls and H014 readiness evidence; Draft PR to `dev`, not merged |
