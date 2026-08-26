@@ -92,6 +92,59 @@ paths:
                 $ref: '#/components/schemas/LeaderboardResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
+  /levels/:
+    get:
+      operationId: listPublishedLevels
+      summary: List public published campaign levels.
+      responses:
+        '200':
+          description: Published level catalogue.
+  /levels/{slug}/:
+    get:
+      operationId: getPublishedLevel
+      summary: Resolve the active published version for a level slug.
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Published level authority. }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /levels/{slug}/versions/{version}/:
+    get:
+      operationId: getPublishedLevelVersion
+      summary: Resolve one published immutable level version.
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema: { type: string }
+        - name: version
+          in: path
+          required: true
+          schema: { type: integer, minimum: 1 }
+      responses:
+        '200': { description: Published immutable level version. }
+  /admin/levels/:
+    post:
+      operationId: createLevelDraft
+      summary: Create a privileged DRAFT level and version.
+      responses:
+        '201': { description: Draft created. }
+        '403': { description: Level administrator required. }
+  /admin/levels/import/:
+    post:
+      operationId: importLevelDraft
+      summary: Import a validated DRAFT level only.
+      responses:
+        '201': { description: Draft imported. }
+  /admin/levels/generate/:
+    post:
+      operationId: generateLevelDraft
+      summary: Generate a deterministic DRAFT candidate; this endpoint never publishes.
+      responses:
+        '201': { description: Draft generated. }
 components:
   parameters:
     RunId:

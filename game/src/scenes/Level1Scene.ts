@@ -12,9 +12,15 @@ import { InputSystem } from '../systems/InputSystem';
 import { LifeSystem } from '../systems/LifeSystem';
 import { createPlayfieldLayout, type PlayfieldLayout } from '../systems/PlayfieldLayout';
 import { ScoreSystem } from '../systems/ScoreSystem';
+import { CombatLevelScene } from './CombatLevelScene';
+import type { LevelDefinition } from '../levels/LevelDefinition';
+import type { LevelRuntimeConfig } from '../levels/LevelRuntimeConfig';
+import { CAMPAIGN_DEFINITIONS } from '../levels/campaignDefinitions';
+import { validateLevelDefinition } from '../levels/LevelValidator';
 
 type TerminalState = 'complete' | 'failed';
 type PlayerState = 'active' | 'hit' | 'regenerating';
+type TerminalAction = 'continue' | 'replay' | 'try-again' | 'menu';
 type SweptHitTarget =
   | { kind: 'player'; body: Phaser.Physics.Arcade.Body }
   | { kind: 'scout'; body: Phaser.Physics.Arcade.Body; scout: Phaser.Physics.Arcade.Sprite }
@@ -43,6 +49,7 @@ interface HostileQaApi {
   gamepadY: () => Record<string, unknown>;
   forceComplete: () => void;
   forceFail: () => void;
+  continueCampaign: () => void;
   replay: () => void;
   menu: () => void;
   state: () => Record<string, unknown>;
@@ -55,7 +62,7 @@ declare global {
   }
 }
 
-export class Level1Scene extends Phaser.Scene {
+export class Level1Scene extends CombatLevelScene {
   #player!: Player;
   #score!: ScoreSystem;
   #lives!: LifeSystem;
@@ -90,13 +97,30 @@ export class Level1Scene extends Phaser.Scene {
   #playerState: PlayerState = 'active';
   #invulnerableUntilMs = Number.NEGATIVE_INFINITY;
   #runtimeConfig: GameRuntimeConfig = {};
+  #definition!: LevelDefinition;
+  #campaignSequence = 1;
+  #terminalActions: Array<{ action: TerminalAction; x: number; y: number; width: number; height: number; source: 'production-asset' | 'production-derived' }> = [];
+  #terminalActionHandled = false;
 
   constructor() {
     super('Level1Scene');
   }
 
+  init(data: { sequence?: number } = {}): void {
+    this.#campaignSequence = data.sequence ?? 1;
+  }
+
   create(): void {
     this.#runtimeConfig = this.registry.get('runtimeConfig') as GameRuntimeConfig | undefined ?? {};
+    const campaignRuntime = this.registry.get('campaignRuntime') as LevelRuntimeConfig[] | undefined ?? [];
+    const packagedDefinition = CAMPAIGN_DEFINITIONS.find((definition) => definition.sequence === this.#campaignSequence);
+    if (!packagedDefinition) {
+      throw new Error(`Campaign sequence ${this.#campaignSequence} is not defined.`);
+    }
+    this.levelRuntime = campaignRuntime.find((runtime) => runtime.definition.sequence === this.#campaignSequence)
+      ?? (this.#campaignSequence === 1 ? this.registry.get('levelRuntime') as LevelRuntimeConfig | undefined ?? null : null);
+    this.#definition = this.levelRuntime?.definition ?? packagedDefinition;
+    validateLevelDefinition(this.#definition);
     this.#layout = createPlayfieldLayout(this.scale.width, this.scale.height);
     this.#terminalState = null;
     this.#playerState = 'active';
@@ -111,6 +135,8 @@ export class Level1Scene extends Phaser.Scene {
     this.#nukesFired = 0;
     this.#lastUpdateAtMs = 0;
     this.#pauseInputBlockedUntilMs = 0;
+    this.#terminalActions = [];
+    this.#terminalActionHandled = false;
     this.physics.world.setBounds(0, 0, this.scale.width, this.scale.height);
 
     this.#score = new ScoreSystem();
@@ -159,9 +185,9 @@ export class Level1Scene extends Phaser.Scene {
     if (this.#terminalState) {
       const actions = this.#inputSystem.actions;
       if (actions.confirm) {
-        this.scene.restart();
+        this.runTerminalAction(this.primaryTerminalAction());
       } else if (actions.back) {
-        this.scene.start('MainMenuScene');
+        this.runTerminalAction('menu');
       }
       return;
     }
@@ -203,8 +229,9 @@ export class Level1Scene extends Phaser.Scene {
   }
 
   private createScoutWave(): void {
-    for (let row = 0; row < LEVEL_ONE_SLICE.scoutRows; row += 1) {
-      for (let col = 0; col < LEVEL_ONE_SLICE.scoutColumns; col += 1) {
+    const formation = this.#definition.enemy_formations[0];
+    for (let row = 0; row < formation.rows; row += 1) {
+      for (let col = 0; col < formation.columns; col += 1) {
         const position = this.scoutPosition(row, col);
         const scout = new Scout(this, position.x, position.y, this.#layout);
         scout.sprite.setData('row', row);
@@ -233,9 +260,9 @@ export class Level1Scene extends Phaser.Scene {
     const travelMargin = this.formationTravelMargin();
     const usableWidth = Math.max(
       this.#layout.formationBounds.width - travelMargin * 2,
-      this.#layout.scoutSize.width * (LEVEL_ONE_SLICE.scoutColumns - 1),
+      this.#layout.scoutSize.width * (this.#definition.enemy_formations[0].columns - 1),
     );
-    const gapX = usableWidth / (LEVEL_ONE_SLICE.scoutColumns - 1);
+    const gapX = usableWidth / (this.#definition.enemy_formations[0].columns - 1);
     const gapY = Math.max(this.#layout.scoutSize.height * 1.8, 30);
     return new Phaser.Math.Vector2(
       this.#layout.formationBounds.x + travelMargin + col * gapX + this.#formationOffsetX,
@@ -248,7 +275,7 @@ export class Level1Scene extends Phaser.Scene {
   }
 
   private createShieldZone(): void {
-    const bunkerCount = LEVEL_ONE_SLICE.bunkerCount;
+    const bunkerCount = this.#definition.shields[0].count;
     const tileW = this.#layout.shieldTileSize.width;
     const tileH = this.#layout.shieldTileSize.height;
     for (let bunker = 0; bunker < bunkerCount; bunker += 1) {
@@ -284,7 +311,7 @@ export class Level1Scene extends Phaser.Scene {
       const bunker = Number(tile.getData('bunker'));
       const row = Number(tile.getData('row'));
       const col = Number(tile.getData('col'));
-      const bunkerCenterX = this.#layout.shieldZone.x + (this.#layout.shieldZone.width * (bunker + 0.5)) / LEVEL_ONE_SLICE.bunkerCount;
+      const bunkerCenterX = this.#layout.shieldZone.x + (this.#layout.shieldZone.width * (bunker + 0.5)) / this.#definition.shields[0].count;
       const startX = bunkerCenterX - tileW * 4;
       tile.setPosition(startX + col * tileW + tileW / 2, this.#layout.shieldZone.y + row * tileH + tileH / 2);
       tile.setDisplaySize(tileW, tileH);
@@ -876,46 +903,129 @@ export class Level1Scene extends Phaser.Scene {
       return;
     }
     this.#terminalState = state;
+    this.#terminalActions = [];
+    this.#terminalActionHandled = false;
     this.#player.stop();
     this.#playerLasers.clear(true, true);
     this.#enemyLasers.clear(true, true);
-    const title = state === 'complete' ? 'MISSION CLEARED' : 'MISSION FAILED';
-    const panel = this.add.rectangle(this.scale.width / 2, this.scale.height / 2, 620, 330, 0x05101f, 0.9)
-      .setStrokeStyle(2, 0x7ee8ff)
+    const isComplete = state === 'complete';
+    const isFinalLevel = this.#campaignSequence === CAMPAIGN_DEFINITIONS.length;
+    const centreX = this.scale.width / 2;
+    const centreY = this.scale.height / 2;
+    const panelAsset = isComplete ? RUNTIME_ASSETS.ui.victoryPanel : RUNTIME_ASSETS.ui.gameOverPanel;
+    const panelAspect = isComplete ? 1448 / 1086 : 1672 / 941;
+    const panelWidth = Math.min(this.scale.width * 0.8, 920);
+    const panelHeight = panelWidth / panelAspect;
+    const panel = this.add.image(centreX, centreY - 16, panelAsset.key)
+      .setDisplaySize(panelWidth, panelHeight)
       .setDepth(20);
-    const text = this.add.text(this.scale.width / 2, this.scale.height / 2 - 92, `${title}\nSCORE ${this.#score.value}\nLIVES ${this.#lives.value}/${this.#lives.maxLives}`, {
-      color: state === 'complete' ? '#f7d56a' : '#ff8b6e',
-      fontFamily: 'GalacticGunnersGoldDisplay, Arial, sans-serif',
-      fontSize: '38px',
+    const bonus = isComplete ? this.#lives.value * 100 : 0;
+    const heading = isComplete
+      ? (isFinalLevel ? 'CAMPAIGN VICTORY' : 'MISSION CLEARED')
+      : 'GAME OVER';
+    const values = isComplete
+      ? `${heading}\nSCORE ${this.#score.value}\nWAVE ${this.#campaignSequence}\nBONUS ${bonus}`
+      : `${heading}\nSCORE ${this.#score.value}\nWAVE ${this.#campaignSequence}\nLIVES ${this.#lives.value}`;
+    const text = this.add.text(centreX, centreY - panelHeight * 0.12, values, {
+      color: isComplete ? '#f7d56a' : '#ff8b6e',
+      fontFamily: isComplete ? 'GalacticGunnersGoldDisplay, Arial, sans-serif' : 'GalacticGunnersSilverDisplay, Arial, sans-serif',
+      fontSize: `${Math.max(20, Math.min(34, panelWidth * 0.042))}px`,
       align: 'center',
     }).setOrigin(0.5).setDepth(21);
-    const replay = this.createTerminalButton(this.scale.width / 2 - 132, this.scale.height / 2 + 104, state === 'complete' ? 'PLAY AGAIN' : 'TRY AGAIN', () => {
-      this.scene.restart();
-    });
-    const menu = this.createTerminalButton(this.scale.width / 2 + 150, this.scale.height / 2 + 104, 'MAIN MENU', () => {
-      this.scene.start('MainMenuScene');
-    });
+    const actionY = centreY + panelHeight * 0.24;
+    if (isComplete && !isFinalLevel) {
+      this.createContinueControl(centreX, actionY - 8);
+      this.createProductionTerminalButton(centreX - panelWidth * 0.18, actionY + 74, 'replay');
+      this.createProductionTerminalButton(centreX + panelWidth * 0.18, actionY + 74, 'menu');
+    } else if (isComplete) {
+      this.createProductionTerminalButton(centreX - panelWidth * 0.18, actionY + 34, 'replay');
+      this.createProductionTerminalButton(centreX + panelWidth * 0.18, actionY + 34, 'menu');
+    } else {
+      this.createProductionTerminalButton(centreX - panelWidth * 0.18, actionY + 34, 'try-again');
+      this.createProductionTerminalButton(centreX + panelWidth * 0.18, actionY + 34, 'menu');
+    }
     panel.setData('qa', 'terminal-panel');
     text.setData('qa', 'terminal-text');
-    replay.setData('qa', 'terminal-replay');
-    menu.setData('qa', 'terminal-menu');
     void this.#session.complete({
       score: this.#score.value,
       livesUsed: this.#lives.maxLives - this.#lives.value,
       eventSummary: this.#score.eventSummary(),
     }).catch(() => undefined).finally(() => this.publishQaState());
+    this.publishQaState();
   }
 
-  private createTerminalButton(x: number, y: number, label: string, callback: () => void): Phaser.GameObjects.Text {
-    const button = this.add.text(x, y, label, {
-      color: '#d7e9ff',
-      backgroundColor: '#123763',
-      fontFamily: 'GalacticGunnersHUD, monospace',
-      fontSize: '24px',
-      padding: { x: 18, y: 12 },
-    }).setOrigin(0.5).setDepth(22).setInteractive({ useHandCursor: true });
-    button.on('pointerdown', callback);
-    return button;
+  private primaryTerminalAction(): TerminalAction {
+    if (this.#terminalState === 'failed') {
+      return 'try-again';
+    }
+    return this.#campaignSequence < CAMPAIGN_DEFINITIONS.length ? 'continue' : 'replay';
+  }
+
+  private createContinueControl(x: number, y: number): void {
+    const width = Phaser.Math.Clamp(this.scale.width * 0.19, 174, 250);
+    const height = Phaser.Math.Clamp(this.scale.height * 0.065, 48, 64);
+    const surface = this.add.rectangle(x, y, width, height, 0x123763, 0.96)
+      .setStrokeStyle(2, 0xf7d56a, 0.96)
+      .setDepth(22)
+      .setInteractive({ useHandCursor: true });
+    const label = this.add.text(x, y, 'CONTINUE', {
+      color: '#f7d56a',
+      fontFamily: 'GalacticGunnersGoldDisplay, Arial, sans-serif',
+      fontSize: `${Math.max(22, Math.round(height * 0.48))}px`,
+    }).setOrigin(0.5).setDepth(23);
+    surface.on('pointerover', () => surface.setFillStyle(0x24538b, 1));
+    surface.on('pointerout', () => surface.setFillStyle(0x123763, 0.96));
+    surface.on('pointerup', () => this.runTerminalAction('continue'));
+    surface.setData('qa', 'terminal-continue');
+    label.setData('qa', 'terminal-continue-label');
+    this.#terminalActions.push({ action: 'continue', x, y, width, height, source: 'production-derived' });
+  }
+
+  private createProductionTerminalButton(x: number, y: number, action: Exclude<TerminalAction, 'continue'>): void {
+    const textures = action === 'menu'
+      ? { off: RUNTIME_ASSETS.ui.mainMenuOff.key, on: RUNTIME_ASSETS.ui.mainMenuOnclick.key }
+      : action === 'replay'
+        ? { off: RUNTIME_ASSETS.ui.replayOff.key, on: RUNTIME_ASSETS.ui.replayOnclick.key }
+        : { off: RUNTIME_ASSETS.ui.tryAgainOff.key, on: RUNTIME_ASSETS.ui.tryAgainOnclick.key };
+    const sourceWidth = action === 'replay' ? 420 : action === 'menu' ? 340 : 350;
+    const width = Phaser.Math.Clamp(this.scale.width * 0.19, 144, 220);
+    const height = width * (140 / sourceWidth);
+    const button = this.add.image(x, y, textures.off)
+      .setDisplaySize(width, height)
+      .setDepth(22)
+      .setInteractive({ useHandCursor: true });
+    button.on('pointerover', () => {
+      button.setTexture(textures.on);
+      this.#audio.play('uiSelect');
+    });
+    button.on('pointerout', () => button.setTexture(textures.off));
+    button.on('pointerdown', () => button.setTexture(textures.on));
+    button.on('pointerup', () => {
+      button.setTexture(textures.off);
+      this.runTerminalAction(action);
+    });
+    button.setData('qa', `terminal-${action}`);
+    this.#terminalActions.push({ action, x, y, width, height, source: 'production-asset' });
+  }
+
+  private runTerminalAction(action: TerminalAction): void {
+    if (!this.#terminalState || this.#terminalActionHandled) {
+      return;
+    }
+    this.#terminalActionHandled = true;
+    this.#audio.play('uiConfirm');
+    if (action === 'continue') {
+      const nextSequence = this.#campaignSequence + 1;
+      if (nextSequence <= CAMPAIGN_DEFINITIONS.length) {
+        this.scene.restart({ sequence: nextSequence });
+      }
+      return;
+    }
+    if (action === 'menu') {
+      this.scene.start('MainMenuScene');
+      return;
+    }
+    this.scene.restart({ sequence: this.#campaignSequence });
   }
 
   private installHostileQa(): void {
@@ -1114,8 +1224,9 @@ export class Level1Scene extends Phaser.Scene {
         this.showTerminal('complete');
       },
       forceFail: () => this.showTerminal('failed'),
-      replay: () => this.scene.restart(),
-      menu: () => this.scene.start('MainMenuScene'),
+      continueCampaign: () => this.runTerminalAction('continue'),
+      replay: () => this.runTerminalAction('replay'),
+      menu: () => this.runTerminalAction('menu'),
       state: () => this.buildQaState(),
     };
   }
@@ -1144,12 +1255,20 @@ export class Level1Scene extends Phaser.Scene {
 
     return {
       scene: 'Level1Scene',
+      campaign: {
+        sequence: this.#campaignSequence,
+        levelId: this.#definition.id,
+        levelName: this.#definition.name,
+        checksum: this.levelRuntime?.checksum ?? null,
+        source: this.levelRuntime?.source ?? 'package',
+        finalSequence: CAMPAIGN_DEFINITIONS.length,
+      },
       score: this.#score.value,
       lives: this.#lives.value,
       maxLives: this.#lives.maxLives,
       activeScouts: this.getActiveScouts().length,
       activeShieldTiles: this.getActiveShieldTiles().length,
-      bunkerCount: LEVEL_ONE_SLICE.bunkerCount,
+      bunkerCount: this.#definition.shields[0].count,
       playerLaserCount: this.#playerLasers?.getChildren().filter((child) => child.active).length ?? 0,
       enemyLaserCount: this.#enemyLasers?.getChildren().filter((child) => child.active).length ?? 0,
       nukeProjectileCount: this.#nukes?.getChildren().filter((child) => child.active).length ?? 0,
@@ -1165,6 +1284,7 @@ export class Level1Scene extends Phaser.Scene {
       playerAlpha: this.#player?.sprite.alpha,
       playerVelocity: playerVelocity ? { x: Math.round(playerVelocity.x), y: Math.round(playerVelocity.y), speed: Math.round(Math.hypot(playerVelocity.x, playerVelocity.y)) } : null,
       terminalState: this.#terminalState,
+      terminalActions: this.#terminalActions.map((action) => ({ ...action })),
       gameRunId: this.#session.runId,
       offlineRunMode: this.#session.offline,
       gameRunCompleteAttempted: this.#session.completeAttempted,

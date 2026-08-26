@@ -2,6 +2,11 @@ import * as Phaser from 'phaser';
 
 import { FRAME_RECTS, REQUIRED_RUNTIME_ASSETS, RUNTIME_ASSETS } from '../config/assets';
 import type { GameRuntimeConfig } from '../config/gameConfig';
+import { levelChecksum } from '../levels/LevelChecksum';
+import { LevelLoader } from '../levels/LevelLoader';
+import { CAMPAIGN_DEFINITIONS } from '../levels/campaignDefinitions';
+import { LEVEL_ONE_DEFINITION } from '../levels/levelOneDefinition';
+import { validateLevelDefinition } from '../levels/LevelValidator';
 
 export class BootScene extends Phaser.Scene {
   constructor(private readonly runtimeConfig: GameRuntimeConfig = {}) {
@@ -39,7 +44,7 @@ export class BootScene extends Phaser.Scene {
     );
   }
 
-  create(): void {
+  async create(): Promise<void> {
     const missing = REQUIRED_RUNTIME_ASSETS.filter((asset) => {
       if (asset.key.startsWith('audio.')) {
         return !this.cache.audio.exists(asset.key);
@@ -57,6 +62,17 @@ export class BootScene extends Phaser.Scene {
 
     this.registerTextureFrames();
     this.createShipAnimations();
+    validateLevelDefinition(LEVEL_ONE_DEFINITION);
+    // Golden Level 1 must start without an API request. Remote resolution is an
+    // explicit campaign-loader capability, never an implicit gameplay dependency.
+    const loader = new LevelLoader();
+    const campaignRuntime = await Promise.all(CAMPAIGN_DEFINITIONS.map(async (definition) => {
+      validateLevelDefinition(definition);
+      const fallback = { definition, checksum: await levelChecksum(definition), source: 'package' as const };
+      return loader.load(definition.slug, definition).catch(() => fallback);
+    }));
+    this.registry.set('campaignRuntime', campaignRuntime);
+    this.registry.set('levelRuntime', campaignRuntime[0]);
 
     this.anims.create({
       key: 'fx.explosionSmall.play',

@@ -1,6 +1,7 @@
 import uuid
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.core.validators import MaxLengthValidator, MinValueValidator, RegexValidator
 from django.db import models
 from django.db.models import Q
@@ -38,6 +39,10 @@ class GameRun(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     player = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name='game_runs')
     game_version = models.ForeignKey(GameVersion, on_delete=models.PROTECT, related_name='game_runs')
+    level = models.ForeignKey('levels.Level', null=True, blank=True, on_delete=models.PROTECT, related_name='game_runs')
+    level_version = models.PositiveIntegerField(null=True, blank=True)
+    level_checksum = models.CharField(max_length=64, blank=True)
+    seed = models.PositiveIntegerField(null=True, blank=True)
     client_type = models.CharField(
         max_length=32,
         choices=ClientType.choices,
@@ -82,6 +87,11 @@ class GameRun(models.Model):
 
     def __str__(self):
         return f'{self.id} ({self.validity})'
+
+    def clean(self):
+        if self.level_id:
+            if self.level_version is None or not self.level_checksum:
+                raise ValidationError('Level-bound runs require version and checksum.')
 
 class ScoreSubmission(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

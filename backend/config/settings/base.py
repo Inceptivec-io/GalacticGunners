@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'accounts',
     'players',
     'game_runs',
+    'levels',
     'leaderboard',
 ]
 

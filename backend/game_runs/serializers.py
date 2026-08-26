@@ -4,6 +4,8 @@ from rest_framework import serializers
 
 from leaderboard.models import LeaderboardEntry
 
+from levels.models import Level, LevelVersion
+
 from .models import GameRun, GameVersion, ScoreSubmission
 
 
@@ -15,6 +17,10 @@ class GameRunSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'game_version',
+            'level',
+            'level_version',
+            'level_checksum',
+            'seed',
             'client_type',
             'started_at',
             'completed_at',
@@ -30,15 +36,30 @@ class GameRunSerializer(serializers.ModelSerializer):
 class StartGameRunSerializer(serializers.Serializer):
     game_version = serializers.CharField(min_length=1, max_length=32)
     client_type = serializers.ChoiceField(choices=GameRun.ClientType.choices)
+    level_slug = serializers.SlugField(required=False)
+    seed = serializers.IntegerField(required=False, min_value=0)
 
     def create(self, validated_data):
         version, _ = GameVersion.objects.get_or_create(version=validated_data['game_version'])
         request = self.context.get('request')
         user = request.user if request and request.user.is_authenticated else None
+        level = None
+        level_version = None
+        checksum = ''
+        if validated_data.get('level_slug'):
+            level = Level.objects.select_related('active_version').filter(slug=validated_data['level_slug'], archived=False, active_version__status=LevelVersion.Status.PUBLISHED).first()
+            if not level:
+                raise serializers.ValidationError({'level_slug': 'Published level not found.'})
+            level_version = level.active_version
+            checksum = level_version.checksum
         return GameRun.objects.create(
             player=user,
             game_version=version,
             client_type=validated_data['client_type'],
+            level=level,
+            level_version=level_version.version if level_version else None,
+            level_checksum=checksum,
+            seed=validated_data.get('seed'),
         )
 
 

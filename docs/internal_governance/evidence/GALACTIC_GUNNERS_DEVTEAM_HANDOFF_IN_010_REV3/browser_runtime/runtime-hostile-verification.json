@@ -1,7 +1,7 @@
 {
   "url": "http://localhost:3002",
   "handoff_id": "GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_010_REV3",
-  "generated_at": "2026-08-25T19:39:34.327Z",
+  "generated_at": "2026-08-26T05:57:46.575Z",
   "banned_visible_terms": [
     "LEVEL 1 VERTICAL SLICE",
     "VERTICAL SLICE",
@@ -26,6 +26,7 @@
       "rev3_scout_scale": true,
       "four_direction_player_movement": true,
       "diagonal_speed_normalization": true,
+      "player_enemy_laser_speed_match": true,
       "all_edge_clamp_top_left": true,
       "all_edge_clamp_bottom_right": true,
       "direct_player_laser_hit_score_once": true,
@@ -45,6 +46,11 @@
       "respawn_body_relocated": true,
       "enemy_laser_near_miss_zero_damage": true,
       "player_laser_visual_body_mapping": true,
+      "player_laser_spawn_body_left_centre_right": true,
+      "player_laser_pool_reuse_24_cycles": true,
+      "nuke_pool_reuse_multiple_lanes": true,
+      "nuke_ammo_guard_blocks_zero": true,
+      "nuke_rearm_is_cooldown_not_ammunition": true,
       "enemy_laser_visual_body_mapping": true,
       "enemy_shield_hit_score_minus_one": true,
       "player_laser_shield_score_zero": true,
@@ -55,6 +61,7 @@
       "nuke_initial_count": true,
       "nuke_fire_decrements_once": true,
       "nuke_projectile_visible": true,
+      "nuke_projectile_uses_authoritative_sprite_sheet": true,
       "nuke_burst_multikill_score_exact": true,
       "nuke_rearm_progresses": true,
       "nuke_hud_live": true,
@@ -64,6 +71,7 @@
       "sound_mute_top_right": true,
       "nuke_count_never_negative": true,
       "gamepad_y_nuke_path": true,
+      "pause_surface_visible": true,
       "pause_freezes_state": true,
       "pause_resume_exact_state": true,
       "repeat_pause_resume_clean": true,
@@ -76,6 +84,272 @@
       "replay_new_run": true,
       "backend_offline_playable": true,
       "no_fabricated_run_id": true
+    },
+    "projectile_pool_evidence": {
+      "player_laser_cycles": [
+        {
+          "cycle": 1,
+          "expectedX": 51.83999999999999,
+          "spriteX": 51.83999999999999,
+          "bodyCenterX": 51.83999999999999,
+          "bodyCenterY": 656.7776,
+          "previousBodyCenterX": 51.83999999999999,
+          "previousBodyCenterY": 656.7776
+        },
+        {
+          "cycle": 2,
+          "expectedX": 682.5,
+          "spriteX": 682.5,
+          "bodyCenterX": 682.5,
+          "bodyCenterY": 656.7776,
+          "previousBodyCenterX": 682.5,
+          "previousBodyCenterY": 656.7776
+        },
+        {
+          "cycle": 3,
+          "expectedX": 1313.1599999999999,
+          "spriteX": 1313.1599999999999,
+          "bodyCenterX": 1313.1599999999999,
+          "bodyCenterY": 656.7776,
+          "previousBodyCenterX": 1313.1599999999999,
+          "previousBodyCenterY": 656.7776
+        },
+        {
+          "cycle": 4,
+          "expectedX": 51.83999999999999,
+          "spriteX": 51.83999999999999,
+          "bodyCenterX": 51.83999999999999,
+          "bodyCenterY": 656.7776,
+          "previousBodyCenterX": 51.83999999999999,
+          "previousBodyCenterY": 656.7776
+        },
+        {
+          "cycle": 5,
+          "expectedX": 682.5,
+          "spriteX": 682.5,
+          "bodyCenterX": 682.5,
+          "bodyCenterY": 656.7776,
+          "previousBodyCenterX": 682.5,
+          "previousBodyCenterY": 656.7776
+        },
+        {
+          "cycle": 6,
+          "expectedX": 1313.1599999999999,
+          "spriteX": 1313.1599999999999,
+          "bodyCenterX": 1313.1599999999999,
+          "bodyCenterY": 656.7776,
+          "previousBodyCenterX": 1313.1599999999999,
+          "previousBodyCenterY": 656.7776
+        },
+        {
+          "cycle": 7,
+          "expectedX": 51.83999999999999,
+          "spriteX": 51.83999999999999,
+          "bodyCenterX": 51.83999999999999,
+          "bodyCenterY": 656.7776,
+          "previousBodyCenterX": 51.83999999999999,
+          "previousBodyCenterY": 656.7776
+        },
+        {
+          "cycle": 8,
+          "expectedX": 682.5,
+          "spriteX": 682.5,
+          "bodyCenterX": 682.5,
+          "bodyCenterY": 656.7776,
+          "previousBodyCenterX": 682.5,
+          "previousBodyCenterY": 656.7776
+        },
+        {
+          "cycle": 9,
+          "expectedX": 1313.1599999999999,
+          "spriteX": 1313.1599999999999,
+          "bodyCenterX": 1313.1599999999999,
+          "bodyCenterY": 656.7776,
+          "previousBodyCenterX": 1313.1599999999999,
+          "previousBodyCenterY": 656.7776
+        },
+        {
+          "cycle": 10,
+          "expectedX": 51.83999999999999,
+          "spriteX": 51.83999999999999,
+          "bodyCenterX": 51.83999999999999,
+          "bodyCenterY": 656.7776,
+          "previousBodyCenterX": 51.83999999999999,
+          "previousBodyCenterY": 656.7776
+        },
+        {
+          "cycle": 11,
+          "expectedX": 682.5,
+          "spriteX": 682.5,
+          "bodyCenterX": 682.5,
+          "bodyCenterY": 656.7776,
+          "previousBodyCenterX": 682.5,
+          "previousBodyCenterY": 656.7776
+        },
+        {
+          "cycle": 12,
+          "expectedX": 1313.1599999999999,
+          "spriteX": 1313.1599999999999,
+          "bodyCenterX": 1313.1599999999999,
+          "bodyCenterY": 656.7776,
+          "previousBodyCenterX": 1313.1599999999999,
+          "previousBodyCenterY": 656.7776
+        },
+        {
+          "cycle": 13,
+          "expectedX": 51.83999999999999,
+          "spriteX": 51.83999999999999,
+          "bodyCenterX": 51.83999999999999,
+          "bodyCenterY": 656.7776,
+          "previousBodyCenterX": 51.83999999999999,
+          "previousBodyCenterY": 656.7776
+        },
+        {
+          "cycle": 14,
+          "expectedX": 682.5,
+          "spriteX": 682.5,
+          "bodyCenterX": 682.5,
+          "bodyCenterY": 656.7776,
+          "previousBodyCenterX": 682.5,
+          "previousBodyCenterY": 656.7776
+        },
+        {
+          "cycle": 15,
+          "expectedX": 1313.1599999999999,
+          "spriteX": 1313.1599999999999,
+          "bodyCenterX": 1313.1599999999999,
+          "bodyCenterY": 656.7776,
+          "previousBodyCenterX": 1313.1599999999999,
+          "previousBodyCenterY": 656.7776
+        },
+        {
+          "cycle": 16,
+          "expectedX": 51.83999999999999,
+          "spriteX": 51.83999999999999,
+          "bodyCenterX": 51.83999999999999,
+          "bodyCenterY": 656.7776,
+          "previousBodyCenterX": 51.83999999999999,
+          "previousBodyCenterY": 656.7776
+        },
+        {
+          "cycle": 17,
+          "expectedX": 682.5,
+          "spriteX": 682.5,
+          "bodyCenterX": 682.5,
+          "bodyCenterY": 656.7776,
+          "previousBodyCenterX": 682.5,
+          "previousBodyCenterY": 656.7776
+        },
+        {
+          "cycle": 18,
+          "expectedX": 1313.1599999999999,
+          "spriteX": 1313.1599999999999,
+          "bodyCenterX": 1313.1599999999999,
+          "bodyCenterY": 656.7776,
+          "previousBodyCenterX": 1313.1599999999999,
+          "previousBodyCenterY": 656.7776
+        },
+        {
+          "cycle": 19,
+          "expectedX": 51.83999999999999,
+          "spriteX": 51.83999999999999,
+          "bodyCenterX": 51.83999999999999,
+          "bodyCenterY": 656.7776,
+          "previousBodyCenterX": 51.83999999999999,
+          "previousBodyCenterY": 656.7776
+        },
+        {
+          "cycle": 20,
+          "expectedX": 682.5,
+          "spriteX": 682.5,
+          "bodyCenterX": 682.5,
+          "bodyCenterY": 656.7776,
+          "previousBodyCenterX": 682.5,
+          "previousBodyCenterY": 656.7776
+        },
+        {
+          "cycle": 21,
+          "expectedX": 1313.1599999999999,
+          "spriteX": 1313.1599999999999,
+          "bodyCenterX": 1313.1599999999999,
+          "bodyCenterY": 656.7776,
+          "previousBodyCenterX": 1313.1599999999999,
+          "previousBodyCenterY": 656.7776
+        },
+        {
+          "cycle": 22,
+          "expectedX": 51.83999999999999,
+          "spriteX": 51.83999999999999,
+          "bodyCenterX": 51.83999999999999,
+          "bodyCenterY": 656.7776,
+          "previousBodyCenterX": 51.83999999999999,
+          "previousBodyCenterY": 656.7776
+        },
+        {
+          "cycle": 23,
+          "expectedX": 682.5,
+          "spriteX": 682.5,
+          "bodyCenterX": 682.5,
+          "bodyCenterY": 656.7776,
+          "previousBodyCenterX": 682.5,
+          "previousBodyCenterY": 656.7776
+        },
+        {
+          "cycle": 24,
+          "expectedX": 1313.1599999999999,
+          "spriteX": 1313.1599999999999,
+          "bodyCenterX": 1313.1599999999999,
+          "bodyCenterY": 656.7776,
+          "previousBodyCenterX": 1313.1599999999999,
+          "previousBodyCenterY": 656.7776
+        }
+      ],
+      "nuke_cycles": [
+        {
+          "cycle": 1,
+          "expectedX": 77.75999999999999,
+          "spriteX": 77.75999999999999,
+          "bodyCenterX": 77.75999999999999,
+          "bodyCenterY": 649.8656000000001,
+          "previousBodyCenterX": 77.75999999999999,
+          "previousBodyCenterY": 649.8656000000001
+        },
+        {
+          "cycle": 2,
+          "expectedX": 682.5,
+          "spriteX": 682.5,
+          "bodyCenterX": 682.5,
+          "bodyCenterY": 649.8656000000001,
+          "previousBodyCenterX": 682.5,
+          "previousBodyCenterY": 649.8656000000001
+        },
+        {
+          "cycle": 3,
+          "expectedX": 1287.24,
+          "spriteX": 1287.24,
+          "bodyCenterX": 1287.24,
+          "bodyCenterY": 649.8656000000001,
+          "previousBodyCenterX": 1287.24,
+          "previousBodyCenterY": 649.8656000000001
+        }
+      ],
+      "nuke_ammo_guard": {
+        "firstFired": true,
+        "secondFired": true,
+        "exhaustedNukes": 0,
+        "thirdBlocked": true,
+        "activeProjectiles": 0
+      },
+      "nuke_rearm_lifecycle": {
+        "firstCompletion": {
+          "currentNukes": 0,
+          "rearmProgress": 150
+        },
+        "cappedCompletion": {
+          "currentNukes": 1,
+          "rearmProgress": 150
+        }
+      }
     },
     "console_errors": [
       {

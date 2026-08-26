@@ -23,7 +23,7 @@ dev = [
 ]
 
 [tool.setuptools.packages.find]
-include = ["config*", "accounts*", "players*", "game_runs*", "leaderboard*"]
+include = ["config*", "accounts*", "players*", "game_runs*", "leaderboard*", "levels*"]
 
 [tool.ruff]
 line-length = 100
