@@ -5,7 +5,7 @@ Programme:
 v1.0 BUILD - SPRINT 001
 
 Stage:
-H012 CAMPAIGN PLATFORM EXECUTION / IN PROGRESS
+H012 CAMPAIGN PLATFORM COMPLETE / PENDING CTO-FOUNDER REVIEW
 
 Branch:
 feature/v1-config-driven-campaign-platform
@@ -59,7 +59,7 @@ Runtime Gameplay:
 PASS - BootScene, MainMenuScene and bounded Level1 playable runtime corrected for REV3 scale/composition, semantic PlayfieldLayout authority, 58-enemy Level1 formation, four-direction player movement, respawn/regeneration, 8-bunker / 256-tile shield zone, rotated laser geometry/body alignment, widened meaningful body envelopes, swept laser collision checks, normal real-origin laser hits/near-misses, enemy laser left/center/right player-body hits, nuke projectile/burst, bottom-left icon-only lives, bottom-right icon-only nukes with fixed `ENERGISE` bar, top-left score, top-right sound, pause/resume and hostile runtime/composition verification.
 
 Full Level 1:
-NOT CLAIMED
+GOLDEN BASELINE PRESERVED / HOSTILE REGRESSION PASS
 
 Level 2:
 NOT STARTED
