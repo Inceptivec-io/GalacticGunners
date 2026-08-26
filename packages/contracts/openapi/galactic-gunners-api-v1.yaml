@@ -344,9 +344,9 @@ components:
     LeaderboardResponse:
       type: object
       additionalProperties: false
-      required: [count, results]
+      required: [total, results]
       properties:
-        count:
+        total:
           type: integer
           minimum: 0
         results:
