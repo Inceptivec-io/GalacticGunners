@@ -35,6 +35,10 @@ interface HostileQaApi {
   fireEnemyLaserAtShield: (index?: number) => Record<string, unknown>;
   firePlayerLaserAtShield: (index?: number) => Record<string, unknown>;
   fireNukeAtScout: (index?: number) => Record<string, unknown>;
+  verifyPlayerLaserPool: () => Record<string, unknown>[];
+  verifyNukePool: () => Record<string, unknown>[];
+  verifyNukeAmmoGuard: () => Record<string, unknown>;
+  verifyNukeRearmLifecycle: () => Record<string, unknown>;
   setPlayerUnderScout: (index?: number, offsetX?: number) => Record<string, unknown>;
   gamepadY: () => Record<string, unknown>;
   forceComplete: () => void;
@@ -433,6 +437,7 @@ export class Level1Scene extends Phaser.Scene {
     if (!laser) {
       return null;
     }
+    laser.setPosition(x, y);
     if (Number.isFinite(nowMs)) {
       this.#player.markFired(nowMs);
     }
@@ -459,6 +464,7 @@ export class Level1Scene extends Phaser.Scene {
     if (!laser) {
       return null;
     }
+    laser.setPosition(scout.x, scout.y + this.#layout.scoutSize.height * 0.55);
     this.configureLaser(laser, 'enemy-laser', 90, this.enemyLaserSpeed());
     this.#audio.play('enemyLaser');
     return laser;
@@ -476,12 +482,15 @@ export class Level1Scene extends Phaser.Scene {
     laser.setDisplaySize(this.#layout.projectileSize.width, this.#layout.projectileSize.height);
     laser.setDepth(3);
     laser.setData('spent', false);
-    laser.setVelocity(0, velocityY);
     const body = laser.body as Phaser.Physics.Arcade.Body;
     body.enable = true;
     body.setSize(this.#layout.projectileBodySize.width / laser.scaleX, this.#layout.projectileBodySize.height / laser.scaleY, true);
+    body.reset(laser.x, laser.y);
+    body.position.set(laser.x - body.width / 2, laser.y - body.height / 2);
+    body.prev.set(body.x, body.y);
     laser.setData('previousBodyCenterX', body.x + body.width / 2);
     laser.setData('previousBodyCenterY', body.y + body.height / 2);
+    laser.setVelocity(0, velocityY);
   }
 
   private reflowActiveProjectiles(): void {
@@ -649,28 +658,29 @@ export class Level1Scene extends Phaser.Scene {
   }
 
   private fireNuke(x = this.#player.sprite.x, y = this.#player.sprite.y - this.#layout.playerSize.height * 0.62): Phaser.Physics.Arcade.Sprite | null {
-    if (this.#currentNukes <= 0 || this.#terminalState) {
+    if (this.#currentNukes <= 0 || this.#rearmProgress < LEVEL_ONE_SLICE.nukeRearmMax || this.#terminalState) {
       return null;
     }
     const nuke = this.#nukes.get(x, y, RUNTIME_ASSETS.projectile.nuke.key) as Phaser.Physics.Arcade.Sprite | null;
     if (!nuke) {
       return null;
     }
+    nuke.setPosition(x, y);
     this.#currentNukes = Math.max(0, this.#currentNukes - 1);
     this.#rearmProgress = 0;
     this.#nukesFired += 1;
     this.updateNukeHud();
     nuke.setActive(true).setVisible(true);
     nuke.setName('nuke-projectile');
-    nuke.setAngle(-90);
+    nuke.setAngle(0);
     nuke.setDisplaySize(this.#layout.nukeProjectileSize.width, this.#layout.nukeProjectileSize.height);
     nuke.setDepth(4);
     nuke.setData('spent', false);
-    nuke.setVelocity(0, -this.playerLaserSpeed() * 0.72);
     if (this.anims.exists('projectile.nuke.fly')) {
       nuke.play('projectile.nuke.fly');
     }
     this.configureNukeBody(nuke);
+    nuke.setVelocity(0, -LEVEL_ONE_SLICE.nukeProjectileSpeed);
     this.#audio.play('nukeFire');
     return nuke;
   }
@@ -680,6 +690,11 @@ export class Level1Scene extends Phaser.Scene {
     const body = nuke.body as Phaser.Physics.Arcade.Body;
     body.enable = true;
     body.setSize(this.#layout.nukeProjectileBodySize.width / nuke.scaleX, this.#layout.nukeProjectileBodySize.height / nuke.scaleY, true);
+    body.reset(nuke.x, nuke.y);
+    body.position.set(nuke.x - body.width / 2, nuke.y - body.height / 2);
+    body.prev.set(body.x, body.y);
+    nuke.setData('previousBodyCenterX', body.x + body.width / 2);
+    nuke.setData('previousBodyCenterY', body.y + body.height / 2);
   }
 
   private handleNukeScoutOverlap(nuke: Phaser.Physics.Arcade.Sprite, scout: Phaser.Physics.Arcade.Sprite): void {
@@ -718,16 +733,11 @@ export class Level1Scene extends Phaser.Scene {
   }
 
   private updateNukeRearm(deltaMs: number): void {
-    if (this.#currentNukes >= LEVEL_ONE_SLICE.maxNukes) {
-      this.#rearmProgress = LEVEL_ONE_SLICE.nukeRearmMax;
+    if (this.#rearmProgress >= LEVEL_ONE_SLICE.nukeRearmMax) {
       this.updateNukeHud();
       return;
     }
     this.#rearmProgress = Math.min(LEVEL_ONE_SLICE.nukeRearmMax, this.#rearmProgress + deltaMs / 50);
-    if (this.#rearmProgress >= LEVEL_ONE_SLICE.nukeRearmMax) {
-      this.#currentNukes = Math.min(LEVEL_ONE_SLICE.maxNukes, this.#currentNukes + 1);
-      this.#rearmProgress = this.#currentNukes >= LEVEL_ONE_SLICE.maxNukes ? LEVEL_ONE_SLICE.nukeRearmMax : 0;
-    }
     this.updateNukeHud();
   }
 
@@ -923,13 +933,24 @@ export class Level1Scene extends Phaser.Scene {
       },
       firePlayerLaserForVisual: (offsetX = 0) => {
         const laser = this.firePlayerLaser(Number.POSITIVE_INFINITY, this.#player.sprite.x + offsetX, this.#player.sprite.y - this.#layout.playerSize.height * 0.52);
-        return { fired: Boolean(laser), playerX: this.#player.sprite.x, laserX: laser?.x, offsetX };
+        const body = laser?.body as Phaser.Physics.Arcade.Body | undefined;
+        return {
+          fired: Boolean(laser),
+          playerX: this.#player.sprite.x,
+          laserX: laser?.x,
+          bodyCenterX: body ? body.x + body.width / 2 : null,
+          bodyCenterY: body ? body.y + body.height / 2 : null,
+          previousBodyCenterX: laser?.getData('previousBodyCenterX') ?? null,
+          previousBodyCenterY: laser?.getData('previousBodyCenterY') ?? null,
+          offsetX,
+        };
       },
       fireEnemyLaserAtPlayer: (offsetX = 0) => {
         const laser = this.#enemyLasers.get(this.#player.sprite.x + offsetX, this.#player.sprite.y - this.#layout.playerSize.height * 0.42, RUNTIME_ASSETS.projectile.enemyLaser.key) as Phaser.Physics.Arcade.Image | null;
         if (!laser) {
           return { fired: false, reason: 'no-laser' };
         }
+        laser.setPosition(this.#player.sprite.x + offsetX, this.#player.sprite.y - this.#layout.playerSize.height * 0.42);
         this.configureLaser(laser, 'enemy-laser', 90, this.enemyLaserSpeed());
         return { fired: true, playerX: this.#player.sprite.x, laserX: laser.x, offsetX };
       },
@@ -942,6 +963,7 @@ export class Level1Scene extends Phaser.Scene {
         if (!laser) {
           return { fired: false, reason: 'no-laser' };
         }
+        laser.setPosition(tile.x, tile.y - this.#layout.projectileSize.height * 0.62);
         this.configureLaser(laser, 'enemy-laser', 90, this.enemyLaserSpeed());
         return { fired: true, tileX: tile.x, laserX: laser.x };
       },
@@ -959,7 +981,119 @@ export class Level1Scene extends Phaser.Scene {
           return { fired: false, reason: 'no-scout' };
         }
         const nuke = this.fireNuke(scout.x, scout.y + this.#layout.scoutSize.height * 1.8);
-        return { fired: Boolean(nuke), scoutX: scout.x, nukeX: nuke?.x, currentNukes: this.#currentNukes };
+        const body = nuke?.body as Phaser.Physics.Arcade.Body | undefined;
+        return {
+          fired: Boolean(nuke),
+          scoutX: scout.x,
+          nukeX: nuke?.x,
+          bodyCenterX: body ? body.x + body.width / 2 : null,
+          bodyCenterY: body ? body.y + body.height / 2 : null,
+          previousBodyCenterX: nuke?.getData('previousBodyCenterX') ?? null,
+          previousBodyCenterY: nuke?.getData('previousBodyCenterY') ?? null,
+          currentNukes: this.#currentNukes,
+        };
+      },
+      verifyPlayerLaserPool: () => {
+        const lanes = [
+          this.#layout.movementBounds.left + this.#layout.playerSize.width * 0.5,
+          this.scale.width / 2,
+          this.#layout.movementBounds.right - this.#layout.playerSize.width * 0.5,
+        ];
+        return Array.from({ length: 24 }, (_, index) => {
+          const x = lanes[index % lanes.length];
+          const laser = this.firePlayerLaser(Number.POSITIVE_INFINITY, x, this.#player.sprite.y - this.#layout.playerSize.height * 0.52);
+          const body = laser?.body as Phaser.Physics.Arcade.Body | undefined;
+          const result = {
+            cycle: index + 1,
+            expectedX: x,
+            spriteX: laser?.x ?? null,
+            bodyCenterX: body ? body.x + body.width / 2 : null,
+            bodyCenterY: body ? body.y + body.height / 2 : null,
+            previousBodyCenterX: laser?.getData('previousBodyCenterX') ?? null,
+            previousBodyCenterY: laser?.getData('previousBodyCenterY') ?? null,
+          };
+          if (laser) {
+            this.destroyProjectile(laser);
+          }
+          return result;
+        });
+      },
+      verifyNukePool: () => {
+        const initialNukes = this.#currentNukes;
+        const initialRearm = this.#rearmProgress;
+        const initialFired = this.#nukesFired;
+        const lanes = [
+          this.#layout.movementBounds.left + this.#layout.playerSize.width,
+          this.scale.width / 2,
+          this.#layout.movementBounds.right - this.#layout.playerSize.width,
+        ];
+        const results = lanes.map((x, index) => {
+          this.#currentNukes = LEVEL_ONE_SLICE.maxNukes;
+          this.#rearmProgress = LEVEL_ONE_SLICE.nukeRearmMax;
+          const nuke = this.fireNuke(x, this.#player.sprite.y - this.#layout.playerSize.height * 0.62);
+          const body = nuke?.body as Phaser.Physics.Arcade.Body | undefined;
+          const result = {
+            cycle: index + 1,
+            expectedX: x,
+            spriteX: nuke?.x ?? null,
+            bodyCenterX: body ? body.x + body.width / 2 : null,
+            bodyCenterY: body ? body.y + body.height / 2 : null,
+            previousBodyCenterX: nuke?.getData('previousBodyCenterX') ?? null,
+            previousBodyCenterY: nuke?.getData('previousBodyCenterY') ?? null,
+          };
+          if (nuke) {
+            this.destroyProjectile(nuke);
+          }
+          return result;
+        });
+        this.#currentNukes = initialNukes;
+        this.#rearmProgress = initialRearm;
+        this.#nukesFired = initialFired;
+        this.updateNukeHud();
+        return results;
+      },
+      verifyNukeAmmoGuard: () => {
+        const initialNukes = this.#currentNukes;
+        const initialRearm = this.#rearmProgress;
+        const initialFired = this.#nukesFired;
+        this.#currentNukes = LEVEL_ONE_SLICE.maxNukes;
+        this.#rearmProgress = LEVEL_ONE_SLICE.nukeRearmMax;
+        const first = this.fireNuke();
+        if (first) this.destroyProjectile(first);
+        this.#rearmProgress = LEVEL_ONE_SLICE.nukeRearmMax;
+        const second = this.fireNuke();
+        if (second) this.destroyProjectile(second);
+        const exhaustedNukes = this.#currentNukes;
+        const blocked = this.fireNuke();
+        if (blocked) this.destroyProjectile(blocked);
+        const result = {
+          firstFired: Boolean(first),
+          secondFired: Boolean(second),
+          exhaustedNukes,
+          thirdBlocked: blocked === null,
+          activeProjectiles: this.#nukes.getChildren().filter((child) => child.active).length,
+        };
+        this.#currentNukes = initialNukes;
+        this.#rearmProgress = initialRearm;
+        this.#nukesFired = initialFired;
+        this.updateNukeHud();
+        return result;
+      },
+      verifyNukeRearmLifecycle: () => {
+        const initialNukes = this.#currentNukes;
+        const initialRearm = this.#rearmProgress;
+        this.#currentNukes = 0;
+        this.#rearmProgress = LEVEL_ONE_SLICE.nukeRearmMax - 1;
+        this.updateNukeRearm(50);
+        const firstCompletion = { currentNukes: this.#currentNukes, rearmProgress: this.#rearmProgress };
+        this.#currentNukes = LEVEL_ONE_SLICE.maxNukes - 1;
+        this.#rearmProgress = LEVEL_ONE_SLICE.nukeRearmMax - 1;
+        this.updateNukeRearm(50);
+        const cappedCompletion = { currentNukes: this.#currentNukes, rearmProgress: this.#rearmProgress };
+        this.#currentNukes = initialNukes;
+        this.#rearmProgress = initialRearm;
+        this.updateNukeHud();
+        return { firstCompletion, cappedCompletion };
       },
       setPlayerUnderScout: (index = 0, offsetX = 0) => {
         const scout = this.getActiveScouts()[index];
@@ -1072,7 +1206,7 @@ export class Level1Scene extends Phaser.Scene {
         player: Math.round(this.playerLaserSpeed()),
         enemy: Math.round(this.enemyLaserSpeed()),
       },
-      shieldBottomGapPlayerHeights: (this.#layout.movementBounds.bottom - (this.#layout.shieldZone.y + this.#layout.shieldZone.height)) / this.#layout.playerSize.height,
+      shieldBottomGapPlayerHeights: (this.#layout.playerSpawn.y - (this.#layout.shieldZone.y + this.#layout.shieldZone.height)) / this.#layout.playerSize.height,
       visibleTexts,
       playerBody: playerBody ? { x: Math.round(playerBody.x), y: Math.round(playerBody.y), width: Math.round(playerBody.width), height: Math.round(playerBody.height) } : null,
       playerCount: this.children.list.filter((child) => child.name === 'player').length,
@@ -1095,17 +1229,17 @@ export class Level1Scene extends Phaser.Scene {
       playerLaserBodies: (this.#playerLasers?.getChildren().filter((child) => child.active) as Phaser.Physics.Arcade.Image[] ?? []).map((laser) => {
         const body = laser.body as Phaser.Physics.Arcade.Body;
         const bounds = laser.getBounds();
-        return { x: Math.round(laser.x), y: Math.round(laser.y), angle: laser.angle, display: { width: Math.round(laser.displayWidth), height: Math.round(laser.displayHeight) }, worldBounds: { width: Math.round(bounds.width), height: Math.round(bounds.height) }, body: { width: Math.round(body.width), height: Math.round(body.height) } };
+        return { x: Math.round(laser.x), y: Math.round(laser.y), angle: laser.angle, display: { width: Math.round(laser.displayWidth), height: Math.round(laser.displayHeight) }, worldBounds: { width: Math.round(bounds.width), height: Math.round(bounds.height) }, body: { x: Math.round(body.x), y: Math.round(body.y), width: Math.round(body.width), height: Math.round(body.height) }, previousBodyCenterX: laser.getData('previousBodyCenterX'), previousBodyCenterY: laser.getData('previousBodyCenterY') };
       }),
       enemyLaserBodies: (this.#enemyLasers?.getChildren().filter((child) => child.active) as Phaser.Physics.Arcade.Image[] ?? []).map((laser) => {
         const body = laser.body as Phaser.Physics.Arcade.Body;
         const bounds = laser.getBounds();
-        return { x: Math.round(laser.x), y: Math.round(laser.y), angle: laser.angle, display: { width: Math.round(laser.displayWidth), height: Math.round(laser.displayHeight) }, worldBounds: { width: Math.round(bounds.width), height: Math.round(bounds.height) }, body: { width: Math.round(body.width), height: Math.round(body.height) } };
+        return { x: Math.round(laser.x), y: Math.round(laser.y), angle: laser.angle, display: { width: Math.round(laser.displayWidth), height: Math.round(laser.displayHeight) }, worldBounds: { width: Math.round(bounds.width), height: Math.round(bounds.height) }, body: { x: Math.round(body.x), y: Math.round(body.y), width: Math.round(body.width), height: Math.round(body.height) }, previousBodyCenterX: laser.getData('previousBodyCenterX'), previousBodyCenterY: laser.getData('previousBodyCenterY') };
       }),
       nukeBodies: (this.#nukes?.getChildren().filter((child) => child.active) as Phaser.Physics.Arcade.Sprite[] ?? []).map((nuke) => {
         const body = nuke.body as Phaser.Physics.Arcade.Body;
         const bounds = nuke.getBounds();
-        return { x: Math.round(nuke.x), y: Math.round(nuke.y), angle: nuke.angle, display: { width: Math.round(nuke.displayWidth), height: Math.round(nuke.displayHeight) }, worldBounds: { width: Math.round(bounds.width), height: Math.round(bounds.height) }, body: { width: Math.round(body.width), height: Math.round(body.height) } };
+        return { x: Math.round(nuke.x), y: Math.round(nuke.y), texture: nuke.texture.key, animation: nuke.anims.currentAnim?.key ?? null, angle: nuke.angle, display: { width: Math.round(nuke.displayWidth), height: Math.round(nuke.displayHeight) }, worldBounds: { width: Math.round(bounds.width), height: Math.round(bounds.height) }, body: { x: Math.round(body.x), y: Math.round(body.y), width: Math.round(body.width), height: Math.round(body.height) }, previousBodyCenterX: nuke.getData('previousBodyCenterX'), previousBodyCenterY: nuke.getData('previousBodyCenterY') };
       }),
     };
   }

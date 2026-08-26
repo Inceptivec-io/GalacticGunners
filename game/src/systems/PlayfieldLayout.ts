@@ -64,6 +64,7 @@ export function createPlayfieldLayout(width: number, height: number): PlayfieldL
   const projectileThickness = clamp(projectileLength * 0.2, 5, 8);
   const projectileSize = { width: projectileLength, height: projectileThickness };
   const shieldTile = clamp(gameplayRect.width / 112, 4, 14);
+  const nukeWidth = clamp(playerSize.height * 0.42, 36, 54);
 
   const playerSpawn = {
     x: width / 2,
@@ -77,10 +78,10 @@ export function createPlayfieldLayout(width: number, height: number): PlayfieldL
     hudSafeRect,
     playerSpawn,
     movementBounds: {
-      left: gameplayRect.x + playerSize.width / 2,
-      right: gameplayRect.x + gameplayRect.width - playerSize.width / 2,
-      top: gameplayRect.y + gameplayRect.height * 0.5,
-      bottom: playerSpawn.y,
+      left: playerSize.width / 2,
+      right: width - playerSize.width / 2,
+      top: playerSize.height / 2,
+      bottom: height - playerSize.height / 2,
     },
     formationBounds: {
       x: gameplayRect.x,
@@ -98,7 +99,7 @@ export function createPlayfieldLayout(width: number, height: number): PlayfieldL
     scoutSize,
     shieldTileSize: { width: shieldTile, height: shieldTile },
     projectileSize,
-    nukeProjectileSize: { width: clamp(playerSize.height * 0.8, 48, 68), height: clamp(playerSize.height * 0.26, 16, 24) },
+    nukeProjectileSize: { width: nukeWidth, height: nukeWidth * (800 / 720) },
     nukeBurstSize: { width: clamp(playerSize.height * 2.6, 150, 220), height: clamp(playerSize.height * 2.6, 150, 220) },
     playerBodySize: { width: playerSize.width * 0.64, height: playerSize.height * 0.72 },
     scoutBodySize: { width: scoutSize.width * 0.86, height: scoutSize.height * 0.74 },

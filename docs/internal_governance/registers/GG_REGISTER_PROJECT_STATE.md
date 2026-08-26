@@ -35,3 +35,4 @@
 | Boarding | NOT STARTED |
 | Founder Acceptance Authority | Michael Leese |
 | Founder Acceptance | PENDING |
+| Handoff 011 APP1 HOTFIX1 | PASS TARGET - corrections complete; CTO / Founder gate required before merge and H012 entry |
