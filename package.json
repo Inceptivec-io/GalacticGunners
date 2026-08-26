@@ -15,6 +15,7 @@
     "game:test": "npm --workspace game run test",
     "runtime:verify": "node scripts/verify-v1-slice-runtime.mjs",
     "runtime:hostile": "node scripts/verify-v1-slice-runtime.mjs",
+    "runtime:campaign": "node scripts/verify-campaign-progression.mjs",
     "contracts:validate": "node scripts/validate-contracts.mjs",
     "quality": "npm run assets:sync && npm run contracts:validate && npm run game:typecheck && npm run game:test && npm run web:typecheck && npm run web:build"
   },

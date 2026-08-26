@@ -4,6 +4,7 @@ import { FRAME_RECTS, REQUIRED_RUNTIME_ASSETS, RUNTIME_ASSETS } from '../config/
 import type { GameRuntimeConfig } from '../config/gameConfig';
 import { levelChecksum } from '../levels/LevelChecksum';
 import { LevelLoader } from '../levels/LevelLoader';
+import { CAMPAIGN_DEFINITIONS } from '../levels/campaignDefinitions';
 import { LEVEL_ONE_DEFINITION } from '../levels/levelOneDefinition';
 import { validateLevelDefinition } from '../levels/LevelValidator';
 
@@ -65,8 +66,13 @@ export class BootScene extends Phaser.Scene {
     // Golden Level 1 must start without an API request. Remote resolution is an
     // explicit campaign-loader capability, never an implicit gameplay dependency.
     const loader = new LevelLoader();
-    const fallback = { definition: LEVEL_ONE_DEFINITION, checksum: await levelChecksum(LEVEL_ONE_DEFINITION), source: 'package' as const };
-    this.registry.set('levelRuntime', await loader.load('level-01', fallback.definition).catch(() => fallback));
+    const campaignRuntime = await Promise.all(CAMPAIGN_DEFINITIONS.map(async (definition) => {
+      validateLevelDefinition(definition);
+      const fallback = { definition, checksum: await levelChecksum(definition), source: 'package' as const };
+      return loader.load(definition.slug, definition).catch(() => fallback);
+    }));
+    this.registry.set('campaignRuntime', campaignRuntime);
+    this.registry.set('levelRuntime', campaignRuntime[0]);
 
     this.anims.create({
       key: 'fx.explosionSmall.play',

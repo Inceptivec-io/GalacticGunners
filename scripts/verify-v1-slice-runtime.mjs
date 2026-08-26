@@ -91,12 +91,15 @@ async function getGameState(page) {
   return page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__?.state() ?? window.__GALACTIC_GUNNERS_SLICE_QA__);
 }
 
-async function clickTerminalButton(page, side) {
+async function clickTerminalButton(page, action) {
   const bounds = await page.locator('canvas').first().boundingBox();
   assert(bounds, 'Canvas missing for terminal click.');
-  const x = side === 'left' ? bounds.x + bounds.width / 2 - 132 : bounds.x + bounds.width / 2 + 150;
-  const y = bounds.y + bounds.height / 2 + 104;
-  await page.mouse.click(x, y);
+  const terminalAction = await page.evaluate((requestedAction) => {
+    const state = window.__GALACTIC_GUNNERS_HOSTILE__?.state();
+    return state?.terminalActions?.find((entry) => entry.action === requestedAction) ?? null;
+  }, action);
+  assert(terminalAction, `Terminal action ${action} was not exposed.`);
+  await page.mouse.click(bounds.x + terminalAction.x, bounds.y + terminalAction.y);
 }
 
 async function createPage(browser, viewport) {
@@ -575,13 +578,13 @@ async function runHostileCases(browser) {
   await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__.forceComplete());
   await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__.state().terminalState === 'complete', null, { timeout: 3000 });
   await page.screenshot({ path: path.join(outputDir, 'mission-complete.png'), fullPage: true });
-  await clickTerminalButton(page, 'left');
+  await clickTerminalButton(page, 'replay');
   await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__.state().terminalState === null, null, { timeout: 5000 });
   state = await getGameState(page);
   cases.complete_replay_reset = state.score === 0 && state.activeScouts === 58 && state.activeShieldTiles === 256 && state.playerLaserCount === 0 && state.enemyLaserCount === 0;
   await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__.forceComplete());
   await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__.state().terminalState === 'complete', null, { timeout: 3000 });
-  await clickTerminalButton(page, 'right');
+  await clickTerminalButton(page, 'menu');
   await waitForScene(page, 'MainMenuScene');
   cases.complete_main_menu = true;
 
@@ -589,12 +592,12 @@ async function runHostileCases(browser) {
   await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__.forceFail());
   await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__.state().terminalState === 'failed', null, { timeout: 3000 });
   await page.screenshot({ path: path.join(outputDir, 'mission-failed.png'), fullPage: true });
-  await clickTerminalButton(page, 'left');
+  await clickTerminalButton(page, 'try-again');
   await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__.state().terminalState === null, null, { timeout: 5000 });
   cases.fail_retry = (await getGameState(page)).activeScouts === 58;
   await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__.forceFail());
   await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__.state().terminalState === 'failed', null, { timeout: 3000 });
-  await clickTerminalButton(page, 'right');
+  await clickTerminalButton(page, 'menu');
   await waitForScene(page, 'MainMenuScene');
   cases.fail_main_menu = true;
 
@@ -604,7 +607,7 @@ async function runHostileCases(browser) {
   await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__.forceComplete());
   await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__.state().gameRunCompleteAttempted === true, null, { timeout: 5000 });
   cases.online_complete_once = true;
-  await clickTerminalButton(page, 'left');
+  await clickTerminalButton(page, 'replay');
   await page.waitForFunction((previousRunId) => {
     const replayState = window.__GALACTIC_GUNNERS_HOSTILE__?.state();
     return replayState?.terminalState === null

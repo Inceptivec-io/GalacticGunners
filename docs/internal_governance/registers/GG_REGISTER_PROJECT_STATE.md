@@ -7,9 +7,9 @@
 | Commercial Repository | `Inceptivec-io/GalacticGunners` |
 | Historical Repository | `michael-leese/GallacticGunners` READ-ONLY |
 | Current Programme | v1.0 BUILD - SPRINT 001 |
-| Current Stage | SCALE / GAMEPLAY COMPOSITION CORRECTION COMPLETE / PENDING CTO AND FOUNDER REVIEW |
-| Active Handoff | GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_010_REV3 |
-| Current Feature Branch | `feature/v1-level1-vertical-slice` |
+| Current Stage | H012 REV1 CAMPAIGN PROGRESSION AND PRODUCTION RESULT UI COMPLETE / PENDING CTO AND FOUNDER REVIEW |
+| Active Handoff | GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_012_REV1_APP1 |
+| Current Feature Branch | `feature/v1-config-driven-campaign-platform` |
 | Base Branch | `dev` |
 | Entry/Base SHA | `771bf384ae3878e292acf8d7e53dca90576b23b3` |
 | Branch Model | `feature/* -> dev -> stage -> prod` |
@@ -22,7 +22,7 @@
 | Living Registers | `docs/internal_governance/registers` |
 | POST_BOX Closed State | boundary/readme controls only; active payload zero |
 | Production Architecture Foundation | PASS - Django/DRF backend, PostgreSQL Docker topology, Next.js web shell, Phaser/TypeScript game package, contracts and CI gates reconciled |
-| v1.0 Sprint 001 Runtime | PASS - `/play` mounts Phaser Boot/MainMenu/Level1 vertical slice with semantic PlayfieldLayout, REV3 player/scout visual contracts, 58-enemy formation, four-direction player movement, 8 shield bunkers / 256 tiles, normal/nuke projectile collisions, swept laser collision reliability, bottom-left icon-only lives, bottom-right icon-only nukes and `ENERGISE` bar, top-left score, top-right sound, pause overlay and temporary slice terminal states |
+| v1.0 Sprint 001 Runtime | PASS TARGET - `/play` mounts Phaser Boot/MainMenu and Level 1 golden combat baseline plus a validated/checksummed six-level campaign. Production victory/game-over panels expose dynamic runtime values and discrete Continue/Replay/Try Again/Main Menu controls; Founder acceptance remains pending. |
 | Backend API | PASS - `/api/v1/health/`, `/api/v1/game-runs/`, `/api/v1/game-runs/{runId}/complete/`, `/api/v1/leaderboard/` |
 | Contract Authority | PASS - OpenAPI 3.1 plus JSON Schema draft 2020-12 validated by `scripts/validate-contracts.mjs` |
 | Docker Full Stack | AVAILABLE - web host `3002`, backend host `8010`, db internal only |
@@ -30,8 +30,8 @@
 | Handoff 010 REV4 CI Gate | PASS - diagnostic-only hostile harness correction; local hostile PASS x3; GitHub Actions run `32894066325` backend/client-and-game/docker-smoke/runtime-hostile all SUCCESS; Founder-accepted product state preserved |
 | Handoff 011 Entry Gate | STOP - ENTRY_GATE_NOT_SATISFIED; PR #4 remains OPEN / DRAFT / NOT MERGED, so no authorised post-merge `dev` SHA exists for `feature/v1-config-driven-campaign-platform` branch creation |
 | Full Level 1 | NOT CLAIMED |
-| Level 2 | NOT STARTED |
-| Boss / Final Victory / Final Game Over | NOT STARTED |
+| Levels 2-6 | PLAYABLE - each resolves the next validated/checksummed packaged campaign definition; Level 6 is terminal with no Level 7 |
+| Final Victory / Final Game Over | PRODUCTION RESULT PANELS AVAILABLE - Founder acceptance pending |
 | Boarding | NOT STARTED |
 | Founder Acceptance Authority | Michael Leese |
 | Founder Acceptance | PENDING |
