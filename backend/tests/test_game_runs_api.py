@@ -9,6 +9,7 @@ from game_runs.models import GameRun, GameVersion, ScoreSubmission
 from leaderboard.models import LeaderboardEntry
 from levels.models import Level, LevelVersion
 from players.models import PlayerProfile
+from games.models import GameProject, OwnerScope, Visibility
 
 
 def golden_level():
@@ -16,7 +17,12 @@ def golden_level():
 
 
 def published_level():
-    level = Level.objects.create(slug='level-01', name='Level 1', sequence=1)
+    owner = User.objects.create_user(username='core-runtime-owner', password='safe-password')
+    project = GameProject.objects.create(
+        slug='core-runtime', name='CORE Runtime', owner_scope=OwnerScope.CORE,
+        visibility=Visibility.PRIVATE, created_by=owner,
+    )
+    level = Level.objects.create(slug='level-01', name='Level 1', sequence=1, game_project=project)
     version = LevelVersion.objects.create(level=level, version=1, config=golden_level())
     version.status = LevelVersion.Status.VALIDATED
     version.save()

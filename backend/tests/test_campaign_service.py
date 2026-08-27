@@ -20,7 +20,7 @@ class CampaignServiceTests(TestCase):
         self.assertEqual(ServicePlan.objects.count(), 4)
         definitions = [entry.level_version.config for entry in run.campaign_version.entries.order_by('position')]
         self.assertEqual(len({item['slug'] for item in definitions}), 6)
-        self.assertTrue(definitions[1]['hazards'])
+        self.assertTrue(definitions[1]['hazard_emitters'])
         self.assertTrue(definitions[3]['boarding_anchors'])
 
     def test_completion_resolves_next_entry_by_identity(self):

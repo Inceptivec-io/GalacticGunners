@@ -47,7 +47,7 @@ def test_level_one_admission_publish_and_public_resolution(client, level_admin, 
 
 @pytest.mark.django_db
 def test_published_version_is_immutable_and_unknown_routes_are_absent(client, level_admin):
-    level = Level.objects.create(slug='level-01', name='Level 1', sequence=1)
+    level = Level.objects.create(slug='level-01', name='Level 1', sequence=1, game_project=core_project)
     version = LevelVersion.objects.create(level=level, version=1, config=golden_level())
     version.status = LevelVersion.Status.VALIDATED
     version.save()
@@ -77,7 +77,11 @@ def test_clone_export_and_deterministic_draft_generation(client, level_admin, co
 
 @pytest.mark.django_db
 def test_game_run_binds_the_server_owned_published_level_identity(client, level_admin):
-    level = Level.objects.create(slug='level-01', name='Level 1', sequence=1)
+    core_project = GameProject.objects.create(
+        slug='game-run-core', name='Game Run CORE', owner_scope=OwnerScope.CORE,
+        visibility=Visibility.PRIVATE, created_by=level_admin,
+    )
+    level = Level.objects.create(slug='level-01', name='Level 1', sequence=1, game_project=core_project)
     version = LevelVersion.objects.create(level=level, version=1, config=golden_level())
     version.status = LevelVersion.Status.VALIDATED; version.save(); version.publish()
     GameVersion.objects.create(version='1.0.0-dev')

@@ -170,3 +170,81 @@ jobs:
         with: { python-version: '3.13' }
       - run: pip install -e '.[dev]'
       - run: pytest tests/test_leaderboard_moderation.py -k moderation
+
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22', cache: npm }
+      - run: npm ci
+      - run: npm run contracts:validate
+
+  auth-hostile:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env: { POSTGRES_DB: galactic_gunners, POSTGRES_USER: galactic_gunners, POSTGRES_PASSWORD: local-development-only }
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U galactic_gunners -d galactic_gunners" --health-interval 5s --health-timeout 5s --health-retries 10
+    defaults: { run: { working-directory: backend } }
+    env: { DATABASE_URL: postgresql://galactic_gunners:local-development-only@localhost:5432/galactic_gunners, DJANGO_SETTINGS_MODULE: config.settings.local, DJANGO_SECRET_KEY: ci-local-placeholder }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.13' }
+      - run: pip install -e '.[dev]'
+      - run: pytest tests/test_auth_surfaces.py
+
+  tenant-hostile:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env: { POSTGRES_DB: galactic_gunners, POSTGRES_USER: galactic_gunners, POSTGRES_PASSWORD: local-development-only }
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U galactic_gunners -d galactic_gunners" --health-interval 5s --health-timeout 5s --health-retries 10
+    defaults: { run: { working-directory: backend } }
+    env: { DATABASE_URL: postgresql://galactic_gunners:local-development-only@localhost:5432/galactic_gunners, DJANGO_SETTINGS_MODULE: config.settings.local, DJANGO_SECRET_KEY: ci-local-placeholder }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.13' }
+      - run: pip install -e '.[dev]'
+      - run: pytest organizations/tests/test_portal_api.py tests/test_plan_quota.py
+
+  campaign-hostile:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env: { POSTGRES_DB: galactic_gunners, POSTGRES_USER: galactic_gunners, POSTGRES_PASSWORD: local-development-only }
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U galactic_gunners -d galactic_gunners" --health-interval 5s --health-timeout 5s --health-retries 10
+    defaults: { run: { working-directory: backend } }
+    env: { DATABASE_URL: postgresql://galactic_gunners:local-development-only@localhost:5432/galactic_gunners, DJANGO_SETTINGS_MODULE: config.settings.local, DJANGO_SECRET_KEY: ci-local-placeholder }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.13' }
+      - run: pip install -e '.[dev]'
+      - run: pytest tests/test_campaign_service.py levels/tests/test_authoring.py levels/tests/test_levels_api.py
+
+  runtime-browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22', cache: npm }
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: docker compose up --build -d
+      - run: |
+          timeout 120 bash -c 'until curl -fsS http://localhost:3002/api/health; do sleep 5; done'
+          GG_RUNTIME_URL=http://localhost:3002 npm run runtime:campaign
+      - if: always()
+        run: docker compose down -v
