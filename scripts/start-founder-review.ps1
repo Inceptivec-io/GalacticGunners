@@ -30,6 +30,15 @@ if (-not (Test-Path $envFile)) {
     'NEXT_PUBLIC_API_BASE_URL=/api/v1', 'INTERNAL_API_ORIGIN=http://backend:8000', 'WEB_HOST_PORT=3002', 'BACKEND_HOST_PORT=8010', "SOURCE_SHA=$sourceSha", "BUILD_ID=$sourceSha"
   ) | Set-Content -LiteralPath $envFile -Encoding ascii
 }
+$existing = Read-ReviewEnvironment
+$reviewDefaults = @{
+  'DJANGO_CSRF_TRUSTED_ORIGINS' = 'http://localhost:3002'; 'ENABLE_DJANGO_ADMIN' = 'false'; 'FOUNDER_REVIEW_MODE' = 'true';
+  'COMMAND_POST_REVIEW_USERNAME' = 'command-post-review'; 'COMMAND_POST_REVIEW_DISPLAY_NAME' = 'Command Post Review'; 'COMMAND_POST_REVIEW_ORGANIZATION_SLUG' = 'founder-demo';
+  'PLAYER_REVIEW_USERNAME' = 'player-review'; 'PLAYER_REVIEW_DISPLAY_NAME' = 'Player Review'; 'DJANGO_LOCAL_SUPERUSER_USERNAME' = 'django-local-admin';
+  'NEXT_PUBLIC_API_BASE_URL' = '/api/v1'; 'INTERNAL_API_ORIGIN' = 'http://backend:8000'; 'WEB_HOST_PORT' = '3002'; 'BACKEND_HOST_PORT' = '8010'
+}
+foreach ($name in $reviewDefaults.Keys) { if (-not $existing[$name]) { Set-ReviewValue $name $reviewDefaults[$name] } }
+foreach ($name in 'COMMAND_POST_REVIEW_PASSWORD','PLAYER_REVIEW_PASSWORD','DJANGO_LOCAL_SUPERUSER_PASSWORD') { if (-not $existing[$name]) { Set-ReviewValue $name (New-ReviewSecret) } }
 Set-ReviewValue 'SOURCE_SHA' $sourceSha; Set-ReviewValue 'BUILD_ID' $sourceSha
 $values = Read-ReviewEnvironment
 $required = 'POSTGRES_DB','POSTGRES_USER','POSTGRES_PASSWORD','DATABASE_URL','DJANGO_SECRET_KEY','DJANGO_ALLOWED_HOSTS','DJANGO_CSRF_TRUSTED_ORIGINS','ENABLE_DJANGO_ADMIN','FOUNDER_REVIEW_USERNAME','FOUNDER_REVIEW_PASSWORD','FOUNDER_REVIEW_DISPLAY_NAME','COMMAND_POST_REVIEW_USERNAME','COMMAND_POST_REVIEW_PASSWORD','COMMAND_POST_REVIEW_DISPLAY_NAME','COMMAND_POST_REVIEW_ORGANIZATION_SLUG','PLAYER_REVIEW_USERNAME','PLAYER_REVIEW_PASSWORD','PLAYER_REVIEW_DISPLAY_NAME','DJANGO_LOCAL_SUPERUSER_USERNAME','DJANGO_LOCAL_SUPERUSER_PASSWORD'
