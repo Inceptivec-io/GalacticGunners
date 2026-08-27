@@ -1,0 +1,18 @@
+'use client';
+
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+
+import { CampaignDesigner } from '../inceptivec-gamification-admin/CampaignDesigner';
+
+type Workspace = { organization: { name: string; slug: string }; plan: { code?: string; limits?: Record<string, number>; capabilities?: Record<string, boolean> } | null; maps: Array<{ id: string; name: string; slug: string; sequence: number; active_version?: { status: string } | null; editable_version?: { status: string } | null }>; projects: Array<{ id: string; name: string; slug: string }> };
+type Tab = 'overview' | 'maps' | 'campaign' | 'members' | 'scores' | 'profile' | 'help';
+
+export function CommandPostWorkspace({ orgSlug }: { orgSlug: string }) {
+  const [tab, setTab] = useState<Tab>('overview'); const [workspace, setWorkspace] = useState<Workspace | null>(null); const [message, setMessage] = useState('Loading organisation authority...');
+  useEffect(() => { void fetch(`/api/v1/portal/organizations/${encodeURIComponent(orgSlug)}/`, { credentials: 'same-origin' }).then(async (response) => { if (!response.ok) throw new Error('Organisation authority is unavailable.'); return response.json() as Promise<Workspace>; }).then((value) => { setWorkspace(value); setMessage(''); }).catch((error: Error) => setMessage(error.message)); }, [orgSlug]);
+  if (message) return <main className="admin-session-state" role="status">{message}</main>;
+  if (!workspace) return null;
+  const tabs: Array<[Tab, string]> = [['overview', 'Overview'], ['maps', 'Maps'], ['campaign', 'Campaign'], ['members', 'Members'], ['scores', 'Scores'], ['profile', 'Profile'], ['help', 'Help']];
+  return <main className="command-post-shell"><header><h1>Command Post</h1><p>{workspace.organization.name}</p><nav aria-label="Command Post sections">{tabs.map(([key, label]) => <button key={key} className={tab === key ? 'selected' : ''} onClick={() => setTab(key)}>{label}</button>)}<Link href="/command-post">Switch organisation</Link></nav></header>{tab === 'maps' ? <CampaignDesigner context={{ surface: 'COMMAND_POST', organizationSlug: orgSlug, project_id: workspace.projects[0]?.id, owner_scope: 'ORGANIZATION', organization_id: null, effective_permissions: ['MAP_WRITE'], effective_limits: { active_map_limit: Number(workspace.plan?.limits?.active_map_limit ?? 0), max_active_enemies: 80, max_active_hazards: 12, max_shield_tiles: 512 } }} /> : <section className="command-post-content">{tab === 'overview' ? <><h2>Organisation overview</h2><p>{workspace.maps.length} governed map{workspace.maps.length === 1 ? '' : 's'} across {workspace.projects.length} active project{workspace.projects.length === 1 ? '' : 's'}.</p><p>Plan: {workspace.plan?.code ?? 'No active plan'}</p></> : null}{tab === 'campaign' ? <><h2>Campaign</h2><p>Campaign order and publication remain server-authorised. Current map entries are listed from the owning organisation only.</p><ol>{workspace.maps.map((map) => <li key={map.id}>{map.sequence}. {map.name} ({map.editable_version?.status ?? map.active_version?.status ?? 'DRAFT'})</li>)}</ol></> : null}{tab === 'members' ? <><h2>Members</h2><p>Active member access is scoped to this organisation. Contact an authorised organisation administrator to manage membership.</p></> : null}{tab === 'scores' ? <><h2>Scores</h2><p>Only server-validated organisation-owned scores are eligible for this surface. No cross-tenant score data is shown.</p></> : null}{tab === 'profile' ? <><h2>Profile</h2><Link href="/account">Open player profile</Link></> : null}{tab === 'help' ? <><h2>Help</h2><p>Use Maps to author organisation-owned playable definitions. Published CORE campaign content is not editable from Command Post.</p></> : null}</section>}</main>;
+}
