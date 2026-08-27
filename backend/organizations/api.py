@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from games.models import GameProject, OwnerScope
+from game_runs.models import GameRun
 from levels.models import Level, LevelVersion
 from levels.serializers import LevelVersionSerializer
 from levels.validation import validate_definition
@@ -42,13 +43,34 @@ class PortalOrganizationView(APIView):
 
     def get(self, request, slug):
         organization = organization_for(request, slug)
+        membership = AuthorizationPolicy.membership(request.user, organization)
         assignment = OrganizationPlanAssignment.objects.filter(
             organization=organization, status=OrganizationPlanAssignment.Status.ACTIVE,
         ).select_related('plan').order_by('-starts_at').first()
         maps = Level.objects.filter(game_project__organization=organization, archived=False).select_related('game_project', 'active_version').prefetch_related('versions').order_by('sequence')
         projects = GameProject.objects.filter(organization=organization, owner_scope=OwnerScope.ORGANIZATION, status='ACTIVE').order_by('name')
+        can_manage_members = AuthorizationPolicy.is_platform_owner(request.user) or bool(
+            membership and membership.role == 'BUSINESS_ADMIN'
+        )
+        member_records = []
+        if can_manage_members:
+            member_records = [{
+                'id': str(item.id), 'username': item.user.username, 'role': item.role,
+                'status': item.status,
+            } for item in organization.memberships.select_related('user').order_by('user__username')]
+        score_records = list(GameRun.objects.filter(
+            level__game_project__organization=organization,
+            level__game_project__owner_scope=OwnerScope.ORGANIZATION,
+            completed_at__isnull=False,
+        ).select_related('player').order_by('-score', '-completed_at').values(
+            'id', 'score', 'validity', 'victory', 'level__name', 'player__username', 'completed_at',
+        )[:100])
         return Response({
             'organization': {'id': str(organization.id), 'slug': organization.slug, 'name': organization.name},
+            'effective_permissions': ['MAP_WRITE'] if (
+                AuthorizationPolicy.is_platform_owner(request.user)
+                or bool(membership and membership.role in {'BUSINESS_ADMIN', 'EDITOR'})
+            ) else [],
             'plan': None if assignment is None else {'code': assignment.plan_snapshot.get('code'), 'limits': assignment.plan_snapshot.get('limits', {}), 'capabilities': assignment.plan_snapshot.get('capabilities', {})},
             'maps': [{
                 'id': str(level.id), 'slug': level.slug, 'name': level.name, 'sequence': level.sequence,
@@ -57,6 +79,9 @@ class PortalOrganizationView(APIView):
                 'editable_version': LevelVersionSerializer(level.versions.order_by('-version').first()).data if level.versions.exists() else None,
             } for level in maps],
             'projects': [{'id': str(project.id), 'slug': project.slug, 'name': project.name} for project in projects],
+            'members': member_records,
+            'can_manage_members': can_manage_members,
+            'scores': score_records,
         })
 
 
