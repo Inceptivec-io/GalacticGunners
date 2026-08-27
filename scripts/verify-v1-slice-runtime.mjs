@@ -458,8 +458,8 @@ async function runHostileCases(browser) {
     && nukeRearmLifecycle.cappedCompletion.currentNukes === 1
     && nukeRearmLifecycle.cappedCompletion.rearmProgress === 150;
   await loadGame(page);
-  await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__.fireEnemyLaserAtPlayer(90));
-  await page.waitForTimeout(400);
+  await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__.fireEnemyLaserForVisual());
+  await page.waitForTimeout(90);
   state = await getGameState(page);
   cases.enemy_laser_visual_body_mapping = laserVisualAndBodyValid(firstLaser(state, 'enemy')) && firstLaser(state, 'enemy').angle === 90;
   await page.screenshot({ path: path.join(outputDir, 'enemy-laser-mid-flight.png'), fullPage: true });

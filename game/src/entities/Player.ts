@@ -35,6 +35,10 @@ export class Player {
     this.#spawn = spawn;
   }
 
+  get spawn(): { x: number; y: number } {
+    return { ...this.#spawn };
+  }
+
   move(vector: MovementVector, layout: PlayfieldLayout): void {
     this.clampToPlayfield(layout);
     const length = Math.hypot(vector.x, vector.y) || 1;

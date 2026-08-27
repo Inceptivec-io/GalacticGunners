@@ -60,6 +60,7 @@ interface HostileQaApi {
   firePlayerLaserAtScout: (index?: number, offsetX?: number) => Record<string, unknown>;
   firePlayerLaserForVisual: (offsetX?: number) => Record<string, unknown>;
   fireEnemyLaserAtPlayer: (offsetX?: number) => Record<string, unknown>;
+  fireEnemyLaserForVisual: () => Record<string, unknown>;
   fireEnemyLaserAtShield: (index?: number) => Record<string, unknown>;
   firePlayerLaserAtShield: (index?: number) => Record<string, unknown>;
   fireNukeAtScout: (index?: number) => Record<string, unknown>;
@@ -768,7 +769,7 @@ export class Level1Scene extends CombatLevelScene {
     laser.setDepth(3);
     laser.setData('spent', false);
     const body = laser.body as Phaser.Physics.Arcade.Body;
-    body.enable = true;
+    laser.enableBody(true, laser.x, laser.y, true, true);
     body.setSize(this.#layout.projectileBodySize.width / laser.scaleX, this.#layout.projectileBodySize.height / laser.scaleY, true);
     body.reset(laser.x, laser.y);
     body.position.set(laser.x - body.width / 2, laser.y - body.height / 2);
@@ -1073,7 +1074,7 @@ export class Level1Scene extends CombatLevelScene {
   private configureNukeBody(nuke: Phaser.Physics.Arcade.Sprite): void {
     nuke.setDisplaySize(this.#layout.nukeProjectileSize.width, this.#layout.nukeProjectileSize.height);
     const body = nuke.body as Phaser.Physics.Arcade.Body;
-    body.enable = true;
+    nuke.enableBody(true, nuke.x, nuke.y, true, true);
     body.setSize(this.#layout.nukeProjectileBodySize.width / nuke.scaleX, this.#layout.nukeProjectileBodySize.height / nuke.scaleY, true);
     body.reset(nuke.x, nuke.y);
     body.position.set(nuke.x - body.width / 2, nuke.y - body.height / 2);
@@ -1488,7 +1489,30 @@ export class Level1Scene extends CombatLevelScene {
         }
         laser.setPosition(this.#player.sprite.x + offsetX, this.#player.sprite.y - this.#layout.playerSize.height * 0.42);
         this.configureLaser(laser, 'enemy-laser', 90, this.enemyLaserSpeed());
-        return { fired: true, playerX: this.#player.sprite.x, laserX: laser.x, offsetX };
+        const body = laser.body as Phaser.Physics.Arcade.Body;
+        return {
+          fired: true,
+          playerX: this.#player.sprite.x,
+          laserX: laser.x,
+          offsetX,
+          body: { x: body.x, y: body.y, width: body.width, height: body.height, enabled: body.enable },
+        };
+      },
+      fireEnemyLaserForVisual: () => {
+        // Place the visual probe in a clear lower lane so real player/shield
+        // collision contracts cannot consume it before the body is observed.
+        const x = Math.min(
+          this.#layout.movementBounds.right - this.#layout.projectileSize.height,
+          this.#player.sprite.x + this.#layout.playerBodySize.width * 3,
+        );
+        const y = this.scale.height - this.#layout.projectileBodySize.height * 2 - 20;
+        const laser = this.#enemyLasers.get(x, y, RUNTIME_ASSETS.projectile.enemyLaser.key) as Phaser.Physics.Arcade.Image | null;
+        if (!laser) {
+          return { fired: false, reason: 'no-laser' };
+        }
+        laser.setPosition(x, y);
+        this.configureLaser(laser, 'enemy-laser', 90, this.enemyLaserSpeed());
+        return { fired: true, laserX: laser.x, laserY: laser.y };
       },
       fireEnemyLaserAtShield: (index = 0) => {
         const tile = this.getActiveShieldTiles()[index];
@@ -1703,7 +1727,7 @@ export class Level1Scene extends CombatLevelScene {
       maxLives: this.#lives.maxLives,
       activeScouts: this.getActiveScouts().length,
       activeShieldTiles: this.getActiveShieldTiles().length,
-      bunkerCount: this.#definition.shields[0].count,
+      bunkerCount: this.#definition.shields.reduce((total, shield) => total + shield.count, 0),
       playerLaserCount: this.#playerLasers?.getChildren().filter((child) => child.active).length ?? 0,
       enemyLaserCount: this.#enemyLasers?.getChildren().filter((child) => child.active).length ?? 0,
       nukeProjectileCount: this.#nukes?.getChildren().filter((child) => child.active).length ?? 0,
@@ -1746,7 +1770,7 @@ export class Level1Scene extends CombatLevelScene {
           fillWidth: Math.round(this.#rearmBarFill.displayWidth),
         },
       },
-      playerSpawn: this.#layout.playerSpawn,
+      playerSpawn: this.#player.spawn,
       playerSize: this.#layout.playerSize,
       scoutSize: this.#layout.scoutSize,
       projectileSize: this.#layout.projectileSize,
