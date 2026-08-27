@@ -1,5 +1,5 @@
 Active Handoff:
-GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015
+GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015 (BASE + REV1 + ADDITIVE)
 
 Programme:
 PLATFORM FOUNDATION AND CAMPAIGN CONTINUITY
@@ -26,16 +26,16 @@ DEVTEAM_010_REV4 Entry SHA:
 5d0f8d04556a51f3398192e011e8b6b41b9bd2bf
 
 Current Repository Head Authority:
-origin/feature/v1-boarding-mode
+origin/feature/v1-platform-foundation-campaign-continuity
 
 Local/Remote Reconciliation At Return:
-RECORDED EXTERNALLY AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
+PASS at implementation authority `745e5e9e49bdf2f81108b5d9c36d501f76e26390`; final closure SHA recorded externally after push to avoid a Git self-reference loop.
 
 Worktree At Return:
-RECORDED EXTERNALLY AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
+CLEAN before governance closeout commit.
 
 POST_BOX:
-FOUNDER-RETAINED IMAGERY TRANSPORT ONLY - `GalacticGunners_Imagery_Pack_v1.0_PRODUCTION.zip`; all other transient payload absent
+CLEAN - boundary controls only / active payload zero
 
 Internal Governance:
 CURRENT
@@ -76,5 +76,5 @@ H014 CLOSED UNDER FOUNDER ROUTING. Known platform and runtime completion items, 
 Founder Acceptance:
 FOUNDER ACCEPTED - KNOWN PLATFORM AND RUNTIME ITEMS DEFERRED TO H015. Development does not assert unqualified Founder manual acceptance of deferred items. PR #11 remains open for Founder merge decision.
 
-H015 Start Condition:
-FOUNDER MUST MERGE PR #11; then create a fresh H015 branch from the updated `dev` branch. No H015 development occurs on `feature/v1-boarding-mode`.
+H015 Closure:
+FOUNDER_REVIEW_READY=YES. Legacy playability, schema 1.1, freeform mixed Designer, distinct enemy classes, recurring hazards, Mothership finale, Levels 1-6, gameplay UX and browser evidence all PASS. Founder acceptance and merge remain PENDING.
