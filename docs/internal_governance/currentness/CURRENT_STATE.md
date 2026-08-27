@@ -5,7 +5,7 @@ Programme:
 BOARDING MODE PLATFORM IMPLEMENTATION
 
 Stage:
-H014 FAIL-CLOSED - CHARACTER SOURCE GEOMETRY AUTHORITY CONFLICT
+H014 CLOSED - FOUNDER ACCEPTED / KNOWN PLATFORM AND RUNTIME ITEMS DEFERRED TO H015
 
 Branch:
 feature/v1-boarding-mode
@@ -35,7 +35,7 @@ Worktree At Return:
 RECORDED EXTERNALLY AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
 
 POST_BOX:
-CLEAN - boundary controls only / active payload zero
+FOUNDER-RETAINED IMAGERY TRANSPORT ONLY - `GalacticGunners_Imagery_Pack_v1.0_PRODUCTION.zip`; all other transient payload absent
 
 Internal Governance:
 CURRENT
@@ -71,7 +71,10 @@ Validated Runs / Leaderboard:
 COMPLETE / PENDING FOUNDER REVIEW
 
 Boarding:
-FAIL-CLOSED - H014 character source sheets do not provide the true-alpha, uniform frame geometry the H014 asset contract requires. Evidence: `docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_014/CHARACTER_SOURCE_GEOMETRY_CONFLICT.md`. No fabricated extraction or substitute art is authorised. Founder acceptance remains pending.
+H014 CLOSED UNDER FOUNDER ROUTING. Known platform and runtime completion items, including the character-source geometry issue, are deferred to H015. The Campaign Designer shell is accepted in its current visual and planning direction and must not be redesigned.
 
 Founder Acceptance:
-REV4 PRODUCT STATE ACCEPTED AS-IS AT ENTRY; CTO FINAL MERGE GATE PENDING
+FOUNDER ACCEPTED - KNOWN PLATFORM AND RUNTIME ITEMS DEFERRED TO H015. Development does not assert unqualified Founder manual acceptance of deferred items. PR #11 remains open for Founder merge decision.
+
+H015 Start Condition:
+FOUNDER MUST MERGE PR #11; then create a fresh H015 branch from the updated `dev` branch. No H015 development occurs on `feature/v1-boarding-mode`.

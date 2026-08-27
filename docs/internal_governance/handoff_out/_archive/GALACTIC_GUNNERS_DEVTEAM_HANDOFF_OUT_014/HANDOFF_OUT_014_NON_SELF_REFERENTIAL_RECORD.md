@@ -1,4 +1,4 @@
-# GALACTIC_GUNNERS_DEVTEAM_HANDOFF_OUT_014 - SUPERSEDED PRELIMINARY RECORD
+# GALACTIC_GUNNERS_DEVTEAM_HANDOFF_OUT_014
 
 Handoff: `GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_014`
 
@@ -8,29 +8,37 @@ Branch: `feature/v1-boarding-mode`
 
 Entry authority: `origin/dev` at `989d56a511f1de1af72b66144eb5c93fc2a80921`
 
-## Status Correction
+## Founder Routing and Closure
 
-This record was written before the complete H014 acceptance matrix was independently demonstrated. It is retained as evidence of the premature status claim and is not a closure record. The active H014 status is `IMPLEMENTATION / ACCEPTANCE-MATRIX RECONCILIATION IN PROGRESS`.
+Founder Michael accepted the H014 visual and game-planning direction and directed H014 closeout on PR #11. The Campaign Designer shell is retained without redesign.
 
-## Preliminary Scope
+Closure result: `FOUNDER ACCEPTED — KNOWN PLATFORM AND RUNTIME ITEMS DEFERRED TO H015`.
 
-- Founder-authoritative H014 pack unpacked as an inspectable governed Handoff archive.
-- Founder-authoritative imagery pack hash/inventory/antivirus checks passed; 129 intended files admitted once using the supplied matrix. The imagery transport is retained in POST_BOX and is not committed.
-- Boarding API, immutable interior version, migrations, contract schemas, deterministic core, Level 4 anchor transition, Phaser boarding scene, asset normalisation metadata, runtime manifest sync and CI gates are included.
-- No merge was performed. Founder acceptance remains pending.
+This direction acceptance is not a Development assertion that every remaining platform or runtime item has passed Founder manual acceptance. Founder merge authority remains Michael only. PR #11 remains open and is not merged by Development.
 
-## Validation
+## Delivered H014 Scope
 
-GitHub Actions run `33047056624`: PASS.
+- The Founder-authoritative H014 commission was received as an inspectable governed Handoff archive.
+- The Founder-authoritative imagery transport was inventoried, safety checked and reconciled into canonical repository locations once. Its retained POST_BOX transport disposition is recorded in the receiving evidence.
+- Boarding API, immutable interior version, migrations, contract schemas, deterministic core, Level 4 anchor transition, Phaser Boarding scene, asset-normalisation metadata, runtime-manifest synchronisation and CI gates were delivered on this branch.
 
-`client-and-game`, `backend`, `docker-smoke`, `runtime-hostile`, `boarding-contracts`, `boarding-runtime`, `boarding-hostile`, score validation, leaderboard hostile and moderation hostile: all SUCCESS.
+## H015 Carry-Forward
 
-Docker health and actual Boarding runtime asset HTTP checks passed locally.
+H015 is planning-only until Founder merges PR #11 and a fresh H015 branch is created from the updated `dev` branch. The complete deferred list is maintained in `docs/internal_governance/planning/H015_CARRY_FORWARD_FROM_H014.md` and includes:
 
-## Seal Rule
+- explicit login before privileged administration surfaces;
+- Campaign Designer level-data retrieval, populated level listings and previews;
+- distinct level configurations and persistent campaign score, lives, nukes and progression across Continue;
+- database-backed, versioned Shooter and Boarding configurations;
+- anonymous unranked play, registered-player score ownership and server-validated top-ten publication;
+- simple administrator navigation for Campaign, Users, Scores and Logs;
+- visible production artwork in game and administration previews; and
+- remaining Boarding runtime, server-authority and end-to-end evidence completion.
 
-This committed record intentionally does not contain its own commit SHA. The exact final pushed repository SHA, local/remote equality and this record's SHA-256 are recorded in the governed external return message after the final push to avoid a Git self-referential SHA loop.
+## Validation and Safe Exit
 
-Closure recommendation: NO CLOSURE RECOMMENDATION. A new sealed return may be issued only after every mandatory H014 acceptance row is evidenced as PASS.
+The prior implementation head `e7b1c2286f7b7205a5e5a2d37c7700b1004df9c3` completed GitHub Actions run `33050281827` successfully. Exact final closure-commit CI, local/remote equality, clean-worktree proof and this record's SHA-256 are sealed in the governed external return after the final push.
+
+The committed record intentionally does not contain its own final commit SHA, avoiding a Git self-referential SHA loop.
 
 Founder merge authority: Michael only.

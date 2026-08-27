@@ -6,21 +6,21 @@
 | Institutional Arm | Inceptivec Gamification |
 | Commercial Repository | `Inceptivec-io/GalacticGunners` |
 | Historical Repository | `michael-leese/GallacticGunners` READ-ONLY |
-| Current Programme | v1.0 BUILD - SPRINT 001 |
-| Current Stage | H012 REV1 CAMPAIGN PROGRESSION AND PRODUCTION RESULT UI COMPLETE / PENDING CTO AND FOUNDER REVIEW |
-| Active Handoff | GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_012_REV1_APP1 |
-| Current Feature Branch | `feature/v1-config-driven-campaign-platform` |
+| Current Programme | H014 BOARDING MODE PLATFORM IMPLEMENTATION CLOSEOUT |
+| Current Stage | H014 CLOSED - FOUNDER ACCEPTED / KNOWN PLATFORM AND RUNTIME ITEMS DEFERRED TO H015 |
+| Active Handoff | GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_014 |
+| Current Feature Branch | `feature/v1-boarding-mode` |
 | Base Branch | `dev` |
-| Entry/Base SHA | `771bf384ae3878e292acf8d7e53dca90576b23b3` |
+| Entry/Base SHA | `989d56a511f1de1af72b66144eb5c93fc2a80921` |
 | Branch Model | `feature/* -> dev -> stage -> prod` |
 | Default Branch Target | `prod` |
-| Current Feature HEAD | final pushed SHA recorded externally after final push |
-| Closure State | PASS TARGET - SAFE EXIT PROOF RECORDED EXTERNALLY AFTER FINAL PUSH |
+| Current Feature HEAD | final H014 closure SHA recorded externally after final push |
+| Closure State | FOUNDER ACCEPTED - KNOWN PLATFORM AND RUNTIME ITEMS DEFERRED TO H015 |
 | Root Execution Contract | `AGENTS.md` |
 | External Boundary | `_EXTERNAL_GalacticGunners` |
 | Internal Governance Root | `docs/internal_governance` |
 | Living Registers | `docs/internal_governance/registers` |
-| POST_BOX Closed State | boundary/readme controls only; active payload zero |
+| POST_BOX Closed State | Founder-retained imagery transport only; all other active/transient payload absent |
 | Production Architecture Foundation | PASS - Django/DRF backend, PostgreSQL Docker topology, Next.js web shell, Phaser/TypeScript game package, contracts and CI gates reconciled |
 | v1.0 Sprint 001 Runtime | PASS TARGET - `/play` mounts Phaser Boot/MainMenu and Level 1 golden combat baseline plus a validated/checksummed six-level campaign. Production victory/game-over panels expose dynamic runtime values and discrete Continue/Replay/Try Again/Main Menu controls; Founder acceptance remains pending. |
 | Backend API | PASS - `/api/v1/health/`, `/api/v1/game-runs/`, `/api/v1/game-runs/{runId}/complete/`, `/api/v1/leaderboard/` |
@@ -32,8 +32,8 @@
 | Full Level 1 | NOT CLAIMED |
 | Levels 2-6 | PLAYABLE - each resolves the next validated/checksummed packaged campaign definition; Level 6 is terminal with no Level 7 |
 | Final Victory / Final Game Over | PRODUCTION RESULT PANELS AVAILABLE - Founder acceptance pending |
-| Boarding | NOT STARTED |
+| Boarding | H014 CLOSED UNDER FOUNDER ROUTING; remaining platform/runtime/server-authority and end-to-end evidence gaps are explicit H015 carry-forward |
 | Founder Acceptance Authority | Michael Leese |
-| Founder Acceptance | PENDING |
+| Founder Acceptance | FOUNDER ACCEPTED - KNOWN PLATFORM AND RUNTIME ITEMS DEFERRED TO H015; Development does not assert unqualified manual acceptance of deferred items |
 | Handoff 011 APP1 HOTFIX1 | PASS TARGET - corrections complete; CTO / Founder gate required before merge and H012 entry |
 | Handoff 013 | COMPLETE / PENDING FOUNDER REVIEW - validated GameRuns, public leaderboard, moderator controls and H014 readiness evidence; Draft PR to `dev`, not merged |
