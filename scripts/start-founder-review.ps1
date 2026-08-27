@@ -31,6 +31,18 @@ if (-not (Test-Path $envFile)) {
   ) | Set-Content -LiteralPath $envFile -Encoding ascii
 }
 $existing = Read-ReviewEnvironment
+if (-not $existing['POSTGRES_DB'] -or -not $existing['POSTGRES_USER'] -or -not $existing['POSTGRES_PASSWORD']) {
+  $dbEnv = @{}
+  $runningDb = docker compose ps -q db
+  if ($runningDb) {
+    (docker inspect $runningDb --format '{{range .Config.Env}}{{println .}}{{end}}') | ForEach-Object {
+      if ($_ -match '^POSTGRES_(DB|USER|PASSWORD)=') { $name, $value = $_ -split '=', 2; $dbEnv[$name] = $value }
+    }
+  }
+  if (-not $dbEnv['POSTGRES_DB']) { $dbEnv['POSTGRES_DB'] = 'galactic_gunners'; $dbEnv['POSTGRES_USER'] = 'galactic_gunners'; $dbEnv['POSTGRES_PASSWORD'] = New-ReviewSecret }
+  foreach ($name in 'POSTGRES_DB','POSTGRES_USER','POSTGRES_PASSWORD') { if (-not $existing[$name]) { Set-ReviewValue $name $dbEnv[$name] } }
+  Set-ReviewValue 'DATABASE_URL' "postgresql://$($dbEnv['POSTGRES_USER']):$($dbEnv['POSTGRES_PASSWORD'])@db:5432/$($dbEnv['POSTGRES_DB'])"
+}
 $reviewDefaults = @{
   'DJANGO_CSRF_TRUSTED_ORIGINS' = 'http://localhost:3002'; 'ENABLE_DJANGO_ADMIN' = 'false'; 'FOUNDER_REVIEW_MODE' = 'true';
   'COMMAND_POST_REVIEW_USERNAME' = 'command-post-review'; 'COMMAND_POST_REVIEW_DISPLAY_NAME' = 'Command Post Review'; 'COMMAND_POST_REVIEW_ORGANIZATION_SLUG' = 'founder-demo';
@@ -39,6 +51,7 @@ $reviewDefaults = @{
 }
 foreach ($name in $reviewDefaults.Keys) { if (-not $existing[$name]) { Set-ReviewValue $name $reviewDefaults[$name] } }
 foreach ($name in 'COMMAND_POST_REVIEW_PASSWORD','PLAYER_REVIEW_PASSWORD','DJANGO_LOCAL_SUPERUSER_PASSWORD') { if (-not $existing[$name]) { Set-ReviewValue $name (New-ReviewSecret) } }
+if (-not $existing['DJANGO_SECRET_KEY']) { Set-ReviewValue 'DJANGO_SECRET_KEY' (New-ReviewSecret) }
 Set-ReviewValue 'SOURCE_SHA' $sourceSha; Set-ReviewValue 'BUILD_ID' $sourceSha
 $values = Read-ReviewEnvironment
 $required = 'POSTGRES_DB','POSTGRES_USER','POSTGRES_PASSWORD','DATABASE_URL','DJANGO_SECRET_KEY','DJANGO_ALLOWED_HOSTS','DJANGO_CSRF_TRUSTED_ORIGINS','ENABLE_DJANGO_ADMIN','FOUNDER_REVIEW_USERNAME','FOUNDER_REVIEW_PASSWORD','FOUNDER_REVIEW_DISPLAY_NAME','COMMAND_POST_REVIEW_USERNAME','COMMAND_POST_REVIEW_PASSWORD','COMMAND_POST_REVIEW_DISPLAY_NAME','COMMAND_POST_REVIEW_ORGANIZATION_SLUG','PLAYER_REVIEW_USERNAME','PLAYER_REVIEW_PASSWORD','PLAYER_REVIEW_DISPLAY_NAME','DJANGO_LOCAL_SUPERUSER_USERNAME','DJANGO_LOCAL_SUPERUSER_PASSWORD'
