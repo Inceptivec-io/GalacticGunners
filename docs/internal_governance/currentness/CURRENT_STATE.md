@@ -5,7 +5,7 @@ Programme:
 BOARDING MODE PLATFORM IMPLEMENTATION
 
 Stage:
-H014 IMPLEMENTATION / ACCEPTANCE-MATRIX RECONCILIATION IN PROGRESS
+H014 FAIL-CLOSED - CHARACTER SOURCE GEOMETRY AUTHORITY CONFLICT
 
 Branch:
 feature/v1-boarding-mode
@@ -71,7 +71,7 @@ Validated Runs / Leaderboard:
 COMPLETE / PENDING FOUNDER REVIEW
 
 Boarding:
-IMPLEMENTATION IN PROGRESS - governed H014 intake and foundational runtime/API work are committed; the required end-to-end acceptance matrix is not yet sealed. Founder acceptance remains pending.
+FAIL-CLOSED - H014 character source sheets do not provide the true-alpha, uniform frame geometry the H014 asset contract requires. Evidence: `docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_014/CHARACTER_SOURCE_GEOMETRY_CONFLICT.md`. No fabricated extraction or substitute art is authorised. Founder acceptance remains pending.
 
 Founder Acceptance:
 REV4 PRODUCT STATE ACCEPTED AS-IS AT ENTRY; CTO FINAL MERGE GATE PENDING
