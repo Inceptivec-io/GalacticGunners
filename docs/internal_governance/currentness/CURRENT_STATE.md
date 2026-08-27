@@ -5,7 +5,7 @@ Programme:
 BOARDING MODE PLATFORM IMPLEMENTATION
 
 Stage:
-H014 COMPLETE / PENDING FOUNDER REVIEW AND MERGE
+H014 IMPLEMENTATION / ACCEPTANCE-MATRIX RECONCILIATION IN PROGRESS
 
 Branch:
 feature/v1-boarding-mode
@@ -71,7 +71,7 @@ Validated Runs / Leaderboard:
 COMPLETE / PENDING FOUNDER REVIEW
 
 Boarding:
-COMPLETE - H014 immutable interior, server validation, deterministic fixed-step core, Level 4 anchor, Phaser BoardingScene, Founder imagery admission, Docker reproduction and CI controls. Founder acceptance remains pending.
+IMPLEMENTATION IN PROGRESS - governed H014 intake and foundational runtime/API work are committed; the required end-to-end acceptance matrix is not yet sealed. Founder acceptance remains pending.
 
 Founder Acceptance:
 REV4 PRODUCT STATE ACCEPTED AS-IS AT ENTRY; CTO FINAL MERGE GATE PENDING

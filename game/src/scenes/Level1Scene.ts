@@ -670,12 +670,19 @@ export class Level1Scene extends CombatLevelScene {
     }
     const anchor = this.#definition.boarding_anchors?.[0];
     if (awardScore && anchor && !this.#boardingActive
+      && !scout.getData('boarding-resolved')
       && Number(scout.getData('row')) === anchor.source_selector.row
       && Number(scout.getData('col')) === anchor.source_selector.column) {
       this.#boardingActive = true;
       scout.setData('boarding-anchor', true);
       this.scene.pause();
-      this.scene.launch('BoardingScene', { seed: this.#definition.seed, lives: this.#lives.value, nukes: this.#currentNukes });
+      this.scene.launch('BoardingScene', {
+        seed: this.#definition.seed,
+        lives: this.#lives.value,
+        nukes: this.#currentNukes,
+        anchorId: anchor.id,
+        sourceEntityId: anchor.source_entity_id,
+      });
       return;
     }
     scout.setData('destroyed', true);
@@ -693,7 +700,8 @@ export class Level1Scene extends CombatLevelScene {
     const anchoredScout = this.getActiveScouts().find((scout) => scout.getData('boarding-anchor'));
     if (anchoredScout) {
       anchoredScout.setData('boarding-anchor', false);
-      this.destroyScoutBody(anchoredScout, false);
+      anchoredScout.setData('boarding-resolved', true);
+      this.destroyScoutBody(anchoredScout, true);
     }
     this.#boardingActive = false;
     if (data?.boardingOutcome === 'PLAYER_DEAD') this.damagePlayer(true);

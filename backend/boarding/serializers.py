@@ -75,13 +75,13 @@ class StartBoardingRunSerializer(StrictSerializer):
         if existing:
             return existing, None, False
         token = new_capability_token() if game_run.player_id is None else None
-        run = BoardingRun.objects.create(game_run=game_run, player=game_run.player, level=game_run.level, level_version=attrs['level_version'], level_checksum=attrs['level_checksum'], source_entity_id=attrs['source_entity_id'], source_entity_type=attrs['source_entity_type'], source_ship_type=attrs['source_ship_type'], anchor_id=attrs['anchor_id'], interior_version=attrs['interior_version_object'], interior_checksum=attrs['interior_checksum'], seed=deterministic_seed(game_run.seed, attrs['anchor_id'], attrs['interior_checksum']), lives_start=attrs['resources']['lives'], nukes_start=attrs['resources']['nukes'], shooter_state_digest=attrs['shooter_state_digest'], capability_token_hash=token_digest(token) if token else None)
+        run = BoardingRun.objects.create(game_run=game_run, player=game_run.player, level=game_run.level, level_version=attrs['level_version'], level_checksum=attrs['level_checksum'], source_entity_id=attrs['source_entity_id'], source_entity_type=attrs['source_entity_type'], source_ship_type=attrs['source_ship_type'], anchor_id=attrs['anchor_id'], interior_version=attrs['interior_version_object'], interior_checksum=attrs['interior_checksum'], seed=deterministic_seed(game_run.seed, attrs['source_entity_id'], attrs['interior_checksum']), lives_start=attrs['resources']['lives'], nukes_start=attrs['resources']['nukes'], shooter_state_digest=attrs['shooter_state_digest'], capability_token_hash=token_digest(token) if token else None)
         BoardingRunEvent.objects.create(boarding_run=run, sequence=0, event_type='STARTED', payload={'anchor_id': run.anchor_id}, payload_hash=digest({'anchor_id': run.anchor_id}))
         return run, token, True
 
 
 class BoardingEventSerializer(StrictSerializer):
-    sequence = serializers.IntegerField(min_value=1, max_value=511)
+    sequence = serializers.IntegerField(min_value=0, max_value=511)
     at_ms = serializers.IntegerField(min_value=0, max_value=60000)
     type = serializers.ChoiceField(choices=['INPUT_CHANGED', 'PLAYER_FIRE', 'PLAYER_HIT', 'PLAYER_RESPAWN', 'ALIEN_FIRE', 'ALIEN_HIT', 'ALIEN_KILLED', 'CONTAINER_OPENED', 'PICKUP_COLLECTED', 'EXIT_INTERACTED', 'TIMEOUT', 'PAUSE_STARTED', 'PAUSE_ENDED'])
     entity_id = serializers.RegexField(r'^[a-z][a-z0-9-]*$', max_length=64)
@@ -105,7 +105,7 @@ class CompleteBoardingRunSerializer(StrictSerializer):
 
     def validate_events(self, events):
         sequences = [event['sequence'] for event in events]
-        if sequences != list(range(1, len(events) + 1)):
+        if sequences != list(range(len(events))):
             raise serializers.ValidationError('EVENT_SEQUENCE_INVALID')
         if any(events[index]['at_ms'] > events[index + 1]['at_ms'] for index in range(len(events) - 1)):
             raise serializers.ValidationError('EVENT_TIME_NOT_MONOTONIC')
@@ -126,7 +126,12 @@ class CompleteBoardingRunSerializer(StrictSerializer):
             raise serializers.ValidationError({'detail': 'SHOOTER_STATE_DIGEST_MISMATCH'})
         if summary['outcome'] == BoardingRun.Outcome.TIMEOUT and summary['duration_ms'] != 60000:
             raise serializers.ValidationError({'detail': 'TIMEOUT_DURATION_INVALID'})
+        if summary['outcome'] == BoardingRun.Outcome.SUCCESS:
+            if not any(event['type'] == 'EXIT_INTERACTED' and event['at_ms'] < 60000 for event in summary['events']):
+                raise serializers.ValidationError({'detail': 'SUCCESS_EXIT_REQUIRED'})
         resources_end = summary['resources_end']
+        if summary['outcome'] == BoardingRun.Outcome.PLAYER_DEAD and resources_end['lives'] != 0:
+            raise serializers.ValidationError({'detail': 'PLAYER_DEAD_LIVES_INVALID'})
         expected_lives = min(3, run.lives_start + summary['lives_found'])
         expected_nukes = min(2, run.nukes_start + summary['nukes_found'])
         if summary['outcome'] == BoardingRun.Outcome.PLAYER_DEAD:
@@ -135,14 +140,15 @@ class CompleteBoardingRunSerializer(StrictSerializer):
             raise serializers.ValidationError({'detail': 'RESOURCE_RETURN_INVALID'})
         return_state = {'lives': expected_lives, 'nukes': expected_nukes, 'score_delta': 0, 'remove_source_entity_id': run.source_entity_id}
         BoardingSubmission.objects.create(boarding_run=run, idempotency_key=idempotency_key, raw_summary=summary, summary_hash=summary_hash, accepted=True)
-        for event in summary['events']:
-            payload = {key: value for key, value in event.items() if key != 'sequence'}
-            BoardingRunEvent.objects.create(boarding_run=run, sequence=event['sequence'], event_type=event['type'], payload=payload, payload_hash=digest(payload))
         run.status, run.outcome, run.completed_at, run.duration_ms = BoardingRun.Status.COMPLETED, summary['outcome'], timezone.now(), summary['duration_ms']
         run.lives_end, run.nukes_end, run.aliens_killed, run.containers_opened = expected_lives, expected_nukes, summary['aliens_killed'], summary['containers_opened']
         run.lives_found, run.nukes_found, run.score_events, run.return_state = summary['lives_found'], summary['nukes_found'], [], return_state
         run.validation_result, run.validation_code, run.return_applied = BoardingRun.ValidationResult.VALID, '', True
         run.save()
+        # Audit records are server-authored state transitions, not browser trace
+        # events.  The exact submitted trace remains immutable in the submission.
+        payload = {'outcome': run.outcome, 'summary_hash': summary_hash}
+        BoardingRunEvent.objects.create(boarding_run=run, sequence=1, event_type='VALIDATED', payload=payload, payload_hash=digest(payload))
         return run
 
 

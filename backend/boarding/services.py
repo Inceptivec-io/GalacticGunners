@@ -25,6 +25,6 @@ def token_matches(token, expected_digest):
     return bool(token and expected_digest and constant_time_compare(token_digest(token), expected_digest))
 
 
-def deterministic_seed(game_run_seed, anchor_id, interior_checksum):
-    material = f'{game_run_seed}:{anchor_id}:{interior_checksum}'.encode('ascii')
+def deterministic_seed(game_run_seed, source_entity_id, interior_checksum):
+    material = f'{game_run_seed}:{source_entity_id}:{interior_checksum}'.encode('ascii')
     return int.from_bytes(hashlib.sha256(material).digest()[:4], 'big')

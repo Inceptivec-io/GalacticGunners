@@ -23,9 +23,15 @@ class BoardingStartView(APIView):
             game_run = GameRun.objects.select_related('level', 'player').get(pk=game_run_id)
         except GameRun.DoesNotExist as exc:
             raise NotFound('Game run not found.') from exc
+        if game_run.player_id:
+            if not request.user.is_authenticated or request.user.pk != game_run.player_id:
+                raise PermissionDenied('BOARDING_OWNER_REQUIRED')
         serializer = StartBoardingRunSerializer(data=request.data, context={'game_run': game_run})
         serializer.is_valid(raise_exception=True)
         run, token, created = serializer.create_or_get()
+        if not created and run.player_id is None:
+            supplied_token = request.headers.get('X-Boarding-Token')
+            token = supplied_token if token_matches(supplied_token, run.capability_token_hash) else None
         return BoardingResponse(boarding_run_payload(run, token), status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
 
 
@@ -37,6 +43,8 @@ class BoardingRunDetailView(APIView):
             run = BoardingRun.objects.select_related('game_run', 'interior_version__interior').get(pk=boarding_run_id)
         except BoardingRun.DoesNotExist as exc:
             raise NotFound('Boarding run not found.') from exc
+        if run.player_id and (not request.user.is_authenticated or request.user.pk != run.player_id):
+            raise PermissionDenied('BOARDING_OWNER_REQUIRED')
         if run.player_id is None and not token_matches(request.headers.get('X-Boarding-Token'), run.capability_token_hash):
             raise PermissionDenied('BOARDING_CAPABILITY_INVALID')
         return run
