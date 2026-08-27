@@ -1101,8 +1101,14 @@ export class Level1Scene extends CombatLevelScene {
     let destroyed = 0;
     for (const scout of this.getActiveScouts()) {
       if (Phaser.Math.Distance.Between(x, y, scout.x, scout.y) <= radius) {
-        this.destroyScoutBody(scout, true);
-        destroyed += 1;
+        if (scout.getData('enemyType') === 'mothership') {
+          // The boss must retain its governed 30-health, hit-image, and score
+          // lifecycle. A burst cannot silently bypass that authored contract.
+          this.damageHostile(scout);
+        } else {
+          this.destroyScoutBody(scout, true);
+          destroyed += 1;
+        }
       }
     }
     return destroyed;
