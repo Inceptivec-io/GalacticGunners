@@ -44,7 +44,7 @@ export function compileLevelDocument(value: LevelDefinition | LevelAuthoringDocu
     const xs = [...new Set(members.map((entity) => entity.x))].sort((a, b) => a - b);
     const ys = [...new Set(members.map((entity) => entity.y))].sort((a, b) => a - b);
     return {
-      id: anchor.id, source_entity_type: 'scout' as const, source_ship_type: anchor.source_ship_type, source_entity_id: anchor.source_entity_id,
+      id: anchor.id, source_entity_type: (source?.entity_type.toLowerCase() ?? 'scout') as 'scout' | 'cruiser' | 'destroyer', source_ship_type: anchor.source_ship_type, source_entity_id: anchor.source_entity_id,
       source_selector: { formation_index: Math.max(0, runtimeIndex), row: source ? Math.max(0, ys.indexOf(source.y)) : 0, column: source ? Math.max(0, xs.indexOf(source.x)) : 0 },
       interior: anchor.interior, entry_envelope: anchor.entry_envelope, offer_duration_ms: anchor.offer_duration_ms,
     };
@@ -56,7 +56,7 @@ export function compileLevelDocument(value: LevelDefinition | LevelAuthoringDocu
     drop_tables: value.drop_rules.flatMap((rule) => rule.host_entity_types.map((host) => ({
       host: host.toLowerCase() as 'scout' | 'cruiser' | 'destroyer',
       entries: [{ pickup: rule.pickup_type.toLowerCase() as 'nuke' | 'life', weight: rule.probability, maximum_per_level: rule.maximum_per_level }],
-    }))), performance_budget: { max_enemies: value.performance_budget.max_active_enemies },
+    }))), objectives: value.objectives, performance_budget: { max_enemies: value.performance_budget.max_active_enemies },
     boarding_anchors,
   };
 }

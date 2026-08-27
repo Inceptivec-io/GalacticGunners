@@ -24,7 +24,7 @@ export function validateLevelDefinition(value: unknown): asserts value is LevelD
     for (const anchor of level.boarding_anchors) {
       const expected = `${level.slug}:formation-${anchor.source_selector.formation_index}:r${anchor.source_selector.row}:c${anchor.source_selector.column}`;
       const selectedFormation = level.enemy_formations[anchor.source_selector.formation_index];
-      if (anchor.source_entity_type !== 'scout' || anchor.source_ship_type !== 'ALIEN_FRIGATE'
+      if (!['scout', 'cruiser', 'destroyer'].includes(anchor.source_entity_type) || anchor.source_ship_type !== 'ALIEN_FRIGATE'
         || (anchor.source_entity_id !== expected && selectedFormation?.entity_id !== anchor.source_entity_id) || anchor.offer_duration_ms !== 8000
         || anchor.entry_envelope.width_px !== 160 || anchor.entry_envelope.height_px !== 128
         || !/^[0-9a-f]{64}$/.test(anchor.interior.checksum)) {

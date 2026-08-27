@@ -28,11 +28,12 @@ export interface LevelDefinition {
   /** Runtime-instantiated hazards. They are part of the level checksum and are never decorative metadata. */
   hazards?: Array<{ type: 'asteroid' | 'comet'; count: number; speed: number; origin: { x: number; y: number }; spacing: { x: number; y: number }; emitter?: unknown }>;
   drop_tables?: Array<{ host: 'scout' | 'cruiser' | 'destroyer'; entries: Array<{ pickup: 'nuke' | 'life'; weight: number; maximum_per_level?: number }> }>;
+  objectives?: Array<{ id: string; type: 'DESTROY_ALL_HOSTILES' | 'DESTROY_MOTHERSHIP' | 'SURVIVE_DURATION' | 'BOARD_TARGET'; required: boolean; target_entity_ids: string[]; duration_ms: number | null }>;
   performance_budget: { max_enemies: number };
   boarding_anchors?: Array<{
     id: string;
     source_selector: { formation_index: number; row: number; column: number };
-    source_entity_type: 'scout';
+    source_entity_type: 'scout' | 'cruiser' | 'destroyer';
     source_ship_type: 'ALIEN_FRIGATE';
     source_entity_id: string;
     interior: { slug: 'alien-frigate'; version: 1; checksum: string };

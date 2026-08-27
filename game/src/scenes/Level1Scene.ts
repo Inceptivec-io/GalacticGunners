@@ -132,6 +132,7 @@ export class Level1Scene extends CombatLevelScene {
   #hazardEmitterState = new Map<string, { emitted: number; nextAtMs: number }>();
   #lastMothershipDeployAtMs = Number.NEGATIVE_INFINITY;
   #enemyFireOrdinal = 0;
+  #levelStartedAtMs = 0;
 
   constructor() {
     super('Level1Scene');
@@ -143,6 +144,7 @@ export class Level1Scene extends CombatLevelScene {
 
   create(): void {
     this.#runtimeConfig = this.registry.get('runtimeConfig') as GameRuntimeConfig | undefined ?? {};
+    this.#levelStartedAtMs = this.time.now;
     this.#campaignSession = this.registry.get('campaignSession') as CampaignSession | undefined ?? null;
     const campaignRuntime = this.registry.get('campaignRuntime') as LevelRuntimeConfig[] | undefined ?? [];
     const packagedDefinition = CAMPAIGN_DEFINITIONS.find((definition) => definition.sequence === this.#campaignSequence);
@@ -1226,10 +1228,27 @@ export class Level1Scene extends CombatLevelScene {
   }
 
   private checkTerminalConditions(): void {
-    const activeScouts = this.getActiveScouts().length;
-    if (activeScouts === 0) {
+    const objectives = this.#definition.objectives ?? [{ type: 'DESTROY_ALL_HOSTILES', required: true, target_entity_ids: [], duration_ms: null }];
+    const requiredObjectives = objectives.filter((objective) => objective.required);
+    const completed = requiredObjectives.every((objective) => this.isObjectiveComplete(objective));
+    if (completed) {
       this.showTerminal('complete');
     }
+  }
+
+  private isObjectiveComplete(objective: { type: string; target_entity_ids?: string[]; duration_ms?: number | null }): boolean {
+    const active = this.getActiveScouts();
+    if (objective.type === 'SURVIVE_DURATION') {
+      return this.time.now - this.#levelStartedAtMs >= (objective.duration_ms ?? Number.POSITIVE_INFINITY);
+    }
+    if (objective.type === 'DESTROY_MOTHERSHIP') {
+      return !active.some((scout) => scout.getData('enemyType') === 'mothership');
+    }
+    if (objective.type === 'BOARD_TARGET') {
+      const targets = new Set(objective.target_entity_ids ?? []);
+      return [...targets].every((id) => !active.some((scout) => scout.getData('entityId') === id));
+    }
+    return active.length === 0;
   }
 
   private showTerminal(state: TerminalState): void {

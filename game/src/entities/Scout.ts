@@ -16,8 +16,10 @@ export function hostileDisplaySize(layout: PlayfieldLayout, type: HostileType, a
   const profile = HOSTILE_PROFILES[type];
   const scale = layout.scoutSize.width / HOSTILE_PROFILES.scout.width;
   return {
-    width: authoredSize?.width ?? profile.width * scale,
-    height: authoredSize?.height ?? profile.height * scale,
+    // Authoring dimensions are canonical 1280x720 canvas units. Apply the
+    // same playfield scale used by the established Scout baseline.
+    width: (authoredSize?.width ?? profile.width) * scale,
+    height: (authoredSize?.height ?? profile.height) * scale,
   };
 }
 

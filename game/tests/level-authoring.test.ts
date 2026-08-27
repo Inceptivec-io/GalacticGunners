@@ -50,3 +50,16 @@ test('published package retains the governed six-level population baseline', () 
   assert.deepEqual([byType(6, 'scout'), byType(6, 'cruiser'), byType(6, 'destroyer'), byType(6, 'mothership')], [18, 10, 6, 1]);
   assert.equal(CAMPAIGN_DEFINITIONS[0].shields[0].count * 32, 256);
 });
+
+test('compiler preserves authored objectives and stable Boarding target identity', () => {
+  const authored: LevelAuthoringDocument = {
+    ...document,
+    entities: [...document.entities, { id: 'destroyer-1', entity_type: 'DESTROYER', asset_id: 'enemy.destroyer', x: 760, y: 140, width: 92, height: 74, rotation: 0, z_index: 4, behaviour_profile: 'enemy.destroyer.standard', enabled: true, tags: [] }],
+    boarding_anchors: [{ id: 'board-1', source_entity_id: 'destroyer-1', source_ship_type: 'ALIEN_FRIGATE', interior: { slug: 'alien-frigate', version: 1, checksum: 'e9b1af65f0daef6725a7ddf4683b5f6d503e25dabc97aef1212102e6b1e994f3' }, entry_envelope: { width_px: 160, height_px: 128 }, offer_duration_ms: 8000, interaction: 'BOARD' }],
+    objectives: [{ id: 'board', type: 'BOARD_TARGET', required: true, target_entity_ids: ['destroyer-1'], duration_ms: null }],
+  };
+  const compiled = compileLevelDocument(authored);
+  assert.deepEqual(compiled.objectives, authored.objectives);
+  assert.equal(compiled.boarding_anchors?.[0].source_entity_id, 'destroyer-1');
+  assert.equal(compiled.boarding_anchors?.[0].source_entity_type, 'destroyer');
+});

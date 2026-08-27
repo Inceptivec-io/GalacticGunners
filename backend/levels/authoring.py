@@ -7,6 +7,9 @@ ENTITY_TYPES = {'SCOUT', 'CRUISER', 'DESTROYER', 'MOTHERSHIP', 'ASTEROID', 'COME
 SHIP_TYPES = {'SCOUT', 'CRUISER', 'DESTROYER', 'MOTHERSHIP'}
 FORMATION_LAYOUTS = {'GRID', 'LINE', 'WEDGE', 'ARC', 'FREEFORM'}
 HAZARD_TYPES = {'ASTEROID', 'COMET'}
+OBJECTIVE_TYPES = {'DESTROY_ALL_HOSTILES', 'DESTROY_MOTHERSHIP', 'SURVIVE_DURATION', 'BOARD_TARGET'}
+EMITTER_PATTERNS = {'RANDOM_EDGE', 'ALTERNATING_EDGES', 'LANE', 'FIXED_POINTS'}
+EDGES = {'TOP', 'RIGHT', 'BOTTOM', 'LEFT'}
 ENTITY_ASSETS = {
     'SCOUT': {'enemy.scout'}, 'CRUISER': {'enemy.cruiser'}, 'DESTROYER': {'enemy.destroyer'},
     'MOTHERSHIP': {'enemy.mothership'}, 'ASTEROID': {'hazard.asteroid'}, 'COMET': {'hazard.comet'},
@@ -93,8 +96,18 @@ def validate_authoring_document(value):
     entity_id_set = set(entity_ids)
     if not all(isinstance(entity_id, str) and entity_id for entity_id in entity_ids) or len(entity_ids) != len(entity_id_set):
         issue('/entities', 'DUPLICATE_OR_INVALID_ENTITY_ID')
-    enabled_spawns = [spawn for spawn in value.get('player_spawns', []) if spawn.get('enabled')]
+    spawns = value.get('player_spawns', [])
+    enabled_spawns = [spawn for spawn in spawns if spawn.get('enabled')]
     if len(enabled_spawns) != 1 or enabled_spawns[0].get('slot') != 1: issue('/player_spawns', 'PLAYER_SPAWN_CARDINALITY')
+    for index, spawn in enumerate(spawns):
+        if (
+            spawn.get('slot') not in {1, 2}
+            or spawn.get('asset_id') != 'player.ship'
+            or not isinstance(spawn.get('x'), (int, float)) or not 0 <= spawn['x'] <= 1280
+            or not isinstance(spawn.get('y'), (int, float)) or not 0 <= spawn['y'] <= 720
+            or not isinstance(spawn.get('enabled'), bool)
+        ):
+            issue(f'/player_spawns/{index}', 'INVALID_PLAYER_SPAWN')
     if sum(entity.get('entity_type') == 'MOTHERSHIP' and entity.get('enabled') for entity in entities) > 1: issue('/entities', 'MOTHERSHIP_CARDINALITY')
     for index, entity in enumerate(entities):
         if (
@@ -105,6 +118,11 @@ def validate_authoring_document(value):
             or not isinstance(entity.get('height'), (int, float)) or entity['height'] <= 0
             or not 0 <= entity.get('x', -1) <= 1280
             or not 0 <= entity.get('y', -1) <= 720
+            or entity.get('x', 0) - entity.get('width', 0) / 2 < 0
+            or entity.get('x', 0) + entity.get('width', 0) / 2 > 1280
+            or entity.get('y', 0) - entity.get('height', 0) / 2 < 0
+            or entity.get('y', 0) + entity.get('height', 0) / 2 > 720
+            or not isinstance(entity.get('behaviour_profile'), str) or not entity['behaviour_profile']
         ):
             issue(f'/entities/{index}', 'INVALID_ENTITY')
     for index, formation in enumerate(value.get('formations', [])):
@@ -116,10 +134,24 @@ def validate_authoring_document(value):
             or len(member_ids) != len(set(member_ids))
             or any(member not in entity_id_set for member in member_ids)
             or not all(isinstance(bounds.get(key), (int, float)) and bounds[key] >= 0 for key in ('x', 'y', 'width', 'height'))
+            or bounds.get('x', 0) + bounds.get('width', 0) > 1280
+            or bounds.get('y', 0) + bounds.get('height', 0) > 720
         ):
             issue(f'/formations/{index}/member_ids', 'UNKNOWN_ENTITY_REFERENCE')
     for index, emitter in enumerate(value.get('hazard_emitters', [])):
-        if emitter.get('hazard_type') not in HAZARD_TYPES or emitter.get('maximum_active', 0) < emitter.get('initial_count', 0) or emitter.get('maximum_active', 0) < 1: issue(f'/hazard_emitters/{index}', 'INVALID_EMITTER')
+        numeric = ('initial_count', 'maximum_active', 'spawn_interval_ms', 'spawn_jitter_ms', 'speed_min', 'speed_max', 'angular_velocity_min', 'angular_velocity_max', 'despawn_margin', 'collision_damage')
+        if (
+            emitter.get('hazard_type') not in HAZARD_TYPES
+            or emitter.get('asset_id') != f"hazard.{str(emitter.get('hazard_type', '')).lower()}"
+            or emitter.get('maximum_active', 0) < emitter.get('initial_count', 0)
+            or emitter.get('maximum_active', 0) < 1
+            or emitter.get('spawn_pattern') not in EMITTER_PATTERNS
+            or not emitter.get('entry_edges') or any(edge not in EDGES for edge in emitter.get('entry_edges', []))
+            or any(not isinstance(emitter.get(field), (int, float)) or emitter[field] < 0 for field in numeric)
+            or emitter.get('speed_max', 0) < emitter.get('speed_min', 0)
+            or any(not isinstance(point.get('x'), (int, float)) or not isinstance(point.get('y'), (int, float)) or not 0 <= point['x'] <= 1280 or not 0 <= point['y'] <= 720 for point in emitter.get('spawn_points', []))
+        ):
+            issue(f'/hazard_emitters/{index}', 'INVALID_EMITTER')
     for index, rule in enumerate(value.get('drop_rules', [])):
         if (
             not rule.get('host_entity_types')
@@ -132,13 +164,42 @@ def validate_authoring_document(value):
     shield_tiles = 0
     for index, structure in enumerate(value.get('shield_structures', [])):
         matrix = structure.get('matrix', [])
-        if not matrix or any(not isinstance(row, list) or any(tile not in {0, 1} for tile in row) for row in matrix):
+        if (
+            not matrix or any(not isinstance(row, list) or any(tile not in {0, 1} for tile in row) for row in matrix)
+            or structure.get('tile_asset_id') != 'shield.tile'
+            or structure.get('destructible') is not True
+            or not isinstance(structure.get('tile_width'), (int, float)) or structure['tile_width'] <= 0
+            or not isinstance(structure.get('tile_height'), (int, float)) or structure['tile_height'] <= 0
+            or not isinstance(structure.get('origin', {}).get('x'), (int, float)) or not isinstance(structure.get('origin', {}).get('y'), (int, float))
+        ):
             issue(f'/shield_structures/{index}/matrix', 'INVALID_SHIELD_MATRIX')
             continue
         shield_tiles += sum(row.count(1) for row in matrix)
     budget = value.get('performance_budget', {})
     if len([entity for entity in entities if entity.get('entity_type') in SHIP_TYPES and entity.get('enabled')]) > budget.get('max_active_enemies', 0): issue('/performance_budget/max_active_enemies', 'ENEMY_BUDGET_EXCEEDED')
     if shield_tiles > budget.get('max_shield_tiles', 0): issue('/performance_budget/max_shield_tiles', 'SHIELD_BUDGET_EXCEEDED')
+    if len([emitter for emitter in value.get('hazard_emitters', []) if emitter.get('enabled')]) > budget.get('max_active_hazards', 0): issue('/performance_budget/max_active_hazards', 'HAZARD_BUDGET_EXCEEDED')
+    runtime_total = len(entities) + shield_tiles + sum(emitter.get('maximum_active', 0) for emitter in value.get('hazard_emitters', []) if emitter.get('enabled'))
+    if runtime_total > budget.get('max_total_runtime_objects', 0): issue('/performance_budget/max_total_runtime_objects', 'RUNTIME_OBJECT_BUDGET_EXCEEDED')
+    for index, objective in enumerate(value.get('objectives', [])):
+        if (
+            objective.get('type') not in OBJECTIVE_TYPES
+            or not isinstance(objective.get('required'), bool)
+            or any(entity_id not in entity_id_set for entity_id in objective.get('target_entity_ids', []))
+            or (objective.get('type') == 'SURVIVE_DURATION' and (not isinstance(objective.get('duration_ms'), int) or objective['duration_ms'] <= 0))
+        ):
+            issue(f'/objectives/{index}', 'INVALID_OBJECTIVE')
     for index, anchor in enumerate(value.get('boarding_anchors', [])):
-        if anchor.get('source_entity_id') not in entity_id_set or anchor.get('offer_duration_ms') != 8000: issue(f'/boarding_anchors/{index}', 'INVALID_BOARDING_ANCHOR')
+        source = next((entity for entity in entities if entity.get('id') == anchor.get('source_entity_id')), None)
+        if (
+            # Existing governed Level 4 anchors a legacy Scout identity. New
+            # authored maps may target a Cruiser or Destroyer, but migration
+            # must retain that accepted stable source coordinate.
+            not source or source.get('entity_type') not in {'SCOUT', 'CRUISER', 'DESTROYER'}
+            or anchor.get('source_ship_type') != 'ALIEN_FRIGATE'
+            or anchor.get('offer_duration_ms') != 8000
+            or anchor.get('interaction') != 'BOARD'
+            or anchor.get('interior', {}).get('slug') != 'alien-frigate'
+        ):
+            issue(f'/boarding_anchors/{index}', 'INVALID_BOARDING_ANCHOR')
     return errors

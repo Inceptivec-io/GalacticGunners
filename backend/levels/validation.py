@@ -65,7 +65,7 @@ def validate_definition(value):
         selected = (value.get('enemy_formations') or [])[selector.get('formation_index', -1)] if isinstance(selector.get('formation_index'), int) and 0 <= selector.get('formation_index') < len(value.get('enemy_formations', [])) else {}
         interior = anchor.get('interior', {})
         if (
-            anchor.get('source_entity_type') != 'scout'
+            anchor.get('source_entity_type') not in {'scout', 'cruiser', 'destroyer'}
             or anchor.get('source_ship_type') != 'ALIEN_FRIGATE'
             or (anchor.get('source_entity_id') != expected_id and anchor.get('source_entity_id') != selected.get('entity_id'))
             or anchor.get('offer_duration_ms') != 8000
