@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://galacticgunners.inceptivec.io/contracts/interior-definition-v1.schema.json",
+  "title": "Galactic Gunners InteriorDefinition v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "slug", "version", "ship_type", "world", "performance", "rooms", "connectors", "spawn", "exit", "enemies", "containers", "hazards", "pickups", "assets"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "slug": {"type": "string", "const": "alien-frigate"},
+    "version": {"type": "integer", "const": 1},
+    "ship_type": {"type": "string", "const": "ALIEN_FRIGATE"},
+    "world": {
+      "type": "object", "additionalProperties": false,
+      "required": ["width_px", "height_px", "grid_px", "gravity_px_s2"],
+      "properties": {
+        "width_px": {"const": 4096}, "height_px": {"const": 720}, "grid_px": {"const": 64}, "gravity_px_s2": {"const": 1800}
+      }
+    },
+    "performance": {
+      "type": "object", "additionalProperties": false,
+      "required": ["fixed_step_hz", "time_limit_ms", "max_enemies", "max_projectiles", "max_trace_events"],
+      "properties": {
+        "fixed_step_hz": {"const": 60}, "time_limit_ms": {"const": 60000}, "max_enemies": {"const": 6},
+        "max_projectiles": {"type": "integer", "minimum": 1, "maximum": 64}, "max_trace_events": {"const": 512}
+      }
+    },
+    "rooms": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"$ref": "#/$defs/room"}},
+    "connectors": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"$ref": "#/$defs/connector"}},
+    "spawn": {"$ref": "#/$defs/point"},
+    "exit": {
+      "allOf": [{"$ref": "#/$defs/rect"}],
+      "properties": {"id": {"const": "exit-main"}, "room_id": {"const": "engineering"}}
+    },
+    "enemies": {"type": "array", "minItems": 6, "maxItems": 6, "items": {"$ref": "#/$defs/enemy"}},
+    "containers": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"$ref": "#/$defs/container"}},
+    "hazards": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"$ref": "#/$defs/rect"}},
+    "pickups": {
+      "type": "object", "additionalProperties": false,
+      "required": ["allowed_types", "lives_cap", "nukes_cap"],
+      "properties": {
+        "allowed_types": {"type": "array", "prefixItems": [{"const": "LIFE"}, {"const": "NUKE"}], "items": false},
+        "lives_cap": {"const": 3}, "nukes_cap": {"const": 2}
+      }
+    },
+    "assets": {
+      "type": "object", "additionalProperties": false,
+      "required": ["backgrounds", "tilekit", "props", "characters", "projectiles", "effects", "ui", "audio"],
+      "properties": {
+        "backgrounds": {"$ref": "#/$defs/pathList"}, "tilekit": {"$ref": "#/$defs/pathList"},
+        "props": {"$ref": "#/$defs/pathList"}, "characters": {"$ref": "#/$defs/pathList"},
+        "projectiles": {"$ref": "#/$defs/pathList"}, "effects": {"$ref": "#/$defs/pathList"},
+        "ui": {"$ref": "#/$defs/pathList"}, "audio": {"$ref": "#/$defs/pathList"}
+      }
+    }
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[a-z][a-z0-9-]{0,63}$"},
+    "path": {"type": "string", "pattern": "^assets/[A-Za-z0-9_./-]+$"},
+    "pathList": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/path"}},
+    "point": {
+      "type": "object", "additionalProperties": false, "required": ["id", "room_id", "x_px", "y_px"],
+      "properties": {"id": {"$ref": "#/$defs/id"}, "room_id": {"$ref": "#/$defs/id"}, "x_px": {"type": "integer", "minimum": 0, "maximum": 4096}, "y_px": {"type": "integer", "minimum": 0, "maximum": 720}}
+    },
+    "rect": {
+      "type": "object", "additionalProperties": false, "required": ["id", "room_id", "x_px", "y_px", "width_px", "height_px"],
+      "properties": {"id": {"$ref": "#/$defs/id"}, "room_id": {"$ref": "#/$defs/id"}, "x_px": {"type": "integer", "minimum": 0, "maximum": 4095}, "y_px": {"type": "integer", "minimum": 0, "maximum": 719}, "width_px": {"type": "integer", "minimum": 1, "maximum": 4096}, "height_px": {"type": "integer", "minimum": 1, "maximum": 720}}
+    },
+    "room": {
+      "type": "object", "additionalProperties": false, "required": ["id", "x_px", "width_px", "background_asset", "floor_y_px", "collision_rects"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"}, "x_px": {"type": "integer", "minimum": 0, "maximum": 4095}, "width_px": {"type": "integer", "minimum": 64, "maximum": 4096},
+        "background_asset": {"$ref": "#/$defs/path"}, "floor_y_px": {"const": 648},
+        "collision_rects": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/rect"}}
+      }
+    },
+    "connector": {
+      "type": "object", "additionalProperties": false, "required": ["id", "from_room_id", "to_room_id", "door_id"],
+      "properties": {"id": {"$ref": "#/$defs/id"}, "from_room_id": {"$ref": "#/$defs/id"}, "to_room_id": {"$ref": "#/$defs/id"}, "door_id": {"$ref": "#/$defs/id"}}
+    },
+    "enemy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "room_id", "x_px", "y_px", "type", "patrol_min_x_px", "patrol_max_x_px", "fire_interval_ms"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"}, "room_id": {"$ref": "#/$defs/id"},
+        "x_px": {"type": "integer", "minimum": 0, "maximum": 4096}, "y_px": {"type": "integer", "minimum": 0, "maximum": 720},
+        "type": {"const": "ALIEN_GUNNER"}, "patrol_min_x_px": {"type": "integer", "minimum": 0, "maximum": 4096}, "patrol_max_x_px": {"type": "integer", "minimum": 0, "maximum": 4096},
+        "fire_interval_ms": {"type": "object", "additionalProperties": false, "required": ["min", "max"], "properties": {"min": {"const": 900}, "max": {"const": 1500}}}
+      }
+    },
+    "drop": {
+      "type": "object", "additionalProperties": false, "required": ["type", "weight"],
+      "properties": {"type": {"enum": ["LIFE", "NUKE", "EMPTY"]}, "weight": {"type": "integer", "minimum": 1, "maximum": 100}}
+    },
+    "container": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "room_id", "x_px", "y_px", "prop_type", "hit_points", "drop_table"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"}, "room_id": {"$ref": "#/$defs/id"},
+        "x_px": {"type": "integer", "minimum": 0, "maximum": 4096}, "y_px": {"type": "integer", "minimum": 0, "maximum": 720},
+        "prop_type": {"enum": ["CRATE", "BARREL"]}, "hit_points": {"const": 1},
+        "drop_table": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"$ref": "#/$defs/drop"}}
+      }
+    }
+  }
+}

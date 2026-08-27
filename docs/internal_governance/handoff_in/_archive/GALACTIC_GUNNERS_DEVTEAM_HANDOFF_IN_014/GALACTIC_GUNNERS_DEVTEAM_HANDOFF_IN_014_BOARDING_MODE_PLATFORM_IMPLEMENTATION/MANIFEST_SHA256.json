@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "handoff_id": "GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_014",
+  "workstream": "BOARDING_MODE_PLATFORM_IMPLEMENTATION",
+  "entry_sha": "989d56a511f1de1af72b66144eb5c93fc2a80921",
+  "imagery_transport_embedded": false,
+  "imagery_pack_filename": "GalacticGunners_Imagery_Pack_v1.0_PRODUCTION.zip",
+  "imagery_pack_sha256": "71a9fdde58bf84f3a01618cdc3cb72211cfe4f5cff4d5154f7455de94ec14930",
+  "interior_fixture_sha256_jcs": "e9b1af65f0daef6725a7ddf4683b5f6d503e25dabc97aef1212102e6b1e994f3",
+  "member_count_excluding_manifest": 30,
+  "members": [
+    {
+      "path": "00_START_HERE_EXECUTE_NOW.md",
+      "bytes": 3153,
+      "sha256": "3041165a6751cea7eee387e9428696d574dbfeb1371eb389b0d652c47defe0bb"
+    },
+    {
+      "path": "01_EXECUTION_CHARTER.md",
+      "bytes": 2212,
+      "sha256": "b67eda5614f4d551e211f3ac2c72fbb76468bec432db58f5a18c40f64a746ef6"
+    },
+    {
+      "path": "02_INPUT_RECEIVING_AND_ASSET_ADMISSION.md",
+      "bytes": 5117,
+      "sha256": "464574787f64fc0a031235274a0651dece60269aca972557e159b4a9d9cffb16"
+    },
+    {
+      "path": "03_PRODUCT_RUNTIME_AUTHORITY.md",
+      "bytes": 8201,
+      "sha256": "7fde48deac6bb10711688761d98b016dde5bcec8062b5b9fec1ca2a08e59965d"
+    },
+    {
+      "path": "04_ASSET_RUNTIME_CONTRACT.md",
+      "bytes": 3139,
+      "sha256": "349295552de08677d0f2de2ef552b5eb198974f2bc3ce330022442fad2696548"
+    },
+    {
+      "path": "05_DATA_MODELS_AND_MIGRATIONS.md",
+      "bytes": 6163,
+      "sha256": "aadff74262df6409d3b9058431b30a9758a0a2e499038d88bfa294fb5a71a9ae"
+    },
+    {
+      "path": "06_API_CONTRACT.md",
+      "bytes": 4611,
+      "sha256": "000a399bc400be43cddbb8854ed759adf1d4c01d96cb47a31d26ae57e11784c9"
+    },
+    {
+      "path": "07_GAME_CORE_AND_CLIENT_IMPLEMENTATION.md",
+      "bytes": 4457,
+      "sha256": "07027887f31600698161eddc777f145dd40882ac03d6599fc7dc3f8f905aa107"
+    },
+    {
+      "path": "08_SECURITY_VALIDATION_AND_ANTI_ABUSE.md",
+      "bytes": 3505,
+      "sha256": "7810b37041a428859b44d648ebd2698d67dec87b3daf3a2b56cceced0ed2dc0a"
+    },
+    {
+      "path": "09_TEST_CI_HOSTILE_MATRIX.md",
+      "bytes": 4550,
+      "sha256": "16f8ad0fd0bf81e5ecdb3c5b30056f2864ce76198b6bfe42acbd1722fd45eda4"
+    },
+    {
+      "path": "10_GOVERNANCE_EVIDENCE_AND_RETURN.md",
+      "bytes": 2815,
+      "sha256": "30a83be3271d90df197e5197a1ab5542fd132f0c43eeb0740f83dd4fd745e402"
+    },
+    {
+      "path": "11_ACCEPTANCE_MATRIX.md",
+      "bytes": 2596,
+      "sha256": "e942c21a8cb646bbc2acbe904384366070fdb3b5f638990a98b8ed3181344723"
+    },
+    {
+      "path": "12_ROUTING_MESSAGE.md",
+      "bytes": 873,
+      "sha256": "8926aa947fdbd9caa3c3064b0eade6fa1c1f0b38d29917bc2179e54d1ae65395"
+    },
+    {
+      "path": "13_IMPLEMENTATION_FILE_PLAN.md",
+      "bytes": 2629,
+      "sha256": "2f9d1ff688410581b6a8bd7d74919f3c6436868269be5792ee5061bf6a71b441"
+    },
+    {
+      "path": "contracts/boarding-domain-types.ts",
+      "bytes": 5107,
+      "sha256": "145cafcef62cd80eb6335604bedd2576df089523266c7665658d5e4d77d4c9cb"
+    },
+    {
+      "path": "contracts/boarding-error-codes.json",
+      "bytes": 2665,
+      "sha256": "3aff6296e4241bfd7ad5c8a127a7326fcbffe3950e33c0b6e5237724bf0414da"
+    },
+    {
+      "path": "contracts/boarding-run.schema.json",
+      "bytes": 3799,
+      "sha256": "fd4bfba576395e6c94f10272036fd088de4b19770eff082546a1c422663db461"
+    },
+    {
+      "path": "contracts/interior-definition.schema.json",
+      "bytes": 6574,
+      "sha256": "106dac189cacf252f7efad4329ae24ac1555d6fc0751faddf80570f7c3d2cf73"
+    },
+    {
+      "path": "contracts/level-boarding-anchor.schema.json",
+      "bytes": 1589,
+      "sha256": "b2802aaafe366d9fe7ae7bb88da7e7465aeddd2dec230c9be461f351c4f0e699"
+    },
+    {
+      "path": "contracts/openapi-boarding-v1.yaml",
+      "bytes": 12118,
+      "sha256": "c7beb7e4d3e3fb86e4eae7eb258711a3de145fc9fc6cae8ed7af17d081177224"
+    },
+    {
+      "path": "contracts/shooter-snapshot.schema.json",
+      "bytes": 4265,
+      "sha256": "e5ba7bac49539449d292448f16768792cc5be8ed37d1686ef6e19a71ef37c795"
+    },
+    {
+      "path": "fixtures/boarding-completion-success.json",
+      "bytes": 1896,
+      "sha256": "2e1fac6c7226bd62be8886d62d850cdf36dd2704f61df47e4836dfb337f45a4d"
+    },
+    {
+      "path": "fixtures/boarding-completion-timeout.json",
+      "bytes": 397,
+      "sha256": "51fc34f0b3f257a94f4b5baa11276664cc3237de6debe78b219b1e8dc1a88b2a"
+    },
+    {
+      "path": "fixtures/boarding-start.json",
+      "bytes": 569,
+      "sha256": "371b8bce4816963dd183607e9b542be4414eb1542e79a8770364e11ac3bb9ce0"
+    },
+    {
+      "path": "fixtures/interior-alien-frigate-v1.json",
+      "bytes": 7234,
+      "sha256": "0e4ab5d2a8f227ca599af9cdabe958ce4dc6fecd9b36691367369a70bae833d4"
+    },
+    {
+      "path": "fixtures/rng-golden-vectors.json",
+      "bytes": 1180,
+      "sha256": "83037d799e2a36ef30879ee06dc75ba7881069e87b5442e41906ee4c1cb516aa"
+    },
+    {
+      "path": "README.md",
+      "bytes": 1086,
+      "sha256": "7d88b9ceed9df349212bf533c8ea1bfbd583f250bcff05393acb46103bda9a6d"
+    },
+    {
+      "path": "registers/H014_ASSET_USE_MATRIX.csv",
+      "bytes": 41062,
+      "sha256": "ac3767db12bdea8fa6fe80c14a8c100cdf6a0eb9b79948a81acefed87195e9d7"
+    },
+    {
+      "path": "registers/IMAGERY_PACK_INVENTORY.csv",
+      "bytes": 19179,
+      "sha256": "87c7d5a9700c481c3cf787461337adb65341176ed95ed6317f0077d12e53e8a4"
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "bytes": 1670,
+      "sha256": "8fafe93b502358eb7f14eb718390ef6f5a266b967b93da7c05652868e8f72ced"
+    }
+  ]
+}

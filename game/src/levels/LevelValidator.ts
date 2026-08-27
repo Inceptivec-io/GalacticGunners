@@ -16,4 +16,16 @@ export function validateLevelDefinition(value: unknown): asserts value is LevelD
   for (const shield of level.shields) {
     if (!Number.isInteger(shield.count) || shield.count < 0 || shield.matrix.some((row) => row.some((tile) => tile !== 0 && tile !== 1))) throw new Error('Invalid shield matrix.');
   }
+  if (level.boarding_anchors) {
+    if (level.boarding_anchors.length > 1) throw new Error('A level can have at most one Boarding anchor.');
+    for (const anchor of level.boarding_anchors) {
+      const expected = `${level.slug}:formation-${anchor.source_selector.formation_index}:r${anchor.source_selector.row}:c${anchor.source_selector.column}`;
+      if (anchor.source_entity_type !== 'scout' || anchor.source_ship_type !== 'ALIEN_FRIGATE'
+        || anchor.source_entity_id !== expected || anchor.offer_duration_ms !== 8000
+        || anchor.entry_envelope.width_px !== 160 || anchor.entry_envelope.height_px !== 128
+        || !/^[0-9a-f]{64}$/.test(anchor.interior.checksum)) {
+        throw new Error('Invalid Boarding anchor.');
+      }
+    }
+  }
 }

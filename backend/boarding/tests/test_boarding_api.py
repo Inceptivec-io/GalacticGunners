@@ -1,0 +1,53 @@
+import hashlib
+import json
+
+from django.core.management import call_command
+from django.test import TestCase
+from rest_framework.test import APIClient
+
+from game_runs.models import GameRun, GameVersion
+from levels.models import Level
+
+
+def digest(value):
+    return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+
+
+class BoardingApiTests(TestCase):
+    def setUp(self):
+        call_command('seed_runtime_authority')
+        version = GameVersion.objects.get(version='v1.0-s001-l1-slice')
+        level = Level.objects.get(slug='level-04')
+        active = level.active_version
+        self.game_run = GameRun.objects.create(game_version=version, level=level, level_version=active.version, level_checksum=active.checksum, seed=12004, client_type='web')
+        self.client = APIClient()
+        self.digest = 'a' * 64
+
+    def payload(self):
+        return {'anchor_id': 'level-04-alien-frigate-01', 'source_entity_id': 'level-04:formation-0:r0:c14', 'source_entity_type': 'scout', 'source_ship_type': 'ALIEN_FRIGATE', 'level_version': self.game_run.level_version, 'level_checksum': self.game_run.level_checksum, 'interior_slug': 'alien-frigate', 'interior_version': 1, 'interior_checksum': 'e9b1af65f0daef6725a7ddf4683b5f6d503e25dabc97aef1212102e6b1e994f3', 'shooter_state_digest': self.digest, 'resources': {'lives': 3, 'nukes': 2}}
+
+    def test_start_is_idempotent_and_issues_anonymous_capability(self):
+        first = self.client.post(f'/api/v1/game-runs/{self.game_run.id}/boarding-runs/start/', self.payload(), format='json')
+        self.assertEqual(first.status_code, 201)
+        self.assertEqual(first['Cache-Control'], 'no-store')
+        again = self.client.post(f'/api/v1/game-runs/{self.game_run.id}/boarding-runs/start/', self.payload(), format='json')
+        self.assertEqual(again.status_code, 200)
+        self.assertEqual(first.data['id'], again.data['id'])
+
+    def test_rejects_unknown_fields_and_bad_capability(self):
+        bad = self.payload() | {'hostile': True}
+        response = self.client.post(f'/api/v1/game-runs/{self.game_run.id}/boarding-runs/start/', bad, format='json')
+        self.assertEqual(response.status_code, 400)
+        started = self.client.post(f'/api/v1/game-runs/{self.game_run.id}/boarding-runs/start/', self.payload(), format='json')
+        denied = self.client.get(f"/api/v1/boarding-runs/{started.data['id']}/")
+        self.assertEqual(denied.status_code, 403)
+
+    def test_complete_requires_matching_digest_and_is_idempotent(self):
+        started = self.client.post(f'/api/v1/game-runs/{self.game_run.id}/boarding-runs/start/', self.payload(), format='json')
+        headers = {'HTTP_X_BOARDING_TOKEN': started.data['boarding_token'], 'HTTP_IDEMPOTENCY_KEY': 'complete-1'}
+        completion = {'outcome': 'SUCCESS', 'duration_ms': 1000, 'resources_end': {'lives': 3, 'nukes': 2}, 'aliens_killed': 0, 'containers_opened': 0, 'lives_found': 0, 'nukes_found': 0, 'score_events': [], 'shooter_state_digest': self.digest, 'events': []}
+        completed = self.client.post(f"/api/v1/boarding-runs/{started.data['id']}/complete/", completion, format='json', **headers)
+        self.assertEqual(completed.status_code, 200)
+        replay = self.client.post(f"/api/v1/boarding-runs/{started.data['id']}/complete/", completion, format='json', **headers)
+        self.assertEqual(replay.status_code, 200)
+        self.assertEqual(replay.data['return_state']['score_delta'], 0)

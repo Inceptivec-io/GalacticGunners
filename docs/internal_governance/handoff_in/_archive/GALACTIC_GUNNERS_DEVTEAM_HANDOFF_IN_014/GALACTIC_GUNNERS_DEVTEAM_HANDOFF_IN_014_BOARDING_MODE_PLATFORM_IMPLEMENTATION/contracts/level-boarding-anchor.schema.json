@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://galacticgunners.inceptivec.io/contracts/level-boarding-anchor-v1.schema.json",
+  "title": "LevelDefinition boarding_anchors extension v1",
+  "type": "array",
+  "maxItems": 1,
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["id", "source_selector", "source_entity_type", "source_ship_type", "source_entity_id", "interior", "entry_envelope", "offer_duration_ms"],
+    "properties": {
+      "id": {"type": "string", "const": "level-04-alien-frigate-01"},
+      "source_selector": {
+        "type": "object", "additionalProperties": false, "required": ["formation_index", "row", "column"],
+        "properties": {"formation_index": {"const": 0}, "row": {"const": 0}, "column": {"const": 14}}
+      },
+      "source_entity_type": {"const": "scout"},
+      "source_ship_type": {"const": "ALIEN_FRIGATE"},
+      "source_entity_id": {"const": "level-04:formation-0:r0:c14"},
+      "interior": {
+        "type": "object", "additionalProperties": false, "required": ["slug", "version", "checksum"],
+        "properties": {
+          "slug": {"const": "alien-frigate"}, "version": {"const": 1},
+          "checksum": {"const": "e9b1af65f0daef6725a7ddf4683b5f6d503e25dabc97aef1212102e6b1e994f3"}
+        }
+      },
+      "entry_envelope": {
+        "type": "object", "additionalProperties": false, "required": ["width_px", "height_px"],
+        "properties": {"width_px": {"const": 160}, "height_px": {"const": 128}}
+      },
+      "offer_duration_ms": {"const": 8000}
+    }
+  }
+}

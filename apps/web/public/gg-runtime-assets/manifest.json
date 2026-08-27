@@ -288,6 +288,526 @@
       "canonical_sha256": "46E97A344CBCEF9E775B9FCC81B0895858D29E975C32C416C6E3CD91C8DA6D2B",
       "runtime_path": "/gg-runtime-assets/audio/gg_nuke_burst_v001.wav",
       "runtime_sha256": "46E97A344CBCEF9E775B9FCC81B0895858D29E975C32C416C6E3CD91C8DA6D2B"
+    },
+    {
+      "key": "boarding.gg_boarding_bg_cargo_bay_v001",
+      "asset_id": "imagery-pack:boarding/backgrounds/gg_boarding_bg_cargo_bay_v001.png",
+      "canonical_path": "assets/boarding/backgrounds/gg_boarding_bg_cargo_bay_v001.png",
+      "canonical_sha256": "C818B2097D7BF19B04044F56FFB726459F58BAEA565861F5209B88436078EC23",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/backgrounds/gg_boarding_bg_cargo_bay_v001.png",
+      "runtime_sha256": "C818B2097D7BF19B04044F56FFB726459F58BAEA565861F5209B88436078EC23"
+    },
+    {
+      "key": "boarding.gg_boarding_bg_corridor_v001",
+      "asset_id": "imagery-pack:boarding/backgrounds/gg_boarding_bg_corridor_v001.png",
+      "canonical_path": "assets/boarding/backgrounds/gg_boarding_bg_corridor_v001.png",
+      "canonical_sha256": "5F7247FA19A987FE9BEE542893AB4590243A99714D94455A48DD539F00F4E76C",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/backgrounds/gg_boarding_bg_corridor_v001.png",
+      "runtime_sha256": "5F7247FA19A987FE9BEE542893AB4590243A99714D94455A48DD539F00F4E76C"
+    },
+    {
+      "key": "boarding.gg_boarding_bg_engineering_v001",
+      "asset_id": "imagery-pack:boarding/backgrounds/gg_boarding_bg_engineering_v001.png",
+      "canonical_path": "assets/boarding/backgrounds/gg_boarding_bg_engineering_v001.png",
+      "canonical_sha256": "04541410771B0D54CC3D1A4220A09D58C616C44F68BF0F12B5362FAF62EBA9FD",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/backgrounds/gg_boarding_bg_engineering_v001.png",
+      "runtime_sha256": "04541410771B0D54CC3D1A4220A09D58C616C44F68BF0F12B5362FAF62EBA9FD"
+    },
+    {
+      "key": "boarding.gg_boarding_fx_explosion_v001",
+      "asset_id": "imagery-pack:boarding/effects/gg_boarding_fx_explosion_v001.png",
+      "canonical_path": "assets/boarding/effects/gg_boarding_fx_explosion_v001.png",
+      "canonical_sha256": "8387DCDAB72F45A1D11B92E55A4907D038A54734EF4A99D3FECFB4A24D8CFBE2",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/effects/gg_boarding_fx_explosion_v001.png",
+      "runtime_sha256": "8387DCDAB72F45A1D11B92E55A4907D038A54734EF4A99D3FECFB4A24D8CFBE2"
+    },
+    {
+      "key": "boarding.gg_boarding_fx_muzzle_flash_v001",
+      "asset_id": "imagery-pack:boarding/effects/gg_boarding_fx_muzzle_flash_v001.png",
+      "canonical_path": "assets/boarding/effects/gg_boarding_fx_muzzle_flash_v001.png",
+      "canonical_sha256": "2C7951604317013A250A013E60FF0CD15C9A8ACB8BB63FF5358A30FC224998CE",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/effects/gg_boarding_fx_muzzle_flash_v001.png",
+      "runtime_sha256": "2C7951604317013A250A013E60FF0CD15C9A8ACB8BB63FF5358A30FC224998CE"
+    },
+    {
+      "key": "boarding.gg_boarding_fx_pickup_burst_v001",
+      "asset_id": "imagery-pack:boarding/effects/gg_boarding_fx_pickup_burst_v001.png",
+      "canonical_path": "assets/boarding/effects/gg_boarding_fx_pickup_burst_v001.png",
+      "canonical_sha256": "0E602D33EB7FC5E541B716FCF1E097D63F1BB765BBBFB4B8F04ACA1D9228171C",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/effects/gg_boarding_fx_pickup_burst_v001.png",
+      "runtime_sha256": "0E602D33EB7FC5E541B716FCF1E097D63F1BB765BBBFB4B8F04ACA1D9228171C"
+    },
+    {
+      "key": "boarding.gg_boarding_pickup_life_v001",
+      "asset_id": "imagery-pack:boarding/pickups/gg_boarding_pickup_life_v001.png",
+      "canonical_path": "assets/boarding/pickups/gg_boarding_pickup_life_v001.png",
+      "canonical_sha256": "E6F8B54EBDCA110F567B703E3E566F840AAE4445C64F549ED54121A85A349AB5",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/pickups/gg_boarding_pickup_life_v001.png",
+      "runtime_sha256": "E6F8B54EBDCA110F567B703E3E566F840AAE4445C64F549ED54121A85A349AB5"
+    },
+    {
+      "key": "boarding.gg_boarding_pickup_nuke_v001",
+      "asset_id": "imagery-pack:boarding/pickups/gg_boarding_pickup_nuke_v001.png",
+      "canonical_path": "assets/boarding/pickups/gg_boarding_pickup_nuke_v001.png",
+      "canonical_sha256": "FFA52562E33E320472B6DF38BF63FD1B956EB3A07CF64E94145BD6CFD15383B5",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/pickups/gg_boarding_pickup_nuke_v001.png",
+      "runtime_sha256": "FFA52562E33E320472B6DF38BF63FD1B956EB3A07CF64E94145BD6CFD15383B5"
+    },
+    {
+      "key": "boarding.gg_boarding_console_terminal_v001",
+      "asset_id": "imagery-pack:boarding/props/gg_boarding_console_terminal_v001.png",
+      "canonical_path": "assets/boarding/props/gg_boarding_console_terminal_v001.png",
+      "canonical_sha256": "76F4D9DE4B79A76856BA927E76380B4D654EBACA1DB07F5FB503D7D92ED02EDA",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/props/gg_boarding_console_terminal_v001.png",
+      "runtime_sha256": "76F4D9DE4B79A76856BA927E76380B4D654EBACA1DB07F5FB503D7D92ED02EDA"
+    },
+    {
+      "key": "boarding.gg_boarding_console_wall_v001",
+      "asset_id": "imagery-pack:boarding/props/gg_boarding_console_wall_v001.png",
+      "canonical_path": "assets/boarding/props/gg_boarding_console_wall_v001.png",
+      "canonical_sha256": "D67E6C314A1B4AE4615A76430E1FE38B12208C97F5C33ED56C94A3C7A8F967F8",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/props/gg_boarding_console_wall_v001.png",
+      "runtime_sha256": "D67E6C314A1B4AE4615A76430E1FE38B12208C97F5C33ED56C94A3C7A8F967F8"
+    },
+    {
+      "key": "boarding.gg_boarding_prop_barrel_breakable_v001",
+      "asset_id": "imagery-pack:boarding/props/gg_boarding_prop_barrel_breakable_v001.png",
+      "canonical_path": "assets/boarding/props/gg_boarding_prop_barrel_breakable_v001.png",
+      "canonical_sha256": "C30FE5492DDBB37CEEB62B8C5D86A9B32E9AE73776993FB587F47B388787BCBB",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/props/gg_boarding_prop_barrel_breakable_v001.png",
+      "runtime_sha256": "C30FE5492DDBB37CEEB62B8C5D86A9B32E9AE73776993FB587F47B388787BCBB"
+    },
+    {
+      "key": "boarding.gg_boarding_prop_barrel_broken_v001",
+      "asset_id": "imagery-pack:boarding/props/gg_boarding_prop_barrel_broken_v001.png",
+      "canonical_path": "assets/boarding/props/gg_boarding_prop_barrel_broken_v001.png",
+      "canonical_sha256": "31047EC7C29CD78F919F68359AF597D589325917BEE3A9FD9F33A4418C372344",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/props/gg_boarding_prop_barrel_broken_v001.png",
+      "runtime_sha256": "31047EC7C29CD78F919F68359AF597D589325917BEE3A9FD9F33A4418C372344"
+    },
+    {
+      "key": "boarding.gg_boarding_prop_barrel_damaged_v001",
+      "asset_id": "imagery-pack:boarding/props/gg_boarding_prop_barrel_damaged_v001.png",
+      "canonical_path": "assets/boarding/props/gg_boarding_prop_barrel_damaged_v001.png",
+      "canonical_sha256": "7AF45FA07E8ED47BD343F830292F17A307F8919B0E1B1F765525116F84981496",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/props/gg_boarding_prop_barrel_damaged_v001.png",
+      "runtime_sha256": "7AF45FA07E8ED47BD343F830292F17A307F8919B0E1B1F765525116F84981496"
+    },
+    {
+      "key": "boarding.gg_boarding_prop_cargo_container_v001",
+      "asset_id": "imagery-pack:boarding/props/gg_boarding_prop_cargo_container_v001.png",
+      "canonical_path": "assets/boarding/props/gg_boarding_prop_cargo_container_v001.png",
+      "canonical_sha256": "9660E88BBB997C9BE814A6344786615417851D0B47FEE17ED4F34B9188BA42C9",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/props/gg_boarding_prop_cargo_container_v001.png",
+      "runtime_sha256": "9660E88BBB997C9BE814A6344786615417851D0B47FEE17ED4F34B9188BA42C9"
+    },
+    {
+      "key": "boarding.gg_boarding_prop_crate_breakable_v001",
+      "asset_id": "imagery-pack:boarding/props/gg_boarding_prop_crate_breakable_v001.png",
+      "canonical_path": "assets/boarding/props/gg_boarding_prop_crate_breakable_v001.png",
+      "canonical_sha256": "6859C99B6630847EE37048AA5508254802D8E2833321E6AA0366D63AA34932CA",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/props/gg_boarding_prop_crate_breakable_v001.png",
+      "runtime_sha256": "6859C99B6630847EE37048AA5508254802D8E2833321E6AA0366D63AA34932CA"
+    },
+    {
+      "key": "boarding.gg_boarding_prop_crate_broken_v001",
+      "asset_id": "imagery-pack:boarding/props/gg_boarding_prop_crate_broken_v001.png",
+      "canonical_path": "assets/boarding/props/gg_boarding_prop_crate_broken_v001.png",
+      "canonical_sha256": "9CF217936A98A967145CB01BE1380DEBAE739747C9B9CEB6F0DF1B9ADDF04C40",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/props/gg_boarding_prop_crate_broken_v001.png",
+      "runtime_sha256": "9CF217936A98A967145CB01BE1380DEBAE739747C9B9CEB6F0DF1B9ADDF04C40"
+    },
+    {
+      "key": "boarding.gg_boarding_prop_crate_damaged_v001",
+      "asset_id": "imagery-pack:boarding/props/gg_boarding_prop_crate_damaged_v001.png",
+      "canonical_path": "assets/boarding/props/gg_boarding_prop_crate_damaged_v001.png",
+      "canonical_sha256": "F65638DFFE1E0EEAC0FBE451938E19DE0CEBB8E812391892D2C95450F64F99C4",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/props/gg_boarding_prop_crate_damaged_v001.png",
+      "runtime_sha256": "F65638DFFE1E0EEAC0FBE451938E19DE0CEBB8E812391892D2C95450F64F99C4"
+    },
+    {
+      "key": "boarding.gg_boarding_prop_debris_set_v001",
+      "asset_id": "imagery-pack:boarding/props/gg_boarding_prop_debris_set_v001.png",
+      "canonical_path": "assets/boarding/props/gg_boarding_prop_debris_set_v001.png",
+      "canonical_sha256": "0CA0E4DDF271A2A810FD5B4173B37081374A1AA654A35A2133BBBE39E2E40573",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/props/gg_boarding_prop_debris_set_v001.png",
+      "runtime_sha256": "0CA0E4DDF271A2A810FD5B4173B37081374A1AA654A35A2133BBBE39E2E40573"
+    },
+    {
+      "key": "boarding.gg_boarding_prop_hologram_panel_v001",
+      "asset_id": "imagery-pack:boarding/props/gg_boarding_prop_hologram_panel_v001.png",
+      "canonical_path": "assets/boarding/props/gg_boarding_prop_hologram_panel_v001.png",
+      "canonical_sha256": "ED68C6B91B2EFFB8C4567BC3059EDA7AF066B4F0825AACA97F70020AED542E61",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/props/gg_boarding_prop_hologram_panel_v001.png",
+      "runtime_sha256": "ED68C6B91B2EFFB8C4567BC3059EDA7AF066B4F0825AACA97F70020AED542E61"
+    },
+    {
+      "key": "boarding.gg_boarding_prop_light_fixture_v001",
+      "asset_id": "imagery-pack:boarding/props/gg_boarding_prop_light_fixture_v001.png",
+      "canonical_path": "assets/boarding/props/gg_boarding_prop_light_fixture_v001.png",
+      "canonical_sha256": "48768084C36430813E3B15E47DC1008DCDDDBD47FF9BAC3CDB7B3DE667DB684D",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/props/gg_boarding_prop_light_fixture_v001.png",
+      "runtime_sha256": "48768084C36430813E3B15E47DC1008DCDDDBD47FF9BAC3CDB7B3DE667DB684D"
+    },
+    {
+      "key": "boarding.gg_boarding_prop_loot_canister_v001",
+      "asset_id": "imagery-pack:boarding/props/gg_boarding_prop_loot_canister_v001.png",
+      "canonical_path": "assets/boarding/props/gg_boarding_prop_loot_canister_v001.png",
+      "canonical_sha256": "5D6ED19BE3E71D21459AA19E15698F5DAF18C669FB4AB862E4E5733CA18697B1",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/props/gg_boarding_prop_loot_canister_v001.png",
+      "runtime_sha256": "5D6ED19BE3E71D21459AA19E15698F5DAF18C669FB4AB862E4E5733CA18697B1"
+    },
+    {
+      "key": "boarding.gg_boarding_prop_pipe_conduit_v001",
+      "asset_id": "imagery-pack:boarding/props/gg_boarding_prop_pipe_conduit_v001.png",
+      "canonical_path": "assets/boarding/props/gg_boarding_prop_pipe_conduit_v001.png",
+      "canonical_sha256": "E81B02C9B72D99CE53A14CA148D8909BAFCD34DC4BE2D301CCE6FC63513D22BE",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/props/gg_boarding_prop_pipe_conduit_v001.png",
+      "runtime_sha256": "E81B02C9B72D99CE53A14CA148D8909BAFCD34DC4BE2D301CCE6FC63513D22BE"
+    },
+    {
+      "key": "boarding.gg_boarding_prop_storage_rack_v001",
+      "asset_id": "imagery-pack:boarding/props/gg_boarding_prop_storage_rack_v001.png",
+      "canonical_path": "assets/boarding/props/gg_boarding_prop_storage_rack_v001.png",
+      "canonical_sha256": "B6749BC92724177FB1B0DCD61C67606841590CB9D974FCEC852F9C8C32CED10B",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/props/gg_boarding_prop_storage_rack_v001.png",
+      "runtime_sha256": "B6749BC92724177FB1B0DCD61C67606841590CB9D974FCEC852F9C8C32CED10B"
+    },
+    {
+      "key": "boarding.gg_boarding_prop_vent_grille_v001",
+      "asset_id": "imagery-pack:boarding/props/gg_boarding_prop_vent_grille_v001.png",
+      "canonical_path": "assets/boarding/props/gg_boarding_prop_vent_grille_v001.png",
+      "canonical_sha256": "13638773277C8651977B0DBF25AFC7FEFE9D717B4EFB062956252A6DC7101057",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/props/gg_boarding_prop_vent_grille_v001.png",
+      "runtime_sha256": "13638773277C8651977B0DBF25AFC7FEFE9D717B4EFB062956252A6DC7101057"
+    },
+    {
+      "key": "boarding.gg_boarding_prop_warning_beacon_v001",
+      "asset_id": "imagery-pack:boarding/props/gg_boarding_prop_warning_beacon_v001.png",
+      "canonical_path": "assets/boarding/props/gg_boarding_prop_warning_beacon_v001.png",
+      "canonical_sha256": "6216BDBB375EA65D2ECE5215038EA61386C7C96B914D842ACC386E451EF7891F",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/props/gg_boarding_prop_warning_beacon_v001.png",
+      "runtime_sha256": "6216BDBB375EA65D2ECE5215038EA61386C7C96B914D842ACC386E451EF7891F"
+    },
+    {
+      "key": "boarding.gg_boarding_cargo_wall_v001",
+      "asset_id": "imagery-pack:boarding/tiles/gg_boarding_cargo_wall_v001.png",
+      "canonical_path": "assets/boarding/tiles/gg_boarding_cargo_wall_v001.png",
+      "canonical_sha256": "D746780E031EF4C62D3C3E1BE97356C205FD3CDF86875798E53342124A845F56",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/tiles/gg_boarding_cargo_wall_v001.png",
+      "runtime_sha256": "D746780E031EF4C62D3C3E1BE97356C205FD3CDF86875798E53342124A845F56"
+    },
+    {
+      "key": "boarding.gg_boarding_control_room_wall_v001",
+      "asset_id": "imagery-pack:boarding/tiles/gg_boarding_control_room_wall_v001.png",
+      "canonical_path": "assets/boarding/tiles/gg_boarding_control_room_wall_v001.png",
+      "canonical_sha256": "E8771F5E0900E04DB8825261AD75D243D83F18657ADD09B2F3ECC42E3CB2256A",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/tiles/gg_boarding_control_room_wall_v001.png",
+      "runtime_sha256": "E8771F5E0900E04DB8825261AD75D243D83F18657ADD09B2F3ECC42E3CB2256A"
+    },
+    {
+      "key": "boarding.gg_boarding_corridor_wall_module_v001",
+      "asset_id": "imagery-pack:boarding/tiles/gg_boarding_corridor_wall_module_v001.png",
+      "canonical_path": "assets/boarding/tiles/gg_boarding_corridor_wall_module_v001.png",
+      "canonical_sha256": "C07C90BCDA58FCF3FFC489B530FA0B780301EDFB457C43F5C4C1A497B02B8203",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/tiles/gg_boarding_corridor_wall_module_v001.png",
+      "runtime_sha256": "C07C90BCDA58FCF3FFC489B530FA0B780301EDFB457C43F5C4C1A497B02B8203"
+    },
+    {
+      "key": "boarding.gg_boarding_reactor_wall_v001",
+      "asset_id": "imagery-pack:boarding/tiles/gg_boarding_reactor_wall_v001.png",
+      "canonical_path": "assets/boarding/tiles/gg_boarding_reactor_wall_v001.png",
+      "canonical_sha256": "C779669740F36D9576A33191F9120CD0448CDD202A1ED6E22FC5D300DE0F4565",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/tiles/gg_boarding_reactor_wall_v001.png",
+      "runtime_sha256": "C779669740F36D9576A33191F9120CD0448CDD202A1ED6E22FC5D300DE0F4565"
+    },
+    {
+      "key": "boarding.gg_boarding_tiles_catwalk_a_v001",
+      "asset_id": "imagery-pack:boarding/tiles/gg_boarding_tiles_catwalk_a_v001.png",
+      "canonical_path": "assets/boarding/tiles/gg_boarding_tiles_catwalk_a_v001.png",
+      "canonical_sha256": "00BD380A3CBE023E80C106C03233EC814B8AFBBB7CD1B0CF257C673136D799C3",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/tiles/gg_boarding_tiles_catwalk_a_v001.png",
+      "runtime_sha256": "00BD380A3CBE023E80C106C03233EC814B8AFBBB7CD1B0CF257C673136D799C3"
+    },
+    {
+      "key": "boarding.gg_boarding_tiles_ceiling_a_v001",
+      "asset_id": "imagery-pack:boarding/tiles/gg_boarding_tiles_ceiling_a_v001.png",
+      "canonical_path": "assets/boarding/tiles/gg_boarding_tiles_ceiling_a_v001.png",
+      "canonical_sha256": "F150DEC6DE5280580D04185FA8438F01D6D0E8A729B84A568D7BF0F1E767AEAB",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/tiles/gg_boarding_tiles_ceiling_a_v001.png",
+      "runtime_sha256": "F150DEC6DE5280580D04185FA8438F01D6D0E8A729B84A568D7BF0F1E767AEAB"
+    },
+    {
+      "key": "boarding.gg_boarding_tiles_column_v001",
+      "asset_id": "imagery-pack:boarding/tiles/gg_boarding_tiles_column_v001.png",
+      "canonical_path": "assets/boarding/tiles/gg_boarding_tiles_column_v001.png",
+      "canonical_sha256": "083F3F7882F4ADF90EDE29F764D0DDD6AF42C1965F4896A68B183A1339A879A3",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/tiles/gg_boarding_tiles_column_v001.png",
+      "runtime_sha256": "083F3F7882F4ADF90EDE29F764D0DDD6AF42C1965F4896A68B183A1339A879A3"
+    },
+    {
+      "key": "boarding.gg_boarding_tiles_floor_a_v001",
+      "asset_id": "imagery-pack:boarding/tiles/gg_boarding_tiles_floor_a_v001.png",
+      "canonical_path": "assets/boarding/tiles/gg_boarding_tiles_floor_a_v001.png",
+      "canonical_sha256": "6EC0B42F854BD812E66A9136914EDDB8551ECF2B282D8A8FAF73B8EEF21E78DC",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/tiles/gg_boarding_tiles_floor_a_v001.png",
+      "runtime_sha256": "6EC0B42F854BD812E66A9136914EDDB8551ECF2B282D8A8FAF73B8EEF21E78DC"
+    },
+    {
+      "key": "boarding.gg_boarding_tiles_floor_hazard_v001",
+      "asset_id": "imagery-pack:boarding/tiles/gg_boarding_tiles_floor_hazard_v001.png",
+      "canonical_path": "assets/boarding/tiles/gg_boarding_tiles_floor_hazard_v001.png",
+      "canonical_sha256": "F8AF0B5D5D83A75D728564A3423690154F35FEBD0297CF296BBE5223BFD57F95",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/tiles/gg_boarding_tiles_floor_hazard_v001.png",
+      "runtime_sha256": "F8AF0B5D5D83A75D728564A3423690154F35FEBD0297CF296BBE5223BFD57F95"
+    },
+    {
+      "key": "boarding.gg_boarding_tiles_platform_a_v001",
+      "asset_id": "imagery-pack:boarding/tiles/gg_boarding_tiles_platform_a_v001.png",
+      "canonical_path": "assets/boarding/tiles/gg_boarding_tiles_platform_a_v001.png",
+      "canonical_sha256": "F3C824EA4FE02EA9AD80EEE20AC252DA6261FD2DA484291EA96933A03A4371E8",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/tiles/gg_boarding_tiles_platform_a_v001.png",
+      "runtime_sha256": "F3C824EA4FE02EA9AD80EEE20AC252DA6261FD2DA484291EA96933A03A4371E8"
+    },
+    {
+      "key": "boarding.gg_boarding_tiles_support_strut_v001",
+      "asset_id": "imagery-pack:boarding/tiles/gg_boarding_tiles_support_strut_v001.png",
+      "canonical_path": "assets/boarding/tiles/gg_boarding_tiles_support_strut_v001.png",
+      "canonical_sha256": "083F3F7882F4ADF90EDE29F764D0DDD6AF42C1965F4896A68B183A1339A879A3",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/tiles/gg_boarding_tiles_support_strut_v001.png",
+      "runtime_sha256": "083F3F7882F4ADF90EDE29F764D0DDD6AF42C1965F4896A68B183A1339A879A3"
+    },
+    {
+      "key": "boarding.gg_boarding_tiles_wall_a_v001",
+      "asset_id": "imagery-pack:boarding/tiles/gg_boarding_tiles_wall_a_v001.png",
+      "canonical_path": "assets/boarding/tiles/gg_boarding_tiles_wall_a_v001.png",
+      "canonical_sha256": "F150DEC6DE5280580D04185FA8438F01D6D0E8A729B84A568D7BF0F1E767AEAB",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/tiles/gg_boarding_tiles_wall_a_v001.png",
+      "runtime_sha256": "F150DEC6DE5280580D04185FA8438F01D6D0E8A729B84A568D7BF0F1E767AEAB"
+    },
+    {
+      "key": "boarding.gg_boarding_tiles_wall_b_v001",
+      "asset_id": "imagery-pack:boarding/tiles/gg_boarding_tiles_wall_b_v001.png",
+      "canonical_path": "assets/boarding/tiles/gg_boarding_tiles_wall_b_v001.png",
+      "canonical_sha256": "2D1FD8AF3AF3420B11B8A9485906058C6290877A566538AD6CDCC471745B24C4",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/tiles/gg_boarding_tiles_wall_b_v001.png",
+      "runtime_sha256": "2D1FD8AF3AF3420B11B8A9485906058C6290877A566538AD6CDCC471745B24C4"
+    },
+    {
+      "key": "boarding.gg_boarding_window_view_v001",
+      "asset_id": "imagery-pack:boarding/tiles/gg_boarding_window_view_v001.png",
+      "canonical_path": "assets/boarding/tiles/gg_boarding_window_view_v001.png",
+      "canonical_sha256": "CD4890982EA97FA0FB7F6C42B37BB6FAC93E4F4655E1121CE9D53F3FD11AA46F",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/tiles/gg_boarding_window_view_v001.png",
+      "runtime_sha256": "CD4890982EA97FA0FB7F6C42B37BB6FAC93E4F4655E1121CE9D53F3FD11AA46F"
+    },
+    {
+      "key": "boarding.gg_boarding_door_airlock_open_v001",
+      "asset_id": "imagery-pack:boarding/transit/gg_boarding_door_airlock_open_v001.png",
+      "canonical_path": "assets/boarding/transit/gg_boarding_door_airlock_open_v001.png",
+      "canonical_sha256": "99E6D85A8FB0BBDB7DFCF032F35458E4E63F0EFDD79EFDBA7B41DED7591C5BDE",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/transit/gg_boarding_door_airlock_open_v001.png",
+      "runtime_sha256": "99E6D85A8FB0BBDB7DFCF032F35458E4E63F0EFDD79EFDBA7B41DED7591C5BDE"
+    },
+    {
+      "key": "boarding.gg_boarding_door_airlock_v001",
+      "asset_id": "imagery-pack:boarding/transit/gg_boarding_door_airlock_v001.png",
+      "canonical_path": "assets/boarding/transit/gg_boarding_door_airlock_v001.png",
+      "canonical_sha256": "CD6A8E2B5B6E15E07846D5A9E27EFCDA10A2948309291751415E5C95744D77F0",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/transit/gg_boarding_door_airlock_v001.png",
+      "runtime_sha256": "CD6A8E2B5B6E15E07846D5A9E27EFCDA10A2948309291751415E5C95744D77F0"
+    },
+    {
+      "key": "boarding.gg_boarding_door_blast_open_v001",
+      "asset_id": "imagery-pack:boarding/transit/gg_boarding_door_blast_open_v001.png",
+      "canonical_path": "assets/boarding/transit/gg_boarding_door_blast_open_v001.png",
+      "canonical_sha256": "01438822FF2A0722188E38541029C8510837D35969FC453BB1E18B1488576680",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/transit/gg_boarding_door_blast_open_v001.png",
+      "runtime_sha256": "01438822FF2A0722188E38541029C8510837D35969FC453BB1E18B1488576680"
+    },
+    {
+      "key": "boarding.gg_boarding_door_blast_v001",
+      "asset_id": "imagery-pack:boarding/transit/gg_boarding_door_blast_v001.png",
+      "canonical_path": "assets/boarding/transit/gg_boarding_door_blast_v001.png",
+      "canonical_sha256": "C0563A271D69A5B7FD7C5E6DCD1431417361BCE1BBAF765B84F6CEE02FAD7BE2",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/transit/gg_boarding_door_blast_v001.png",
+      "runtime_sha256": "C0563A271D69A5B7FD7C5E6DCD1431417361BCE1BBAF765B84F6CEE02FAD7BE2"
+    },
+    {
+      "key": "boarding.gg_boarding_door_standard_open_v001",
+      "asset_id": "imagery-pack:boarding/transit/gg_boarding_door_standard_open_v001.png",
+      "canonical_path": "assets/boarding/transit/gg_boarding_door_standard_open_v001.png",
+      "canonical_sha256": "92FF8EF62FB038BDCC3418FE188AD4F59B3362CDA79DB60E7E34DB57DE702133",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/transit/gg_boarding_door_standard_open_v001.png",
+      "runtime_sha256": "92FF8EF62FB038BDCC3418FE188AD4F59B3362CDA79DB60E7E34DB57DE702133"
+    },
+    {
+      "key": "boarding.gg_boarding_door_standard_v001",
+      "asset_id": "imagery-pack:boarding/transit/gg_boarding_door_standard_v001.png",
+      "canonical_path": "assets/boarding/transit/gg_boarding_door_standard_v001.png",
+      "canonical_sha256": "85127AE099ECD8F7D6B86C6057857EEAE5DD5ACC9AD177F44C0C35366CE30881",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/transit/gg_boarding_door_standard_v001.png",
+      "runtime_sha256": "85127AE099ECD8F7D6B86C6057857EEAE5DD5ACC9AD177F44C0C35366CE30881"
+    },
+    {
+      "key": "boarding.gg_boarding_marker_entry_v001",
+      "asset_id": "imagery-pack:boarding/transit/gg_boarding_marker_entry_v001.png",
+      "canonical_path": "assets/boarding/transit/gg_boarding_marker_entry_v001.png",
+      "canonical_sha256": "ED3DBAE8CB04888605E045218248533BC5D5E4C730005B240A6E7C24803AD381",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/transit/gg_boarding_marker_entry_v001.png",
+      "runtime_sha256": "ED3DBAE8CB04888605E045218248533BC5D5E4C730005B240A6E7C24803AD381"
+    },
+    {
+      "key": "boarding.gg_boarding_marker_exit_v001",
+      "asset_id": "imagery-pack:boarding/transit/gg_boarding_marker_exit_v001.png",
+      "canonical_path": "assets/boarding/transit/gg_boarding_marker_exit_v001.png",
+      "canonical_sha256": "2D7495800E50983DABB1D379CADD83FB3AF325C2413AD1E4D9432BB772F3052D",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/transit/gg_boarding_marker_exit_v001.png",
+      "runtime_sha256": "2D7495800E50983DABB1D379CADD83FB3AF325C2413AD1E4D9432BB772F3052D"
+    },
+    {
+      "key": "boarding.gg_boarding_indicator_access_granted_v001",
+      "asset_id": "imagery-pack:boarding/ui/gg_boarding_indicator_access_granted_v001.png",
+      "canonical_path": "assets/boarding/ui/gg_boarding_indicator_access_granted_v001.png",
+      "canonical_sha256": "857285A8B6C5282E866B9AE654A74A2E4D48A22ABDFD045ADCAF93BD10E5C56A",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/ui/gg_boarding_indicator_access_granted_v001.png",
+      "runtime_sha256": "857285A8B6C5282E866B9AE654A74A2E4D48A22ABDFD045ADCAF93BD10E5C56A"
+    },
+    {
+      "key": "boarding.gg_boarding_indicator_warning_alarm_v001",
+      "asset_id": "imagery-pack:boarding/ui/gg_boarding_indicator_warning_alarm_v001.png",
+      "canonical_path": "assets/boarding/ui/gg_boarding_indicator_warning_alarm_v001.png",
+      "canonical_sha256": "F697F54185FFF4FF967682A6D941B3FEA1E2E7A40C12E7BCBACD5ACD26011E7A",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/ui/gg_boarding_indicator_warning_alarm_v001.png",
+      "runtime_sha256": "F697F54185FFF4FF967682A6D941B3FEA1E2E7A40C12E7BCBACD5ACD26011E7A"
+    },
+    {
+      "key": "boarding.gg_boarding_ui_tally_panel_v001",
+      "asset_id": "imagery-pack:boarding/ui/gg_boarding_ui_tally_panel_v001.png",
+      "canonical_path": "assets/boarding/ui/gg_boarding_ui_tally_panel_v001.png",
+      "canonical_sha256": "B837A873B2984422E50A67A733A1CBB8DCE965537AAA6FF89E841897212AF305",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/ui/gg_boarding_ui_tally_panel_v001.png",
+      "runtime_sha256": "B837A873B2984422E50A67A733A1CBB8DCE965537AAA6FF89E841897212AF305"
+    },
+    {
+      "key": "boarding.gg_boarding_ui_timer_frame_v001",
+      "asset_id": "imagery-pack:boarding/ui/gg_boarding_ui_timer_frame_v001.png",
+      "canonical_path": "assets/boarding/ui/gg_boarding_ui_timer_frame_v001.png",
+      "canonical_sha256": "0B395789DAED42969EB9ABE2DFB959F691949F4E001669E26F3A97DD709D95A3",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/ui/gg_boarding_ui_timer_frame_v001.png",
+      "runtime_sha256": "0B395789DAED42969EB9ABE2DFB959F691949F4E001669E26F3A97DD709D95A3"
+    },
+    {
+      "key": "boarding.gg_boarding_ui_warning_strip_v001",
+      "asset_id": "imagery-pack:boarding/ui/gg_boarding_ui_warning_strip_v001.png",
+      "canonical_path": "assets/boarding/ui/gg_boarding_ui_warning_strip_v001.png",
+      "canonical_sha256": "C402BFD045A88CB6AA42DDC730641FB89629C2624A1F1AB750B0B688D11151EF",
+      "runtime_path": "/gg-runtime-assets/boarding/boarding/ui/gg_boarding_ui_warning_strip_v001.png",
+      "runtime_sha256": "C402BFD045A88CB6AA42DDC730641FB89629C2624A1F1AB750B0B688D11151EF"
+    },
+    {
+      "key": "boarding.character.player.1",
+      "asset_id": "H014-normalized-player-1",
+      "canonical_path": "assets/boarding/characters/player_001_v001.png",
+      "canonical_sha256": "136304BD25E0D04F8BB843BB51B6BE0C5BF10D761BFAB41D6BD53F782E70D115",
+      "runtime_path": "/gg-runtime-assets/boarding/characters/player_001_v001.png",
+      "runtime_sha256": "136304BD25E0D04F8BB843BB51B6BE0C5BF10D761BFAB41D6BD53F782E70D115"
+    },
+    {
+      "key": "boarding.character.player.2",
+      "asset_id": "H014-normalized-player-2",
+      "canonical_path": "assets/boarding/characters/player_002_v001.png",
+      "canonical_sha256": "39AFB450B74F0D07837AC18547DB1D161E59B173AE14DDA86C0BE5E614466C8E",
+      "runtime_path": "/gg-runtime-assets/boarding/characters/player_002_v001.png",
+      "runtime_sha256": "39AFB450B74F0D07837AC18547DB1D161E59B173AE14DDA86C0BE5E614466C8E"
+    },
+    {
+      "key": "boarding.character.player.3",
+      "asset_id": "H014-normalized-player-3",
+      "canonical_path": "assets/boarding/characters/player_003_v001.png",
+      "canonical_sha256": "35AEAA1E2EF301B0816A561D9BBA09A7171793BFBC6D0EE3731025974A4702BD",
+      "runtime_path": "/gg-runtime-assets/boarding/characters/player_003_v001.png",
+      "runtime_sha256": "35AEAA1E2EF301B0816A561D9BBA09A7171793BFBC6D0EE3731025974A4702BD"
+    },
+    {
+      "key": "boarding.character.player.4",
+      "asset_id": "H014-normalized-player-4",
+      "canonical_path": "assets/boarding/characters/player_004_v001.png",
+      "canonical_sha256": "F02B7C3BD067AE545289D0B6EC0FCDA39026BA48768331E161897176E40FF31F",
+      "runtime_path": "/gg-runtime-assets/boarding/characters/player_004_v001.png",
+      "runtime_sha256": "F02B7C3BD067AE545289D0B6EC0FCDA39026BA48768331E161897176E40FF31F"
+    },
+    {
+      "key": "boarding.character.player.5",
+      "asset_id": "H014-normalized-player-5",
+      "canonical_path": "assets/boarding/characters/player_005_v001.png",
+      "canonical_sha256": "1D3F4027A5C2E6FD926CFE403F618AE54E5251C4B9741CF41ACA8C443D57D3DB",
+      "runtime_path": "/gg-runtime-assets/boarding/characters/player_005_v001.png",
+      "runtime_sha256": "1D3F4027A5C2E6FD926CFE403F618AE54E5251C4B9741CF41ACA8C443D57D3DB"
+    },
+    {
+      "key": "boarding.character.player.6",
+      "asset_id": "H014-normalized-player-6",
+      "canonical_path": "assets/boarding/characters/player_006_v001.png",
+      "canonical_sha256": "48568E668055D5581EA13A455D2010FC30780EE29FF751048BDAABB37D391E6B",
+      "runtime_path": "/gg-runtime-assets/boarding/characters/player_006_v001.png",
+      "runtime_sha256": "48568E668055D5581EA13A455D2010FC30780EE29FF751048BDAABB37D391E6B"
+    },
+    {
+      "key": "boarding.character.player.7",
+      "asset_id": "H014-normalized-player-7",
+      "canonical_path": "assets/boarding/characters/player_007_v001.png",
+      "canonical_sha256": "56A8124D51E62CA2F6CFE9C2BCB4D2605201F6E07500124FC19FC0353D540228",
+      "runtime_path": "/gg-runtime-assets/boarding/characters/player_007_v001.png",
+      "runtime_sha256": "56A8124D51E62CA2F6CFE9C2BCB4D2605201F6E07500124FC19FC0353D540228"
+    },
+    {
+      "key": "boarding.character.alien.1",
+      "asset_id": "H014-normalized-alien-1",
+      "canonical_path": "assets/boarding/characters/alien_001_v001.png",
+      "canonical_sha256": "6D34DEC77EFACA897FD129CE3D7F5D36119E558CD06928FC5FA23235CC1EB740",
+      "runtime_path": "/gg-runtime-assets/boarding/characters/alien_001_v001.png",
+      "runtime_sha256": "6D34DEC77EFACA897FD129CE3D7F5D36119E558CD06928FC5FA23235CC1EB740"
+    },
+    {
+      "key": "boarding.character.alien.2",
+      "asset_id": "H014-normalized-alien-2",
+      "canonical_path": "assets/boarding/characters/alien_002_v001.png",
+      "canonical_sha256": "E8E48EC29A51167D768BD4D4ACD2A945D4CD04E3AFDA708BAB4BFB0324EEB479",
+      "runtime_path": "/gg-runtime-assets/boarding/characters/alien_002_v001.png",
+      "runtime_sha256": "E8E48EC29A51167D768BD4D4ACD2A945D4CD04E3AFDA708BAB4BFB0324EEB479"
+    },
+    {
+      "key": "boarding.character.alien.3",
+      "asset_id": "H014-normalized-alien-3",
+      "canonical_path": "assets/boarding/characters/alien_003_v001.png",
+      "canonical_sha256": "EFEE9CF76A7495D429F5BD4E79442333566C81C40544A75CFEA75B1D97ED4BA8",
+      "runtime_path": "/gg-runtime-assets/boarding/characters/alien_003_v001.png",
+      "runtime_sha256": "EFEE9CF76A7495D429F5BD4E79442333566C81C40544A75CFEA75B1D97ED4BA8"
+    },
+    {
+      "key": "boarding.character.alien.4",
+      "asset_id": "H014-normalized-alien-4",
+      "canonical_path": "assets/boarding/characters/alien_004_v001.png",
+      "canonical_sha256": "FFE6A63C9F98A42AED89677B298341B9532F0E0937EA4F60F2B22234464EC32B",
+      "runtime_path": "/gg-runtime-assets/boarding/characters/alien_004_v001.png",
+      "runtime_sha256": "FFE6A63C9F98A42AED89677B298341B9532F0E0937EA4F60F2B22234464EC32B"
+    },
+    {
+      "key": "boarding.character.alien.5",
+      "asset_id": "H014-normalized-alien-5",
+      "canonical_path": "assets/boarding/characters/alien_005_v001.png",
+      "canonical_sha256": "18840813F9321F82E5595AE9BED2943D9EF0D68CA0FCFC74EF813863405B746B",
+      "runtime_path": "/gg-runtime-assets/boarding/characters/alien_005_v001.png",
+      "runtime_sha256": "18840813F9321F82E5595AE9BED2943D9EF0D68CA0FCFC74EF813863405B746B"
+    },
+    {
+      "key": "boarding.character.alien.6",
+      "asset_id": "H014-normalized-alien-6",
+      "canonical_path": "assets/boarding/characters/alien_006_v001.png",
+      "canonical_sha256": "7A4E4CF7FC57D745A4BE28EA821ABAA640BF2F9EDE3AFC6C0EB8D372D9B97F66",
+      "runtime_path": "/gg-runtime-assets/boarding/characters/alien_006_v001.png",
+      "runtime_sha256": "7A4E4CF7FC57D745A4BE28EA821ABAA640BF2F9EDE3AFC6C0EB8D372D9B97F66"
     }
   ]
 }

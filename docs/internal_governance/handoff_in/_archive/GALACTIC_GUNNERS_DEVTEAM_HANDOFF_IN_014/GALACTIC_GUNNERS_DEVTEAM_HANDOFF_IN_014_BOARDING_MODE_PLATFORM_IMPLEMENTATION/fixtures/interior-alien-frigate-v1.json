@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "slug": "alien-frigate",
+  "version": 1,
+  "ship_type": "ALIEN_FRIGATE",
+  "world": {"width_px": 4096, "height_px": 720, "grid_px": 64, "gravity_px_s2": 1800},
+  "performance": {"fixed_step_hz": 60, "time_limit_ms": 60000, "max_enemies": 6, "max_projectiles": 32, "max_trace_events": 512},
+  "rooms": [
+    {"id": "airlock", "x_px": 0, "width_px": 1024, "background_asset": "assets/boarding/backgrounds/gg_boarding_bg_corridor_v001.png", "floor_y_px": 648, "collision_rects": [{"id": "floor-airlock", "room_id": "airlock", "x_px": 0, "y_px": 648, "width_px": 1024, "height_px": 72}]},
+    {"id": "corridor", "x_px": 1024, "width_px": 1024, "background_asset": "assets/boarding/backgrounds/gg_boarding_bg_corridor_v001.png", "floor_y_px": 648, "collision_rects": [{"id": "floor-corridor", "room_id": "corridor", "x_px": 1024, "y_px": 648, "width_px": 1024, "height_px": 72}]},
+    {"id": "cargo", "x_px": 2048, "width_px": 1024, "background_asset": "assets/boarding/backgrounds/gg_boarding_bg_cargo_bay_v001.png", "floor_y_px": 648, "collision_rects": [{"id": "floor-cargo", "room_id": "cargo", "x_px": 2048, "y_px": 648, "width_px": 1024, "height_px": 72}]},
+    {"id": "engineering", "x_px": 3072, "width_px": 1024, "background_asset": "assets/boarding/backgrounds/gg_boarding_bg_engineering_v001.png", "floor_y_px": 648, "collision_rects": [{"id": "floor-engineering", "room_id": "engineering", "x_px": 3072, "y_px": 648, "width_px": 1024, "height_px": 72}]}
+  ],
+  "connectors": [
+    {"id": "connector-airlock-corridor", "from_room_id": "airlock", "to_room_id": "corridor", "door_id": "door-standard-01"},
+    {"id": "connector-corridor-cargo", "from_room_id": "corridor", "to_room_id": "cargo", "door_id": "door-blast-01"},
+    {"id": "connector-cargo-engineering", "from_room_id": "cargo", "to_room_id": "engineering", "door_id": "door-airlock-01"}
+  ],
+  "spawn": {"id": "spawn-player", "room_id": "airlock", "x_px": 128, "y_px": 520},
+  "exit": {"id": "exit-main", "room_id": "engineering", "x_px": 3904, "y_px": 520, "width_px": 96, "height_px": 128},
+  "enemies": [
+    {"id": "alien-01", "room_id": "airlock", "x_px": 704, "y_px": 536, "type": "ALIEN_GUNNER", "patrol_min_x_px": 576, "patrol_max_x_px": 896, "fire_interval_ms": {"min": 900, "max": 1500}},
+    {"id": "alien-02", "room_id": "corridor", "x_px": 1280, "y_px": 536, "type": "ALIEN_GUNNER", "patrol_min_x_px": 1152, "patrol_max_x_px": 1472, "fire_interval_ms": {"min": 900, "max": 1500}},
+    {"id": "alien-03", "room_id": "corridor", "x_px": 1792, "y_px": 536, "type": "ALIEN_GUNNER", "patrol_min_x_px": 1600, "patrol_max_x_px": 1920, "fire_interval_ms": {"min": 900, "max": 1500}},
+    {"id": "alien-04", "room_id": "cargo", "x_px": 2304, "y_px": 536, "type": "ALIEN_GUNNER", "patrol_min_x_px": 2176, "patrol_max_x_px": 2496, "fire_interval_ms": {"min": 900, "max": 1500}},
+    {"id": "alien-05", "room_id": "cargo", "x_px": 2816, "y_px": 536, "type": "ALIEN_GUNNER", "patrol_min_x_px": 2624, "patrol_max_x_px": 2944, "fire_interval_ms": {"min": 900, "max": 1500}},
+    {"id": "alien-06", "room_id": "engineering", "x_px": 3520, "y_px": 536, "type": "ALIEN_GUNNER", "patrol_min_x_px": 3328, "patrol_max_x_px": 3712, "fire_interval_ms": {"min": 900, "max": 1500}}
+  ],
+  "containers": [
+    {"id": "crate-01", "room_id": "corridor", "x_px": 1536, "y_px": 552, "prop_type": "CRATE", "hit_points": 1, "drop_table": [{"type": "LIFE", "weight": 15}, {"type": "NUKE", "weight": 15}, {"type": "EMPTY", "weight": 70}]},
+    {"id": "barrel-01", "room_id": "cargo", "x_px": 2176, "y_px": 552, "prop_type": "BARREL", "hit_points": 1, "drop_table": [{"type": "LIFE", "weight": 20}, {"type": "NUKE", "weight": 10}, {"type": "EMPTY", "weight": 70}]},
+    {"id": "crate-02", "room_id": "cargo", "x_px": 2688, "y_px": 552, "prop_type": "CRATE", "hit_points": 1, "drop_table": [{"type": "LIFE", "weight": 10}, {"type": "NUKE", "weight": 20}, {"type": "EMPTY", "weight": 70}]},
+    {"id": "barrel-02", "room_id": "engineering", "x_px": 3264, "y_px": 552, "prop_type": "BARREL", "hit_points": 1, "drop_table": [{"type": "LIFE", "weight": 15}, {"type": "NUKE", "weight": 15}, {"type": "EMPTY", "weight": 70}]}
+  ],
+  "hazards": [
+    {"id": "hazard-cargo-floor", "room_id": "cargo", "x_px": 2496, "y_px": 616, "width_px": 128, "height_px": 32},
+    {"id": "hazard-reactor-floor", "room_id": "engineering", "x_px": 3712, "y_px": 616, "width_px": 96, "height_px": 32}
+  ],
+  "pickups": {"allowed_types": ["LIFE", "NUKE"], "lives_cap": 3, "nukes_cap": 2},
+  "assets": {
+    "backgrounds": ["assets/boarding/backgrounds/gg_boarding_bg_corridor_v001.png", "assets/boarding/backgrounds/gg_boarding_bg_cargo_bay_v001.png", "assets/boarding/backgrounds/gg_boarding_bg_engineering_v001.png"],
+    "tilekit": ["assets/boarding/tiles/gg_boarding_tiles_floor_a_v001.png", "assets/boarding/tiles/gg_boarding_tiles_floor_hazard_v001.png", "assets/boarding/tiles/gg_boarding_tiles_wall_a_v001.png", "assets/boarding/tiles/gg_boarding_corridor_wall_module_v001.png"],
+    "props": ["assets/boarding/props/gg_boarding_prop_crate_breakable_v001.png", "assets/boarding/props/gg_boarding_prop_crate_damaged_v001.png", "assets/boarding/props/gg_boarding_prop_crate_broken_v001.png", "assets/boarding/props/gg_boarding_prop_barrel_breakable_v001.png", "assets/boarding/props/gg_boarding_prop_barrel_damaged_v001.png", "assets/boarding/props/gg_boarding_prop_barrel_broken_v001.png"],
+    "characters": ["assets/boarding/characters/player_idle_v001.png", "assets/boarding/characters/player_walk_v001.png", "assets/boarding/characters/player_jump_v001.png", "assets/boarding/characters/player_fire_v001.png", "assets/boarding/characters/player_hit_v001.png", "assets/boarding/characters/player_death_v001.png", "assets/boarding/characters/alien_idle_v001.png", "assets/boarding/characters/alien_walk_v001.png", "assets/boarding/characters/alien_fire_v001.png", "assets/boarding/characters/alien_hit_v001.png"],
+    "projectiles": ["assets/sprites/objects/gg_player_laser_v002.png", "assets/sprites/objects/gg_enemy_laser_v002.png"],
+    "effects": ["assets/boarding/effects/gg_boarding_fx_explosion_v001.png", "assets/boarding/effects/gg_boarding_fx_muzzle_flash_v001.png", "assets/boarding/effects/gg_boarding_fx_pickup_burst_v001.png"],
+    "ui": ["assets/boarding/ui/gg_boarding_ui_timer_frame_v001.png", "assets/boarding/ui/gg_boarding_ui_warning_strip_v001.png", "assets/boarding/ui/gg_boarding_ui_tally_panel_v001.png", "assets/ui/final_assault_v1.0/buttons/gg_ui_button_boarding_enter_off_v001.png", "assets/ui/final_assault_v1.0/buttons/gg_ui_button_boarding_enter_on_v001.png", "assets/ui/final_assault_v1.0/buttons/gg_ui_button_boarding_exit_off_v001.png", "assets/ui/final_assault_v1.0/buttons/gg_ui_button_boarding_exit_on_v001.png"],
+    "audio": ["assets/audio/owned/rev2/gg_ui_confirm_v001.wav", "assets/audio/owned/rev2/gg_ui_back_v001.wav", "assets/audio/owned/rev2/gg_player_laser_v001.wav", "assets/audio/owned/rev2/gg_enemy_laser_v001.wav", "assets/audio/owned/rev2/gg_player_hit_v001.wav", "assets/audio/owned/rev2/gg_explosion_small_v001.wav", "assets/audio/owned/rev2/gg_explosion_large_v001.wav", "assets/audio/owned/rev2/gg_ui_select_v001.wav"]
+  }
+}

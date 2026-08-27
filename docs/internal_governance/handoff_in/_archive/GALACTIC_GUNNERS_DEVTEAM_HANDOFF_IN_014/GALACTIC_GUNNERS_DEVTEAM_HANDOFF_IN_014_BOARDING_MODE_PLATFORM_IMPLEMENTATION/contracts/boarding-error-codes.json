@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "codes": [
+    {"code": "MALFORMED_REQUEST", "http_status": 400, "terminal": false, "mutates": false},
+    {"code": "UNKNOWN_FIELD", "http_status": 400, "terminal": false, "mutates": false},
+    {"code": "PAYLOAD_TOO_LARGE", "http_status": 413, "terminal": false, "mutates": false},
+    {"code": "AUTHENTICATION_REQUIRED", "http_status": 401, "terminal": false, "mutates": false},
+    {"code": "INVALID_BOARDING_TOKEN", "http_status": 403, "terminal": false, "mutates": false},
+    {"code": "RUN_OWNERSHIP_DENIED", "http_status": 403, "terminal": false, "mutates": false},
+    {"code": "BOARDING_RUN_NOT_FOUND", "http_status": 404, "terminal": false, "mutates": false},
+    {"code": "PARENT_RUN_NOT_ACTIVE", "http_status": 409, "terminal": false, "mutates": false},
+    {"code": "BOARDING_ATTEMPT_EXISTS", "http_status": 409, "terminal": false, "mutates": false},
+    {"code": "IDEMPOTENCY_CONFLICT", "http_status": 409, "terminal": false, "mutates": false},
+    {"code": "LEVEL_BINDING_MISMATCH", "http_status": 422, "terminal": false, "mutates": false},
+    {"code": "ANCHOR_NOT_FOUND", "http_status": 422, "terminal": false, "mutates": false},
+    {"code": "SOURCE_ENTITY_MISMATCH", "http_status": 422, "terminal": false, "mutates": false},
+    {"code": "INTERIOR_NOT_PUBLISHED", "http_status": 422, "terminal": false, "mutates": false},
+    {"code": "INTERIOR_CHECKSUM_MISMATCH", "http_status": 422, "terminal": false, "mutates": false},
+    {"code": "RESOURCE_STATE_INVALID", "http_status": 422, "terminal": false, "mutates": false},
+    {"code": "SHOOTER_DIGEST_MISMATCH", "http_status": 422, "terminal": true, "mutates": true},
+    {"code": "INVALID_EVENT_SEQUENCE", "http_status": 422, "terminal": true, "mutates": true},
+    {"code": "INVALID_DURATION", "http_status": 422, "terminal": true, "mutates": true},
+    {"code": "INVALID_OUTCOME", "http_status": 422, "terminal": true, "mutates": true},
+    {"code": "INVALID_RESOURCE_DELTA", "http_status": 422, "terminal": true, "mutates": true},
+    {"code": "INVALID_DROP", "http_status": 422, "terminal": true, "mutates": true},
+    {"code": "INVALID_COUNTER", "http_status": 422, "terminal": true, "mutates": true},
+    {"code": "SCORE_EVENT_FORBIDDEN", "http_status": 422, "terminal": true, "mutates": true},
+    {"code": "THROTTLED", "http_status": 429, "terminal": false, "mutates": false}
+  ],
+  "terminal_rejection_mutation": "Create immutable rejected BoardingSubmission, set BoardingRun status REJECTED and validation_result INVALID, set validation_code, append REJECTED audit event, and make parent GameRun leaderboard-ineligible; never apply a return resource delta."
+}

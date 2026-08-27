@@ -1,5 +1,6 @@
 import hashlib
 import json
+import re
 
 from rest_framework import serializers
 
@@ -39,4 +40,21 @@ def validate_definition(value):
         for entry in rule.get('entries', []):
             if entry.get('pickup') not in KNOWN_PICKUPS:
                 raise serializers.ValidationError('Unknown pickup type.')
+    anchors = value.get('boarding_anchors', [])
+    if not isinstance(anchors, list) or len(anchors) > 1:
+        raise serializers.ValidationError('A level may have at most one Boarding anchor.')
+    for anchor in anchors:
+        selector = anchor.get('source_selector', {})
+        expected_id = f"{slug}:formation-{selector.get('formation_index')}:r{selector.get('row')}:c{selector.get('column')}"
+        interior = anchor.get('interior', {})
+        if (
+            anchor.get('source_entity_type') != 'scout'
+            or anchor.get('source_ship_type') != 'ALIEN_FRIGATE'
+            or anchor.get('source_entity_id') != expected_id
+            or anchor.get('offer_duration_ms') != 8000
+            or anchor.get('entry_envelope') != {'width_px': 160, 'height_px': 128}
+            or not isinstance(interior.get('checksum'), str)
+            or not re.fullmatch(r'[0-9a-f]{64}', interior['checksum'])
+        ):
+            raise serializers.ValidationError('Invalid Boarding anchor.')
     return value

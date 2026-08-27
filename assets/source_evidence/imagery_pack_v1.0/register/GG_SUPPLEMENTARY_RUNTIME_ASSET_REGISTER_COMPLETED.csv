@@ -1,0 +1,22 @@
+filename,path,dimensions,status,ownership,purpose
+gg_boarding_prop_barrel_broken_v001.png,boarding/props/gg_boarding_prop_barrel_broken_v001.png,512x512,COMPLETE,Owned/original (AI-assisted),Supplementary reusable runtime asset required by narrative brief.
+gg_boarding_prop_barrel_damaged_v001.png,boarding/props/gg_boarding_prop_barrel_damaged_v001.png,512x512,COMPLETE,Owned/original (AI-assisted),Supplementary reusable runtime asset required by narrative brief.
+gg_boarding_prop_crate_broken_v001.png,boarding/props/gg_boarding_prop_crate_broken_v001.png,512x512,COMPLETE,Owned/original (AI-assisted),Supplementary reusable runtime asset required by narrative brief.
+gg_boarding_prop_crate_damaged_v001.png,boarding/props/gg_boarding_prop_crate_damaged_v001.png,512x512,COMPLETE,Owned/original (AI-assisted),Supplementary reusable runtime asset required by narrative brief.
+gg_boarding_cargo_wall_v001.png,boarding/tiles/gg_boarding_cargo_wall_v001.png,1536x512,COMPLETE,Owned/original (AI-assisted),Supplementary reusable runtime asset required by narrative brief.
+gg_boarding_control_room_wall_v001.png,boarding/tiles/gg_boarding_control_room_wall_v001.png,1536x512,COMPLETE,Owned/original (AI-assisted),Supplementary reusable runtime asset required by narrative brief.
+gg_boarding_corridor_wall_module_v001.png,boarding/tiles/gg_boarding_corridor_wall_module_v001.png,1536x512,COMPLETE,Owned/original (AI-assisted),Supplementary reusable runtime asset required by narrative brief.
+gg_boarding_reactor_wall_v001.png,boarding/tiles/gg_boarding_reactor_wall_v001.png,1536x512,COMPLETE,Owned/original (AI-assisted),Supplementary reusable runtime asset required by narrative brief.
+gg_boarding_tiles_ladder_climb_v001.png,boarding/tiles/gg_boarding_tiles_ladder_climb_v001.png,1024x256,COMPLETE,Owned/original (AI-assisted),Supplementary reusable runtime asset required by narrative brief.
+gg_boarding_window_view_v001.png,boarding/tiles/gg_boarding_window_view_v001.png,1536x512,COMPLETE,Owned/original (AI-assisted),Supplementary reusable runtime asset required by narrative brief.
+gg_boarding_door_airlock_open_v001.png,boarding/transit/gg_boarding_door_airlock_open_v001.png,512x512,COMPLETE,Owned/original (AI-assisted),Supplementary reusable runtime asset required by narrative brief.
+gg_boarding_door_blast_open_v001.png,boarding/transit/gg_boarding_door_blast_open_v001.png,512x512,COMPLETE,Owned/original (AI-assisted),Supplementary reusable runtime asset required by narrative brief.
+gg_boarding_door_standard_open_v001.png,boarding/transit/gg_boarding_door_standard_open_v001.png,512x512,COMPLETE,Owned/original (AI-assisted),Supplementary reusable runtime asset required by narrative brief.
+gg_boarding_indicator_access_granted_v001.png,boarding/ui/gg_boarding_indicator_access_granted_v001.png,512x512,COMPLETE,Owned/original (AI-assisted),Supplementary reusable runtime asset required by narrative brief.
+gg_boarding_indicator_warning_alarm_v001.png,boarding/ui/gg_boarding_indicator_warning_alarm_v001.png,512x512,COMPLETE,Owned/original (AI-assisted),Supplementary reusable runtime asset required by narrative brief.
+gg_ui_button_boarding_enter_off_v001.png,buttons/gg_ui_button_boarding_enter_off_v001.png,768x192,COMPLETE,Owned/original (AI-assisted),Supplementary reusable runtime asset required by narrative brief.
+gg_ui_button_boarding_enter_on_v001.png,buttons/gg_ui_button_boarding_enter_on_v001.png,768x192,COMPLETE,Owned/original (AI-assisted),Supplementary reusable runtime asset required by narrative brief.
+gg_ui_button_boarding_exit_off_v001.png,buttons/gg_ui_button_boarding_exit_off_v001.png,768x192,COMPLETE,Owned/original (AI-assisted),Supplementary reusable runtime asset required by narrative brief.
+gg_ui_button_boarding_exit_on_v001.png,buttons/gg_ui_button_boarding_exit_on_v001.png,768x192,COMPLETE,Owned/original (AI-assisted),Supplementary reusable runtime asset required by narrative brief.
+gg_ui_button_continue_off_v001.png,buttons/gg_ui_button_continue_off_v001.png,768x192,COMPLETE,Owned/original (AI-assisted),Supplementary reusable runtime asset required by narrative brief.
+gg_ui_button_continue_on_v001.png,buttons/gg_ui_button_continue_on_v001.png,768x192,COMPLETE,Owned/original (AI-assisted),Supplementary reusable runtime asset required by narrative brief.
