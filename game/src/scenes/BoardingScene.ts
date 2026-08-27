@@ -16,6 +16,20 @@ interface BoardingLaunch {
   levelChecksum: string;
 }
 
+interface BoardingQaState {
+  active: boolean;
+  completed: boolean;
+  serverRunId: string | null;
+  serverError: string | null;
+  elapsedMs: number;
+}
+
+declare global {
+  interface Window {
+    __GALACTIC_GUNNERS_BOARDING_QA__?: { state: () => BoardingQaState };
+  }
+}
+
 /** Phaser projection of the deterministic H014 boarding simulation. */
 export class BoardingScene extends Phaser.Scene {
   private coordinator = new BoardingCoordinator();
@@ -42,6 +56,7 @@ export class BoardingScene extends Phaser.Scene {
     this.simulation = new BoardingSimulation(data.seed ?? 1, { lives: data.lives ?? 3, nukes: data.nukes ?? 2 });
     this.coordinator = new BoardingCoordinator();
     this.offerElapsed = 0;
+    this.elapsed = 0;
     this.active = false;
     this.completed = false;
     this.serverRun = null;
@@ -78,6 +93,11 @@ export class BoardingScene extends Phaser.Scene {
     this.enterLabel = this.add.text(this.scale.width / 2, this.scale.height * 0.48, 'ENTER', { fontFamily: 'GalacticGunnersHUD, monospace', fontSize: '26px', color: '#ffffff' }).setOrigin(0.5).setScrollFactor(0).setDepth(21);
     this.cameras.main.startFollow(this.player, true, 0.12, 0.12);
     void this.openServerRun();
+    if (typeof window !== 'undefined') {
+      window.__GALACTIC_GUNNERS_BOARDING_QA__ = {
+        state: () => ({ active: this.active, completed: this.completed, serverRunId: this.serverRun?.id ?? null, serverError: this.serverError, elapsedMs: this.simulation.elapsedMs() }),
+      };
+    }
     this.input.keyboard?.once('keydown-ENTER', () => this.acceptOffer());
     this.input.keyboard?.once('keydown-ESC', () => this.finish('ABORTED'));
   }
@@ -140,6 +160,7 @@ export class BoardingScene extends Phaser.Scene {
       }
     }
     this.scene.stop();
+    if (typeof window !== 'undefined') delete window.__GALACTIC_GUNNERS_BOARDING_QA__;
     this.scene.resume('Level1Scene', { boardingOutcome: outcome, boardingSnapshot: this.simulation.snapshot(), boardingReturnState: returnState, boardingValidated: Boolean(returnState) });
   }
 

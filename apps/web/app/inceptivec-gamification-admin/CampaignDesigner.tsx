@@ -13,7 +13,22 @@ export function CampaignDesigner() {
   const [selectedPlacement, setSelectedPlacement] = useState<number | null>(null); const [message, setMessage] = useState('Loading governed campaign authority...'); const [zoom, setZoom] = useState(1);
   const selectedLevel = useMemo(() => levels.find((level) => level.id === selected) ?? null, [levels, selected]);
   const selectedAsset = selectedPlacement === null ? null : assets.find((asset) => asset.key === placements[selectedPlacement]?.assetKey) ?? null;
-  async function call(path: string, init?: RequestInit) { const response = await fetch(`/api/v1${path}`, { credentials: 'same-origin', headers: { ...(init?.body ? { 'content-type': 'application/json' } : {}), ...init?.headers }, ...init }); if (!response.ok) { const body = await response.json().catch(() => ({})); throw new Error(body.detail ?? body.code ?? `Request failed (${response.status})`); } return response.json(); }
+  async function call(path: string, init?: RequestInit) {
+    const mutating = Boolean(init?.method && init.method !== 'GET' && init.method !== 'HEAD');
+    const csrf = mutating
+      ? await fetch('/api/v1/auth/csrf/', { credentials: 'same-origin' }).then(async (response) => {
+        if (!response.ok) throw new Error('Unable to establish the protected editor session.');
+        return (await response.json() as { csrf_token: string }).csrf_token;
+      })
+      : null;
+    const response = await fetch(`/api/v1${path}`, {
+      credentials: 'same-origin',
+      headers: { ...(init?.body ? { 'content-type': 'application/json' } : {}), ...(csrf ? { 'X-CSRFToken': csrf } : {}), ...init?.headers },
+      ...init,
+    });
+    if (!response.ok) { const body = await response.json().catch(() => ({})); throw new Error(body.detail ?? body.code ?? `Request failed (${response.status})`); }
+    return response.json();
+  }
   async function load() { try { const [levelData, assetData] = await Promise.all([call('/levels/'), call('/assets/catalogue/')]); const catalogue = levelData.results ?? levelData; setLevels(catalogue); setAssets(assetData.results ?? []); setSelected((current) => current ?? catalogue[0]?.id ?? null); setMessage('Published campaign authority and approved assets loaded.'); } catch (error) { setMessage(error instanceof Error ? error.message : 'Unable to load governed catalogue.'); } }
   useEffect(() => { void load(); }, []);
   useEffect(() => { const config = selectedLevel?.active_version?.config; setPlacements(Array.isArray(config?.placements) ? config.placements : []); setSelectedPlacement(null); }, [selectedLevel]);

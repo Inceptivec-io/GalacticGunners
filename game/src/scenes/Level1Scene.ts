@@ -54,6 +54,7 @@ interface HostileQaApi {
   continueCampaign: () => void;
   replay: () => void;
   menu: () => void;
+  triggerBoarding: () => Record<string, unknown>;
   state: () => Record<string, unknown>;
 }
 
@@ -1368,6 +1369,14 @@ export class Level1Scene extends CombatLevelScene {
       continueCampaign: () => this.runTerminalAction('continue'),
       replay: () => this.runTerminalAction('replay'),
       menu: () => this.runTerminalAction('menu'),
+      triggerBoarding: () => {
+        const anchor = this.#definition.boarding_anchors?.[0];
+        const scout = anchor ? this.getActiveScouts().find((candidate) => Number(candidate.getData('row')) === anchor.source_selector.row
+          && Number(candidate.getData('col')) === anchor.source_selector.column) : null;
+        if (!scout) return { launched: false, reason: 'boarding-anchor-not-available' };
+        this.destroyScoutBody(scout, true);
+        return { launched: this.#boardingActive, anchorId: anchor?.id ?? null, gameRunId: this.#session.runId };
+      },
       state: () => this.buildQaState(),
     };
   }

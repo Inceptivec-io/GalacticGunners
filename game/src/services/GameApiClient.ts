@@ -166,15 +166,16 @@ export class GameApiClient implements GameRunClient {
 
   private async request<T>(path: string, init: RequestInit = {}): Promise<T> {
     const csrfToken = init.method && init.method !== 'GET' && init.method !== 'HEAD' ? await this.csrfToken() : null;
+    const { headers: requestHeaders, ...requestInit } = init;
     const response = await fetch(`${this.baseUrl.replace(/\/+$/, '')}${path}`, {
+      ...requestInit,
       credentials: 'same-origin',
       headers: {
         accept: 'application/json',
-        ...(init.body ? { 'content-type': 'application/json' } : {}),
+        ...(requestInit.body ? { 'content-type': 'application/json' } : {}),
         ...(csrfToken ? { 'X-CSRFToken': csrfToken } : {}),
-        ...init.headers,
+        ...requestHeaders,
       },
-      ...init,
     });
     if (!response.ok) {
       throw new Error(`Galactic Gunners API request failed: ${response.status}`);
