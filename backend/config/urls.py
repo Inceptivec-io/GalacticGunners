@@ -9,6 +9,7 @@ from leaderboard.views import LeaderboardListView, LeaderboardMeView, Moderation
 from players.api import LeaderboardProfileView
 from levels.views import AdminLevelActionView, AdminLevelCreateView, AdminLevelExportView, AdminLevelGenerateView, AdminLevelImportView, PublicLevelDetailView, PublicLevelListView, PublicVersionView
 from accounts.api import CsrfView, LoginView, LogoutView, RegisterView, SessionView
+from campaigns.views import CampaignRunCompleteEntryView, CampaignRunStartView
 
 from .views import health
 
@@ -16,9 +17,12 @@ urlpatterns = [
     path('api/v1/health/', health, name='health'),
     path('api/v1/auth/csrf/', CsrfView.as_view(), name='csrf'),
     path('api/v1/auth/session/', SessionView.as_view(), name='session'),
+    path('api/v1/auth/me/', SessionView.as_view(), name='auth-me'),
     path('api/v1/auth/login/', LoginView.as_view(), name='login'),
     path('api/v1/auth/logout/', LogoutView.as_view(), name='logout'),
     path('api/v1/auth/register/', RegisterView.as_view(), name='register'),
+    path('api/v1/campaign-runs/start/', CampaignRunStartView.as_view(), name='campaign-run-start'),
+    path('api/v1/campaign-runs/<uuid:run_id>/complete-entry/', CampaignRunCompleteEntryView.as_view(), name='campaign-run-complete-entry'),
     path('api/v1/game-runs/', GameRunStartView.as_view(), name='game-run-start'),
     path(
         'api/v1/game-runs/<uuid:run_id>/complete/',

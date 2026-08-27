@@ -25,7 +25,10 @@ class CampaignRun(models.Model):
     player = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.PROTECT, related_name='campaign_runs')
     anonymous_capability_hash = models.CharField(max_length=64, null=True, blank=True)
     status = models.CharField(max_length=16, choices=Status.choices, default=Status.ACTIVE)
-    next_sequence = models.PositiveSmallIntegerField(default=1)
+    campaign_version = models.ForeignKey('campaigns.CampaignVersion', null=True, blank=True, on_delete=models.PROTECT, related_name='runs')
+    current_entry = models.ForeignKey('campaigns.CampaignEntry', null=True, blank=True, on_delete=models.PROTECT, related_name='+')
+    next_entry = models.ForeignKey('campaigns.CampaignEntry', null=True, blank=True, on_delete=models.PROTECT, related_name='+')
+    completed_entry_count = models.PositiveIntegerField(default=0)
     score = models.PositiveIntegerField(default=0)
     lives = models.PositiveSmallIntegerField(default=3)
     nukes = models.PositiveSmallIntegerField(default=2)
@@ -40,7 +43,6 @@ class CampaignRun(models.Model):
     class Meta:
         constraints = [
             models.CheckConstraint(condition=(Q(player__isnull=False, anonymous_capability_hash__isnull=True) | Q(player__isnull=True, anonymous_capability_hash__isnull=False)), name='campaign_run_single_owner'),
-            models.CheckConstraint(condition=Q(next_sequence__gte=1, next_sequence__lte=7), name='campaign_run_sequence_bounded'),
             models.CheckConstraint(condition=Q(lives__gte=0, lives__lte=3), name='campaign_run_lives_bounded'),
             models.CheckConstraint(condition=Q(nukes__gte=0, nukes__lte=2), name='campaign_run_nukes_bounded'),
         ]
@@ -88,8 +90,9 @@ class GameRun(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     player = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name='game_runs')
     campaign_run = models.ForeignKey(CampaignRun, null=True, blank=True, on_delete=models.PROTECT, related_name='attempts')
+    campaign_entry = models.ForeignKey('campaigns.CampaignEntry', null=True, blank=True, on_delete=models.PROTECT, related_name='game_runs')
     sequence = models.PositiveSmallIntegerField(null=True, blank=True)
-    attempt = models.PositiveSmallIntegerField(null=True, blank=True)
+    attempt = models.PositiveIntegerField(null=True, blank=True)
     game_version = models.ForeignKey(GameVersion, on_delete=models.PROTECT, related_name='game_runs')
     level = models.ForeignKey('levels.Level', null=True, blank=True, on_delete=models.PROTECT, related_name='game_runs')
     level_version = models.PositiveIntegerField(null=True, blank=True)

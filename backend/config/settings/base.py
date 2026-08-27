@@ -53,6 +53,8 @@ INSTALLED_APPS = [
     'games',
     'assets',
     'audit',
+    'campaigns',
+    'plans',
 ]
 
 MIDDLEWARE = [

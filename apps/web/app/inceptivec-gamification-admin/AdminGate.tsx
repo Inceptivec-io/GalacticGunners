@@ -12,7 +12,7 @@ export function AdminGate({ children }: { children: ReactNode }) {
   const [state, setState] = useState<'checking' | 'login' | 'denied' | 'ready' | 'error'>('checking');
 
   useEffect(() => {
-    fetch('/api/v1/auth/session/', { credentials: 'include' })
+    fetch('/api/v1/auth/me/', { credentials: 'same-origin' })
       .then((response) => response.ok ? response.json() as Promise<Session> : Promise.reject())
       .then((session) => {
         if (!session.authenticated) {

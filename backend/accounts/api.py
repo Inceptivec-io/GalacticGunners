@@ -17,12 +17,24 @@ from players.models import PlayerProfile
 def session_payload(request):
     user = request.user
     if not user.is_authenticated:
-        return {'authenticated': False, 'user': None, 'platform_access': False}
+        return {'authenticated': False, 'user': None, 'platform_access': False, 'surface_grants': [], 'memberships': [], 'platform_permissions': []}
     profile = getattr(user, 'player_profile', None)
+    memberships = list(user.organization_memberships.filter(status='ACTIVE', organization__status='ACTIVE').select_related('organization'))
+    platform_access = bool(user.is_superuser or user.has_perm('accounts.manage_platform'))
+    grants = []
+    if profile and profile.status == PlayerProfile.Status.ACTIVE:
+        grants.append('PLAYER_ACCOUNT')
+    if memberships and 'PLAYER_ACCOUNT' in grants:
+        grants.append('COMMAND_POST')
+    if platform_access:
+        grants.append('INCEPTIVEC_ADMIN')
     return {
         'authenticated': True,
         'user': {'id': str(user.id), 'username': user.username, 'display_name': profile.display_name if profile else None},
-        'platform_access': bool(user.is_superuser or user.has_perm('accounts.manage_platform')),
+        'platform_access': platform_access,
+        'surface_grants': grants,
+        'memberships': [{'organization_id': str(item.organization_id), 'organization_slug': item.organization.slug, 'role': item.role} for item in memberships],
+        'platform_permissions': sorted(permission.split('.', 1)[1] for permission in user.get_all_permissions() if permission.startswith('accounts.')),
     }
 
 
@@ -42,7 +54,9 @@ class SessionView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        return Response(session_payload(request))
+        response = Response(session_payload(request))
+        response['Cache-Control'] = 'no-store'
+        return response
 
 
 class LoginView(APIView):
