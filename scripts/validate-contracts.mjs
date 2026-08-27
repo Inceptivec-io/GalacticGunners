@@ -6,14 +6,19 @@ const jsonContracts = [
   'packages/contracts/schemas/game-run.schema.json',
   'packages/contracts/schemas/score-submission.schema.json',
   'packages/contracts/schemas/leaderboard-entry.schema.json',
-  'packages/contracts/schemas/score-event.schema.json'
+  'packages/contracts/schemas/score-event.schema.json',
+  'packages/contracts/schemas/level-authoring-document-v1.1.schema.json'
 ];
 
 const requiredPaths = [
   '/health/',
   '/game-runs/',
   '/game-runs/{runId}/complete/',
-  '/leaderboard/'
+  '/leaderboard/',
+  '/admin/levels/{levelId}/drafts/',
+  '/admin/levels/{levelId}/preview/{checksum}',
+  '/portal/organizations/{organizationSlug}/maps/{levelId}/drafts/',
+  '/portal/organizations/{organizationSlug}/maps/{levelId}/preview/{checksum}'
 ];
 
 const requiredComponents = [
@@ -26,7 +31,10 @@ const requiredComponents = [
   'LeaderboardEntry',
   'LeaderboardResponse',
   'ClientType',
-  'GameRunValidity'
+  'GameRunValidity',
+  'LevelAuthoringDocument',
+  'LevelDraftSaveRequest',
+  'LevelVersion'
 ];
 
 const requiredScoreEvents = [
@@ -88,6 +96,12 @@ for (const event of requiredScoreEvents) {
     throw new Error(`Missing score event enum: ${event}`);
   }
 }
+
+const levelAuthoring = parsedSchemas.find(([path]) => path.endsWith('level-authoring-document-v1.1.schema.json'))?.[1];
+for (const field of ['player_spawns', 'entities', 'formations', 'hazard_emitters', 'shield_structures', 'drop_rules', 'objectives', 'boarding_anchors', 'gameplay', 'performance_budget']) {
+  if (!levelAuthoring?.required?.includes(field)) throw new Error(`Level Authoring schema missing ${field}.`);
+}
+if (levelAuthoring?.properties?.schema_version?.const !== '1.1') throw new Error('Level Authoring schema must remain 1.1.');
 
 const openApi = YAML.parse(await readFile('packages/contracts/openapi/galactic-gunners-api-v1.yaml', 'utf8'));
 if (openApi.openapi !== '3.1.0') {

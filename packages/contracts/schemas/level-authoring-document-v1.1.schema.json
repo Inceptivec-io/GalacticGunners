@@ -23,18 +23,19 @@
       },
       "additionalProperties": false
     },
-    "player_spawns": { "type": "array", "minItems": 1 },
+    "player_spawns": { "type": "array", "minItems": 1, "maxItems": 2, "items": { "$ref": "#/$defs/playerSpawn" } },
     "entities": { "type": "array", "items": { "$ref": "#/$defs/entity" } },
     "formations": { "type": "array", "items": { "$ref": "#/$defs/formation" } },
-    "hazard_emitters": { "type": "array" },
-    "shield_structures": { "type": "array" },
-    "drop_rules": { "type": "array" },
-    "objectives": { "type": "array" },
-    "boarding_anchors": { "type": "array", "maxItems": 1 },
-    "gameplay": { "type": "object" },
-    "performance_budget": { "type": "object" }
+    "hazard_emitters": { "type": "array", "items": { "$ref": "#/$defs/hazardEmitter" } },
+    "shield_structures": { "type": "array", "items": { "$ref": "#/$defs/shieldStructure" } },
+    "drop_rules": { "type": "array", "items": { "$ref": "#/$defs/dropRule" } },
+    "objectives": { "type": "array", "items": { "$ref": "#/$defs/objective" } },
+    "boarding_anchors": { "type": "array", "maxItems": 1, "items": { "$ref": "#/$defs/boardingAnchor" } },
+    "gameplay": { "$ref": "#/$defs/gameplay" },
+    "performance_budget": { "$ref": "#/$defs/performanceBudget" }
   },
   "$defs": {
+    "playerSpawn": { "type": "object", "additionalProperties": false, "required": ["id", "slot", "asset_id", "x", "y", "rotation", "enabled"], "properties": { "id": { "type": "string", "minLength": 1 }, "slot": { "enum": [1, 2] }, "asset_id": { "type": "string", "minLength": 1 }, "x": { "type": "number", "minimum": 0, "maximum": 1280 }, "y": { "type": "number", "minimum": 0, "maximum": 720 }, "rotation": { "type": "number" }, "enabled": { "type": "boolean" } } },
     "entity": {
       "type": "object",
       "required": ["id", "entity_type", "asset_id", "x", "y", "width", "height", "rotation", "z_index", "behaviour_profile", "enabled", "tags"],
@@ -64,7 +65,15 @@
         "entry_delay_ms": { "type": "integer", "minimum": 0 }, "repeat": { "type": "integer", "minimum": 0 }
       },
       "additionalProperties": false
-    }
+    },
+    "hazardEmitter": { "type": "object", "additionalProperties": false, "required": ["id", "hazard_type", "asset_id", "enabled", "initial_count", "maximum_active", "spawn_interval_ms", "spawn_jitter_ms", "speed_min", "speed_max", "angular_velocity_min", "angular_velocity_max", "entry_edges", "spawn_pattern", "spawn_points", "despawn_margin", "collision_damage"], "properties": { "id": { "type": "string", "minLength": 1 }, "hazard_type": { "enum": ["ASTEROID", "COMET"] }, "asset_id": { "type": "string", "minLength": 1 }, "enabled": { "type": "boolean" }, "initial_count": { "type": "integer", "minimum": 0 }, "maximum_active": { "type": "integer", "minimum": 1 }, "spawn_interval_ms": { "type": "integer", "minimum": 1 }, "spawn_jitter_ms": { "type": "integer", "minimum": 0 }, "speed_min": { "type": "number", "minimum": 0 }, "speed_max": { "type": "number", "minimum": 0 }, "angular_velocity_min": { "type": "number" }, "angular_velocity_max": { "type": "number" }, "entry_edges": { "type": "array", "minItems": 1, "items": { "enum": ["TOP", "RIGHT", "BOTTOM", "LEFT"] } }, "spawn_pattern": { "enum": ["RANDOM_EDGE", "ALTERNATING_EDGES", "LANE", "FIXED_POINTS"] }, "spawn_points": { "type": "array", "items": { "$ref": "#/$defs/point" } }, "despawn_margin": { "type": "number", "minimum": 0 }, "collision_damage": { "type": "integer", "minimum": 0 } } },
+    "shieldStructure": { "type": "object", "additionalProperties": false, "required": ["id", "name", "origin", "tile_asset_id", "tile_width", "tile_height", "matrix", "destructible"], "properties": { "id": { "type": "string", "minLength": 1 }, "name": { "type": "string", "minLength": 1 }, "origin": { "$ref": "#/$defs/point" }, "tile_asset_id": { "type": "string", "minLength": 1 }, "tile_width": { "type": "number", "exclusiveMinimum": 0 }, "tile_height": { "type": "number", "exclusiveMinimum": 0 }, "matrix": { "type": "array", "minItems": 1, "items": { "type": "array", "minItems": 1, "items": { "enum": [0, 1] } } }, "destructible": { "const": true } } },
+    "dropRule": { "type": "object", "additionalProperties": false, "required": ["id", "host_entity_types", "pickup_type", "probability", "maximum_per_level", "collection_window_ms"], "properties": { "id": { "type": "string", "minLength": 1 }, "host_entity_types": { "type": "array", "minItems": 1, "items": { "enum": ["SCOUT", "CRUISER", "DESTROYER"] } }, "pickup_type": { "enum": ["NUKE", "LIFE"] }, "probability": { "type": "number", "minimum": 0, "maximum": 1 }, "maximum_per_level": { "type": "integer", "minimum": 0 }, "collection_window_ms": { "type": "integer", "minimum": 1 } } },
+    "objective": { "type": "object", "additionalProperties": false, "required": ["id", "type", "required", "target_entity_ids", "duration_ms"], "properties": { "id": { "type": "string", "minLength": 1 }, "type": { "enum": ["DESTROY_ALL_HOSTILES", "DESTROY_MOTHERSHIP", "SURVIVE_DURATION", "BOARD_TARGET"] }, "required": { "type": "boolean" }, "target_entity_ids": { "type": "array", "items": { "type": "string" } }, "duration_ms": { "type": ["integer", "null"], "minimum": 1 } } },
+    "boardingAnchor": { "type": "object", "additionalProperties": false, "required": ["id", "source_entity_id", "source_ship_type", "interior", "entry_envelope", "offer_duration_ms", "interaction"], "properties": { "id": { "type": "string", "minLength": 1 }, "source_entity_id": { "type": "string", "minLength": 1 }, "source_ship_type": { "const": "ALIEN_FRIGATE" }, "interior": { "type": "object", "additionalProperties": false, "required": ["slug", "version", "checksum"], "properties": { "slug": { "const": "alien-frigate" }, "version": { "const": 1 }, "checksum": { "type": "string", "pattern": "^[0-9a-f]{64}$" } } }, "entry_envelope": { "type": "object", "additionalProperties": false, "required": ["width_px", "height_px"], "properties": { "width_px": { "type": "number", "minimum": 1 }, "height_px": { "type": "number", "minimum": 1 } } }, "offer_duration_ms": { "const": 8000 }, "interaction": { "const": "BOARD" } } },
+    "gameplay": { "type": "object", "additionalProperties": false, "required": ["player_lives_at_campaign_start", "nukes_at_campaign_start", "nuke_rearm_max", "allow_pause", "allow_replay", "allow_main_menu_resume", "completion_bonus_profile", "scoring_profile"], "properties": { "player_lives_at_campaign_start": { "type": "integer", "minimum": 0 }, "nukes_at_campaign_start": { "type": "integer", "minimum": 0 }, "nuke_rearm_max": { "type": "integer", "minimum": 1 }, "allow_pause": { "type": "boolean" }, "allow_replay": { "type": "boolean" }, "allow_main_menu_resume": { "type": "boolean" }, "completion_bonus_profile": { "type": "string", "minLength": 1 }, "scoring_profile": { "const": "LEGACY_V1_GOVERNED" } } },
+    "performanceBudget": { "type": "object", "additionalProperties": false, "required": ["max_active_enemies", "max_active_hazards", "max_projectiles", "max_shield_tiles", "max_total_runtime_objects"], "properties": { "max_active_enemies": { "type": "integer", "minimum": 1 }, "max_active_hazards": { "type": "integer", "minimum": 0 }, "max_projectiles": { "type": "integer", "minimum": 1 }, "max_shield_tiles": { "type": "integer", "minimum": 0 }, "max_total_runtime_objects": { "type": "integer", "minimum": 1 } } },
+    "point": { "type": "object", "additionalProperties": false, "required": ["x", "y"], "properties": { "x": { "type": "number", "minimum": 0, "maximum": 1280 }, "y": { "type": "number", "minimum": 0, "maximum": 720 } } }
   },
   "additionalProperties": false
 }
