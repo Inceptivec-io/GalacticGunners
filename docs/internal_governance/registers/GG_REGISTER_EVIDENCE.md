@@ -2,6 +2,7 @@
 
 | Evidence ID | Handoff | Type | Path | SHA/Ref | Created | Status | Notes |
 |---|---|---|---|---|---|---|---|
+| GG-DEVTEAM-015-EV-001 | GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015 | H015 platform/runtime/browser verification | `docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/H015_RUNTIME_VERIFICATION.md`; `.../final_runtime/` | GitHub Actions run 33118960366 PASS at candidate `e5becaff20d0857845b67119587eb6a8b8e84cf3`; Docker pytest 38 passed; campaign and Boarding runtime PASS | 2026-08-27 | CURRENT | H015 automatic gates pass; Founder review and merge remain pending. |
 | GG-COM-001-EV-001 | GALACTIC_GUNNERS_GG_COM_001_HANDOFF_IN_001 | inbound preserved | `docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_GG_COM_001_HANDOFF_IN_001/` | 3417782E3D629FD8F9884C36DE354C4ED171EAA80DCB413F72AA4CAEA19B4C65 | 2026-08-23 | CURRENT | Original inbound package and extracted CTO baseline preserved outside POST_BOX. |
 | GG-COM-001-EV-002 | GALACTIC_GUNNERS_GG_COM_001_HANDOFF_IN_001 | CTO baseline | `docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_GG_COM_001_HANDOFF_IN_001/03_WORKING_COPY_IF_REQUIRED/` | manifest present | 2026-08-23 | CURRENT | Approved GG-COM-001 CTO baseline used as governing specification. |
 | GG-COM-001-EV-003 | GALACTIC_GUNNERS_GG_COM_001_HANDOFF_IN_001 | execution evidence | `docs/internal_governance/evidence/GALACTIC_GUNNERS_GG_COM_001_HANDOFF_IN_001/execution_smoke/` | browser-smoke-result.json | 2026-08-23 | CURRENT | Bounded browser smoke evidence preserved. |
