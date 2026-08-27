@@ -76,4 +76,4 @@ if ($health.status -ne 'ok' -or $build.source_sha -ne $sourceSha) { throw 'Found
   "Inceptivec administrator: $($values.FOUNDER_REVIEW_USERNAME) / $($values.FOUNDER_REVIEW_PASSWORD)", "Command Post customer: $($values.COMMAND_POST_REVIEW_USERNAME) / $($values.COMMAND_POST_REVIEW_PASSWORD)", "Player: $($values.PLAYER_REVIEW_USERNAME) / $($values.PLAYER_REVIEW_PASSWORD)",
   'Review order: sign in to each permitted surface; verify cross-surface denial; play campaign Continue and Boarding; create/save a customer map; verify leaderboard and logout.', 'Stop: docker compose down', 'Restart: .\scripts\start-founder-review.ps1', 'Backend diagnostics only: http://localhost:8010. Django Admin is local technical tooling only when ENABLE_DJANGO_ADMIN=true.'
 ) | Set-Content -LiteralPath (Join-Path $root 'FOUNDER_REVIEW_ACCESS.local.txt') -Encoding ascii
-Write-Output 'FOUNDER_REVIEW_READY=YES'
+Write-Output 'FOUNDER_REVIEW_READY=NO - H015 runtime, Designer, tenant, Boarding, score, and CI gates must pass before Founder review readiness can be declared.'
