@@ -34,4 +34,11 @@ class CampaignRunCompleteEntryView(APIView):
             return Response({'code': str(error), 'detail': 'Campaign entry cannot be completed.'}, status=status.HTTP_403_FORBIDDEN)
         except (TypeError, ValueError) as error:
             return Response({'code': str(error), 'detail': 'Campaign entry cannot be completed.'}, status=status.HTTP_409_CONFLICT)
-        return Response({'id': str(result.id), 'status': result.status, 'score': result.score, 'lives': result.lives, 'nukes': result.nukes, 'entry': CampaignService.entry_payload(result), 'has_next_entry': bool(result.next_entry_id), 'completed_entry_count': result.completed_entry_count})
+        return Response({
+            'id': str(result.id), 'status': result.status, 'score': result.score, 'lives': result.lives, 'nukes': result.nukes,
+            'entry': CampaignService.entry_payload(result), 'has_next_entry': bool(result.next_entry_id),
+            'completed_entry_count': result.completed_entry_count,
+            # An anonymous browser owns its run through this already-validated
+            # capability. The server never persists or derives the raw token.
+            'capability': request.headers.get('X-Campaign-Token') if result.player_id is None else None,
+        })

@@ -158,7 +158,7 @@ export class Level1Scene extends CombatLevelScene {
     const campaignRun = this.#campaignSession?.run;
     this.#session = new GameSession(this.#runtimeConfig.apiBaseUrl ? new GameApiClient(this.#runtimeConfig.apiBaseUrl) : null, {
       slug: this.#definition.slug,
-      version: this.#definition.version,
+      version: this.levelRuntime?.version ?? this.#definition.version,
       checksum: this.levelRuntime?.checksum ?? '',
       seed: this.#definition.seed,
     }, campaignRun?.entry ? {
@@ -742,7 +742,7 @@ export class Level1Scene extends CombatLevelScene {
         sourceEntityId: anchor.source_entity_id,
         apiBaseUrl: this.#runtimeConfig.apiBaseUrl,
         gameRunId: this.#session.runId ?? undefined,
-        levelVersion: this.#definition.version,
+        levelVersion: this.levelRuntime?.version ?? this.#definition.version,
         levelChecksum: this.levelRuntime?.checksum ?? '',
       });
       return;
@@ -1144,7 +1144,7 @@ export class Level1Scene extends CombatLevelScene {
       if (serverDefinition && typeof serverDefinition === 'object') {
         validateLevelDefinition(serverDefinition);
         const runtimes = this.registry.get('campaignRuntime') as LevelRuntimeConfig[];
-        const replacement = { definition: serverDefinition, checksum: serverResult?.entry?.level.checksum ?? '', source: 'remote' as const };
+        const replacement = { definition: serverDefinition, version: serverResult?.entry?.level.version ?? serverDefinition.version, checksum: serverResult?.entry?.level.checksum ?? '', source: 'remote' as const };
         this.registry.set('campaignRuntime', [...runtimes.filter((runtime) => runtime.definition.sequence !== nextSequence), replacement]);
       }
       if (nextSequence && serverDefinition && typeof serverDefinition === 'object') {

@@ -12,24 +12,24 @@ export class LevelLoader {
       if (this.apiBaseUrl) {
         const response = await fetch(`${this.apiBaseUrl}/levels/${slug}/`);
         if (response.ok) {
-          const payload = await response.json() as { active_version?: { config: LevelDefinition; checksum: string } };
+          const payload = await response.json() as { active_version?: { version: number; config: LevelDefinition; checksum: string } };
           if (payload.active_version) {
             validateLevelDefinition(payload.active_version.config);
             localStorage.setItem(cacheKey, JSON.stringify(payload.active_version));
-            return { definition: payload.active_version.config, checksum: payload.active_version.checksum, source: 'remote' };
+            return { definition: payload.active_version.config, version: payload.active_version.version, checksum: payload.active_version.checksum, source: 'remote' };
           }
         }
       }
       const cached = localStorage.getItem(cacheKey);
       if (cached) {
-        const value = JSON.parse(cached) as { config: LevelDefinition; checksum: string };
+        const value = JSON.parse(cached) as { version?: number; config: LevelDefinition; checksum: string };
         validateLevelDefinition(value.config);
-        return { definition: value.config, checksum: value.checksum, source: 'cache' };
+        return { definition: value.config, version: value.version ?? value.config.version, checksum: value.checksum, source: 'cache' };
       }
     } catch {
       // Offline play remains available through the signed-in-package baseline.
     }
     validateLevelDefinition(packaged);
-    return { definition: packaged, checksum: await levelChecksum(packaged), source: 'package' };
+    return { definition: packaged, version: packaged.version, checksum: await levelChecksum(packaged), source: 'package' };
   }
 }

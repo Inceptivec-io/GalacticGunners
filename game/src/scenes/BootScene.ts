@@ -70,7 +70,7 @@ export class BootScene extends Phaser.Scene {
     const loader = new LevelLoader(this.runtimeConfig.apiBaseUrl);
     const campaignRuntime = await Promise.all(CAMPAIGN_DEFINITIONS.map(async (definition) => {
       validateLevelDefinition(definition);
-      const fallback = { definition, checksum: await levelChecksum(definition), source: 'package' as const };
+      const fallback = { definition, version: definition.version, checksum: await levelChecksum(definition), source: 'package' as const };
       return loader.load(definition.slug, definition).catch(() => fallback);
     }));
     this.registry.set('campaignRuntime', campaignRuntime);
