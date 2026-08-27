@@ -46,7 +46,7 @@ def test_level_one_admission_publish_and_public_resolution(client, level_admin, 
 
 
 @pytest.mark.django_db
-def test_published_version_is_immutable_and_unknown_routes_are_absent(client, level_admin):
+def test_published_version_is_immutable_and_unknown_routes_are_absent(client, level_admin, core_project):
     level = Level.objects.create(slug='level-01', name='Level 1', sequence=1, game_project=core_project)
     version = LevelVersion.objects.create(level=level, version=1, config=golden_level())
     version.status = LevelVersion.Status.VALIDATED
