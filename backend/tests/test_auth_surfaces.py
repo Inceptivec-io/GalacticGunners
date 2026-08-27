@@ -38,3 +38,13 @@ class AuthenticationSurfaceTests(TestCase):
         )
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['code'], 'INVALID_REQUEST')
+
+    def test_dashboard_operations_require_platform_permission_and_return_safe_user_inventory(self):
+        self.assertEqual(self.client.get('/api/v1/admin/operations/users/').status_code, 403)
+        self.user.user_permissions.add(Permission.objects.get(codename='manage_platform'))
+        self.client.force_authenticate(self.user)
+        response = self.client.get('/api/v1/admin/operations/users/')
+        self.assertEqual(response.status_code, 200)
+        record = next(item for item in response.data['results'] if item['username'] == 'platform-admin')
+        self.assertEqual(set(record), {'id', 'username', 'active', 'display_name', 'memberships', 'platform_access'})
+        self.assertNotIn('password', record)

@@ -9,6 +9,7 @@ from leaderboard.views import LeaderboardListView, LeaderboardMeView, Moderation
 from players.api import LeaderboardProfileView
 from levels.views import AdminLevelActionView, AdminLevelCreateView, AdminLevelDraftView, AdminLevelExportView, AdminLevelGenerateView, AdminLevelImportView, AdminLevelPreviewView, PublicLevelDetailView, PublicLevelListView, PublicVersionView
 from accounts.api import CsrfView, LoginView, LogoutView, RegisterView, SessionView
+from accounts.admin_api import AdminOperationsView
 from campaigns.views import CampaignRunCompleteEntryView, CampaignRunStartView
 from organizations.api import PortalMapCreateView, PortalMapDraftView, PortalMapPreviewView, PortalOrganizationView, PortalOrganizationsView
 from assets.api import AssetCatalogueView
@@ -46,6 +47,7 @@ urlpatterns = [
     path('api/v1/player/leaderboard-profile/', LeaderboardProfileView.as_view(), name='leaderboard-profile'),
     path('api/v1/admin/leaderboard/<str:resource>/', ModerationView.as_view(), name='leaderboard-admin-list'),
     path('api/v1/admin/leaderboard/<str:resource>/<uuid:entry_id>/<str:action>/', ModerationView.as_view(), name='leaderboard-admin-action'),
+    path('api/v1/admin/operations/<str:resource>/', AdminOperationsView.as_view(), name='admin-operations'),
     path('api/v1/admin/game-runs/<uuid:entry_id>/validation/', ModerationView.as_view(), {'resource': 'runs', 'action': 'validation'}, name='game-run-validation'),
     path('api/v1/levels/', PublicLevelListView.as_view(), name='level-list'),
     path('api/v1/levels/<slug:slug>/', PublicLevelDetailView.as_view(), name='level-detail'),
