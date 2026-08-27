@@ -1,0 +1,14 @@
+{
+  "outcome": "TIMEOUT",
+  "duration_ms": 60000,
+  "resources_end": {"lives": 1, "nukes": 1},
+  "aliens_killed": 0,
+  "containers_opened": 0,
+  "lives_found": 0,
+  "nukes_found": 0,
+  "score_events": [],
+  "shooter_state_digest": "2222222222222222222222222222222222222222222222222222222222222222",
+  "events": [
+    {"sequence": 0, "at_ms": 60000, "type": "TIMEOUT", "entity_id": "player"}
+  ]
+}

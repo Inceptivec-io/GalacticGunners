@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://galacticgunners.inceptivec.io/contracts/boarding-run-v1.schema.json",
+  "title": "Galactic Gunners Boarding API payloads v1",
+  "$defs": {
+    "uuid": {"type": "string", "format": "uuid"},
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "resources": {
+      "type": "object", "additionalProperties": false, "required": ["lives", "nukes"],
+      "properties": {"lives": {"type": "integer", "minimum": 0, "maximum": 3}, "nukes": {"type": "integer", "minimum": 0, "maximum": 2}}
+    },
+    "resourcesStart": {
+      "type": "object", "additionalProperties": false, "required": ["lives", "nukes"],
+      "properties": {"lives": {"type": "integer", "minimum": 1, "maximum": 3}, "nukes": {"type": "integer", "minimum": 0, "maximum": 2}}
+    },
+    "event": {
+      "type": "object", "additionalProperties": false, "required": ["sequence", "at_ms", "type", "entity_id"],
+      "properties": {
+        "sequence": {"type": "integer", "minimum": 0, "maximum": 511}, "at_ms": {"type": "integer", "minimum": 0, "maximum": 60000},
+        "type": {"enum": ["INPUT_CHANGED", "PLAYER_FIRE", "PLAYER_HIT", "PLAYER_RESPAWN", "ALIEN_FIRE", "ALIEN_HIT", "ALIEN_KILLED", "CONTAINER_OPENED", "PICKUP_COLLECTED", "EXIT_INTERACTED", "TIMEOUT", "PAUSE_STARTED", "PAUSE_ENDED"]},
+        "entity_id": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[a-z][a-z0-9-]*$"},
+        "target_id": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[a-z][a-z0-9-]*$"},
+        "value": {"type": "string", "enum": ["LIFE", "NUKE", "EMPTY"]},
+        "horizontal": {"type": "integer", "minimum": -1, "maximum": 1},
+        "pressed_actions": {"type": "array", "uniqueItems": true, "items": {"enum": ["JUMP", "FIRE", "INTERACT"]}}
+      }
+    },
+    "startRequest": {
+      "type": "object", "additionalProperties": false,
+      "required": ["anchor_id", "source_entity_id", "source_entity_type", "source_ship_type", "level_version", "level_checksum", "interior_slug", "interior_version", "interior_checksum", "shooter_state_digest", "resources"],
+      "properties": {
+        "anchor_id": {"const": "level-04-alien-frigate-01"}, "source_entity_id": {"const": "level-04:formation-0:r0:c14"}, "source_entity_type": {"const": "scout"}, "source_ship_type": {"const": "ALIEN_FRIGATE"},
+        "level_version": {"type": "integer", "minimum": 1}, "level_checksum": {"$ref": "#/$defs/hash"},
+        "interior_slug": {"const": "alien-frigate"}, "interior_version": {"const": 1}, "interior_checksum": {"$ref": "#/$defs/hash"},
+        "shooter_state_digest": {"$ref": "#/$defs/hash"}, "resources": {"$ref": "#/$defs/resourcesStart"}
+      }
+    },
+    "completionRequest": {
+      "type": "object", "additionalProperties": false,
+      "required": ["outcome", "duration_ms", "resources_end", "aliens_killed", "containers_opened", "lives_found", "nukes_found", "score_events", "shooter_state_digest", "events"],
+      "properties": {
+        "outcome": {"enum": ["SUCCESS", "TIMEOUT", "PLAYER_DEAD", "ABORTED"]}, "duration_ms": {"type": "integer", "minimum": 0, "maximum": 60000},
+        "resources_end": {"$ref": "#/$defs/resources"}, "aliens_killed": {"type": "integer", "minimum": 0, "maximum": 6}, "containers_opened": {"type": "integer", "minimum": 0, "maximum": 4},
+        "lives_found": {"type": "integer", "minimum": 0, "maximum": 4}, "nukes_found": {"type": "integer", "minimum": 0, "maximum": 4},
+        "score_events": {"type": "array", "maxItems": 0}, "shooter_state_digest": {"$ref": "#/$defs/hash"},
+        "events": {"type": "array", "maxItems": 512, "items": {"$ref": "#/$defs/event"}}
+      }
+    }
+  },
+  "oneOf": [{"$ref": "#/$defs/startRequest"}, {"$ref": "#/$defs/completionRequest"}]
+}

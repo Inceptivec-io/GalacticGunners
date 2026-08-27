@@ -1,0 +1,19 @@
+{
+  "algorithm": "LCG32",
+  "transition": "state=(1664525*state+1013904223)>>>0",
+  "seed_derivation_input": "424242:level-04:formation-0:r0:c14:e9b1af65f0daef6725a7ddf4683b5f6d503e25dabc97aef1212102e6b1e994f3",
+  "seed_derivation_sha256": "8e5203dd41f610384b51d606ae7fbe4069cfa45cdb6c2cc52f076680c81b198c",
+  "initial_seed_uint32_big_endian": 2387739613,
+  "vectors": [
+    {"call": 1, "state": 2226664344, "fire_interval_ms": 1112, "drop_roll": 44},
+    {"call": 2, "state": 1747984919, "fire_interval_ms": 1359, "drop_roll": 19},
+    {"call": 3, "state": 146069642, "fire_interval_ms": 1098, "drop_roll": 42},
+    {"call": 4, "state": 3781095009, "fire_interval_ms": 1170, "drop_roll": 9},
+    {"call": 5, "state": 3367285836, "fire_interval_ms": 931, "drop_roll": 36},
+    {"call": 6, "state": 148792123, "fire_interval_ms": 1049, "drop_roll": 23},
+    {"call": 7, "state": 4228284254, "fire_interval_ms": 1340, "drop_roll": 54},
+    {"call": 8, "state": 263249701, "fire_interval_ms": 1182, "drop_roll": 1},
+    {"call": 9, "state": 1274021440, "fire_interval_ms": 904, "drop_roll": 40},
+    {"call": 10, "state": 1448920223, "fire_interval_ms": 1475, "drop_roll": 23}
+  ]
+}

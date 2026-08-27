@@ -1,0 +1,267 @@
+{
+  "method": "RGBA alpha bounds crop; no creative pixel changes; no uniform-cell slicing",
+  "player": [
+    {
+      "source": "assets/platform/player_platform/gg_player_platform_concept_001.png",
+      "source_sha256": "3a476c572620661271ad72ba71f0bfe5453a1ca00f89e220aa05130554c20851",
+      "runtime_derivative": "assets/boarding/characters/player_001_v001.png",
+      "runtime_sha256": "136304bd25e0d04f8bb843bb51b6be0c5bf10d761bfab41d6bd53f782e70d115",
+      "source_size": [
+        1881,
+        836
+      ],
+      "alpha_bounds": [
+        0,
+        0,
+        1881,
+        836
+      ],
+      "derivative_size": [
+        1881,
+        836
+      ]
+    },
+    {
+      "source": "assets/platform/player_platform/gg_player_platform_concept_002.png",
+      "source_sha256": "6b40f0b439647aecb70ab67c4e70e335a0430c7b3cc0c83effdf5f4ee64d7c68",
+      "runtime_derivative": "assets/boarding/characters/player_002_v001.png",
+      "runtime_sha256": "39afb450b74f0d07837ac18547db1d161e59b173ae14dda86c0be5e614466c8e",
+      "source_size": [
+        1983,
+        793
+      ],
+      "alpha_bounds": [
+        0,
+        0,
+        1983,
+        793
+      ],
+      "derivative_size": [
+        1983,
+        793
+      ]
+    },
+    {
+      "source": "assets/platform/player_platform/gg_player_platform_concept_003.png",
+      "source_sha256": "3c3aaafb67fb32d9556d8f1d5538040ea906289137156e2a4ba5c48242d4919b",
+      "runtime_derivative": "assets/boarding/characters/player_003_v001.png",
+      "runtime_sha256": "35aeaa1e2ef301b0816a561d9bba09a7171793bfbc6d0ee3731025974a4702bd",
+      "source_size": [
+        1881,
+        836
+      ],
+      "alpha_bounds": [
+        0,
+        0,
+        1881,
+        836
+      ],
+      "derivative_size": [
+        1881,
+        836
+      ]
+    },
+    {
+      "source": "assets/platform/player_platform/gg_player_platform_concept_004.png",
+      "source_sha256": "e39f814501776388d652e7af66d8f5cb9c342b5064a1d81cf15256fe51fd969d",
+      "runtime_derivative": "assets/boarding/characters/player_004_v001.png",
+      "runtime_sha256": "f02b7c3bd067ae545289d0b6ec0fcda39026ba48768331e161897176e40ff31f",
+      "source_size": [
+        2172,
+        724
+      ],
+      "alpha_bounds": [
+        0,
+        0,
+        2172,
+        724
+      ],
+      "derivative_size": [
+        2172,
+        724
+      ]
+    },
+    {
+      "source": "assets/platform/player_platform/gg_player_platform_concept_005.png",
+      "source_sha256": "495ee1fe2724905332b662d26221a870dcb95ca0f20f78a3f7fed74588dead18",
+      "runtime_derivative": "assets/boarding/characters/player_005_v001.png",
+      "runtime_sha256": "1d3f4027a5c2e6fd926cfe403f618ae54e5251c4b9741cf41aca8c443d57d3db",
+      "source_size": [
+        2172,
+        724
+      ],
+      "alpha_bounds": [
+        0,
+        0,
+        2172,
+        724
+      ],
+      "derivative_size": [
+        2172,
+        724
+      ]
+    },
+    {
+      "source": "assets/platform/player_platform/gg_player_platform_concept_006.png",
+      "source_sha256": "cd9161d66f6ea7b0850d8f9e2d5ae171e0468d0ae0b0ab52fac0f84ed4fca808",
+      "runtime_derivative": "assets/boarding/characters/player_006_v001.png",
+      "runtime_sha256": "48568e668055d5581ea13a455d2010fc30780ee29ff751048bdaabb37d391e6b",
+      "source_size": [
+        2172,
+        724
+      ],
+      "alpha_bounds": [
+        0,
+        0,
+        2172,
+        724
+      ],
+      "derivative_size": [
+        2172,
+        724
+      ]
+    },
+    {
+      "source": "assets/platform/player_platform/gg_player_platform_concept_007.png",
+      "source_sha256": "60a340172ceadb3f9e02f62788ea81a4b9849ecf6fbc46bbd3ed9163ede7d240",
+      "runtime_derivative": "assets/boarding/characters/player_007_v001.png",
+      "runtime_sha256": "56a8124d51e62ca2f6cfe9c2bcb4d2605201f6e07500124fc19fc0353d540228",
+      "source_size": [
+        2103,
+        748
+      ],
+      "alpha_bounds": [
+        0,
+        0,
+        2103,
+        748
+      ],
+      "derivative_size": [
+        2103,
+        748
+      ]
+    }
+  ],
+  "alien": [
+    {
+      "source": "assets/platform/alien_platform/gg_alien_platform_concept_001.png",
+      "source_sha256": "09dd3c7144a5e6bb7e29c94bca1244c084c9433cff5ec3340c954748bfae2a95",
+      "runtime_derivative": "assets/boarding/characters/alien_001_v001.png",
+      "runtime_sha256": "6d34dec77efaca897fd129ce3d7f5d36119e558cd06928fc5fa23235cc1eb740",
+      "source_size": [
+        1831,
+        859
+      ],
+      "alpha_bounds": [
+        0,
+        0,
+        1831,
+        859
+      ],
+      "derivative_size": [
+        1831,
+        859
+      ]
+    },
+    {
+      "source": "assets/platform/alien_platform/gg_alien_platform_concept_002.png",
+      "source_sha256": "e92c36e40bfadee6f08b5ad6ac93752d9130749a8597dd24b8d1c997307fcc78",
+      "runtime_derivative": "assets/boarding/characters/alien_002_v001.png",
+      "runtime_sha256": "e8e48ec29a51167d768bd4d4acd2a945d4cd04e3afda708bab4bfb0324eeb479",
+      "source_size": [
+        2079,
+        756
+      ],
+      "alpha_bounds": [
+        0,
+        9,
+        2071,
+        734
+      ],
+      "derivative_size": [
+        2071,
+        725
+      ]
+    },
+    {
+      "source": "assets/platform/alien_platform/gg_alien_platform_concept_003.png",
+      "source_sha256": "17213335c4ebcc1aa885c7baab734064df131a03878fc2d0ee0b90f826144f36",
+      "runtime_derivative": "assets/boarding/characters/alien_003_v001.png",
+      "runtime_sha256": "efee9cf76a7495d429f5bd4e79442333566c81c40544a75cfea75b1d97ed4ba8",
+      "source_size": [
+        2043,
+        770
+      ],
+      "alpha_bounds": [
+        11,
+        23,
+        2043,
+        754
+      ],
+      "derivative_size": [
+        2032,
+        731
+      ]
+    },
+    {
+      "source": "assets/platform/alien_platform/gg_alien_platform_concept_004.png",
+      "source_sha256": "73ad5c9008f18385e251d4c48bc482d1833b3c7661a79c9f8148e9a0e24e6cc6",
+      "runtime_derivative": "assets/boarding/characters/alien_004_v001.png",
+      "runtime_sha256": "ffe6a63c9f98a42aed89677b298341b9532f0e0937ea4f60f2b22234464ec32b",
+      "source_size": [
+        2007,
+        783
+      ],
+      "alpha_bounds": [
+        0,
+        21,
+        2007,
+        783
+      ],
+      "derivative_size": [
+        2007,
+        762
+      ]
+    },
+    {
+      "source": "assets/platform/alien_platform/gg_alien_platform_concept_005.png",
+      "source_sha256": "2c6fc62c34612b6d5ed10ec520249e5bc4a9175f89b89a7bcc4f4617615ecd02",
+      "runtime_derivative": "assets/boarding/characters/alien_005_v001.png",
+      "runtime_sha256": "18840813f9321f82e5595ae9bed2943d9ef0d68ca0fcfc74ef813863405b746b",
+      "source_size": [
+        2172,
+        724
+      ],
+      "alpha_bounds": [
+        0,
+        0,
+        2172,
+        704
+      ],
+      "derivative_size": [
+        2172,
+        704
+      ]
+    },
+    {
+      "source": "assets/platform/alien_platform/gg_alien_platform_concept_006.png",
+      "source_sha256": "827c22019f3dbd3b0afe6721c31730a979e14c4b729e6ad87b40e6f404614974",
+      "runtime_derivative": "assets/boarding/characters/alien_006_v001.png",
+      "runtime_sha256": "7a4e4cf7fc57d745a4be28ea821abaa640bf2f9ede3afc6c0eb8d372d9b97f66",
+      "source_size": [
+        2172,
+        724
+      ],
+      "alpha_bounds": [
+        0,
+        9,
+        2171,
+        700
+      ],
+      "derivative_size": [
+        2171,
+        691
+      ]
+    }
+  ]
+}

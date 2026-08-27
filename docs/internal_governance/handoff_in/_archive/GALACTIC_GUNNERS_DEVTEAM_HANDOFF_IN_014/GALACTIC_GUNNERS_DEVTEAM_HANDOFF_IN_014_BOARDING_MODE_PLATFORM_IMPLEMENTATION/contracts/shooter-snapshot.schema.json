@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://galacticgunners.inceptivec.io/contracts/shooter-snapshot-v1.schema.json",
+  "title": "ShooterSnapshot v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "level", "rng_state", "clock", "player", "score", "entities", "projectiles", "pickups", "formation_clocks", "boarding_offer", "audio"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "level": {
+      "type": "object", "additionalProperties": false, "required": ["slug", "version", "checksum", "seed"],
+      "properties": {
+        "slug": {"type": "string", "const": "level-04"}, "version": {"type": "integer", "minimum": 1},
+        "checksum": {"$ref": "#/$defs/hash"}, "seed": {"type": "integer", "minimum": 0, "maximum": 4294967295}
+      }
+    },
+    "rng_state": {"type": "integer", "minimum": 0, "maximum": 4294967295},
+    "clock": {
+      "type": "object", "additionalProperties": false, "required": ["active_ms", "level_active_ms", "paused"],
+      "properties": {"active_ms": {"type": "integer", "minimum": 0}, "level_active_ms": {"type": "integer", "minimum": 0}, "paused": {"const": false}}
+    },
+    "player": {
+      "type": "object", "additionalProperties": false, "required": ["x_milli_px", "y_milli_px", "velocity_x_milli_px_s", "velocity_y_milli_px_s", "lives", "nukes", "invulnerable_until_ms"],
+      "properties": {
+        "x_milli_px": {"type": "integer"}, "y_milli_px": {"type": "integer"}, "velocity_x_milli_px_s": {"type": "integer"}, "velocity_y_milli_px_s": {"type": "integer"},
+        "lives": {"type": "integer", "minimum": 1, "maximum": 3}, "nukes": {"type": "integer", "minimum": 0, "maximum": 2}, "invulnerable_until_ms": {"type": "integer", "minimum": 0}
+      }
+    },
+    "score": {
+      "type": "object", "additionalProperties": false, "required": ["value", "multiplier_milli", "event_sequence"],
+      "properties": {"value": {"type": "integer", "minimum": 0}, "multiplier_milli": {"type": "integer", "minimum": 0}, "event_sequence": {"type": "integer", "minimum": 0}}
+    },
+    "entities": {"type": "array", "items": {"$ref": "#/$defs/runtimeObject"}},
+    "projectiles": {"type": "array", "items": {"$ref": "#/$defs/runtimeObject"}},
+    "pickups": {"type": "array", "items": {"$ref": "#/$defs/runtimeObject"}},
+    "formation_clocks": {"type": "array", "items": {"$ref": "#/$defs/clockEntry"}},
+    "boarding_offer": {
+      "type": "object", "additionalProperties": false, "required": ["anchor_id", "source_entity_id", "remaining_ms", "consumed"],
+      "properties": {"anchor_id": {"const": "level-04-alien-frigate-01"}, "source_entity_id": {"const": "level-04:formation-0:r0:c14"}, "remaining_ms": {"type": "integer", "minimum": 0, "maximum": 8000}, "consumed": {"const": true}}
+    },
+    "audio": {
+      "type": "object", "additionalProperties": false, "required": ["music_key", "music_position_ms", "muted", "volume_milli"],
+      "properties": {"music_key": {"type": "string", "maxLength": 96}, "music_position_ms": {"type": "integer", "minimum": 0}, "muted": {"type": "boolean"}, "volume_milli": {"type": "integer", "minimum": 0, "maximum": 1000}}
+    }
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "runtimeObject": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "type", "state", "x_milli_px", "y_milli_px", "velocity_x_milli_px_s", "velocity_y_milli_px_s", "health", "next_action_at_ms"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1, "maxLength": 128}, "type": {"type": "string", "minLength": 1, "maxLength": 64}, "state": {"type": "string", "minLength": 1, "maxLength": 64},
+        "x_milli_px": {"type": "integer"}, "y_milli_px": {"type": "integer"}, "velocity_x_milli_px_s": {"type": "integer"}, "velocity_y_milli_px_s": {"type": "integer"},
+        "health": {"type": "integer", "minimum": 0}, "next_action_at_ms": {"type": "integer", "minimum": 0}
+      }
+    },
+    "clockEntry": {
+      "type": "object", "additionalProperties": false, "required": ["id", "remaining_ms"],
+      "properties": {"id": {"type": "string", "minLength": 1, "maxLength": 128}, "remaining_ms": {"type": "integer", "minimum": 0}}
+    }
+  }
+}

@@ -15,6 +15,7 @@ COPY apps/web ./apps/web
 COPY game ./game
 COPY assets ./assets
 COPY scripts ./scripts
+COPY docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_014 ./docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_014
 RUN npm run assets:sync
 WORKDIR /workspace/apps/web
 RUN npm run build

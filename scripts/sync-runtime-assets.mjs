@@ -261,6 +261,31 @@ const runtimeAssets = [
   },
 ];
 
+const h014Matrix = path.join(root, 'docs', 'internal_governance', 'handoff_in', '_archive', 'GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_014', 'GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_014_BOARDING_MODE_PLATFORM_IMPLEMENTATION', 'registers', 'H014_ASSET_USE_MATRIX.csv');
+if (existsSync(h014Matrix)) {
+  const lines = readFileSync(h014Matrix, 'utf8').trim().split(/\r?\n/).slice(1);
+  for (const line of lines) {
+    const values = [...line.matchAll(/"([^"]*)"/g)].map((match) => match[1]);
+    const [source, destination, sha256, admission] = values;
+    if (admission !== 'active' || !destination.startsWith('assets/boarding/') || !/^[a-f0-9]{64}$/i.test(sha256)) continue;
+    runtimeAssets.push({
+      key: `boarding.${path.basename(destination, path.extname(destination))}`,
+      assetId: source,
+      source: destination,
+      runtime: destination.replace(/^assets\//, 'boarding/'),
+      sha256: sha256.toUpperCase(),
+    });
+  }
+}
+
+for (const kind of ['player', 'alien']) {
+  for (let index = 1; index <= (kind === 'player' ? 7 : 6); index += 1) {
+    const name = `${kind}_${String(index).padStart(3, '0')}_v001.png`;
+    const source = `assets/boarding/characters/${name}`;
+    runtimeAssets.push({ key: `boarding.character.${kind}.${index}`, assetId: `H014-normalized-${kind}-${index}`, source, runtime: `boarding/characters/${name}`, sha256: sha256(path.join(root, source)) });
+  }
+}
+
 function sha256(filePath) {
   return createHash('sha256').update(readFileSync(filePath)).digest('hex').toUpperCase();
 }

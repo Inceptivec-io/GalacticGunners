@@ -1,0 +1,26 @@
+{
+  "outcome": "SUCCESS",
+  "duration_ms": 17600,
+  "resources_end": {"lives": 3, "nukes": 1},
+  "aliens_killed": 1,
+  "containers_opened": 1,
+  "lives_found": 1,
+  "nukes_found": 0,
+  "score_events": [],
+  "shooter_state_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+  "events": [
+    {"sequence": 0, "at_ms": 0, "type": "INPUT_CHANGED", "entity_id": "player", "horizontal": 1, "pressed_actions": []},
+    {"sequence": 1, "at_ms": 2200, "type": "INPUT_CHANGED", "entity_id": "player", "horizontal": 1, "pressed_actions": ["FIRE"]},
+    {"sequence": 2, "at_ms": 2200, "type": "PLAYER_FIRE", "entity_id": "player", "target_id": "alien-01"},
+    {"sequence": 3, "at_ms": 2280, "type": "ALIEN_HIT", "entity_id": "alien-01", "target_id": "player"},
+    {"sequence": 4, "at_ms": 2280, "type": "ALIEN_KILLED", "entity_id": "alien-01", "target_id": "player"},
+    {"sequence": 5, "at_ms": 5400, "type": "INPUT_CHANGED", "entity_id": "player", "horizontal": 1, "pressed_actions": ["FIRE"]},
+    {"sequence": 6, "at_ms": 5400, "type": "PLAYER_FIRE", "entity_id": "player", "target_id": "crate-01"},
+    {"sequence": 7, "at_ms": 5480, "type": "CONTAINER_OPENED", "entity_id": "crate-01", "target_id": "player", "value": "LIFE"},
+    {"sequence": 8, "at_ms": 5700, "type": "PICKUP_COLLECTED", "entity_id": "crate-01", "target_id": "player", "value": "LIFE"},
+    {"sequence": 9, "at_ms": 8900, "type": "INPUT_CHANGED", "entity_id": "player", "horizontal": 1, "pressed_actions": ["JUMP"]},
+    {"sequence": 10, "at_ms": 14000, "type": "INPUT_CHANGED", "entity_id": "player", "horizontal": 1, "pressed_actions": ["JUMP"]},
+    {"sequence": 11, "at_ms": 17600, "type": "INPUT_CHANGED", "entity_id": "player", "horizontal": 0, "pressed_actions": ["INTERACT"]},
+    {"sequence": 12, "at_ms": 17600, "type": "EXIT_INTERACTED", "entity_id": "exit-main", "target_id": "player"}
+  ]
+}

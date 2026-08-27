@@ -1,14 +1,14 @@
 Active Handoff:
-GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_013
+GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_014
 
 Programme:
-SERVER-VALIDATED GAMERUNS / GLOBAL LEADERBOARD
+BOARDING MODE PLATFORM IMPLEMENTATION
 
 Stage:
-H013 COMPLETE / PENDING FOUNDER REVIEW AND MERGE
+H014 CLOSED - FOUNDER ACCEPTED / KNOWN PLATFORM AND RUNTIME ITEMS DEFERRED TO H015
 
 Branch:
-feature/v1-validated-runs-global-leaderboard
+feature/v1-boarding-mode
 
 DEVTEAM_010 Entry SHA:
 051c7fc9170ae73344a0dc88214c48fc94e0bfdc
@@ -26,7 +26,7 @@ DEVTEAM_010_REV4 Entry SHA:
 5d0f8d04556a51f3398192e011e8b6b41b9bd2bf
 
 Current Repository Head Authority:
-origin/feature/v1-validated-runs-global-leaderboard
+origin/feature/v1-boarding-mode
 
 Local/Remote Reconciliation At Return:
 RECORDED EXTERNALLY AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
@@ -35,7 +35,7 @@ Worktree At Return:
 RECORDED EXTERNALLY AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
 
 POST_BOX:
-CLEAN - boundary controls only / active payload zero
+FOUNDER-RETAINED IMAGERY TRANSPORT ONLY - `GalacticGunners_Imagery_Pack_v1.0_PRODUCTION.zip`; all other transient payload absent
 
 Internal Governance:
 CURRENT
@@ -71,7 +71,10 @@ Validated Runs / Leaderboard:
 COMPLETE / PENDING FOUNDER REVIEW
 
 Boarding:
-NOT STARTED - H014 READINESS RECORDED ONLY
+H014 CLOSED UNDER FOUNDER ROUTING. Known platform and runtime completion items, including the character-source geometry issue, are deferred to H015. The Campaign Designer shell is accepted in its current visual and planning direction and must not be redesigned.
 
 Founder Acceptance:
-REV4 PRODUCT STATE ACCEPTED AS-IS AT ENTRY; CTO FINAL MERGE GATE PENDING
+FOUNDER ACCEPTED - KNOWN PLATFORM AND RUNTIME ITEMS DEFERRED TO H015. Development does not assert unqualified Founder manual acceptance of deferred items. PR #11 remains open for Founder merge decision.
+
+H015 Start Condition:
+FOUNDER MUST MERGE PR #11; then create a fresh H015 branch from the updated `dev` branch. No H015 development occurs on `feature/v1-boarding-mode`.

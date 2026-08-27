@@ -101,6 +101,7 @@ export class Level1Scene extends CombatLevelScene {
   #campaignSequence = 1;
   #terminalActions: Array<{ action: TerminalAction; x: number; y: number; width: number; height: number; source: 'production-asset' | 'production-derived' }> = [];
   #terminalActionHandled = false;
+  #boardingActive = false;
 
   constructor() {
     super('Level1Scene');
@@ -164,8 +165,9 @@ export class Level1Scene extends CombatLevelScene {
     this.createScoutWave();
     this.createShieldZone();
     this.createHud();
-    this.createCollisions();
-    this.installHostileQa();
+      this.createCollisions();
+      this.events.on('resume', this.handleBoardingReturn, this);
+      this.installHostileQa();
 
     this.time.addEvent({
       delay: LEVEL_ONE_SLICE.scoutFireIntervalMs,
@@ -666,6 +668,23 @@ export class Level1Scene extends CombatLevelScene {
     if (scout.getData('destroyed')) {
       return;
     }
+    const anchor = this.#definition.boarding_anchors?.[0];
+    if (awardScore && anchor && !this.#boardingActive
+      && !scout.getData('boarding-resolved')
+      && Number(scout.getData('row')) === anchor.source_selector.row
+      && Number(scout.getData('col')) === anchor.source_selector.column) {
+      this.#boardingActive = true;
+      scout.setData('boarding-anchor', true);
+      this.scene.pause();
+      this.scene.launch('BoardingScene', {
+        seed: this.#definition.seed,
+        lives: this.#lives.value,
+        nukes: this.#currentNukes,
+        anchorId: anchor.id,
+        sourceEntityId: anchor.source_entity_id,
+      });
+      return;
+    }
     scout.setData('destroyed', true);
     scout.disableBody(true, true);
     if (awardScore) {
@@ -674,6 +693,18 @@ export class Level1Scene extends CombatLevelScene {
     }
     this.#audio.play('explosionSmall');
     this.createExplosion(scout.x, scout.y, 70);
+  }
+
+  private handleBoardingReturn(_system: unknown, data?: { boardingOutcome?: string }): void {
+    if (!this.#boardingActive) return;
+    const anchoredScout = this.getActiveScouts().find((scout) => scout.getData('boarding-anchor'));
+    if (anchoredScout) {
+      anchoredScout.setData('boarding-anchor', false);
+      anchoredScout.setData('boarding-resolved', true);
+      this.destroyScoutBody(anchoredScout, true);
+    }
+    this.#boardingActive = false;
+    if (data?.boardingOutcome === 'PLAYER_DEAD') this.damagePlayer(true);
   }
 
   private destroyShieldTile(tile: Phaser.Physics.Arcade.Image, scorePenalty: boolean): void {

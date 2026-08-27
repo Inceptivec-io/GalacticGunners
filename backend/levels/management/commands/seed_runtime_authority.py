@@ -29,9 +29,6 @@ class Command(BaseCommand):
                 slug=slug,
                 defaults={'name': f'Level {sequence}', 'sequence': sequence},
             )
-            if level.active_version_id:
-                continue
-
             config = copy.deepcopy(level_one_config)
             config.update(
                 {
@@ -48,6 +45,30 @@ class Command(BaseCommand):
             # mirror the deterministic H012 campaign definition progression.
             if sequence > 1:
                 config['enemy_formations'][0]['columns'] = min(29, 16 + sequence * 2)
+            if sequence == 4:
+                config['boarding_anchors'] = [{
+                    'id': 'level-04-alien-frigate-01',
+                    'source_selector': {'formation_index': 0, 'row': 0, 'column': 14},
+                    'source_entity_type': 'scout',
+                    'source_ship_type': 'ALIEN_FRIGATE',
+                    'source_entity_id': 'level-04:formation-0:r0:c14',
+                    'interior': {
+                        'slug': 'alien-frigate', 'version': 1,
+                        'checksum': 'e9b1af65f0daef6725a7ddf4683b5f6d503e25dabc97aef1212102e6b1e994f3',
+                    },
+                    'entry_envelope': {'width_px': 160, 'height_px': 128},
+                    'offer_duration_ms': 8000,
+                }]
+
+            if level.active_version_id:
+                if sequence != 4 or level.active_version.config.get('boarding_anchors') == config.get('boarding_anchors'):
+                    continue
+                next_version = level.versions.order_by('-version').first().version + 1
+                version = LevelVersion.objects.create(level=level, version=next_version, config=config)
+                version.status = LevelVersion.Status.VALIDATED
+                version.save()
+                version.publish()
+                continue
 
             version = LevelVersion.objects.create(level=level, version=1, config=config)
             version.status = LevelVersion.Status.VALIDATED

@@ -3,6 +3,7 @@ from django.urls import path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 from game_runs.views import GameRunCompleteView, GameRunStartView
+from boarding.views import BoardingCompleteView, BoardingRunDetailView, BoardingStartView
 from leaderboard.views import LeaderboardListView, LeaderboardMeView, ModerationView
 from players.api import LeaderboardProfileView
 from levels.views import AdminLevelActionView, AdminLevelCreateView, AdminLevelExportView, AdminLevelGenerateView, AdminLevelImportView, PublicLevelDetailView, PublicLevelListView, PublicVersionView
@@ -18,6 +19,9 @@ urlpatterns = [
         GameRunCompleteView.as_view(),
         name='game-run-complete',
     ),
+    path('api/v1/game-runs/<uuid:game_run_id>/boarding-runs/start/', BoardingStartView.as_view(), name='boarding-run-start'),
+    path('api/v1/boarding-runs/<uuid:boarding_run_id>/', BoardingRunDetailView.as_view(), name='boarding-run-detail'),
+    path('api/v1/boarding-runs/<uuid:boarding_run_id>/complete/', BoardingCompleteView.as_view(), name='boarding-run-complete'),
     path('api/v1/leaderboard/', LeaderboardListView.as_view(), name='leaderboard'),
     path('api/v1/leaderboard/me/', LeaderboardMeView.as_view(), name='leaderboard-me'),
     path('api/v1/player/leaderboard-profile/', LeaderboardProfileView.as_view(), name='leaderboard-profile'),

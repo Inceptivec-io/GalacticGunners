@@ -1,0 +1,222 @@
+openapi: 3.1.0
+info:
+  title: Galactic Gunners Boarding API
+  version: 1.0.0
+  description: Authoritative H014 Boarding lifecycle. Unknown request fields are rejected.
+servers:
+  - url: /api/v1
+paths:
+  /game-runs/{game_run_id}/boarding-runs/start/:
+    post:
+      operationId: startBoardingRun
+      parameters:
+        - $ref: '#/components/parameters/GameRunId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/BoardingStartRequest'}
+      responses:
+        '201':
+          description: Boarding run created
+          headers: {Cache-Control: {$ref: '#/components/headers/NoStore'}}
+          content: {application/json: {schema: {$ref: '#/components/schemas/BoardingStartResponse'}}}
+        '200':
+          description: Idempotent existing run
+          headers: {Cache-Control: {$ref: '#/components/headers/NoStore'}}
+          content: {application/json: {schema: {$ref: '#/components/schemas/BoardingStartResponse'}}}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/TooManyRequests'}
+  /boarding-runs/{boarding_run_id}/complete/:
+    post:
+      operationId: completeBoardingRun
+      parameters:
+        - $ref: '#/components/parameters/BoardingRunId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/BoardingToken'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/BoardingCompletionRequest'}
+      responses:
+        '200':
+          description: Validated terminal result, including idempotent replay
+          headers: {Cache-Control: {$ref: '#/components/headers/NoStore'}}
+          content: {application/json: {schema: {$ref: '#/components/schemas/BoardingRunDetail'}}}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/TooManyRequests'}
+  /boarding-runs/{boarding_run_id}/:
+    get:
+      operationId: getBoardingRun
+      parameters:
+        - $ref: '#/components/parameters/BoardingRunId'
+        - $ref: '#/components/parameters/BoardingToken'
+      responses:
+        '200':
+          description: Authorized Boarding run detail
+          headers: {Cache-Control: {$ref: '#/components/headers/NoStore'}}
+          content: {application/json: {schema: {$ref: '#/components/schemas/BoardingRunDetail'}}}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '429': {$ref: '#/components/responses/TooManyRequests'}
+components:
+  parameters:
+    GameRunId: {name: game_run_id, in: path, required: true, schema: {type: string, format: uuid}}
+    BoardingRunId: {name: boarding_run_id, in: path, required: true, schema: {type: string, format: uuid}}
+    IdempotencyKey: {name: Idempotency-Key, in: header, required: true, schema: {type: string, minLength: 1, maxLength: 64, pattern: '^[A-Za-z0-9._:-]+$'}}
+    BoardingToken: {name: X-Boarding-Token, in: header, required: false, description: Required for anonymous runs, schema: {type: string, minLength: 43, maxLength: 43, pattern: '^[A-Za-z0-9_-]{43}$'}}
+  headers:
+    NoStore: {schema: {type: string, const: no-store}}
+  schemas:
+    Hash: {type: string, pattern: '^[0-9a-f]{64}$'}
+    Resources:
+      type: object
+      additionalProperties: false
+      required: [lives, nukes]
+      properties:
+        lives: {type: integer, minimum: 0, maximum: 3}
+        nukes: {type: integer, minimum: 0, maximum: 2}
+    ResourcesStart:
+      type: object
+      additionalProperties: false
+      required: [lives, nukes]
+      properties:
+        lives: {type: integer, minimum: 1, maximum: 3}
+        nukes: {type: integer, minimum: 0, maximum: 2}
+    BoardingStartRequest:
+      type: object
+      additionalProperties: false
+      required: [anchor_id, source_entity_id, source_entity_type, source_ship_type, level_version, level_checksum, interior_slug, interior_version, interior_checksum, shooter_state_digest, resources]
+      properties:
+        anchor_id: {type: string, const: level-04-alien-frigate-01}
+        source_entity_id: {type: string, const: 'level-04:formation-0:r0:c14'}
+        source_entity_type: {type: string, const: scout}
+        source_ship_type: {type: string, const: ALIEN_FRIGATE}
+        level_version: {type: integer, minimum: 1}
+        level_checksum: {$ref: '#/components/schemas/Hash'}
+        interior_slug: {type: string, const: alien-frigate}
+        interior_version: {type: integer, const: 1}
+        interior_checksum: {type: string, const: e9b1af65f0daef6725a7ddf4683b5f6d503e25dabc97aef1212102e6b1e994f3}
+        shooter_state_digest: {$ref: '#/components/schemas/Hash'}
+        resources: {$ref: '#/components/schemas/ResourcesStart'}
+    BoardingStartResponse:
+      type: object
+      additionalProperties: false
+      required: [id, game_run_id, status, seed, time_limit_ms, interior, resources_start, shooter_state_digest]
+      properties:
+        id: {type: string, format: uuid}
+        game_run_id: {type: string, format: uuid}
+        status: {type: string, const: ACTIVE}
+        seed: {type: integer, minimum: 0, maximum: 4294967295}
+        time_limit_ms: {type: integer, const: 60000}
+        boarding_token: {type: string, minLength: 43, maxLength: 43}
+        interior:
+          type: object
+          additionalProperties: false
+          required: [slug, version, checksum, definition]
+          properties:
+            slug: {type: string, const: alien-frigate}
+            version: {type: integer, const: 1}
+            checksum: {type: string, const: e9b1af65f0daef6725a7ddf4683b5f6d503e25dabc97aef1212102e6b1e994f3}
+            definition: {type: object}
+        resources_start: {$ref: '#/components/schemas/ResourcesStart'}
+        shooter_state_digest: {$ref: '#/components/schemas/Hash'}
+    BoardingEvent:
+      type: object
+      additionalProperties: false
+      required: [sequence, at_ms, type, entity_id]
+      properties:
+        sequence: {type: integer, minimum: 0, maximum: 511}
+        at_ms: {type: integer, minimum: 0, maximum: 60000}
+        type: {type: string, enum: [INPUT_CHANGED, PLAYER_FIRE, PLAYER_HIT, PLAYER_RESPAWN, ALIEN_FIRE, ALIEN_HIT, ALIEN_KILLED, CONTAINER_OPENED, PICKUP_COLLECTED, EXIT_INTERACTED, TIMEOUT, PAUSE_STARTED, PAUSE_ENDED]}
+        entity_id: {type: string, minLength: 1, maxLength: 64, pattern: '^[a-z][a-z0-9-]*$'}
+        target_id: {type: string, minLength: 1, maxLength: 64, pattern: '^[a-z][a-z0-9-]*$'}
+        value: {type: string, enum: [LIFE, NUKE, EMPTY]}
+        horizontal: {type: integer, minimum: -1, maximum: 1}
+        pressed_actions: {type: array, uniqueItems: true, items: {type: string, enum: [JUMP, FIRE, INTERACT]}}
+    BoardingCompletionRequest:
+      type: object
+      additionalProperties: false
+      required: [outcome, duration_ms, resources_end, aliens_killed, containers_opened, lives_found, nukes_found, score_events, shooter_state_digest, events]
+      properties:
+        outcome: {type: string, enum: [SUCCESS, TIMEOUT, PLAYER_DEAD, ABORTED]}
+        duration_ms: {type: integer, minimum: 0, maximum: 60000}
+        resources_end: {$ref: '#/components/schemas/Resources'}
+        aliens_killed: {type: integer, minimum: 0, maximum: 6}
+        containers_opened: {type: integer, minimum: 0, maximum: 4}
+        lives_found: {type: integer, minimum: 0, maximum: 4}
+        nukes_found: {type: integer, minimum: 0, maximum: 4}
+        score_events: {type: array, maxItems: 0}
+        shooter_state_digest: {$ref: '#/components/schemas/Hash'}
+        events: {type: array, maxItems: 512, items: {$ref: '#/components/schemas/BoardingEvent'}}
+    ReturnState:
+      type: object
+      additionalProperties: false
+      required: [lives, nukes, score_delta, remove_source_entity_id]
+      properties:
+        lives: {type: integer, minimum: 0, maximum: 3}
+        nukes: {type: integer, minimum: 0, maximum: 2}
+        score_delta: {type: integer, const: 0}
+        remove_source_entity_id: {type: string, const: 'level-04:formation-0:r0:c14'}
+    BoardingRunDetail:
+      type: object
+      additionalProperties: false
+      required: [id, game_run_id, status, validation_result, seed, time_limit_ms, interior_slug, interior_version, interior_checksum, shooter_state_digest, resources_start]
+      properties:
+        id: {type: string, format: uuid}
+        game_run_id: {type: string, format: uuid}
+        status: {type: string, enum: [ACTIVE, COMPLETED, REJECTED]}
+        outcome: {type: [string, 'null'], enum: [SUCCESS, TIMEOUT, PLAYER_DEAD, ABORTED, null]}
+        validation_result: {type: string, enum: [PENDING, VALID, INVALID]}
+        validation_code: {type: string, maxLength: 64}
+        seed: {type: integer, minimum: 0, maximum: 4294967295}
+        time_limit_ms: {type: integer, const: 60000}
+        duration_ms: {type: [integer, 'null'], minimum: 0, maximum: 60000}
+        interior_slug: {type: string, const: alien-frigate}
+        interior_version: {type: integer, const: 1}
+        interior_checksum: {type: string, const: e9b1af65f0daef6725a7ddf4683b5f6d503e25dabc97aef1212102e6b1e994f3}
+        shooter_state_digest: {$ref: '#/components/schemas/Hash'}
+        resources_start: {$ref: '#/components/schemas/ResourcesStart'}
+        return_state: {oneOf: [{$ref: '#/components/schemas/ReturnState'}, {type: 'null'}]}
+        counters:
+          type: object
+          additionalProperties: false
+          required: [aliens_killed, containers_opened, lives_found, nukes_found]
+          properties:
+            aliens_killed: {type: integer, minimum: 0, maximum: 6}
+            containers_opened: {type: integer, minimum: 0, maximum: 4}
+            lives_found: {type: integer, minimum: 0, maximum: 4}
+            nukes_found: {type: integer, minimum: 0, maximum: 4}
+    Error:
+      type: object
+      additionalProperties: false
+      required: [code, message, correlation_id]
+      properties:
+        code: {type: string, minLength: 1, maxLength: 64, pattern: '^[A-Z0-9_]+$'}
+        message: {type: string, minLength: 1, maxLength: 240}
+        correlation_id: {type: string, minLength: 1, maxLength: 64}
+  responses:
+    BadRequest: {description: Malformed request, content: {application/json: {schema: {$ref: '#/components/schemas/Error'}}}}
+    Unauthorized: {description: Authentication or capability required, content: {application/json: {schema: {$ref: '#/components/schemas/Error'}}}}
+    Forbidden: {description: Ownership or capability denied, content: {application/json: {schema: {$ref: '#/components/schemas/Error'}}}}
+    NotFound: {description: Resource not found, content: {application/json: {schema: {$ref: '#/components/schemas/Error'}}}}
+    Conflict: {description: State or idempotency conflict, content: {application/json: {schema: {$ref: '#/components/schemas/Error'}}}}
+    PayloadTooLarge: {description: Request exceeds 262144 bytes, content: {application/json: {schema: {$ref: '#/components/schemas/Error'}}}}
+    Unprocessable: {description: Semantic or hostile validation rejection, content: {application/json: {schema: {$ref: '#/components/schemas/Error'}}}}
+    TooManyRequests:
+      description: Endpoint throttle exceeded
+      headers:
+        Retry-After: {schema: {type: integer, minimum: 1}}
+      content: {application/json: {schema: {$ref: '#/components/schemas/Error'}}}
