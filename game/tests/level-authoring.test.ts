@@ -30,6 +30,22 @@ test('schema 1.1 compilation retains freeform mixed entities and stable IDs', ()
   assert.ok(compiled.enemy_formations.every((entity) => entity.motion_profile === 'formation.standard'));
 });
 
+test('schema 1.1 permits an authored timed hazard emitter with no initial instance', () => {
+  const authored: LevelAuthoringDocument = {
+    ...document,
+    hazard_emitters: [{
+      id: 'comet-later', hazard_type: 'COMET', asset_id: 'hazard.comet', enabled: true,
+      spawn_pattern: 'ALTERNATING_EDGES', entry_edges: ['TOP'], spawn_points: [],
+      spawn_interval_ms: 6000, spawn_jitter_ms: 0, initial_count: 0, maximum_active: 1,
+      speed_min: 120, speed_max: 140, angular_velocity_min: 0, angular_velocity_max: 0,
+      collision_damage: 1, despawn_margin: 64,
+    }],
+  };
+  const compiled = compileLevelDocument(authored);
+  assert.equal(compiled.hazards?.[0].count, 0);
+  validateLevelDefinition(compiled);
+});
+
 test('canonical level checksums remain stable when nested object key insertion order differs', async () => {
   assert.equal(
     await levelChecksum({ z: { beta: 2, alpha: 1 }, a: [{ y: 2, x: 1 }] }),

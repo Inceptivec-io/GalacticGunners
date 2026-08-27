@@ -4,7 +4,7 @@ import { chromium } from 'playwright';
 
 const baseUrl = process.env.GG_RUNTIME_URL ?? 'http://localhost:3002';
 const outputDir = path.resolve(process.env.GG_EVIDENCE_DIR
-  ?? 'docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_012_REV1/campaign_runtime');
+  ?? 'docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/campaign_runtime');
 mkdirSync(outputDir, { recursive: true });
 
 function assert(value, message) {
@@ -49,7 +49,16 @@ const networkFailures = [];
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, hasTouch: true, isMobile: true });
   page.on('console', (message) => { if (message.type() === 'error') consoleErrors.push(message.text()); });
-  page.on('response', (response) => { if (response.status() >= 400) networkFailures.push(`${response.status()} ${response.url()}`); });
+  page.on('response', async (response) => {
+    if (response.status() < 400) return;
+    let body = '';
+    try {
+      body = await response.text();
+    } catch {
+      body = '<response body unavailable>';
+    }
+    networkFailures.push(`${response.status()} ${response.url()} ${body}`);
+  });
   page.on('requestfailed', (request) => networkFailures.push(`FAILED ${request.url()}`));
 
   await start(page);
@@ -113,8 +122,8 @@ try {
     console_errors: consoleErrors,
     network_failures: networkFailures,
   };
-  assert(consoleErrors.length === 0, `Console errors: ${consoleErrors.join('; ')}`);
   assert(networkFailures.length === 0, `Network failures: ${networkFailures.join('; ')}`);
+  assert(consoleErrors.length === 0, `Console errors: ${consoleErrors.join('; ')}`);
   writeFileSync(path.join(outputDir, 'campaign-progression-verification.json'), `${JSON.stringify(result, null, 2)}\n`);
   console.log(JSON.stringify(result, null, 2));
 } finally {

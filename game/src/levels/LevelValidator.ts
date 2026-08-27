@@ -14,7 +14,9 @@ export function validateLevelDefinition(value: unknown): asserts value is LevelD
     if (!['scout', 'cruiser', 'destroyer', 'mothership'].includes(formation.type) || formation.rows < 1 || formation.columns < 1 || formation.origin.x < 0 || formation.origin.y < 0) throw new Error('Invalid enemy formation.');
   }
   for (const hazard of level.hazards ?? []) {
-    if (!['asteroid', 'comet'].includes(hazard.type) || !Number.isInteger(hazard.count) || hazard.count < 1 || hazard.count > 12 || hazard.speed <= 0 || hazard.origin.x < 0 || hazard.origin.y < 0) throw new Error('Invalid hazard definition.');
+    // A configured emitter may deliberately begin empty and introduce hazards on
+    // its authored schedule. Zero initial instances is therefore valid.
+    if (!['asteroid', 'comet'].includes(hazard.type) || !Number.isInteger(hazard.count) || hazard.count < 0 || hazard.count > 12 || hazard.speed <= 0 || hazard.origin.x < 0 || hazard.origin.y < 0) throw new Error('Invalid hazard definition.');
   }
   for (const shield of level.shields) {
     if (!Number.isInteger(shield.count) || shield.count < 0 || shield.matrix.some((row) => row.some((tile) => tile !== 0 && tile !== 1))) throw new Error('Invalid shield matrix.');
