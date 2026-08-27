@@ -163,8 +163,8 @@ const leaderboardResponse = openApi.components.schemas.LeaderboardResponse;
 if (leaderboardResponse.additionalProperties !== false) {
   throw new Error('LeaderboardResponse must close additional properties.');
 }
-if (JSON.stringify(leaderboardResponse.required) !== JSON.stringify(['count', 'results'])) {
-  throw new Error('LeaderboardResponse must require count and results.');
+if (JSON.stringify(leaderboardResponse.required) !== JSON.stringify(['total', 'results'])) {
+  throw new Error('LeaderboardResponse must require total and results.');
 }
 if (leaderboardResponse.properties?.results?.items?.$ref !== '#/components/schemas/LeaderboardEntry') {
   throw new Error('LeaderboardResponse.results must contain LeaderboardEntry items.');

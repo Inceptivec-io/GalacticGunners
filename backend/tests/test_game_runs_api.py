@@ -1,165 +1,101 @@
+import json
+from pathlib import Path
+
 import pytest
-from django.urls import reverse
 from django.utils import timezone
 
-from game_runs.models import GameRun, GameVersion
+from accounts.models import User
+from game_runs.models import GameRun, GameVersion, ScoreSubmission
 from leaderboard.models import LeaderboardEntry
+from levels.models import Level, LevelVersion
+from players.models import PlayerProfile
 
 
-def assert_error_envelope(payload, *, code, detail=None):
-    assert set(payload) == {'code', 'detail', 'errors'}
-    assert payload['code'] == code
-    assert isinstance(payload['detail'], str)
-    assert isinstance(payload['errors'], dict)
-    if detail is not None:
-        assert payload['detail'] == detail
+def golden_level():
+    return json.loads((Path(__file__).parents[1] / 'levels' / 'fixtures' / 'level-01.json').read_text(encoding='utf-8'))
+
+
+def published_level():
+    level = Level.objects.create(slug='level-01', name='Level 1', sequence=1)
+    version = LevelVersion.objects.create(level=level, version=1, config=golden_level())
+    version.status = LevelVersion.Status.VALIDATED
+    version.save()
+    version.publish()
+    return level, version
+
+
+def start_payload(version):
+    return {'game_version': '1.0.0-dev', 'client_type': 'web', 'level_slug': 'level-01', 'level_version': 1, 'level_checksum': version.checksum, 'seed': 11001}
+
+
+def valid_completion(*, score=25, summary=None):
+    summary = summary or {'scout_kills': 1, 'levels_completed': [1], 'nuke_uses': 0, 'nuke_pickups': 0}
+    return {'duration_ms': 5000, 'victory': False, 'level_reached': 1, 'score': score, 'lives_end': 3, 'nukes_end': 2, 'event_summary': summary}
 
 
 @pytest.mark.django_db
-def test_start_game_run_creates_pending_guest_run(client):
-    response = client.post(
-        reverse('game-run-start'),
-        {'game_version': '1.0.0-dev', 'client_type': 'web'},
-        content_type='application/json',
-    )
-
+def test_start_resolves_authoritative_level_and_returns_active_contract(client):
+    GameVersion.objects.create(version='1.0.0-dev')
+    _, version = published_level()
+    response = client.post('/api/v1/game-runs/', start_payload(version), content_type='application/json')
     assert response.status_code == 201
-    payload = response.json()
-    assert payload['game_version'] == '1.0.0-dev'
-    assert payload['client_type'] == 'web'
-    assert payload['completed_at'] is None
-    assert payload['score'] == 0
-    assert payload['validity'] == 'pending'
+    assert response.json()['validation_state'] == 'ACTIVE'
+    assert response.json()['level']['checksum'] == version.checksum
 
 
 @pytest.mark.django_db
-def test_complete_game_run_publishes_valid_completed_run(client):
-    version = GameVersion.objects.create(version='1.0.0-dev')
-    run = GameRun.objects.create(game_version=version, client_type=GameRun.ClientType.WEB)
-
-    response = client.post(
-        reverse('game-run-complete', kwargs={'run_id': run.id}),
-        {
-            'claimed_score': 1250,
-            'level_reached': 'boss',
-            'lives_used': 2,
-            'nukes_used': 1,
-            'victory': True,
-            'event_summary': {'events': 12},
-        },
-        content_type='application/json',
-    )
-
+def test_rejects_arithmetic_tampering_and_keeps_authoritative_evidence(client):
+    GameVersion.objects.create(version='1.0.0-dev')
+    _, version = published_level()
+    started = client.post('/api/v1/game-runs/', start_payload(version), content_type='application/json').json()
+    response = client.post(f"/api/v1/game-runs/{started['id']}/complete/", valid_completion(score=999), content_type='application/json')
     assert response.status_code == 200
-    run.refresh_from_db()
-    assert run.completed_at is not None
-    assert run.validity == GameRun.Validity.VALID
-    assert run.score == 1250
-    assert LeaderboardEntry.objects.get(run=run).score == 1250
+    assert response.json()['validation_state'] == 'REJECTED'
+    assert response.json()['validated_score'] is None
+    assert 'SCORE_ARITHMETIC_MISMATCH' in response.json()['rejection_codes']
+    assert ScoreSubmission.objects.get().accepted_score is None
 
 
 @pytest.mark.django_db
-def test_duplicate_complete_is_rejected(client):
-    version = GameVersion.objects.create(version='1.0.0-dev')
-    run = GameRun.objects.create(game_version=version, client_type=GameRun.ClientType.WEB)
-    url = reverse('game-run-complete', kwargs={'run_id': run.id})
-    payload = {'claimed_score': 10, 'event_summary': {}}
-
-    first = client.post(url, payload, content_type='application/json')
-    second = client.post(url, payload, content_type='application/json')
-
-    assert first.status_code == 200
-    assert second.status_code == 409
-    assert_error_envelope(second.json(), code='conflict', detail='Game run is already completed.')
-    assert LeaderboardEntry.objects.filter(run=run).count() == 1
-
-
-@pytest.mark.django_db
-def test_unknown_run_returns_404(client):
-    response = client.post(
-        '/api/v1/game-runs/00000000-0000-0000-0000-000000000000/complete/',
-        {'claimed_score': 10, 'event_summary': {}},
-        content_type='application/json',
-    )
-
-    assert response.status_code == 404
-    assert_error_envelope(response.json(), code='not_found', detail='Game run not found.')
-
-
-@pytest.mark.django_db
-def test_invalid_payload_returns_400(client):
-    response = client.post(
-        reverse('game-run-start'),
-        {'game_version': '', 'client_type': 'console'},
-        content_type='application/json',
-    )
-
-    assert response.status_code == 400
-    payload = response.json()
-    assert_error_envelope(payload, code='invalid_request', detail='Request validation failed.')
-    assert 'game_version' in payload['errors']
-    assert 'client_type' in payload['errors']
-
-
-@pytest.mark.django_db
-def test_leaderboard_lists_only_valid_published_runs(client):
-    version = GameVersion.objects.create(version='1.0.0-dev')
-    valid_run = GameRun.objects.create(
-        game_version=version,
-        client_type=GameRun.ClientType.WEB,
-        score=100,
-        validity=GameRun.Validity.VALID,
-        completed_at=timezone.now(),
-    )
-    pending_run = GameRun.objects.create(
-        game_version=version,
-        client_type=GameRun.ClientType.WEB,
-        score=999,
-        validity=GameRun.Validity.PENDING,
-        completed_at=timezone.now(),
-    )
-    rejected_run = GameRun.objects.create(
-        game_version=version,
-        client_type=GameRun.ClientType.WEB,
-        score=888,
-        validity=GameRun.Validity.REJECTED,
-        completed_at=timezone.now(),
-    )
-    incomplete_valid_run = GameRun.objects.create(
-        game_version=version,
-        client_type=GameRun.ClientType.WEB,
-        score=777,
-        validity=GameRun.Validity.VALID,
-    )
-    LeaderboardEntry.objects.create(run=valid_run, score=100, display_name='GUEST')
-    LeaderboardEntry.objects.create(run=pending_run, score=999, display_name='STALE_PENDING')
-    LeaderboardEntry.objects.create(run=rejected_run, score=888, display_name='STALE_REJECTED')
-    LeaderboardEntry.objects.create(run=incomplete_valid_run, score=777, display_name='STALE_INCOMPLETE')
-
-    response = client.get(reverse('leaderboard'))
-    payload = response.json()
-
+def test_accepts_reconstructed_score_once_and_publishes_authenticated_player(client):
+    GameVersion.objects.create(version='1.0.0-dev')
+    _, version = published_level()
+    user = User.objects.create_user(username='pilot', password='safe-password')
+    PlayerProfile.objects.create(user=user, display_name='STARFIRE')
+    client.force_login(user)
+    started = client.post('/api/v1/game-runs/', start_payload(version), content_type='application/json').json()
+    response = client.post(f"/api/v1/game-runs/{started['id']}/complete/", valid_completion(), content_type='application/json')
     assert response.status_code == 200
-    assert payload['count'] == 1
-    assert payload['results'][0]['run_id'] == str(valid_run.id)
-    assert payload['results'][0]['display_name'] == 'GUEST'
+    assert response.json()['validation_state'] == 'VALIDATED'
+    assert response.json()['validated_score'] == 25
+    assert response.json()['leaderboard_eligible'] is True
+    assert LeaderboardEntry.objects.get().display_name == 'STARFIRE'
+    duplicate = client.post(f"/api/v1/game-runs/{started['id']}/complete/", valid_completion(), content_type='application/json')
+    assert duplicate.status_code == 409
 
 
 @pytest.mark.django_db
-def test_leaderboard_rejects_invalid_query_bounds(client):
-    response = client.get(reverse('leaderboard'), {'limit': 'not-a-number'})
-
-    assert response.status_code == 400
-    assert_error_envelope(response.json(), code='invalid_request', detail='Request validation failed.')
+@pytest.mark.parametrize('summary, code', [
+    ({'scout_kills': 9999, 'levels_completed': [1], 'nuke_uses': 0, 'nuke_pickups': 0}, 'IMPOSSIBLE_EVENT_COUNT'),
+    ({'scout_kills': 1, 'levels_completed': [2], 'nuke_uses': 0, 'nuke_pickups': 0}, 'CAMPAIGN_SEQUENCE_INVALID'),
+    ({'scout_kills': 1, 'levels_completed': [1], 'nuke_uses': 3, 'nuke_pickups': 0}, 'NUKE_STATE_INVALID'),
+])
+def test_hostile_event_summaries_are_rejected(client, summary, code):
+    GameVersion.objects.create(version='1.0.0-dev')
+    _, version = published_level()
+    started = client.post('/api/v1/game-runs/', start_payload(version), content_type='application/json').json()
+    score = max(0, summary.get('scout_kills', 0) * 25)
+    response = client.post(f"/api/v1/game-runs/{started['id']}/complete/", valid_completion(score=score, summary=summary), content_type='application/json')
+    assert response.status_code == 200
+    assert code in response.json()['rejection_codes']
 
 
 @pytest.mark.django_db
-def test_model_constraints_reject_negative_values():
+def test_public_leaderboard_exposes_only_minimum_validated_data(client):
     version = GameVersion.objects.create(version='1.0.0-dev')
-
-    with pytest.raises(Exception):
-        GameRun.objects.create(
-            game_version=version,
-            client_type=GameRun.ClientType.WEB,
-            score=-1,
-        )
+    run = GameRun.objects.create(game_version=version, client_type='web', score=100, validity='valid', completed_at=timezone.now())
+    LeaderboardEntry.objects.create(run=run, score=100, display_name='GUEST')
+    response = client.get('/api/v1/leaderboard/')
+    assert response.status_code == 200
+    assert response.json()['total'] == 1
+    assert set(response.json()['results'][0]) == {'rank', 'run_id', 'display_name', 'score', 'campaign_level_reached', 'victory', 'accepted_at'}

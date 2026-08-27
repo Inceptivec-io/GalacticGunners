@@ -3,7 +3,8 @@ from django.urls import path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 from game_runs.views import GameRunCompleteView, GameRunStartView
-from leaderboard.views import LeaderboardListView
+from leaderboard.views import LeaderboardListView, LeaderboardMeView, ModerationView
+from players.api import LeaderboardProfileView
 from levels.views import AdminLevelActionView, AdminLevelCreateView, AdminLevelExportView, AdminLevelGenerateView, AdminLevelImportView, PublicLevelDetailView, PublicLevelListView, PublicVersionView
 
 from .views import health
@@ -18,6 +19,11 @@ urlpatterns = [
         name='game-run-complete',
     ),
     path('api/v1/leaderboard/', LeaderboardListView.as_view(), name='leaderboard'),
+    path('api/v1/leaderboard/me/', LeaderboardMeView.as_view(), name='leaderboard-me'),
+    path('api/v1/player/leaderboard-profile/', LeaderboardProfileView.as_view(), name='leaderboard-profile'),
+    path('api/v1/admin/leaderboard/<str:resource>/', ModerationView.as_view(), name='leaderboard-admin-list'),
+    path('api/v1/admin/leaderboard/<str:resource>/<uuid:entry_id>/<str:action>/', ModerationView.as_view(), name='leaderboard-admin-action'),
+    path('api/v1/admin/game-runs/<uuid:entry_id>/validation/', ModerationView.as_view(), {'resource': 'runs', 'action': 'validation'}, name='game-run-validation'),
     path('api/v1/levels/', PublicLevelListView.as_view(), name='level-list'),
     path('api/v1/levels/<slug:slug>/', PublicLevelDetailView.as_view(), name='level-detail'),
     path('api/v1/levels/<slug:slug>/versions/<int:version>/', PublicVersionView.as_view(), name='level-version'),

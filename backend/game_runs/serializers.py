@@ -1,159 +1,124 @@
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.utils import timezone
 from rest_framework import serializers
 
 from leaderboard.models import LeaderboardEntry
-
 from levels.models import Level, LevelVersion
 
 from .models import GameRun, GameVersion, ScoreSubmission
+from .validation import validate_completion
 
 
 class GameRunSerializer(serializers.ModelSerializer):
-    game_version = serializers.CharField(source='game_version.version')
+    validation_state = serializers.SerializerMethodField()
+    level = serializers.SerializerMethodField()
 
     class Meta:
         model = GameRun
-        fields = [
-            'id',
-            'game_version',
-            'level',
-            'level_version',
-            'level_checksum',
-            'seed',
-            'client_type',
-            'started_at',
-            'completed_at',
-            'score',
-            'level_reached',
-            'lives_used',
-            'nukes_used',
-            'victory',
-            'validity',
-        ]
+        fields = ['id', 'validation_state', 'started_at', 'level', 'seed']
+
+    def get_validation_state(self, _run):
+        return 'ACTIVE'
+
+    def get_level(self, run):
+        return {
+            'slug': run.level.slug,
+            'version': run.level_version,
+            'checksum': run.level_checksum,
+        }
 
 
 class StartGameRunSerializer(serializers.Serializer):
     game_version = serializers.CharField(min_length=1, max_length=32)
     client_type = serializers.ChoiceField(choices=GameRun.ClientType.choices)
-    level_slug = serializers.SlugField(required=False)
-    seed = serializers.IntegerField(required=False, min_value=0)
+    level_slug = serializers.SlugField()
+    level_version = serializers.IntegerField(min_value=1)
+    level_checksum = serializers.RegexField(r'^[0-9a-fA-F]{64}$')
+    seed = serializers.IntegerField(min_value=0, max_value=2147483647)
 
-    def create(self, validated_data):
-        version, _ = GameVersion.objects.get_or_create(version=validated_data['game_version'])
+    def validate(self, attrs):
+        version = GameVersion.objects.filter(version=attrs['game_version'], is_active=True).first()
+        if not version:
+            raise serializers.ValidationError({'game_version': 'GAME_VERSION_MISMATCH'})
+        level = Level.objects.select_related('active_version').filter(slug=attrs['level_slug'], archived=False).first()
+        if not level or not level.active_version or level.active_version.status != LevelVersion.Status.PUBLISHED:
+            raise serializers.ValidationError({'level_slug': 'LEVEL_NOT_PUBLISHED'})
+        active = level.active_version
+        if active.version != attrs['level_version']:
+            raise serializers.ValidationError({'level_version': 'LEVEL_VERSION_MISMATCH'})
+        if active.checksum.lower() != attrs['level_checksum'].lower():
+            raise serializers.ValidationError({'level_checksum': 'LEVEL_CHECKSUM_MISMATCH'})
+        attrs['resolved_version'] = version
+        attrs['resolved_level'] = level
+        return attrs
+
+    def create(self, data):
         request = self.context.get('request')
-        user = request.user if request and request.user.is_authenticated else None
-        level = None
-        level_version = None
-        checksum = ''
-        if validated_data.get('level_slug'):
-            level = Level.objects.select_related('active_version').filter(slug=validated_data['level_slug'], archived=False, active_version__status=LevelVersion.Status.PUBLISHED).first()
-            if not level:
-                raise serializers.ValidationError({'level_slug': 'Published level not found.'})
-            level_version = level.active_version
-            checksum = level_version.checksum
-        return GameRun.objects.create(
-            player=user,
-            game_version=version,
-            client_type=validated_data['client_type'],
-            level=level,
-            level_version=level_version.version if level_version else None,
-            level_checksum=checksum,
-            seed=validated_data.get('seed'),
-        )
+        return GameRun.objects.create(player=request.user if request and request.user.is_authenticated else None, game_version=data['resolved_version'], level=data['resolved_level'], level_version=data['level_version'], level_checksum=data['level_checksum'].lower(), seed=data['seed'], client_type=data['client_type'])
 
 
 class CompleteGameRunSerializer(serializers.Serializer):
-    claimed_score = serializers.IntegerField(min_value=0)
-    level_reached = serializers.CharField(required=False, allow_blank=True, max_length=32)
-    lives_used = serializers.IntegerField(min_value=0, default=0)
-    nukes_used = serializers.IntegerField(min_value=0, default=0)
-    victory = serializers.BooleanField(default=False)
-    event_summary = serializers.DictField(default=dict)
-    payload_hash = serializers.RegexField(
-        r'^[0-9a-fA-F]{64}$',
-        required=False,
-        allow_blank=True,
-        max_length=64,
-    )
-    idempotency_key = serializers.CharField(
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        max_length=128,
-    )
-
-    def validate(self, attrs):
-        attrs['level_reached'] = attrs.get('level_reached', '')
-        attrs['payload_hash'] = attrs.get('payload_hash', '')
-        idempotency_key = attrs.get('idempotency_key') or None
-        attrs['idempotency_key'] = idempotency_key
-        return attrs
+    completed_at = serializers.DateTimeField(required=False)
+    score = serializers.IntegerField(min_value=0)
+    level_reached = serializers.IntegerField(min_value=1, max_value=6)
+    lives_end = serializers.IntegerField(min_value=0, max_value=3)
+    nukes_end = serializers.IntegerField(min_value=0, max_value=2)
+    victory = serializers.BooleanField()
+    duration_ms = serializers.IntegerField(min_value=0)
+    event_summary = serializers.DictField()
+    trace_digest = serializers.CharField(required=False, allow_blank=True, max_length=128)
+    idempotency_key = serializers.CharField(required=False, allow_blank=True, allow_null=True, max_length=128)
 
     @transaction.atomic
     def complete(self, run):
         if run.completed_at is not None:
-            raise serializers.ValidationError(
-                {'detail': 'Game run is already completed.'},
-                code='already_completed',
-            )
-
+            raise serializers.ValidationError({'detail': 'RUN_ALREADY_SUBMITTED'}, code='already_completed')
         data = self.validated_data
-        ScoreSubmission.objects.create(
-            run=run,
-            claimed_score=data['claimed_score'],
-            event_summary=data['event_summary'],
-            payload_hash=data['payload_hash'],
-            idempotency_key=data['idempotency_key'],
-        )
-
-        run.score = max(0, data['claimed_score'])
-        run.level_reached = data['level_reached']
-        run.lives_used = data['lives_used']
-        run.nukes_used = data['nukes_used']
+        outcome = validate_completion(run, data)
+        try:
+            ScoreSubmission.objects.create(run=run, claimed_score=data['score'], event_summary=data['event_summary'], idempotency_key=data.get('idempotency_key') or None, expected_score=outcome.expected_score, accepted_score=outcome.expected_score if outcome.accepted else None, validation_result='ACCEPTED' if outcome.accepted else 'REJECTED', rejection_codes=outcome.codes, validation_detail={**outcome.detail, 'trace_digest': data.get('trace_digest', '')}, validated_at=timezone.now())
+        except IntegrityError as exc:
+            raise serializers.ValidationError({'detail': 'DUPLICATE_SUBMISSION'}, code='duplicate_submission') from exc
+        now = timezone.now()
+        run.score = outcome.expected_score if outcome.accepted else 0
+        run.level_reached = str(data['level_reached'])
+        run.lives_end = data['lives_end']
+        run.lives_used = run.lives_start - data['lives_end']
+        run.nukes_end = data['nukes_end']
+        run.nukes_used = data['event_summary'].get('nuke_uses', 0)
         run.victory = data['victory']
-        run.completed_at = timezone.now()
-        run.validity = GameRun.Validity.VALID
-        run.validation_result = {
-            'policy': 'foundation_non_negative_claimed_score_v1',
-            'accepted': True,
-            'notes': 'Server-owned deterministic foundation validation; anti-cheat is not claimed.',
-        }
-        run.save(update_fields=[
-            'score',
-            'level_reached',
-            'lives_used',
-            'nukes_used',
-            'victory',
-            'completed_at',
-            'validity',
-            'validation_result',
-        ])
-
-        display_name = 'GUEST'
-        if run.player_id and hasattr(run.player, 'player_profile'):
-            display_name = run.player.player_profile.display_name
-
-        if run.is_publishable:
-            LeaderboardEntry.objects.create(
-                run=run,
-                score=run.score,
-                display_name=display_name,
-            )
-
+        run.duration_ms = data['duration_ms']
+        run.completed_at = now
+        run.submitted_at = now
+        run.validity = GameRun.Validity.VALID if outcome.accepted else GameRun.Validity.REJECTED
+        run.accepted_at = now if outcome.accepted else None
+        run.validation_code = '' if outcome.accepted else outcome.codes[0]
+        run.validation_result = {'accepted': outcome.accepted, 'codes': outcome.codes, 'detail': outcome.detail}
+        run.save()
+        if outcome.accepted and run.player_id and getattr(run.player, 'player_profile', None) and run.player.player_profile.leaderboard_enabled and run.player.player_profile.moderation_state == 'VISIBLE':
+            LeaderboardEntry.objects.create(run=run, score=run.score, display_name=run.player.player_profile.display_name, campaign_level_reached=data['level_reached'], victory=run.victory, accepted_at=now)
         return run
 
 
 class CompletedGameRunSerializer(serializers.ModelSerializer):
+    run_id = serializers.UUIDField(source='id')
+    validation_state = serializers.SerializerMethodField()
+    validated_score = serializers.SerializerMethodField()
+    leaderboard_eligible = serializers.SerializerMethodField()
+    rejection_codes = serializers.SerializerMethodField()
+
     class Meta:
         model = GameRun
-        fields = [
-            'id',
-            'score',
-            'level_reached',
-            'lives_used',
-            'nukes_used',
-            'victory',
-            'validity',
-            'completed_at',
-        ]
+        fields = ['run_id', 'validation_state', 'validated_score', 'leaderboard_eligible', 'rejection_codes']
+
+    def get_validation_state(self, run):
+        return 'VALIDATED' if run.validity == GameRun.Validity.VALID else 'REJECTED'
+
+    def get_validated_score(self, run):
+        return run.score if run.validity == GameRun.Validity.VALID else None
+
+    def get_leaderboard_eligible(self, run):
+        return LeaderboardEntry.objects.filter(run=run, visible=True).exists()
+
+    def get_rejection_codes(self, run):
+        return run.validation_result.get('codes', [])

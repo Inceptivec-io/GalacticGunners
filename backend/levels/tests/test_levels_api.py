@@ -5,7 +5,7 @@ import pytest
 from django.contrib.auth.models import Permission
 
 from levels.models import Level, LevelVersion
-from game_runs.models import GameRun
+from game_runs.models import GameRun, GameVersion
 
 
 def golden_level():
@@ -71,7 +71,8 @@ def test_game_run_binds_the_server_owned_published_level_identity(client, level_
     level = Level.objects.create(slug='level-01', name='Level 1', sequence=1)
     version = LevelVersion.objects.create(level=level, version=1, config=golden_level())
     version.status = LevelVersion.Status.VALIDATED; version.save(); version.publish()
-    response = client.post('/api/v1/game-runs/', {'game_version': '1.0.0-dev', 'client_type': 'web', 'level_slug': 'level-01', 'seed': 11001}, content_type='application/json')
+    GameVersion.objects.create(version='1.0.0-dev')
+    response = client.post('/api/v1/game-runs/', {'game_version': '1.0.0-dev', 'client_type': 'web', 'level_slug': 'level-01', 'level_version': 1, 'level_checksum': version.checksum, 'seed': 11001}, content_type='application/json')
     assert response.status_code == 201
     run = GameRun.objects.get(pk=response.json()['id'])
     assert run.level == level and run.level_version == 1 and run.level_checksum == version.checksum and run.seed == 11001

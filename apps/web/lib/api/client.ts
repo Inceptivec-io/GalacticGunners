@@ -48,15 +48,19 @@ export interface CompletedGameRunRecord {
 }
 
 export interface LeaderboardEntry {
+  rank: number;
   run_id: string;
   display_name: string;
   score: number;
-  published_at: string;
+  campaign_level_reached: number;
+  victory: boolean;
+  accepted_at: string;
 }
 
 export interface LeaderboardResponse {
-  count: number;
+  total: number;
   results: LeaderboardEntry[];
+  player?: { rank: number | null; best_score: number | null };
 }
 
 export interface ApiErrorResponse {

@@ -85,3 +85,57 @@ jobs:
       - run: GG_RUNTIME_URL=http://localhost:3002 npm run runtime:hostile
       - if: always()
         run: docker compose down -v
+
+  score-validation-hostile:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env: { POSTGRES_DB: galactic_gunners, POSTGRES_USER: galactic_gunners, POSTGRES_PASSWORD: local-development-only }
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U galactic_gunners -d galactic_gunners" --health-interval 5s --health-timeout 5s --health-retries 10
+    defaults: { run: { working-directory: backend } }
+    env: { DATABASE_URL: postgresql://galactic_gunners:local-development-only@localhost:5432/galactic_gunners, DJANGO_SETTINGS_MODULE: config.settings.local, DJANGO_SECRET_KEY: ci-local-placeholder }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.13' }
+      - run: pip install -e '.[dev]'
+      - run: pytest tests/test_game_runs_api.py
+
+  leaderboard-hostile:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env: { POSTGRES_DB: galactic_gunners, POSTGRES_USER: galactic_gunners, POSTGRES_PASSWORD: local-development-only }
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U galactic_gunners -d galactic_gunners" --health-interval 5s --health-timeout 5s --health-retries 10
+    defaults: { run: { working-directory: backend } }
+    env: { DATABASE_URL: postgresql://galactic_gunners:local-development-only@localhost:5432/galactic_gunners, DJANGO_SETTINGS_MODULE: config.settings.local, DJANGO_SECRET_KEY: ci-local-placeholder }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.13' }
+      - run: pip install -e '.[dev]'
+      - run: pytest tests/test_leaderboard_moderation.py::test_public_ranking_is_deterministic_and_one_best_run_per_player
+
+  moderation-hostile:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env: { POSTGRES_DB: galactic_gunners, POSTGRES_USER: galactic_gunners, POSTGRES_PASSWORD: local-development-only }
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U galactic_gunners -d galactic_gunners" --health-interval 5s --health-timeout 5s --health-retries 10
+    defaults: { run: { working-directory: backend } }
+    env: { DATABASE_URL: postgresql://galactic_gunners:local-development-only@localhost:5432/galactic_gunners, DJANGO_SETTINGS_MODULE: config.settings.local, DJANGO_SECRET_KEY: ci-local-placeholder }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.13' }
+      - run: pip install -e '.[dev]'
+      - run: pytest tests/test_leaderboard_moderation.py -k moderation

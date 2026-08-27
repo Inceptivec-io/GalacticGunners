@@ -65,7 +65,7 @@ export class BootScene extends Phaser.Scene {
     validateLevelDefinition(LEVEL_ONE_DEFINITION);
     // Golden Level 1 must start without an API request. Remote resolution is an
     // explicit campaign-loader capability, never an implicit gameplay dependency.
-    const loader = new LevelLoader();
+    const loader = new LevelLoader(this.runtimeConfig.apiBaseUrl);
     const campaignRuntime = await Promise.all(CAMPAIGN_DEFINITIONS.map(async (definition) => {
       validateLevelDefinition(definition);
       const fallback = { definition, checksum: await levelChecksum(definition), source: 'package' as const };

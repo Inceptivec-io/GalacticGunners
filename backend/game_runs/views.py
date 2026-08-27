@@ -15,7 +15,6 @@ from .serializers import (
 
 
 class GameRunStartView(APIView):
-    authentication_classes = []
     permission_classes = []
 
     def post(self, request):
@@ -26,7 +25,6 @@ class GameRunStartView(APIView):
 
 
 class GameRunCompleteView(APIView):
-    authentication_classes = []
     permission_classes = []
 
     def post(self, request, run_id):
