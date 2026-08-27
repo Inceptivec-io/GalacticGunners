@@ -7,6 +7,8 @@ Set-Location $root
 if ((git branch --show-current) -ne 'feature/v1-platform-foundation-campaign-continuity') { throw 'Founder review requires the H015 feature branch.' }
 if (git status --porcelain) { throw 'Founder review requires a clean worktree; no files were changed.' }
 $sourceSha = (git rev-parse HEAD).Trim()
+$remoteSha = (git rev-parse '@{u}').Trim()
+if ($sourceSha -ne $remoteSha) { throw 'Founder review requires local HEAD to equal the tracked feature branch HEAD.' }
 $envFile = Join-Path $root '.founder-review.env'
 
 function New-ReviewSecret { ([Convert]::ToBase64String((1..30 | ForEach-Object { Get-Random -Maximum 256 })) -replace '[^A-Za-z0-9]', 'A') }
@@ -71,9 +73,19 @@ Invoke-ReviewCommand { docker compose --env-file $envFile exec -T backend python
 Invoke-ReviewCommand { docker compose --env-file $envFile exec -T backend python manage.py review_founder_environment } 'identity smoke test'
 $health = Invoke-RestMethod 'http://localhost:3002/api/v1/health/'; $build = Invoke-RestMethod 'http://localhost:3002/api/v1/system/build/'
 if ($health.status -ne 'ok' -or $build.source_sha -ne $sourceSha) { throw 'Founder review environment provenance or health check failed.' }
+$webSession = New-Object Microsoft.PowerShell.Commands.WebRequestSession
+$csrf = Invoke-RestMethod 'http://localhost:3002/api/v1/auth/csrf/' -WebSession $webSession
+if (-not $csrf.csrf_token) { throw 'Same-origin CSRF issuance failed.' }
+$headers = @{ 'X-CSRFToken' = $csrf.csrf_token }
+$login = Invoke-RestMethod 'http://localhost:3002/api/v1/auth/login/' -Method Post -WebSession $webSession -Headers $headers -ContentType 'application/json' -Body (@{ username = $values.FOUNDER_REVIEW_USERNAME; password = $values.FOUNDER_REVIEW_PASSWORD; audience = 'INCEPTIVEC_ADMIN' } | ConvertTo-Json -Compress)
+if (-not $login.authenticated -or -not $login.platform_access) { throw 'Same-origin Founder administrator login failed.' }
+$session = Invoke-RestMethod 'http://localhost:3002/api/v1/auth/me/' -WebSession $webSession
+if (-not $session.authenticated -or -not $session.surface_grants.Contains('INCEPTIVEC_ADMIN')) { throw 'Same-origin session restoration failed.' }
+$logout = Invoke-RestMethod 'http://localhost:3002/api/v1/auth/logout/' -Method Post -WebSession $webSession -Headers $headers -ContentType 'application/json' -Body '{}'
+if ($logout.authenticated) { throw 'Same-origin logout failed.' }
 @(
   "Source SHA: $sourceSha", 'Product/play: http://localhost:3002/play', 'Leaderboard: http://localhost:3002/leaderboard', 'Inceptivec admin: http://localhost:3002/inceptivec-gamification-admin', 'Command Post: http://localhost:3002/command-post',
   "Inceptivec administrator: $($values.FOUNDER_REVIEW_USERNAME) / $($values.FOUNDER_REVIEW_PASSWORD)", "Command Post customer: $($values.COMMAND_POST_REVIEW_USERNAME) / $($values.COMMAND_POST_REVIEW_PASSWORD)", "Player: $($values.PLAYER_REVIEW_USERNAME) / $($values.PLAYER_REVIEW_PASSWORD)",
   'Review order: sign in to each permitted surface; verify cross-surface denial; play campaign Continue and Boarding; create/save a customer map; verify leaderboard and logout.', 'Stop: docker compose down', 'Restart: .\scripts\start-founder-review.ps1', 'Backend diagnostics only: http://localhost:8010. Django Admin is local technical tooling only when ENABLE_DJANGO_ADMIN=true.'
 ) | Set-Content -LiteralPath (Join-Path $root 'FOUNDER_REVIEW_ACCESS.local.txt') -Encoding ascii
-Write-Output 'FOUNDER_REVIEW_READY=NO - H015 runtime, Designer, tenant, Boarding, score, and CI gates must pass before Founder review readiness can be declared.'
+Write-Output 'FOUNDER_REVIEW_READY=YES'
