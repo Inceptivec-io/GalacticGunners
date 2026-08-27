@@ -75,6 +75,31 @@ class AdminLevelActionView(APIView):
         return Response({'code': 'invalid_request', 'detail': 'Unsupported level action.', 'errors': {}}, status=400)
 
 
+class AdminLevelDraftView(APIView):
+    """Create a new immutable draft from a specific published or draft checksum."""
+
+    permission_classes = [IsLevelAdmin]
+
+    def post(self, request, level_id):
+        level = get_object_or_404(Level, pk=level_id, archived=False)
+        base = level.versions.order_by('-version').first()
+        expected_checksum = request.data.get('expected_checksum')
+        if not expected_checksum or base.checksum != expected_checksum:
+            return Response({'code': 'VERSION_CONFLICT', 'detail': 'Reload the latest level version before saving.', 'checksum': base.checksum}, status=409)
+        config = request.data.get('config')
+        validate_definition(config)
+        draft = LevelVersion.objects.create(
+            level=level,
+            version=base.version + 1,
+            config=config,
+            seed_policy=base.seed_policy,
+            created_by=request.user,
+            supersedes=base,
+        )
+        audit(request, 'designer_save', level, draft, {'from_version': base.version, 'expected_checksum': expected_checksum})
+        return Response(LevelVersionSerializer(draft).data, status=status.HTTP_201_CREATED)
+
+
 class AdminLevelExportView(APIView):
     permission_classes = [IsLevelAdmin]
 

@@ -10,6 +10,7 @@ from campaigns.models import Campaign, CampaignEntry, CampaignVersion
 from games.models import GameProject, GameRelease, Lifecycle, OwnerScope, Visibility
 from game_runs.models import GameVersion
 from levels.models import Level, LevelVersion
+from assets.models import AssetCategory, AssetRecord
 
 
 class Command(BaseCommand):
@@ -42,6 +43,40 @@ class Command(BaseCommand):
         if not game_version.is_active:
             game_version.is_active = True
             game_version.save(update_fields=['is_active'])
+
+        # The Designer consumes the same provenance-bound runtime paths as Phaser.
+        categories = {
+            'ships': ('Ships', 'SHOOTER', 'ship', 10),
+            'hazards': ('Hazards', 'SHOOTER', 'hazard', 20),
+            'ui': ('Interface', 'BOTH', 'ui', 30),
+            'boarding': ('Boarding', 'BOARDING', 'boarding', 40),
+        }
+        category_rows = {}
+        for code, (name, mode, object_type, sort_order) in categories.items():
+            category_rows[code], _ = AssetCategory.objects.get_or_create(
+                code=code,
+                defaults={'name': name, 'editor_mode': mode, 'object_type': object_type, 'sort_order': sort_order},
+            )
+        catalogue = [
+            ('player.ship', 'ships', '/gg-runtime-assets/sprites/ships/gg_player_ship_v002_sheet.png', 'a3e2edbdee85b312ad1766ee00c5a5438f60abf9dfcd006b2bd8474012ddff38'),
+            ('enemy.scout', 'ships', '/gg-runtime-assets/sprites/ships/gg_enemy_scout_v002_sheet.png', 'fbb60a9eb52346cb57cdf22fa1b6088dd24b08f9132540b05dfd0f1612405a7f'),
+            ('projectile.nuke', 'ui', '/gg-runtime-assets/sprites/objects/gg_nuke_projectile_v002_horizontal_upright.png', '3b826087ad38eb6963046260ec384b9507c80e450dfaa3b302b923875b8b21aa'),
+            ('hazard.asteroid', 'hazards', '/gg-runtime-assets/sprites/objects/gg_asteroid_v002_sheet.png', 'c7446cab6ce8f71acac0a7c809cfe98515c26435779a86ed4cbaee8ed0be21db'),
+            ('hazard.comet', 'hazards', '/gg-runtime-assets/sprites/objects/gg_comet_v002_sheet.png', 'bfc8cf65f8f713c6fd7107ff96a2dcf17fc2e0137d794fd833ed3383406629df'),
+            ('ui.life-icon', 'ui', '/gg-runtime-assets/ui/icons/gg_hud_life_icon_v002.png', '9e0f8607f264acb9614958d7043c5f69f4a4ebb303d57049203fd481d1eb0408'),
+            ('boarding.player', 'boarding', '/gg-runtime-assets/boarding/characters/player_001_v001.png', 'd0c944ed2240bfece0cb401006147a17d486514541448008148c0281e23ed7a8'),
+        ]
+        for key, category, runtime_path, digest in catalogue:
+            AssetRecord.objects.update_or_create(
+                key=key,
+                defaults={
+                    'category': category_rows[category], 'owner_scope': OwnerScope.CORE,
+                    'visibility': Visibility.PUBLIC, 'status': AssetRecord.Status.ACTIVE,
+                    'runtime_path': runtime_path, 'thumbnail_path': runtime_path,
+                    'mime_type': 'image/png', 'checksum': digest,
+                    'provenance_ref': 'apps/web/public/gg-runtime-assets/manifest.json',
+                },
+            )
 
         fixture = Path(__file__).resolve().parents[2] / 'fixtures' / 'level-01.json'
         level_one_config = json.loads(fixture.read_text(encoding='utf-8'))

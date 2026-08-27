@@ -2,46 +2,25 @@
 
 import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 
-type DesignerLevel = { id: string; slug: string; name: string; sequence: number; active_version?: { version: number; status: string; checksum: string } | null };
-
-const tools = ['Player', 'Scout formation', 'Bunker', 'Shield tile', 'Hazard', 'NUKE drop', 'LIFE drop', 'Boarding anchor'];
+type Placement = { assetKey: string; x: number; y: number };
+type LevelConfig = Record<string, unknown> & { placements?: Placement[] };
+type DesignerLevel = { id: string; slug: string; name: string; sequence: number; active_version?: { version: number; status: string; checksum: string; config: LevelConfig } | null };
+type Asset = { id: string; key: string; object_type: string; thumbnail_path: string; checksum: string };
 
 export function CampaignDesigner() {
-  const [levels, setLevels] = useState<DesignerLevel[]>([]);
-  const [selected, setSelected] = useState<string | null>(null);
-  const [message, setMessage] = useState('Loading governed level catalogue...');
-  const [zoom, setZoom] = useState(1);
-
+  const [levels, setLevels] = useState<DesignerLevel[]>([]); const [assets, setAssets] = useState<Asset[]>([]);
+  const [selected, setSelected] = useState<string | null>(null); const [placements, setPlacements] = useState<Placement[]>([]);
+  const [selectedPlacement, setSelectedPlacement] = useState<number | null>(null); const [message, setMessage] = useState('Loading governed campaign authority...'); const [zoom, setZoom] = useState(1);
   const selectedLevel = useMemo(() => levels.find((level) => level.id === selected) ?? null, [levels, selected]);
-  async function call(path: string, init?: RequestInit) {
-    const response = await fetch(`/api/v1${path}`, {
-      credentials: 'same-origin',
-      headers: { ...(init?.body ? { 'content-type': 'application/json' } : {}), ...init?.headers },
-      ...init,
-    });
-    if (!response.ok) throw new Error(`Request failed (${response.status})`);
-    return response.json();
-  }
-  async function load() {
-    try {
-      const value = await call('/levels/'); setLevels(value.results ?? value); setMessage('Published level catalogue loaded.');
-    } catch (error) { setMessage(error instanceof Error ? error.message : 'Unable to load levels.'); }
-  }
+  const selectedAsset = selectedPlacement === null ? null : assets.find((asset) => asset.key === placements[selectedPlacement]?.assetKey) ?? null;
+  async function call(path: string, init?: RequestInit) { const response = await fetch(`/api/v1${path}`, { credentials: 'same-origin', headers: { ...(init?.body ? { 'content-type': 'application/json' } : {}), ...init?.headers }, ...init }); if (!response.ok) { const body = await response.json().catch(() => ({})); throw new Error(body.detail ?? body.code ?? `Request failed (${response.status})`); } return response.json(); }
+  async function load() { try { const [levelData, assetData] = await Promise.all([call('/levels/'), call('/assets/catalogue/')]); const catalogue = levelData.results ?? levelData; setLevels(catalogue); setAssets(assetData.results ?? []); setSelected((current) => current ?? catalogue[0]?.id ?? null); setMessage('Published campaign authority and approved assets loaded.'); } catch (error) { setMessage(error instanceof Error ? error.message : 'Unable to load governed catalogue.'); } }
   useEffect(() => { void load(); }, []);
-  async function generate() {
-    try {
-      const value = await call('/admin/levels/generate/', { method: 'POST', body: JSON.stringify({ sequence: levels.length + 2, seed: 12000 + levels.length + 2 }) });
-      setLevels((current) => [...current, value]); setSelected(value.id); setMessage(`Draft ${value.slug} generated. It is not published.`);
-    } catch (error) { setMessage(error instanceof Error ? error.message : 'Generation failed.'); }
-  }
-  async function lifecycle(action: 'validate' | 'publish' | 'archive' | 'clone' | 'rollback') {
-    if (!selectedLevel) return;
-    try { await call(`/admin/levels/${selectedLevel.id}/${action}/`, { method: 'POST', body: '{}' }); setMessage(`${action} completed.`); await load(); }
-    catch (error) { setMessage(error instanceof Error ? error.message : `${action} failed.`); }
-  }
-  return <main className="designer-shell" data-designer-route="hidden">
-    <aside className="designer-sidebar"><h1>Campaign Designer</h1><button onClick={load}>Refresh levels</button><button onClick={generate}>Generate draft</button><section><h2>Layers</h2>{['Background', 'Formation', 'Shields', 'Pickups', 'Objectives'].map((layer) => <label key={layer}><input type="checkbox" defaultChecked />{layer}</label>)}</section><section><h2>Palette</h2>{tools.map((tool) => <button key={tool} className="tool-button">{tool}</button>)}</section></aside>
-    <section className="designer-workspace"><header><strong>{selectedLevel?.name ?? 'No level selected'}</strong><span>{message}</span><label>Zoom <input aria-label="Canvas zoom" type="range" min="0.6" max="1.5" step="0.1" value={zoom} onChange={(event) => setZoom(Number(event.target.value))} /></label></header><div className="designer-canvas" style={{ '--designer-zoom': zoom } as CSSProperties} aria-label="Level canvas"><div className="designer-playfield"><div className="designer-formation">Scout formation</div><div className="designer-bunkers">8 bunkers / 256 tiles</div><div className="designer-player">Player</div></div></div><footer><button onClick={() => lifecycle('clone')} disabled={!selected}>Clone</button><button onClick={() => lifecycle('validate')} disabled={!selected}>Validate</button><button onClick={() => lifecycle('publish')} disabled={!selected}>Publish</button><button onClick={() => lifecycle('rollback')} disabled={!selected}>Rollback</button><button onClick={() => lifecycle('archive')} disabled={!selected}>Archive</button><button onClick={() => selected && window.open(`/play?level=${selected}`, '_blank')} disabled={!selected}>Same-runtime preview</button></footer></section>
-    <aside className="designer-inspector"><h2>Level list</h2>{levels.map((level) => <button key={level.id} onClick={() => setSelected(level.id)} className={selected === level.id ? 'selected' : ''}>{level.sequence}. {level.name}<small>{level.active_version?.status ?? 'DRAFT'}</small></button>)}<h2>Inspector</h2><p>Use the palette and layer controls to compose a validated draft. Publishing is server-authorized and immutable.</p></aside>
-  </main>;
+  useEffect(() => { const config = selectedLevel?.active_version?.config; setPlacements(Array.isArray(config?.placements) ? config.placements : []); setSelectedPlacement(null); }, [selectedLevel]);
+  function addPlacement(assetKey: string, x = 640, y = 360) { setPlacements((current) => [...current, { assetKey, x: Math.round(x), y: Math.round(y) }]); setSelectedPlacement(placements.length); }
+  function movePlacement(index: number, x: number, y: number) { setPlacements((current) => current.map((placement, position) => position === index ? { ...placement, x: Math.round(Math.max(0, Math.min(1280, x))), y: Math.round(Math.max(0, Math.min(720, y))) } : placement)); }
+  function onCanvasDrop(event: React.DragEvent<HTMLDivElement>) { event.preventDefault(); const key = event.dataTransfer.getData('application/x-gg-asset'); if (!key) return; const bounds = event.currentTarget.getBoundingClientRect(); addPlacement(key, ((event.clientX - bounds.left) / bounds.width) * 1280, ((event.clientY - bounds.top) / bounds.height) * 720); }
+  async function saveDraft() { if (!selectedLevel?.active_version) return; try { const config = JSON.parse(JSON.stringify(selectedLevel.active_version.config)) as LevelConfig; config.placements = placements; const draft = await call(`/admin/levels/${selectedLevel.id}/drafts/`, { method: 'POST', body: JSON.stringify({ expected_checksum: selectedLevel.active_version.checksum, config }) }); setMessage(`Draft v${draft.version} saved with immutable checksum ${draft.checksum.slice(0, 12)}.`); await load(); } catch (error) { setMessage(error instanceof Error ? error.message : 'Draft save failed.'); } }
+  async function lifecycle(action: 'validate' | 'publish' | 'archive' | 'rollback') { if (!selectedLevel) return; try { await call(`/admin/levels/${selectedLevel.id}/${action}/`, { method: 'POST', body: '{}' }); setMessage(`${action} completed.`); await load(); } catch (error) { setMessage(error instanceof Error ? error.message : `${action} failed.`); } }
+  return <main className="designer-shell" data-designer-route="campaign"><aside className="designer-sidebar"><h1>Campaign Designer</h1><button onClick={load}>Refresh authority</button><button onClick={saveDraft} disabled={!selectedLevel}>Save immutable draft</button><section><h2>Approved assets</h2>{assets.map((asset) => <button key={asset.id} className="tool-button" draggable onDragStart={(event) => event.dataTransfer.setData('application/x-gg-asset', asset.key)} onClick={() => addPlacement(asset.key)}><img src={asset.thumbnail_path} alt="" /><span>{asset.key}</span></button>)}</section></aside><section className="designer-workspace"><header><strong>{selectedLevel?.name ?? 'No level selected'}</strong><span role="status">{message}</span><label>Zoom <input aria-label="Canvas zoom" type="range" min="0.6" max="1.5" step="0.1" value={zoom} onChange={(event) => setZoom(Number(event.target.value))} /></label></header><div className="designer-canvas" style={{ '--designer-zoom': zoom } as CSSProperties} aria-label="Level canvas" onDragOver={(event) => event.preventDefault()} onDrop={onCanvasDrop}><div className="designer-playfield">{placements.map((placement, index) => { const asset = assets.find((item) => item.key === placement.assetKey); return <button key={`${placement.assetKey}-${index}`} type="button" className="designer-placement" aria-label={`${placement.assetKey} at ${placement.x}, ${placement.y}`} style={{ left: `${placement.x / 12.8}%`, top: `${placement.y / 7.2}%` }} onClick={() => setSelectedPlacement(index)} onKeyDown={(event) => { const delta = event.shiftKey ? 24 : 8; if (event.key === 'ArrowLeft') { event.preventDefault(); movePlacement(index, placement.x - delta, placement.y); } if (event.key === 'ArrowRight') { event.preventDefault(); movePlacement(index, placement.x + delta, placement.y); } if (event.key === 'ArrowUp') { event.preventDefault(); movePlacement(index, placement.x, placement.y - delta); } if (event.key === 'ArrowDown') { event.preventDefault(); movePlacement(index, placement.x, placement.y + delta); } }}>{asset ? <img src={asset.thumbnail_path} alt="" /> : placement.assetKey}</button>; })}</div></div><footer><button onClick={() => lifecycle('validate')} disabled={!selected}>Validate</button><button onClick={() => lifecycle('publish')} disabled={!selected}>Publish</button><button onClick={() => lifecycle('rollback')} disabled={!selected}>Rollback</button><button onClick={() => lifecycle('archive')} disabled={!selected}>Archive</button><button onClick={() => selected && window.open(`/play?level=${selected}`, '_blank')} disabled={!selected}>Same-runtime preview</button></footer></section><aside className="designer-inspector"><h2>Levels</h2>{levels.map((level) => <button key={level.id} onClick={() => setSelected(level.id)} className={selected === level.id ? 'selected' : ''}>{level.sequence}. {level.name}<small>{level.active_version?.status ?? 'DRAFT'}</small></button>)}<h2>Typed inspector</h2>{selectedPlacement === null || !selectedAsset ? <p>Select or add an approved asset. Drag assets to the stage or use arrow keys to position a selected object.</p> : <><img className="designer-inspector-thumbnail" src={selectedAsset.thumbnail_path} alt="" /><dl><dt>Asset</dt><dd>{selectedAsset.key}</dd><dt>Type</dt><dd>{selectedAsset.object_type}</dd><dt>Position</dt><dd>{placements[selectedPlacement].x}, {placements[selectedPlacement].y}</dd><dt>Checksum</dt><dd>{selectedAsset.checksum}</dd></dl><button onClick={() => { setPlacements((current) => current.filter((_, index) => index !== selectedPlacement)); setSelectedPlacement(null); }}>Remove placement</button></>}</aside></main>;
 }

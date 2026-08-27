@@ -7,10 +7,11 @@ from game_runs.views import GameRunCompleteView, GameRunStartView
 from boarding.views import BoardingCompleteView, BoardingRunDetailView, BoardingStartView
 from leaderboard.views import LeaderboardListView, LeaderboardMeView, ModerationView
 from players.api import LeaderboardProfileView
-from levels.views import AdminLevelActionView, AdminLevelCreateView, AdminLevelExportView, AdminLevelGenerateView, AdminLevelImportView, PublicLevelDetailView, PublicLevelListView, PublicVersionView
+from levels.views import AdminLevelActionView, AdminLevelCreateView, AdminLevelDraftView, AdminLevelExportView, AdminLevelGenerateView, AdminLevelImportView, PublicLevelDetailView, PublicLevelListView, PublicVersionView
 from accounts.api import CsrfView, LoginView, LogoutView, RegisterView, SessionView
 from campaigns.views import CampaignRunCompleteEntryView, CampaignRunStartView
 from organizations.api import PortalMapCreateView, PortalOrganizationView, PortalOrganizationsView
+from assets.api import AssetCatalogueView
 
 from .views import build_provenance, health
 
@@ -28,6 +29,7 @@ urlpatterns = [
     path('api/v1/portal/organizations/', PortalOrganizationsView.as_view(), name='portal-organizations'),
     path('api/v1/portal/organizations/<slug:slug>/', PortalOrganizationView.as_view(), name='portal-organization'),
     path('api/v1/portal/organizations/<slug:slug>/maps/', PortalMapCreateView.as_view(), name='portal-map-create'),
+    path('api/v1/assets/catalogue/', AssetCatalogueView.as_view(), name='asset-catalogue'),
     path('api/v1/game-runs/', GameRunStartView.as_view(), name='game-run-start'),
     path(
         'api/v1/game-runs/<uuid:run_id>/complete/',
@@ -50,6 +52,7 @@ urlpatterns = [
     path('api/v1/admin/levels/import/', AdminLevelImportView.as_view(), name='admin-level-import'),
     path('api/v1/admin/levels/generate/', AdminLevelGenerateView.as_view(), name='admin-level-generate'),
     path('api/v1/admin/levels/<uuid:level_id>/export/', AdminLevelExportView.as_view(), name='admin-level-export'),
+    path('api/v1/admin/levels/<uuid:level_id>/drafts/', AdminLevelDraftView.as_view(), name='admin-level-draft-save'),
     path('api/v1/admin/levels/<uuid:level_id>/<str:action>/', AdminLevelActionView.as_view(), name='admin-level-action'),
     path('api/schema/', SpectacularAPIView.as_view(), name='api-schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='api-schema'), name='api-docs'),
