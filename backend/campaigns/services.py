@@ -9,6 +9,18 @@ from games.models import GameRelease, Lifecycle, OwnerScope
 from .models import CampaignVersion
 
 
+def capability_token():
+    return secrets.token_urlsafe(32)
+
+
+def capability_digest(token):
+    return hashlib.sha256(token.encode('ascii')).hexdigest()
+
+
+def capability_matches(token, expected):
+    return bool(token and expected and secrets.compare_digest(capability_digest(token), expected))
+
+
 class CampaignService:
     @staticmethod
     @transaction.atomic
@@ -33,22 +45,27 @@ class CampaignService:
         entries = list(campaign_version.entries.select_related('level_version__level').order_by('position'))
         if not entries:
             raise ValueError('CAMPAIGN_ENTRY_GAP')
-        anonymous_hash = None if user and user.is_authenticated else hashlib.sha256(secrets.token_bytes(32)).hexdigest()
+        token = None if user and user.is_authenticated else capability_token()
         campaign_run = CampaignRun.objects.create(
             game_release=release,
             campaign_version=campaign_version,
             player=user if user and user.is_authenticated else None,
-            anonymous_capability_hash=anonymous_hash,
+            anonymous_capability_hash=capability_digest(token) if token else None,
             current_entry=entries[0],
             next_entry=entries[1] if len(entries) > 1 else None,
             seed_root=seed_root,
         )
-        return campaign_run
+        return campaign_run, token
 
     @staticmethod
     @transaction.atomic
-    def complete_entry(*, campaign_run: CampaignRun, entry_id, score: int, lives: int, nukes: int):
+    def complete_entry(*, campaign_run: CampaignRun, user, capability, entry_id, score: int, lives: int, nukes: int):
         campaign_run = CampaignRun.objects.select_for_update(of=('self',)).get(pk=campaign_run.pk)
+        if campaign_run.player_id:
+            if not user or not user.is_authenticated or user.pk != campaign_run.player_id:
+                raise PermissionError('CAMPAIGN_OWNER_REQUIRED')
+        elif not capability_matches(capability, campaign_run.anonymous_capability_hash):
+            raise PermissionError('CAMPAIGN_CAPABILITY_INVALID')
         if campaign_run.status != CampaignRun.Status.ACTIVE or str(campaign_run.current_entry_id) != str(entry_id):
             raise ValueError('CAMPAIGN_ENTRY_MISMATCH')
         entries = list(campaign_run.campaign_version.entries.order_by('position'))

@@ -7,6 +7,8 @@ import { LevelLoader } from '../levels/LevelLoader';
 import { CAMPAIGN_DEFINITIONS } from '../levels/campaignDefinitions';
 import { LEVEL_ONE_DEFINITION } from '../levels/levelOneDefinition';
 import { validateLevelDefinition } from '../levels/LevelValidator';
+import { GameApiClient } from '../services/GameApiClient';
+import { CampaignSession } from '../systems/CampaignSession';
 
 export class BootScene extends Phaser.Scene {
   constructor(private readonly runtimeConfig: GameRuntimeConfig = {}) {
@@ -73,6 +75,9 @@ export class BootScene extends Phaser.Scene {
     }));
     this.registry.set('campaignRuntime', campaignRuntime);
     this.registry.set('levelRuntime', campaignRuntime[0]);
+    const campaignSession = new CampaignSession(this.runtimeConfig.apiBaseUrl ? new GameApiClient(this.runtimeConfig.apiBaseUrl) : null, LEVEL_ONE_DEFINITION.seed);
+    await campaignSession.start();
+    this.registry.set('campaignSession', campaignSession);
 
     this.anims.create({
       key: 'fx.explosionSmall.play',
@@ -112,6 +117,18 @@ export class BootScene extends Phaser.Scene {
         scoutTexture.add(frame.name, 0, frame.x, frame.y, frame.width, frame.height);
       }
     }
+    const fixedFrames = [
+      [RUNTIME_ASSETS.enemy.cruiser.key, FRAME_RECTS.cruiser],
+      [RUNTIME_ASSETS.enemy.destroyer.key, FRAME_RECTS.destroyer],
+      [RUNTIME_ASSETS.fx.asteroid.key, FRAME_RECTS.asteroid],
+      [RUNTIME_ASSETS.fx.comet.key, FRAME_RECTS.comet],
+    ] as const;
+    for (const [key, frames] of fixedFrames) {
+      const texture = this.textures.get(key);
+      for (const frame of frames) {
+        if (!texture.has(frame.name)) texture.add(frame.name, 0, frame.x, frame.y, frame.width, frame.height);
+      }
+    }
   }
 
   private createShipAnimations(): void {
@@ -121,6 +138,9 @@ export class BootScene extends Phaser.Scene {
       frameRate: 8,
       repeat: -1,
     });
+    for (const [key, asset] of [['enemy.cruiser.idle', RUNTIME_ASSETS.enemy.cruiser], ['enemy.destroyer.idle', RUNTIME_ASSETS.enemy.destroyer]] as const) {
+      this.anims.create({ key, frames: [{ key: asset.key, frame: 'stable-0' }], frameRate: 1, repeat: -1 });
+    }
 
     this.anims.create({
       key: 'enemy.scout.idle',

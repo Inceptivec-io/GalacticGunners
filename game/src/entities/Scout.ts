@@ -6,13 +6,14 @@ import type { PlayfieldLayout } from '../systems/PlayfieldLayout';
 export class Scout {
   readonly sprite: Phaser.Physics.Arcade.Sprite;
 
-  constructor(scene: Phaser.Scene, x: number, y: number, layout: PlayfieldLayout) {
-    this.sprite = scene.physics.add.sprite(x, y, RUNTIME_ASSETS.enemy.scout.key, 'stable-0');
+  constructor(scene: Phaser.Scene, x: number, y: number, layout: PlayfieldLayout, type: 'scout' | 'cruiser' | 'destroyer' = 'scout') {
+    const asset = type === 'scout' ? RUNTIME_ASSETS.enemy.scout : type === 'cruiser' ? RUNTIME_ASSETS.enemy.cruiser : RUNTIME_ASSETS.enemy.destroyer;
+    this.sprite = scene.physics.add.sprite(x, y, asset.key, 'stable-0');
     this.sprite.setName('scout');
-    this.sprite.setData('enemyType', 'scout');
+    this.sprite.setData('enemyType', type);
     this.applyLayout(layout);
     this.sprite.setDepth(4);
-    this.sprite.play('enemy.scout.idle');
+    this.sprite.play(type === 'scout' ? 'enemy.scout.idle' : type === 'cruiser' ? 'enemy.cruiser.idle' : 'enemy.destroyer.idle');
   }
 
   applyLayout(layout: PlayfieldLayout): void {

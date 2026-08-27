@@ -58,7 +58,13 @@ export interface GameRunClient {
   startGameRun(request: GameRunStartRequest): Promise<GameRunRecord>;
   completeGameRun(runId: string, request: GameRunCompletionRequest): Promise<CompletedGameRunRecord>;
   getLeaderboard(limit?: number, offset?: number): Promise<LeaderboardResponse>;
+  startCampaign(seedRoot: number): Promise<CampaignRunRecord>;
+  completeCampaignEntry(runId: string, entryId: string, payload: CampaignEntryCompletion, capability?: string | null): Promise<CampaignRunRecord>;
 }
+
+export interface CampaignEntry { id: string; position: number; level: { slug: string; version: number; checksum: string; definition: unknown }; }
+export interface CampaignRunRecord { id: string; status?: 'ACTIVE' | 'COMPLETED'; score: number; lives: number; nukes: number; entry: CampaignEntry | null; ranked: boolean; capability?: string | null; completed_entry_count?: number; }
+export interface CampaignEntryCompletion { score: number; lives: number; nukes: number; }
 
 export class GameApiClient implements GameRunClient {
   constructor(private readonly baseUrl: string) {}
@@ -85,12 +91,22 @@ export class GameApiClient implements GameRunClient {
     return this.request(`/leaderboard/?limit=${limit}&offset=${offset}`);
   }
 
+  startCampaign(seedRoot: number): Promise<CampaignRunRecord> {
+    return this.request('/campaign-runs/start/', { method: 'POST', body: JSON.stringify({ seed_root: seedRoot }) });
+  }
+
+  completeCampaignEntry(runId: string, entryId: string, payload: CampaignEntryCompletion, capability?: string | null): Promise<CampaignRunRecord> {
+    return this.request(`/campaign-runs/${runId}/complete-entry/`, { method: 'POST', headers: capability ? { 'X-Campaign-Token': capability } : {}, body: JSON.stringify({ entry_id: entryId, ...payload }) });
+  }
+
   private async request<T>(path: string, init: RequestInit = {}): Promise<T> {
+    const csrfToken = init.method && init.method !== 'GET' && init.method !== 'HEAD' ? await this.csrfToken() : null;
     const response = await fetch(`${this.baseUrl.replace(/\/+$/, '')}${path}`, {
       credentials: 'same-origin',
       headers: {
         accept: 'application/json',
         ...(init.body ? { 'content-type': 'application/json' } : {}),
+        ...(csrfToken ? { 'X-CSRFToken': csrfToken } : {}),
         ...init.headers,
       },
       ...init,
@@ -99,5 +115,13 @@ export class GameApiClient implements GameRunClient {
       throw new Error(`Galactic Gunners API request failed: ${response.status}`);
     }
     return response.json() as Promise<T>;
+  }
+
+  private async csrfToken(): Promise<string> {
+    const response = await fetch(`${this.baseUrl.replace(/\/+$/, '')}/auth/csrf/`, { credentials: 'same-origin' });
+    if (!response.ok) throw new Error('Unable to obtain CSRF token.');
+    const value = await response.json() as { csrf_token?: string };
+    if (!value.csrf_token) throw new Error('CSRF token was not supplied.');
+    return value.csrf_token;
   }
 }

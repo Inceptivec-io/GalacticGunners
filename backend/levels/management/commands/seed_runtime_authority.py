@@ -45,6 +45,13 @@ class Command(BaseCommand):
 
         fixture = Path(__file__).resolve().parents[2] / 'fixtures' / 'level-01.json'
         level_one_config = json.loads(fixture.read_text(encoding='utf-8'))
+        authored = {
+            2: {'name': 'Asteroid Advance', 'enemy_formations': [{'type': 'scout', 'rows': 3, 'columns': 18, 'origin': {'x': 70, 'y': 120}, 'spacing': {'x': 54, 'y': 48}}], 'hazards': [{'type': 'asteroid', 'count': 3, 'speed': 72, 'origin': {'x': 180, 'y': 240}, 'spacing': {'x': 290, 'y': 64}}]},
+            3: {'name': 'Cruiser Crossfire', 'enemy_formations': [{'type': 'scout', 'rows': 2, 'columns': 16, 'origin': {'x': 72, 'y': 110}, 'spacing': {'x': 64, 'y': 52}}, {'type': 'cruiser', 'rows': 1, 'columns': 6, 'origin': {'x': 180, 'y': 205}, 'spacing': {'x': 168, 'y': 1}}], 'hazards': [{'type': 'asteroid', 'count': 2, 'speed': 96, 'origin': {'x': 340, 'y': 265}, 'spacing': {'x': 520, 'y': 1}}]},
+            4: {'name': 'Frigate Breach', 'enemy_formations': [{'type': 'scout', 'rows': 2, 'columns': 17, 'origin': {'x': 72, 'y': 110}, 'spacing': {'x': 62, 'y': 50}}, {'type': 'destroyer', 'rows': 1, 'columns': 4, 'origin': {'x': 240, 'y': 210}, 'spacing': {'x': 240, 'y': 1}}], 'hazards': [{'type': 'comet', 'count': 2, 'speed': 132, 'origin': {'x': 230, 'y': 268}, 'spacing': {'x': 620, 'y': 1}}]},
+            5: {'name': 'Elite Gauntlet', 'enemy_formations': [{'type': 'scout', 'rows': 2, 'columns': 15, 'origin': {'x': 72, 'y': 105}, 'spacing': {'x': 70, 'y': 48}}, {'type': 'cruiser', 'rows': 1, 'columns': 5, 'origin': {'x': 170, 'y': 195}, 'spacing': {'x': 220, 'y': 1}}, {'type': 'destroyer', 'rows': 1, 'columns': 3, 'origin': {'x': 300, 'y': 262}, 'spacing': {'x': 320, 'y': 1}}], 'hazards': [{'type': 'comet', 'count': 3, 'speed': 155, 'origin': {'x': 160, 'y': 315}, 'spacing': {'x': 390, 'y': 1}}]},
+            6: {'name': 'Final Assault', 'enemy_formations': [{'type': 'scout', 'rows': 2, 'columns': 14, 'origin': {'x': 80, 'y': 96}, 'spacing': {'x': 74, 'y': 46}}, {'type': 'cruiser', 'rows': 2, 'columns': 5, 'origin': {'x': 170, 'y': 190}, 'spacing': {'x': 220, 'y': 54}}, {'type': 'destroyer', 'rows': 1, 'columns': 4, 'origin': {'x': 210, 'y': 305}, 'spacing': {'x': 255, 'y': 1}}], 'hazards': [{'type': 'asteroid', 'count': 3, 'speed': 118, 'origin': {'x': 150, 'y': 330}, 'spacing': {'x': 350, 'y': 1}}, {'type': 'comet', 'count': 2, 'speed': 170, 'origin': {'x': 280, 'y': 380}, 'spacing': {'x': 580, 'y': 1}}]},
+        }
 
         for sequence in range(1, 7):
             slug = f'level-{sequence:02d}'
@@ -65,10 +72,8 @@ class Command(BaseCommand):
                     'seed': 12000 + sequence,
                 }
             )
-            # Level 1 is the accepted 58-enemy golden baseline. Later levels
-            # mirror the deterministic H012 campaign definition progression.
             if sequence > 1:
-                config['enemy_formations'][0]['columns'] = min(29, 16 + sequence * 2)
+                config.update(copy.deepcopy(authored[sequence]))
             if sequence == 4:
                 config['boarding_anchors'] = [{
                     'id': 'level-04-alien-frigate-01',
@@ -85,7 +90,7 @@ class Command(BaseCommand):
                 }]
 
             if level.active_version_id:
-                if sequence != 4 or level.active_version.config.get('boarding_anchors') == config.get('boarding_anchors'):
+                if level.active_version.config == config:
                     continue
                 next_version = level.versions.order_by('-version').first().version + 1
                 version = LevelVersion.objects.create(level=level, version=next_version, config=config)

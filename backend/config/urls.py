@@ -10,6 +10,7 @@ from players.api import LeaderboardProfileView
 from levels.views import AdminLevelActionView, AdminLevelCreateView, AdminLevelExportView, AdminLevelGenerateView, AdminLevelImportView, PublicLevelDetailView, PublicLevelListView, PublicVersionView
 from accounts.api import CsrfView, LoginView, LogoutView, RegisterView, SessionView
 from campaigns.views import CampaignRunCompleteEntryView, CampaignRunStartView
+from organizations.api import PortalMapCreateView, PortalOrganizationView, PortalOrganizationsView
 
 from .views import build_provenance, health
 
@@ -24,6 +25,9 @@ urlpatterns = [
     path('api/v1/auth/register/', RegisterView.as_view(), name='register'),
     path('api/v1/campaign-runs/start/', CampaignRunStartView.as_view(), name='campaign-run-start'),
     path('api/v1/campaign-runs/<uuid:run_id>/complete-entry/', CampaignRunCompleteEntryView.as_view(), name='campaign-run-complete-entry'),
+    path('api/v1/portal/organizations/', PortalOrganizationsView.as_view(), name='portal-organizations'),
+    path('api/v1/portal/organizations/<slug:slug>/', PortalOrganizationView.as_view(), name='portal-organization'),
+    path('api/v1/portal/organizations/<slug:slug>/maps/', PortalMapCreateView.as_view(), name='portal-map-create'),
     path('api/v1/game-runs/', GameRunStartView.as_view(), name='game-run-start'),
     path(
         'api/v1/game-runs/<uuid:run_id>/complete/',

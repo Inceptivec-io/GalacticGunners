@@ -8,6 +8,7 @@ import { LEVEL_ONE_SLICE } from '../config/levelOneSlice';
 import { GameApiClient } from '../services/GameApiClient';
 import { AudioSystem } from '../systems/AudioSystem';
 import { GameSession } from '../systems/GameSession';
+import { CampaignSession } from '../systems/CampaignSession';
 import { InputSystem } from '../systems/InputSystem';
 import { LifeSystem } from '../systems/LifeSystem';
 import { createPlayfieldLayout, type PlayfieldLayout } from '../systems/PlayfieldLayout';
@@ -77,6 +78,7 @@ export class Level1Scene extends CombatLevelScene {
   #playerLasers!: Phaser.Physics.Arcade.Group;
   #enemyLasers!: Phaser.Physics.Arcade.Group;
   #nukes!: Phaser.Physics.Arcade.Group;
+  #hazards!: Phaser.Physics.Arcade.Group;
   #lifeIcons: Phaser.GameObjects.Image[] = [];
   #soundIcon!: Phaser.GameObjects.Image;
   #scoreText!: Phaser.GameObjects.Text;
@@ -103,6 +105,7 @@ export class Level1Scene extends CombatLevelScene {
   #terminalActions: Array<{ action: TerminalAction; x: number; y: number; width: number; height: number; source: 'production-asset' | 'production-derived' }> = [];
   #terminalActionHandled = false;
   #boardingActive = false;
+  #campaignSession: CampaignSession | null = null;
 
   constructor() {
     super('Level1Scene');
@@ -114,6 +117,7 @@ export class Level1Scene extends CombatLevelScene {
 
   create(): void {
     this.#runtimeConfig = this.registry.get('runtimeConfig') as GameRuntimeConfig | undefined ?? {};
+    this.#campaignSession = this.registry.get('campaignSession') as CampaignSession | undefined ?? null;
     const campaignRuntime = this.registry.get('campaignRuntime') as LevelRuntimeConfig[] | undefined ?? [];
     const packagedDefinition = CAMPAIGN_DEFINITIONS.find((definition) => definition.sequence === this.#campaignSequence);
     if (!packagedDefinition) {
@@ -167,8 +171,10 @@ export class Level1Scene extends CombatLevelScene {
     this.#enemyLasers = this.physics.add.group({ maxSize: 48 });
     this.#nukes = this.physics.add.group({ maxSize: LEVEL_ONE_SLICE.maxNukes });
     this.#scouts = this.physics.add.group();
+    this.#hazards = this.physics.add.group();
     this.#shieldTiles = this.physics.add.group();
     this.createScoutWave();
+    this.createHazards();
     this.createShieldZone();
     this.createHud();
       this.createCollisions();
@@ -242,16 +248,18 @@ export class Level1Scene extends CombatLevelScene {
   }
 
   private createScoutWave(): void {
-    const formation = this.#definition.enemy_formations[0];
-    for (let row = 0; row < formation.rows; row += 1) {
-      for (let col = 0; col < formation.columns; col += 1) {
-        const position = this.scoutPosition(row, col);
-        const scout = new Scout(this, position.x, position.y, this.#layout);
+    this.#definition.enemy_formations.forEach((formation, formationIndex) => {
+      for (let row = 0; row < formation.rows; row += 1) {
+        for (let col = 0; col < formation.columns; col += 1) {
+          const position = this.scoutPosition(formationIndex, row, col);
+          const scout = new Scout(this, position.x, position.y, this.#layout, formation.type);
+          scout.sprite.setData('formation', formationIndex);
         scout.sprite.setData('row', row);
         scout.sprite.setData('col', col);
         this.#scouts.add(scout.sprite);
+        }
       }
-    }
+    });
   }
 
   private reflowScoutWave(): void {
@@ -261,7 +269,7 @@ export class Level1Scene extends CombatLevelScene {
       }
       const row = Number(scout.getData('row'));
       const col = Number(scout.getData('col'));
-      const position = this.scoutPosition(row, col);
+      const position = this.scoutPosition(Number(scout.getData('formation')), row, col);
       scout.setPosition(position.x, position.y);
       scout.setDisplaySize(this.#layout.scoutSize.width, this.#layout.scoutSize.height);
       const body = scout.body as Phaser.Physics.Arcade.Body;
@@ -269,18 +277,38 @@ export class Level1Scene extends CombatLevelScene {
     }
   }
 
-  private scoutPosition(row: number, col: number): Phaser.Math.Vector2 {
+  private scoutPosition(formationIndex: number, row: number, col: number): Phaser.Math.Vector2 {
+    const formation = this.#definition.enemy_formations[formationIndex];
     const travelMargin = this.formationTravelMargin();
     const usableWidth = Math.max(
       this.#layout.formationBounds.width - travelMargin * 2,
-      this.#layout.scoutSize.width * (this.#definition.enemy_formations[0].columns - 1),
+      this.#layout.scoutSize.width * Math.max(formation.columns - 1, 1),
     );
-    const gapX = usableWidth / (this.#definition.enemy_formations[0].columns - 1);
+    const gapX = formation.columns === 1 ? 0 : usableWidth / (formation.columns - 1);
     const gapY = Math.max(this.#layout.scoutSize.height * 1.8, 30);
     return new Phaser.Math.Vector2(
       this.#layout.formationBounds.x + travelMargin + col * gapX + this.#formationOffsetX,
-      this.#layout.formationBounds.y + row * gapY + this.#formationDropY,
+      (this.#campaignSequence === 1 && formationIndex === 0 ? this.#layout.formationBounds.y : formation.origin.y) + row * gapY + this.#formationDropY,
     );
+  }
+
+  private createHazards(): void {
+    for (const definition of this.#definition.hazards ?? []) {
+      const asset = definition.type === 'asteroid' ? RUNTIME_ASSETS.fx.asteroid : RUNTIME_ASSETS.fx.comet;
+      for (let index = 0; index < definition.count; index += 1) {
+        const x = definition.origin.x + definition.spacing.x * index;
+        const y = definition.origin.y + definition.spacing.y * index;
+        const hazard = this.physics.add.sprite(x, y, asset.key, 'stable-0')
+          .setDisplaySize(definition.type === 'asteroid' ? 54 : 72, definition.type === 'asteroid' ? 54 : 54)
+          .setDepth(3);
+        hazard.setName(`${definition.type}-hazard`);
+        hazard.setData('hazardType', definition.type);
+        const body = hazard.body as Phaser.Physics.Arcade.Body;
+        body.setSize(hazard.displayWidth * 0.68 / hazard.scaleX, hazard.displayHeight * 0.68 / hazard.scaleY, true);
+        hazard.setVelocityY(definition.speed);
+        this.#hazards.add(hazard);
+      }
+    }
   }
 
   private formationTravelMargin(): number {
@@ -410,6 +438,17 @@ export class Level1Scene extends CombatLevelScene {
     this.physics.add.overlap(this.#nukes, this.#scouts, (nuke, scout) => {
       this.handleNukeScoutOverlap(nuke as Phaser.Physics.Arcade.Sprite, scout as Phaser.Physics.Arcade.Sprite);
     });
+    this.physics.add.overlap(this.#playerLasers, this.#hazards, (laser, hazard) => {
+      if (!(laser as Phaser.Physics.Arcade.Image).getData('spent')) {
+        this.destroyProjectile(laser as Phaser.Physics.Arcade.Image);
+        (hazard as Phaser.Physics.Arcade.Sprite).disableBody(true, true);
+        this.createExplosion((hazard as Phaser.Physics.Arcade.Sprite).x, (hazard as Phaser.Physics.Arcade.Sprite).y, 60);
+      }
+    });
+    this.physics.add.overlap(this.#player.sprite, this.#hazards, (_player, hazard) => {
+      (hazard as Phaser.Physics.Arcade.Sprite).disableBody(true, true);
+      this.damagePlayer(true);
+    });
   }
 
   private handleInput(time: number): void {
@@ -455,15 +494,19 @@ export class Level1Scene extends CombatLevelScene {
       this.#formationDropY += LEVEL_ONE_SLICE.scoutDropDistance;
     }
     active.forEach((scout) => {
+      const formation = Number(scout.getData('formation'));
       const row = Number(scout.getData('row'));
       const col = Number(scout.getData('col'));
-      const position = this.scoutPosition(row, col);
+      const position = this.scoutPosition(formation, row, col);
       scout.setPosition(position.x, position.y);
       scout.setVelocity(0, 0);
       if (scout.y > this.#layout.movementBounds.bottom) {
         this.showTerminal('failed');
       }
     });
+    for (const hazard of this.#hazards.getChildren() as Phaser.Physics.Arcade.Sprite[]) {
+      if (hazard.active && hazard.y > this.scale.height + 80) hazard.disableBody(true, true);
+    }
     if (time % 250 < this.game.loop.delta) {
       this.publishQaState();
     }
@@ -951,7 +994,7 @@ export class Level1Scene extends CombatLevelScene {
     this.#playerLasers.clear(true, true);
     this.#enemyLasers.clear(true, true);
     const isComplete = state === 'complete';
-    const isFinalLevel = this.#campaignSequence === CAMPAIGN_DEFINITIONS.length;
+    const isFinalLevel = this.#campaignSession?.run?.entry === null || this.#campaignSequence === CAMPAIGN_DEFINITIONS.length;
     const centreX = this.scale.width / 2;
     const centreY = this.scale.height / 2;
     const panelAsset = isComplete ? RUNTIME_ASSETS.ui.victoryPanel : RUNTIME_ASSETS.ui.gameOverPanel;
@@ -1061,16 +1104,7 @@ export class Level1Scene extends CombatLevelScene {
     this.#terminalActionHandled = true;
     this.#audio.play('uiConfirm');
     if (action === 'continue') {
-      const nextSequence = this.#campaignSequence + 1;
-      if (nextSequence <= CAMPAIGN_DEFINITIONS.length) {
-        this.registry.set('campaignState', {
-          sequence: nextSequence,
-          score: this.#score.value,
-          lives: this.#lives.value,
-          nukes: this.#currentNukes,
-        } satisfies CampaignRuntimeState);
-        this.scene.restart({ sequence: nextSequence });
-      }
+      void this.continueCampaign();
       return;
     }
     if (action === 'menu') {
@@ -1079,6 +1113,34 @@ export class Level1Scene extends CombatLevelScene {
       return;
     }
     this.scene.restart({ sequence: this.#campaignSequence });
+  }
+
+  private async continueCampaign(): Promise<void> {
+    try {
+      const serverResult = await this.#campaignSession?.complete(this.#score.value, this.#lives.value, this.#currentNukes);
+      const serverDefinition = serverResult?.entry?.level.definition;
+      const nextSequence = serverResult?.entry?.position ?? this.#campaignSequence + 1;
+      if (serverDefinition && typeof serverDefinition === 'object') {
+        validateLevelDefinition(serverDefinition);
+        const runtimes = this.registry.get('campaignRuntime') as LevelRuntimeConfig[];
+        const replacement = { definition: serverDefinition, checksum: serverResult?.entry?.level.checksum ?? '', source: 'remote' as const };
+        this.registry.set('campaignRuntime', [...runtimes.filter((runtime) => runtime.definition.sequence !== nextSequence), replacement]);
+      }
+      if (nextSequence <= CAMPAIGN_DEFINITIONS.length) {
+        this.registry.set('campaignState', { sequence: nextSequence, score: this.#score.value, lives: this.#lives.value, nukes: this.#currentNukes } satisfies CampaignRuntimeState);
+        this.scene.restart({ sequence: nextSequence });
+      }
+    } catch {
+      // An online server rejection must not manufacture progression. Offline
+      // mode is explicitly deterministic and may use the packaged authority.
+      if (this.#campaignSession?.offline) {
+        const nextSequence = this.#campaignSequence + 1;
+        this.registry.set('campaignState', { sequence: nextSequence, score: this.#score.value, lives: this.#lives.value, nukes: this.#currentNukes } satisfies CampaignRuntimeState);
+        this.scene.restart({ sequence: nextSequence });
+      } else {
+        this.#terminalActionHandled = false;
+      }
+    }
   }
 
   private installHostileQa(): void {

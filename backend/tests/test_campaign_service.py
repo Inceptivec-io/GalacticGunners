@@ -11,15 +11,21 @@ class CampaignServiceTests(TestCase):
         call_command('seed_runtime_authority')
 
     def test_seeded_campaign_is_six_entries_but_not_schema_bounded(self):
-        run = CampaignService.start(user=None, seed_root=12001)
+        run, capability = CampaignService.start(user=None, seed_root=12001)
+        self.assertTrue(capability)
         self.assertEqual(run.current_entry.position, 1)
         self.assertEqual(run.next_entry.position, 2)
         self.assertEqual(run.campaign_version.entries.count(), 6)
         self.assertEqual(ServicePlan.objects.count(), 4)
 
     def test_completion_resolves_next_entry_by_identity(self):
-        run = CampaignService.start(user=None, seed_root=12001)
+        run, capability = CampaignService.start(user=None, seed_root=12001)
         first_entry = run.current_entry
-        completed = CampaignService.complete_entry(campaign_run=run, entry_id=first_entry.id, score=125, lives=3, nukes=2)
+        completed = CampaignService.complete_entry(campaign_run=run, user=None, capability=capability, entry_id=first_entry.id, score=125, lives=3, nukes=2)
         self.assertEqual(completed.current_entry.position, 2)
         self.assertEqual(completed.score, 125)
+
+    def test_anonymous_completion_requires_its_capability(self):
+        run, _capability = CampaignService.start(user=None, seed_root=12001)
+        with self.assertRaisesRegex(PermissionError, 'CAMPAIGN_CAPABILITY_INVALID'):
+            CampaignService.complete_entry(campaign_run=run, user=None, capability='wrong', entry_id=run.current_entry_id, score=0, lives=3, nukes=2)

@@ -7,8 +7,9 @@ from rest_framework import serializers
 
 PROHIBITED_KEYS = {'__proto__', 'constructor', 'prototype'}
 PROHIBITED_TEXT = ('<script', 'javascript:', 'eval(', 'process.', 'require(', 'select ', 'insert ', 'delete ', 'drop ')
-KNOWN_ENEMIES = {'scout'}
+KNOWN_ENEMIES = {'scout', 'cruiser', 'destroyer'}
 KNOWN_PICKUPS = {'nuke', 'life'}
+KNOWN_HAZARDS = {'asteroid', 'comet'}
 
 
 def canonical_json(value):
@@ -40,6 +41,15 @@ def validate_definition(value):
         for entry in rule.get('entries', []):
             if entry.get('pickup') not in KNOWN_PICKUPS:
                 raise serializers.ValidationError('Unknown pickup type.')
+    for hazard in value.get('hazards', []):
+        if (
+            hazard.get('type') not in KNOWN_HAZARDS
+            or not isinstance(hazard.get('count'), int)
+            or not 1 <= hazard['count'] <= 12
+            or not isinstance(hazard.get('speed'), (int, float))
+            or hazard['speed'] <= 0
+        ):
+            raise serializers.ValidationError('Invalid hazard definition.')
     anchors = value.get('boarding_anchors', [])
     if not isinstance(anchors, list) or len(anchors) > 1:
         raise serializers.ValidationError('A level may have at most one Boarding anchor.')

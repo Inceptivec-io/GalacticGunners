@@ -6,6 +6,10 @@ from django.db import transaction
 
 from accounts.models import User
 from players.models import PlayerProfile
+from organizations.models import Organization, OrganizationMembership
+from plans.models import OrganizationPlanAssignment, ServicePlan
+from games.models import GameProject, OwnerScope, Visibility
+from django.utils import timezone
 
 
 class Command(BaseCommand):
@@ -31,4 +35,24 @@ class Command(BaseCommand):
         group, _ = Group.objects.get_or_create(name='Platform Owners')
         group.permissions.add(*Permission.objects.filter(content_type__app_label='accounts', codename__in=['manage_platform', 'publish_core', 'manage_organizations', 'moderate_scores', 'view_platform_audit']))
         user.groups.add(group)
+        # The founder account also receives one deliberately bounded customer
+        # tenancy, so Command Post review exercises the same identity without
+        # inventing a second local credential or bypassing tenant checks.
+        organization, _ = Organization.objects.get_or_create(
+            slug='founder-demo', defaults={'name': 'Founder Demo Organisation', 'created_by': user},
+        )
+        OrganizationMembership.objects.update_or_create(
+            organization=organization, user=user,
+            defaults={'role': OrganizationMembership.Role.BUSINESS_ADMIN, 'status': OrganizationMembership.Status.ACTIVE, 'created_by': user},
+        )
+        plan = ServicePlan.objects.filter(code='SPACE_CADET', status=ServicePlan.Status.ACTIVE).first()
+        if plan:
+            OrganizationPlanAssignment.objects.get_or_create(
+                organization=organization, status=OrganizationPlanAssignment.Status.ACTIVE,
+                defaults={'plan': plan, 'assigned_by': user, 'starts_at': timezone.now(), 'reason': 'Founder local review fixture'},
+            )
+        GameProject.objects.get_or_create(
+            slug='founder-demo-campaign', owner_scope=OwnerScope.ORGANIZATION, organization=organization, owner_user=None,
+            defaults={'name': 'Founder Demo Campaign', 'visibility': Visibility.ORGANIZATION, 'created_by': user},
+        )
         self.stdout.write(self.style.SUCCESS('Founder review account ready.'))

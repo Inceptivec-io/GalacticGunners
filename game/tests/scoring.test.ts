@@ -128,6 +128,14 @@ class FakeGameRunClient implements GameRunClient {
   getLeaderboard(): never {
     throw new Error('Leaderboard is out of scope for Sprint 001.');
   }
+
+  startCampaign() {
+    return Promise.resolve({ id: 'campaign-001', score: 0, lives: 3, nukes: 2, ranked: false, capability: 'test-capability', entry: { id: 'entry-001', position: 1, level: { slug: 'level-01', version: 1, checksum: '0'.repeat(64), definition: {} } } });
+  }
+
+  completeCampaignEntry() {
+    return Promise.resolve({ id: 'campaign-001', status: 'ACTIVE' as const, score: 25, lives: 3, nukes: 2, ranked: false, capability: 'test-capability', entry: { id: 'entry-002', position: 2, level: { slug: 'level-02', version: 1, checksum: '1'.repeat(64), definition: {} } } });
+  }
 }
 
 test('game session starts online runs and completes each run once', async () => {

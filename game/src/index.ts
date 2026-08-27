@@ -8,6 +8,7 @@ export * from './systems/InputSystem';
 export * from './systems/PlayfieldLayout';
 export * from './systems/AudioSystem';
 export * from './systems/GameSession';
+export * from './systems/CampaignSession';
 export * from './services/GameApiClient';
 export * from './input/InputCapabilities';
 export * from './runtime';
