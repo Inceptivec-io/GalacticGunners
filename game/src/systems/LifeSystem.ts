@@ -26,4 +26,11 @@ export class LifeSystem {
   reset(): void {
     this.#lives = this.maxLives;
   }
+
+  restore(lives: number): void {
+    if (!Number.isInteger(lives) || lives < 0 || lives > this.maxLives) {
+      throw new Error('LifeSystem restore requires a valid life count.');
+    }
+    this.#lives = lives;
+  }
 }

@@ -21,6 +21,7 @@ import { validateLevelDefinition } from '../levels/LevelValidator';
 type TerminalState = 'complete' | 'failed';
 type PlayerState = 'active' | 'hit' | 'regenerating';
 type TerminalAction = 'continue' | 'replay' | 'try-again' | 'menu';
+type CampaignRuntimeState = { sequence: number; score: number; lives: number; nukes: number };
 type SweptHitTarget =
   | { kind: 'player'; body: Phaser.Physics.Arcade.Body }
   | { kind: 'scout'; body: Phaser.Physics.Arcade.Body; scout: Phaser.Physics.Arcade.Sprite }
@@ -131,7 +132,8 @@ export class Level1Scene extends CombatLevelScene {
     this.#formationDirection = 1;
     this.#formationOffsetX = 0;
     this.#formationDropY = 0;
-    this.#currentNukes = LEVEL_ONE_SLICE.maxNukes;
+    const campaignState = this.registry.get('campaignState') as CampaignRuntimeState | undefined;
+    this.#currentNukes = campaignState?.sequence === this.#campaignSequence ? campaignState.nukes : LEVEL_ONE_SLICE.maxNukes;
     this.#rearmProgress = LEVEL_ONE_SLICE.nukeRearmMax;
     this.#nukesFired = 0;
     this.#lastUpdateAtMs = 0;
@@ -142,6 +144,10 @@ export class Level1Scene extends CombatLevelScene {
 
     this.#score = new ScoreSystem();
     this.#lives = new LifeSystem(LEVEL_ONE_SLICE.initialLives);
+    if (campaignState?.sequence === this.#campaignSequence) {
+      this.#score.restore(campaignState.score);
+      this.#lives.restore(campaignState.lives);
+    }
     this.#audio = new AudioSystem((cue) => this.sound.play(RUNTIME_ASSETS.audio[cue].key));
     this.#session = new GameSession(this.#runtimeConfig.apiBaseUrl ? new GameApiClient(this.#runtimeConfig.apiBaseUrl) : null, {
       slug: this.#definition.slug,
@@ -1057,11 +1063,18 @@ export class Level1Scene extends CombatLevelScene {
     if (action === 'continue') {
       const nextSequence = this.#campaignSequence + 1;
       if (nextSequence <= CAMPAIGN_DEFINITIONS.length) {
+        this.registry.set('campaignState', {
+          sequence: nextSequence,
+          score: this.#score.value,
+          lives: this.#lives.value,
+          nukes: this.#currentNukes,
+        } satisfies CampaignRuntimeState);
         this.scene.restart({ sequence: nextSequence });
       }
       return;
     }
     if (action === 'menu') {
+      this.registry.remove('campaignState');
       this.scene.start('MainMenuScene');
       return;
     }
