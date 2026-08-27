@@ -947,6 +947,8 @@ export class Level1Scene extends CombatLevelScene {
         nukes: this.#currentNukes,
         anchorId: anchor.id,
         sourceEntityId: anchor.source_entity_id,
+        sourceEntityType: anchor.source_entity_type,
+        interior: anchor.interior,
         apiBaseUrl: this.#runtimeConfig.apiBaseUrl,
         gameRunId: this.#session.runId ?? undefined,
         levelVersion: this.levelRuntime?.version ?? this.#definition.version,

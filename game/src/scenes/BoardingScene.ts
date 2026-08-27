@@ -12,6 +12,8 @@ const OFFER_DURATION_MS = 8000;
 interface BoardingLaunch {
   anchorId: string;
   sourceEntityId: string;
+  sourceEntityType: 'scout' | 'cruiser' | 'destroyer';
+  interior: { slug: 'alien-frigate'; version: 1; checksum: string };
   levelVersion: number;
   levelChecksum: string;
 }
@@ -48,11 +50,11 @@ export class BoardingScene extends Phaser.Scene {
   private offerText!: Phaser.GameObjects.Text;
   private enterLabel!: Phaser.GameObjects.Text;
   private enterButton!: Phaser.GameObjects.Image;
-  private launch: BoardingLaunch = { anchorId: 'level-04-alien-frigate-01', sourceEntityId: 'level-04:formation-0:r0:c14', levelVersion: 1, levelChecksum: '' };
+  private launch: BoardingLaunch = { anchorId: 'level-04-alien-frigate-01', sourceEntityId: 'level-04:formation-0:r0:c14', sourceEntityType: 'scout', interior: { slug: 'alien-frigate', version: 1, checksum: 'e9b1af65f0daef6725a7ddf4683b5f6d503e25dabc97aef1212102e6b1e994f3' }, levelVersion: 1, levelChecksum: '' };
 
   constructor() { super('BoardingScene'); }
 
-  init(data: { seed?: number; lives?: number; nukes?: number; anchorId?: string; sourceEntityId?: string; apiBaseUrl?: string; gameRunId?: string; levelVersion?: number; levelChecksum?: string } = {}): void {
+  init(data: { seed?: number; lives?: number; nukes?: number; anchorId?: string; sourceEntityId?: string; sourceEntityType?: 'scout' | 'cruiser' | 'destroyer'; interior?: { slug: 'alien-frigate'; version: 1; checksum: string }; apiBaseUrl?: string; gameRunId?: string; levelVersion?: number; levelChecksum?: string } = {}): void {
     this.simulation = new BoardingSimulation(data.seed ?? 1, { lives: data.lives ?? 3, nukes: data.nukes ?? 2 });
     this.coordinator = new BoardingCoordinator();
     this.offerElapsed = 0;
@@ -66,6 +68,8 @@ export class BoardingScene extends Phaser.Scene {
     this.launch = {
       anchorId: data.anchorId ?? 'level-04-alien-frigate-01',
       sourceEntityId: data.sourceEntityId ?? 'level-04:formation-0:r0:c14',
+      sourceEntityType: data.sourceEntityType ?? 'scout',
+      interior: data.interior ?? { slug: 'alien-frigate', version: 1, checksum: 'e9b1af65f0daef6725a7ddf4683b5f6d503e25dabc97aef1212102e6b1e994f3' },
       levelVersion: data.levelVersion ?? 1,
       levelChecksum: data.levelChecksum ?? '',
     };
@@ -185,13 +189,13 @@ export class BoardingScene extends Phaser.Scene {
       this.serverRun = await this.api.startBoardingRun(this.gameRunId, {
         anchor_id: this.launch.anchorId,
         source_entity_id: this.launch.sourceEntityId,
-        source_entity_type: 'scout',
+        source_entity_type: this.launch.sourceEntityType,
         source_ship_type: 'ALIEN_FRIGATE',
         level_version: this.launch.levelVersion,
         level_checksum: this.launch.levelChecksum,
-        interior_slug: 'alien-frigate',
-        interior_version: 1,
-        interior_checksum: 'e9b1af65f0daef6725a7ddf4683b5f6d503e25dabc97aef1212102e6b1e994f3',
+        interior_slug: this.launch.interior.slug,
+        interior_version: this.launch.interior.version,
+        interior_checksum: this.launch.interior.checksum,
         shooter_state_digest: this.shooterStateDigest,
         resources: snapshot.resources,
       });

@@ -74,7 +74,7 @@ export interface CampaignEntryCompletion { score: number; lives: number; nukes: 
 export interface BoardingRunStartRequest {
   anchor_id: string;
   source_entity_id: string;
-  source_entity_type: 'scout';
+  source_entity_type: 'scout' | 'cruiser' | 'destroyer';
   source_ship_type: 'ALIEN_FRIGATE';
   level_version: number;
   level_checksum: string;
