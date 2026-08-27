@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://galacticgunners.com/contracts/v1/portal-session.schema.json",
+  "title": "Galactic Gunners Portal Session Delta",
+  "$defs": {
+    "LoginAudience": {
+      "enum": ["PLAYER_ACCOUNT", "COMMAND_POST", "INCEPTIVEC_ADMIN"]
+    },
+    "SurfaceGrant": {
+      "enum": ["PLAYER_ACCOUNT", "COMMAND_POST", "INCEPTIVEC_ADMIN"]
+    },
+    "LoginRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["username", "password", "audience"],
+      "properties": {
+        "username": {"type": "string", "minLength": 3, "maxLength": 30, "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{2,29}$"},
+        "password": {"type": "string", "minLength": 1, "maxLength": 128},
+        "audience": {"$ref": "#/$defs/LoginAudience"},
+        "campaign_claim_token": {"type": "string", "minLength": 43, "maxLength": 128}
+      }
+    },
+    "Membership": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["organization_id", "organization_slug", "organization_name", "role", "status"],
+      "properties": {
+        "organization_id": {"type": "string", "format": "uuid"},
+        "organization_slug": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "organization_name": {"type": "string", "minLength": 1, "maxLength": 128},
+        "role": {"enum": ["BUSINESS_ADMIN", "EDITOR", "PLAYER"]},
+        "status": {"const": "ACTIVE"}
+      }
+    },
+    "SessionResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authenticated", "user", "surface_grants"],
+      "properties": {
+        "authenticated": {"const": true},
+        "user": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "username", "display_name", "platform_permissions", "memberships"],
+          "properties": {
+            "id": {"type": "string", "format": "uuid"},
+            "username": {"type": "string", "minLength": 3, "maxLength": 30},
+            "display_name": {"type": "string", "minLength": 3, "maxLength": 20},
+            "platform_permissions": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z_]+\\.[a-z_]+$"}},
+            "memberships": {"type": "array", "items": {"$ref": "#/$defs/Membership"}}
+          }
+        },
+        "surface_grants": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/SurfaceGrant"}},
+        "claim_result": {"enum": ["CLAIMED", "NOT_REQUESTED"]}
+      }
+    }
+  },
+  "oneOf": [
+    {"$ref": "#/$defs/LoginRequest"},
+    {"$ref": "#/$defs/SessionResponse"}
+  ]
+}
+

@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import admin
 from django.urls import path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
@@ -7,12 +8,17 @@ from boarding.views import BoardingCompleteView, BoardingRunDetailView, Boarding
 from leaderboard.views import LeaderboardListView, LeaderboardMeView, ModerationView
 from players.api import LeaderboardProfileView
 from levels.views import AdminLevelActionView, AdminLevelCreateView, AdminLevelExportView, AdminLevelGenerateView, AdminLevelImportView, PublicLevelDetailView, PublicLevelListView, PublicVersionView
+from accounts.api import CsrfView, LoginView, LogoutView, RegisterView, SessionView
 
 from .views import health
 
 urlpatterns = [
-    path('inceptivec-gamification-admin/', admin.site.urls),
     path('api/v1/health/', health, name='health'),
+    path('api/v1/auth/csrf/', CsrfView.as_view(), name='csrf'),
+    path('api/v1/auth/session/', SessionView.as_view(), name='session'),
+    path('api/v1/auth/login/', LoginView.as_view(), name='login'),
+    path('api/v1/auth/logout/', LogoutView.as_view(), name='logout'),
+    path('api/v1/auth/register/', RegisterView.as_view(), name='register'),
     path('api/v1/game-runs/', GameRunStartView.as_view(), name='game-run-start'),
     path(
         'api/v1/game-runs/<uuid:run_id>/complete/',
@@ -39,3 +45,6 @@ urlpatterns = [
     path('api/schema/', SpectacularAPIView.as_view(), name='api-schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='api-schema'), name='api-docs'),
 ]
+
+if settings.ENABLE_DJANGO_ADMIN:
+    urlpatterns.insert(0, path('django-admin/', admin.site.urls))

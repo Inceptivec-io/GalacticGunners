@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 import { CampaignDesigner } from './CampaignDesigner';
+import { AdminGate } from './AdminGate';
 
 export const metadata: Metadata = {
   title: 'Campaign Designer | Galactic Gunners',
@@ -8,5 +9,5 @@ export const metadata: Metadata = {
 };
 
 export default function CampaignDesignerPage() {
-  return <CampaignDesigner />;
+  return <AdminGate><CampaignDesigner /></AdminGate>;
 }

@@ -1,21 +1,24 @@
 'use client';
 
-import { useMemo, useState, type CSSProperties } from 'react';
+import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 
 type DesignerLevel = { id: string; slug: string; name: string; sequence: number; active_version?: { version: number; status: string; checksum: string } | null };
 
-const API = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8010/api/v1';
 const tools = ['Player', 'Scout formation', 'Bunker', 'Shield tile', 'Hazard', 'NUKE drop', 'LIFE drop', 'Boarding anchor'];
 
 export function CampaignDesigner() {
   const [levels, setLevels] = useState<DesignerLevel[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
-  const [message, setMessage] = useState('Administrator session required.');
+  const [message, setMessage] = useState('Loading governed level catalogue...');
   const [zoom, setZoom] = useState(1);
 
   const selectedLevel = useMemo(() => levels.find((level) => level.id === selected) ?? null, [levels, selected]);
   async function call(path: string, init?: RequestInit) {
-    const response = await fetch(`${API}${path}`, { credentials: 'include', headers: { 'content-type': 'application/json' }, ...init });
+    const response = await fetch(`/api/v1${path}`, {
+      credentials: 'same-origin',
+      headers: { ...(init?.body ? { 'content-type': 'application/json' } : {}), ...init?.headers },
+      ...init,
+    });
     if (!response.ok) throw new Error(`Request failed (${response.status})`);
     return response.json();
   }
@@ -24,6 +27,7 @@ export function CampaignDesigner() {
       const value = await call('/levels/'); setLevels(value.results ?? value); setMessage('Published level catalogue loaded.');
     } catch (error) { setMessage(error instanceof Error ? error.message : 'Unable to load levels.'); }
   }
+  useEffect(() => { void load(); }, []);
   async function generate() {
     try {
       const value = await call('/admin/levels/generate/', { method: 'POST', body: JSON.stringify({ sequence: levels.length + 2, seed: 12000 + levels.length + 2 }) });

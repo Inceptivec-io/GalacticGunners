@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "surfaces": {
+    "INCEPTIVEC_ADMIN": {"web_prefix":"/inceptivec-gamification-admin","login":"/inceptivec-gamification-admin/login","required_grant":"INCEPTIVEC_ADMIN"},
+    "COMMAND_POST": {"web_prefix":"/command-post","login":"/command-post/login","required_grant":"COMMAND_POST"},
+    "PLAYER_ACCOUNT": {"web_prefix":"/account","login":"/account/login","required_grant":"PLAYER_ACCOUNT"}
+  },
+  "technical_admin": {"backend_path":"/django-admin/","linked":false,"stage_enabled":false,"production_enabled":false},
+  "browser_api_base":"/api/v1",
+  "legacy_redirects":[{"from":"/gamification","to":"/command-post","status":308}]
+}
+

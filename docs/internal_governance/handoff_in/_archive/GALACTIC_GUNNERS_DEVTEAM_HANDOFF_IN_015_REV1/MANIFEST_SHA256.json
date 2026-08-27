@@ -1,0 +1,106 @@
+{
+  "manifest_version": "1.0",
+  "handoff": "GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015_REV1",
+  "algorithm": "SHA-256",
+  "self_referential": false,
+  "file_count": 24,
+  "files": [
+    {
+      "path": "00_FOUNDER_ROUTING_AND_EXECUTION_AUTHORITY.md",
+      "sha256": "23dc7b2b9ce942a7a11e6cbbcc1956cca3d353d7505a1c5204cbb6078b3e30f9"
+    },
+    {
+      "path": "01_RECONCILIATION_AND_NO_DUPLICATION_MATRIX.md",
+      "sha256": "683879effe4de0757ea70c260c2c1a8baccf4e5fc56930852a33fca4840b0826"
+    },
+    {
+      "path": "02_LOCKED_PRODUCT_ARCHITECTURE.md",
+      "sha256": "07b58f768df767588dfe4b252eed8fe0c2b3038bccefbe23adb0ff6e5dd7b651"
+    },
+    {
+      "path": "03_IMPLEMENTATION/DATA_MODELS_AND_MIGRATIONS.md",
+      "sha256": "0676979ef73e28d057e994bedb27f21b7a64256fa216b39ee8a6bf8a9ce95071"
+    },
+    {
+      "path": "03_IMPLEMENTATION/ENVIRONMENT_PROXY_AND_FOUNDER_BOOTSTRAP.md",
+      "sha256": "e1dc230af1dbef481ed4c2cdf9480da0ad3c5b57f1adffefa5ebc3be566dc10d"
+    },
+    {
+      "path": "03_IMPLEMENTATION/GAME_RUNTIME_AND_DESIGNER_COMPLETION.md",
+      "sha256": "a96102fa227254ec210e8207f75738ffad5747cc31e461888a599123e003cdfc"
+    },
+    {
+      "path": "03_IMPLEMENTATION/ROUTES_AUTHORIZATION_AND_SESSION_CONTRACT.md",
+      "sha256": "11f941838a799d1f13036e76abfd8854f0178d04b2c8672d57bf8ed68f2928e3"
+    },
+    {
+      "path": "03_IMPLEMENTATION/SURFACE_PERMISSION_MATRIX.md",
+      "sha256": "96d2b7ef39409ba386e0879d99e876d5542214ab4564acf10cb2ddb989b6aec5"
+    },
+    {
+      "path": "04_CONTRACTS/API_NAMESPACE_AND_ERROR_DELTA.md",
+      "sha256": "6af41c544ba668fcb09da9a13bd1bbd55b1f23d1a49bf27e823cc8c1c0f9cc40"
+    },
+    {
+      "path": "04_CONTRACTS/config/environment-contract.env.example",
+      "sha256": "3275a984633bf174afc0a4a9e225690100e1fe8229caf82697b58a1a80b94728"
+    },
+    {
+      "path": "04_CONTRACTS/config/route-policy.json",
+      "sha256": "6a869bd837f032328b76d74abaa3aa9dd839964471e1d8ba87b763aef84caeef"
+    },
+    {
+      "path": "04_CONTRACTS/config/service-plans.seed.json",
+      "sha256": "61ee30369ddeb20c57519f665146b40a27fdee9621bd11582f24e77877cd1f69"
+    },
+    {
+      "path": "04_CONTRACTS/openapi/galactic-gunners-h015-rev1-delta.yaml",
+      "sha256": "64490bbf7f06fac34b913156947241ffb147b882d39b675b3e8688490c2c6969"
+    },
+    {
+      "path": "04_CONTRACTS/schemas/campaign-definition.schema.json",
+      "sha256": "971031afb8ca1df87bec695d2a6ec05fda8b583a55c879addbe8a0360223f9f7"
+    },
+    {
+      "path": "04_CONTRACTS/schemas/founder-review-state.schema.json",
+      "sha256": "129eebd09acf2a0fbf81b31a4a470f053183258cf3632ec7ecce8efa374ac2b6"
+    },
+    {
+      "path": "04_CONTRACTS/schemas/portal-session.schema.json",
+      "sha256": "d7fbe0002a74411239a9d154ec2074b43693cb576cb569533ae1d42a014148f1"
+    },
+    {
+      "path": "04_CONTRACTS/schemas/service-plan.schema.json",
+      "sha256": "9ec092b26247b01f9b13e5915b350b7ef59257e9e7a3dfea5e16f5ad62250adf"
+    },
+    {
+      "path": "05_EXECUTION/FOUNDER_LOCAL_REVIEW_GUIDE_REQUIRED_CONTENT.md",
+      "sha256": "913e29e325ac1f5f54632ac21381ef3fa0f6b0ded089260e7dd57e5fb0c8cd38"
+    },
+    {
+      "path": "05_EXECUTION/REPAIR_SEQUENCE_AND_DEFINITION_OF_DONE.md",
+      "sha256": "d65f415a0f28cad94bd8d2f7f20ad4bd3f66b7a69494ca2ac9a39b7781959e35"
+    },
+    {
+      "path": "05_EXECUTION/VALIDATION_AND_HOSTILE_TEST_DELTA.md",
+      "sha256": "44f558763c8be85e5052e763a589effaeb2fecbd60989f59d559d3b7eedd6ce9"
+    },
+    {
+      "path": "06_GOVERNANCE/H015_REV1_DECISION_AND_DEFECT_REGISTER.md",
+      "sha256": "630862c3f18b094d0210ece478bc6861bd6befdf1fe6ddf9078d1e6f86c6015e"
+    },
+    {
+      "path": "06_GOVERNANCE/ROADMAP_AND_PLAYLIST_v1.3.1_AMENDMENT.md",
+      "sha256": "8bece14102c06c076bc2fda49a15ae75583369d73db5e2a177c2e37fa46fe5e9"
+    },
+    {
+      "path": "07_RETURN/RETURN_PROTOCOL.md",
+      "sha256": "5f17b017c1d2ff574fc020d10f5f43356177bbb9ae033362fe76eeb45cae8e74"
+    },
+    {
+      "path": "README.md",
+      "sha256": "5af6e14a2deafe96074ccb814b2b598d29dbb8c2753cb7f52042b1fea926f084"
+    }
+  ]
+}
+

@@ -15,12 +15,23 @@ def env_bool(name, default=False):
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'unsafe-local-development-only')
 DEBUG = env_bool('DJANGO_DEBUG', False)
+ENABLE_DJANGO_ADMIN = env_bool('ENABLE_DJANGO_ADMIN', False)
 ALLOWED_HOSTS = [host.strip() for host in os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',') if host.strip()]
 CORS_ALLOWED_ORIGINS = [
     origin.strip()
     for origin in os.environ.get('DJANGO_CORS_ALLOWED_ORIGINS', '').split(',')
     if origin.strip()
 ]
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get('DJANGO_CSRF_TRUSTED_ORIGINS', '').split(',')
+    if origin.strip()
+]
+CORS_ALLOW_CREDENTIALS = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -85,4 +96,5 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': ['rest_framework.authentication.SessionAuthentication'],
     'EXCEPTION_HANDLER': 'config.api_errors.api_exception_handler',
 }
+REST_FRAMEWORK['DEFAULT_THROTTLE_RATES'] = {'authentication': '10/min'}
 SPECTACULAR_SETTINGS = {'TITLE': 'Galactic Gunners API', 'VERSION': '1.0.0'}

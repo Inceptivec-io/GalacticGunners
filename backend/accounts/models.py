@@ -14,6 +14,13 @@ class User(AbstractUser):
 
     class Meta(AbstractUser.Meta):
         constraints = [models.UniqueConstraint(Lower('username'), name='account_username_ci_unique')]
+        permissions = [
+            ('manage_platform', 'Can access the Inceptivec Gamification platform portal'),
+            ('publish_core', 'Can publish CORE campaign and release content'),
+            ('manage_organizations', 'Can manage organisations and plan assignments'),
+            ('moderate_scores', 'Can moderate platform scores'),
+            ('view_platform_audit', 'Can view platform audit records'),
+        ]
 
     def clean(self):
         super().clean()
