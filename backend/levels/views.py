@@ -3,6 +3,7 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from games.models import OwnerScope
 from .models import Level, LevelAuditEvent, LevelVersion
 from .permissions import IsLevelAdmin
 from .serializers import LevelCreateSerializer, LevelSerializer, LevelVersionCreateSerializer, LevelVersionSerializer
@@ -11,7 +12,11 @@ from .validation import checksum, validate_definition
 
 class PublicLevelListView(generics.ListAPIView):
     serializer_class = LevelSerializer
-    queryset = Level.objects.filter(archived=False, active_version__status=LevelVersion.Status.PUBLISHED).select_related('active_version')
+    queryset = Level.objects.filter(
+        archived=False,
+        game_project__owner_scope=OwnerScope.CORE,
+        active_version__status=LevelVersion.Status.PUBLISHED,
+    ).select_related('active_version')
 
 
 class PublicLevelDetailView(generics.RetrieveAPIView):
@@ -24,7 +29,11 @@ class PublicVersionView(generics.RetrieveAPIView):
     serializer_class = LevelVersionSerializer
     lookup_field = 'version'
     def get_queryset(self):
-        return LevelVersion.objects.filter(level__slug=self.kwargs['slug'], status=LevelVersion.Status.PUBLISHED)
+        return LevelVersion.objects.filter(
+            level__slug=self.kwargs['slug'],
+            level__game_project__owner_scope=OwnerScope.CORE,
+            status=LevelVersion.Status.PUBLISHED,
+        )
 
 
 class AdminLevelCreateView(APIView):
