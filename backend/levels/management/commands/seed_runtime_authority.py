@@ -113,9 +113,12 @@ class Command(BaseCommand):
             slug='final-assault',
             defaults={'name': 'Final Assault', 'created_by': system_user},
         )
-        campaign_version = campaign.versions.filter(lifecycle=Lifecycle.PUBLISHED).first()
-        if campaign_version is None:
-            campaign_version = CampaignVersion.objects.create(campaign=campaign, version=1, created_by=system_user)
+        campaign_version = campaign.versions.filter(lifecycle=Lifecycle.PUBLISHED).order_by('-version').first()
+        desired_versions = [level.active_version_id for level in levels]
+        existing_versions = [] if campaign_version is None else list(campaign_version.entries.order_by('position').values_list('level_version_id', flat=True))
+        if existing_versions != desired_versions:
+            next_version = (campaign.versions.order_by('-version').first().version + 1) if campaign.versions.exists() else 1
+            campaign_version = CampaignVersion.objects.create(campaign=campaign, version=next_version, created_by=system_user)
             for position, level in enumerate(levels, start=1):
                 CampaignEntry.objects.create(campaign_version=campaign_version, position=position, level_version=level.active_version)
             campaign_version.lifecycle = Lifecycle.PUBLISHED
@@ -130,7 +133,7 @@ class Command(BaseCommand):
         }
         release, created = GameRelease.objects.get_or_create(
             game_project=core_project,
-            version='h015-core-v1',
+            version=f'h015-core-v{campaign_version.version}',
             defaults={'manifest': manifest, 'status': Lifecycle.PUBLISHED, 'created_by': system_user, 'published_by': system_user, 'published_at': timezone.now()},
         )
         if not created and release.status != Lifecycle.PUBLISHED:
