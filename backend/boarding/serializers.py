@@ -53,6 +53,10 @@ class StartBoardingRunSerializer(StrictSerializer):
             raise serializers.ValidationError({'game_run': 'GAME_RUN_CLOSED'})
         if run.level_version != attrs['level_version'] or run.level_checksum != attrs['level_checksum']:
             raise serializers.ValidationError({'level': 'LEVEL_VERSION_MISMATCH'})
+        authoritative_lives = run.lives_end if run.lives_end is not None else run.lives_start
+        authoritative_nukes = run.nukes_end if run.nukes_end is not None else run.nukes_start
+        if attrs['resources'] != {'lives': authoritative_lives, 'nukes': authoritative_nukes}:
+            raise serializers.ValidationError({'resources': 'RESOURCE_STATE_INVALID'})
         try:
             level_version = run.level.versions.get(version=attrs['level_version'], checksum=attrs['level_checksum'], status=LevelVersion.Status.PUBLISHED)
         except LevelVersion.DoesNotExist as exc:
@@ -113,7 +117,8 @@ class CompleteBoardingRunSerializer(StrictSerializer):
 
     @transaction.atomic
     def complete(self, boarding_run, idempotency_key):
-        run = BoardingRun.objects.select_for_update().get(pk=boarding_run.pk)
+        run = BoardingRun.objects.select_for_update().select_related('game_run').get(pk=boarding_run.pk)
+        parent = type(run.game_run).objects.select_for_update().get(pk=run.game_run_id)
         summary = self.validated_data
         summary_hash = digest(summary)
         if hasattr(run, 'submission'):
@@ -124,8 +129,9 @@ class CompleteBoardingRunSerializer(StrictSerializer):
             raise serializers.ValidationError({'detail': 'BOARDING_RUN_CLOSED'})
         if summary['shooter_state_digest'] != run.shooter_state_digest:
             raise serializers.ValidationError({'detail': 'SHOOTER_STATE_DIGEST_MISMATCH'})
-        if summary['outcome'] == BoardingRun.Outcome.TIMEOUT and summary['duration_ms'] != 60000:
-            raise serializers.ValidationError({'detail': 'TIMEOUT_DURATION_INVALID'})
+        if summary['outcome'] == BoardingRun.Outcome.TIMEOUT:
+            if summary['duration_ms'] != 60000 or len(summary['events']) != 1 or summary['events'][0]['type'] != 'TIMEOUT' or summary['events'][0]['at_ms'] != 60000:
+                raise serializers.ValidationError({'detail': 'TIMEOUT_DURATION_INVALID'})
         if summary['outcome'] == BoardingRun.Outcome.SUCCESS:
             if not any(event['type'] == 'EXIT_INTERACTED' and event['at_ms'] < 60000 for event in summary['events']):
                 raise serializers.ValidationError({'detail': 'SUCCESS_EXIT_REQUIRED'})
@@ -134,8 +140,12 @@ class CompleteBoardingRunSerializer(StrictSerializer):
             raise serializers.ValidationError({'detail': 'PLAYER_DEAD_LIVES_INVALID'})
         expected_lives = min(3, run.lives_start + summary['lives_found'])
         expected_nukes = min(2, run.nukes_start + summary['nukes_found'])
-        if summary['outcome'] == BoardingRun.Outcome.PLAYER_DEAD:
+        if summary['outcome'] in (BoardingRun.Outcome.TIMEOUT, BoardingRun.Outcome.PLAYER_DEAD):
             expected_lives = max(0, expected_lives - 1)
+        if summary['outcome'] == BoardingRun.Outcome.ABORTED:
+            if summary['lives_found'] or summary['nukes_found'] or summary['aliens_killed'] or summary['containers_opened']:
+                raise serializers.ValidationError({'detail': 'ABORTED_RETURN_INVALID'})
+            expected_lives, expected_nukes = run.lives_start, run.nukes_start
         if resources_end['lives'] != expected_lives or resources_end['nukes'] != expected_nukes:
             raise serializers.ValidationError({'detail': 'RESOURCE_RETURN_INVALID'})
         return_state = {'lives': expected_lives, 'nukes': expected_nukes, 'score_delta': 0, 'remove_source_entity_id': run.source_entity_id}
@@ -143,8 +153,15 @@ class CompleteBoardingRunSerializer(StrictSerializer):
         run.status, run.outcome, run.completed_at, run.duration_ms = BoardingRun.Status.COMPLETED, summary['outcome'], timezone.now(), summary['duration_ms']
         run.lives_end, run.nukes_end, run.aliens_killed, run.containers_opened = expected_lives, expected_nukes, summary['aliens_killed'], summary['containers_opened']
         run.lives_found, run.nukes_found, run.score_events, run.return_state = summary['lives_found'], summary['nukes_found'], [], return_state
-        run.validation_result, run.validation_code, run.return_applied = BoardingRun.ValidationResult.VALID, '', True
+        if summary['outcome'] == BoardingRun.Outcome.ABORTED:
+            run.status, run.validation_result, run.validation_code, run.return_applied = BoardingRun.Status.REJECTED, BoardingRun.ValidationResult.INVALID, 'ABORTED', False
+        else:
+            run.validation_result, run.validation_code, run.return_applied = BoardingRun.ValidationResult.VALID, '', True
         run.save()
+        if run.return_applied:
+            parent.lives_end = expected_lives
+            parent.nukes_end = expected_nukes
+            parent.save(update_fields=['lives_end', 'nukes_end'])
         # Audit records are server-authored state transitions, not browser trace
         # events.  The exact submitted trace remains immutable in the submission.
         payload = {'outcome': run.outcome, 'summary_hash': summary_hash}
