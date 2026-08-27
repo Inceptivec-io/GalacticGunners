@@ -4,13 +4,13 @@
 
 - Docker Desktop installed/running
 - Repository path: `C:\Users\Michael\dev\GalacticGunners`
-- Required branch: `feature/GG-COM-001`
+- Required branch: `feature/v1-platform-foundation-campaign-continuity`
 
 ## START COMMAND
 
 ```powershell
 cd C:\Users\Michael\dev\GalacticGunners
-docker compose up --build
+.\scripts\start-founder-review.ps1
 ```
 
 ## STOP COMMAND
@@ -36,26 +36,31 @@ docker compose up
 
 ## LOCAL URL
 
-`http://localhost:8027`
+All product review uses `http://localhost:3002`:
+
+- `/play`
+- `/leaderboard`
+- `/inceptivec-gamification-admin`
+- `/command-post`
 
 ## EXPECTED CONTAINER NAME
 
-`galactic-gunners-founder-local`
+`galacticgunners-web-1`, `galacticgunners-backend-1`, and `galacticgunners-db-1`
 
 ## EXPECTED SERVICE NAME
 
-`galactic-gunners`
+`web`, `backend`, and `db`
 
 ## LOG COMMAND
 
 ```powershell
-docker compose logs -f galactic-gunners
+docker compose logs -f web backend
 ```
 
 ## HOW TO CONFIRM CONTAINER HEALTH
 
 ```powershell
-docker inspect galactic-gunners-founder-local --format '{{.State.Status}} {{if .State.Health}}{{.State.Health.Status}}{{end}}'
+docker compose ps
 ```
 
 Expected result after startup: `running healthy`
@@ -65,10 +70,10 @@ Expected result after startup: `running healthy`
 ```powershell
 git branch --show-current
 git rev-parse HEAD
-git rev-parse origin/feature/GG-COM-001
+git rev-parse origin/feature/v1-platform-foundation-campaign-continuity
 ```
 
-Expected branch: `feature/GG-COM-001`
+Expected branch: `feature/v1-platform-foundation-campaign-continuity`
 
 ## HOW TO TROUBLESHOOT PORT CONFLICT
 
@@ -107,7 +112,7 @@ docker compose build --no-cache
 docker compose up
 ```
 
-Then hard-refresh the browser tab for `http://localhost:8027`.
+Then rerun `.\scripts\start-founder-review.ps1` and use the URLs in `FOUNDER_REVIEW_ACCESS.local.txt`.
 
 ## OPTIONAL VERIFICATION COMMAND
 
