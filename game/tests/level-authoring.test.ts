@@ -49,6 +49,10 @@ test('published package retains the governed six-level population baseline', () 
   assert.deepEqual([byType(5, 'scout'), byType(5, 'cruiser'), byType(5, 'destroyer')], [24, 12, 8]);
   assert.deepEqual([byType(6, 'scout'), byType(6, 'cruiser'), byType(6, 'destroyer'), byType(6, 'mothership')], [18, 10, 6, 1]);
   assert.equal(CAMPAIGN_DEFINITIONS[0].shields[0].count * 32, 256);
+  const boarding = CAMPAIGN_DEFINITIONS[3].boarding_anchors?.[0];
+  assert.equal(boarding?.source_entity_type, 'cruiser');
+  assert.equal(boarding?.source_entity_id, 'level-04:formation-1:r0:c5');
+  assert.equal(boarding?.offer_duration_ms, 8000);
 });
 
 test('compiler preserves authored objectives and stable Boarding target identity', () => {
