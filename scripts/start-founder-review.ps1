@@ -44,7 +44,7 @@ if (-not $existing['POSTGRES_DB'] -or -not $existing['POSTGRES_USER'] -or -not $
   Set-ReviewValue 'DATABASE_URL' "postgresql://$($dbEnv['POSTGRES_USER']):$($dbEnv['POSTGRES_PASSWORD'])@db:5432/$($dbEnv['POSTGRES_DB'])"
 }
 $reviewDefaults = @{
-  'DJANGO_CSRF_TRUSTED_ORIGINS' = 'http://localhost:3002'; 'ENABLE_DJANGO_ADMIN' = 'false'; 'FOUNDER_REVIEW_MODE' = 'true';
+  'DJANGO_SETTINGS_MODULE' = 'config.settings.local'; 'DJANGO_DEBUG' = 'true'; 'DJANGO_ALLOWED_HOSTS' = 'localhost,127.0.0.1,backend'; 'DJANGO_CSRF_TRUSTED_ORIGINS' = 'http://localhost:3002'; 'ENABLE_DJANGO_ADMIN' = 'false'; 'FOUNDER_REVIEW_MODE' = 'true';
   'COMMAND_POST_REVIEW_USERNAME' = 'command-post-review'; 'COMMAND_POST_REVIEW_DISPLAY_NAME' = 'Command Post Review'; 'COMMAND_POST_REVIEW_ORGANIZATION_SLUG' = 'founder-demo';
   'PLAYER_REVIEW_USERNAME' = 'player-review'; 'PLAYER_REVIEW_DISPLAY_NAME' = 'Player Review'; 'DJANGO_LOCAL_SUPERUSER_USERNAME' = 'django-local-admin';
   'NEXT_PUBLIC_API_BASE_URL' = '/api/v1'; 'INTERNAL_API_ORIGIN' = 'http://backend:8000'; 'WEB_HOST_PORT' = '3002'; 'BACKEND_HOST_PORT' = '8010'
