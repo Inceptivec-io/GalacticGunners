@@ -668,6 +668,14 @@ export class Level1Scene extends CombatLevelScene {
         return;
       }
       const position = this.scoutPosition(formation, row, col);
+      const profile = String(scout.getData('behaviourProfile') ?? '');
+      if (profile === 'enemy.scout.diver') {
+        const phaseSeed = String(scout.getData('entityId')).split('').reduce((sum, character) => sum + character.charCodeAt(0), 0);
+        const cycle = ((time + phaseSeed * 31) % 5400) / 5400;
+        const arc = Math.sin(cycle * Math.PI);
+        position.x += Math.sin(cycle * Math.PI * 2) * this.#layout.scoutSize.width * 3.2;
+        position.y += arc * Math.min(this.#layout.viewport.height * 0.42, 290);
+      }
       scout.setPosition(position.x, position.y);
       scout.setVelocity(0, 0);
       if (scout.y > this.#layout.movementBounds.bottom) {
