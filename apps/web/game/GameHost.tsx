@@ -40,9 +40,9 @@ export function GameHost() {
             : `/admin/levels/${encodeURIComponent(previewLevelId)}/preview/${encodeURIComponent(previewChecksum)}/`;
           const response = await fetch(`${apiBaseUrl}${previewPath}`, { credentials: 'same-origin' });
           if (!response.ok) throw new Error('The requested Designer preview is unavailable or no longer authorised.');
-          const preview = await response.json() as { config: LevelRuntimeConfig['definition']; version: number; checksum: string };
+          const preview = await response.json() as { config: unknown; version: number; checksum: string };
           if (preview.checksum !== previewChecksum) throw new Error('Designer preview checksum did not reconcile.');
-          previewRuntime = { definition: preview.config, version: preview.version, checksum: preview.checksum, source: 'remote' };
+          previewRuntime = { definition: gameModule.compileLevelDocument(preview.config as LevelRuntimeConfig['definition']), version: preview.version, checksum: preview.checksum, source: 'remote' };
         }
         gameRef.current = await gameModule.createGalacticGunnersGame({
           parent: hostRef.current,

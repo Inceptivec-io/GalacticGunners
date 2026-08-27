@@ -4,6 +4,7 @@ export * from './config/gameConfig';
 export * from './config/levelOneSlice';
 export * from './levels/LevelDefinition';
 export * from './levels/LevelRuntimeConfig';
+export * from './levels/LevelCompiler';
 export * from './systems/ScoreSystem';
 export * from './systems/LifeSystem';
 export * from './systems/InputSystem';
