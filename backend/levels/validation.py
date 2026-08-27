@@ -3,6 +3,7 @@ import json
 import re
 
 from rest_framework import serializers
+from .authoring import validate_authoring_document
 
 
 PROHIBITED_KEYS = {'__proto__', 'constructor', 'prototype'}
@@ -28,6 +29,11 @@ def validate_definition(value):
         raise serializers.ValidationError('Level definition contains prohibited content.')
     if any(key in value for key in PROHIBITED_KEYS):
         raise serializers.ValidationError('Level definition contains prohibited keys.')
+    if value.get('schema_version') == '1.1':
+        errors = validate_authoring_document(value)
+        if errors:
+            raise serializers.ValidationError({'code': 'LEVEL_DEFINITION_INVALID', 'detail': 'Level definition failed validation.', 'errors': errors})
+        return value
     level = value.get('level', value)
     if value.get('schema_version') != '1.0' or not isinstance(level, dict):
         raise serializers.ValidationError('Unsupported level definition schema.')
