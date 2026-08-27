@@ -185,7 +185,9 @@ export class Level1Scene extends CombatLevelScene {
     this.time.addEvent({
       delay: LEVEL_ONE_SLICE.scoutFireIntervalMs,
       loop: true,
-      callback: () => this.fireEnemyLaser(),
+      // Hostile cases place their own projectile deterministically. Ambient fire
+      // would otherwise mutate the initial golden shield topology before capture.
+      callback: () => { if (!this.#runtimeConfig.hostileQa) this.fireEnemyLaser(); },
     });
 
     this.scale.on('resize', this.handleResize, this);
