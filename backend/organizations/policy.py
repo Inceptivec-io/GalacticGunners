@@ -8,8 +8,7 @@ class AuthorizationPolicy:
     """Single server-side authority boundary for platform and tenant requests."""
 
     owner_permissions = {
-        'platform.manage_platform', 'platform.publish_core', 'platform.manage_organizations',
-        'platform.manage_entitlements', 'platform.manage_roles',
+        'accounts.manage_platform', 'accounts.publish_core', 'accounts.manage_organizations',
     }
 
     @classmethod
@@ -18,7 +17,7 @@ class AuthorizationPolicy:
 
     @classmethod
     def can_manage_platform(cls, user):
-        return bool(user and user.is_authenticated and (cls.is_platform_owner(user) or user.has_perm('platform.manage_platform')))
+        return bool(user and user.is_authenticated and (cls.is_platform_owner(user) or user.has_perm('accounts.manage_platform')))
 
     @classmethod
     def membership(cls, user, organization):
