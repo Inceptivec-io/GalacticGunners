@@ -21,6 +21,8 @@ export interface LevelDefinition {
     width?: number;
     height?: number;
     behaviour_profile?: string;
+    /** Authored formation motion retained when schema 1.1 entities are compiled. */
+    motion_profile?: string;
     /** A schema 1.1 entity keeps its authored coordinate instead of reflowing as a legacy grid. */
     fixed_position?: boolean;
   }>;

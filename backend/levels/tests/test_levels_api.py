@@ -73,6 +73,10 @@ def test_clone_export_and_deterministic_draft_generation(client, level_admin, co
     draft = Level.objects.get(slug='level-02').versions.get(version=1)
     assert draft.status == LevelVersion.Status.DRAFT
     assert draft.seed_policy == {'seed': 12002}
+    assert draft.config['schema_version'] == '1.1'
+    assert draft.config['entities'] == []
+    assert draft.config['formations'] == []
+    assert draft.config['player_spawns'][0]['enabled'] is True
 
 
 @pytest.mark.django_db

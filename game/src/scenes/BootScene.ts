@@ -136,6 +136,7 @@ export class BootScene extends Phaser.Scene {
       [RUNTIME_ASSETS.enemy.cruiser.key, FRAME_RECTS.cruiser],
       [RUNTIME_ASSETS.enemy.destroyer.key, FRAME_RECTS.destroyer],
       [RUNTIME_ASSETS.enemy.mothership.key, FRAME_RECTS.mothership],
+      [RUNTIME_ASSETS.enemy.mothershipHit.key, FRAME_RECTS.mothership],
       [RUNTIME_ASSETS.fx.asteroid.key, FRAME_RECTS.asteroid],
       [RUNTIME_ASSETS.fx.comet.key, FRAME_RECTS.comet],
     ] as const;

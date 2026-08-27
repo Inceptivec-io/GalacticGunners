@@ -8,6 +8,7 @@ from .models import Level, LevelAuditEvent, LevelVersion
 from .permissions import IsLevelAdmin
 from .serializers import LevelCreateSerializer, LevelSerializer, LevelVersionCreateSerializer, LevelVersionSerializer
 from .validation import checksum, validate_definition
+from .authoring import blank_authoring_document
 
 
 class PublicLevelListView(generics.ListAPIView):
@@ -153,18 +154,17 @@ class AdminLevelGenerateView(APIView):
     permission_classes = [IsLevelAdmin]
 
     def post(self, request):
-        """Create a deterministic DRAFT candidate; generation never publishes."""
+        """Create a deterministic blank schema-1.1 draft; generation never publishes."""
         seed = int(request.data.get('seed', 12001))
         sequence = int(request.data.get('sequence', 2))
         slug = request.data.get('slug', f'level-{sequence:02d}')
-        payload = {
-            'id': slug, 'slug': slug, 'name': request.data.get('name', f'Level {sequence}'), 'version': 1,
-            'schema_version': '1.0', 'status': 'DRAFT', 'sequence': sequence, 'seed': seed,
-            'player': {'x': 640, 'y': 610},
-            'enemy_formations': [{'type': 'scout', 'rows': 2 + min(sequence // 3, 1), 'columns': min(29, 16 + sequence * 2), 'origin': {'x': 50, 'y': 120}, 'spacing': {'x': 40, 'y': 50}}],
-            'shields': [{'count': 8, 'matrix': [[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,0,0,0,0,1,1],[1,1,0,0,0,0,1,1]]}],
-            'performance_budget': {'max_enemies': 58}, 'drop_tables': [],
-        }
+        payload = blank_authoring_document(
+            identifier=slug,
+            slug=slug,
+            name=request.data.get('name', f'Level {sequence}'),
+            sequence=sequence,
+            seed=seed,
+        )
         serializer = LevelCreateSerializer(data={'slug': slug, 'name': payload['name'], 'campaign': request.data.get('campaign', 'v1'), 'sequence': sequence, 'config': payload, 'seed_policy': {'seed': seed}}, context={'request': request})
         serializer.is_valid(raise_exception=True)
         level = serializer.save(); audit(request, 'generate', level, level.versions.first(), {'seed': seed})

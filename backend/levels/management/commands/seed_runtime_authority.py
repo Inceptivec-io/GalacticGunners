@@ -1,6 +1,4 @@
 import copy
-import json
-from pathlib import Path
 
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
@@ -11,7 +9,207 @@ from games.models import GameProject, GameRelease, Lifecycle, OwnerScope, Visibi
 from game_runs.models import GameVersion
 from levels.models import Level, LevelVersion
 from assets.models import AssetCategory, AssetRecord
-from levels.authoring import migrate_v1_to_v11
+
+
+SHIELD_MATRIX = [
+    [1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 0, 0, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 1, 1],
+]
+
+
+ENTITY_PROFILES = {
+    'SCOUT': {'asset_id': 'enemy.scout', 'width': 44, 'height': 58, 'behaviour_profile': 'enemy.scout.standard'},
+    'CRUISER': {'asset_id': 'enemy.cruiser', 'width': 72, 'height': 64, 'behaviour_profile': 'enemy.cruiser.standard'},
+    'DESTROYER': {'asset_id': 'enemy.destroyer', 'width': 92, 'height': 74, 'behaviour_profile': 'enemy.destroyer.standard'},
+    'MOTHERSHIP': {'asset_id': 'enemy.mothership', 'width': 260, 'height': 120, 'behaviour_profile': 'enemy.mothership.boss'},
+}
+
+
+def authored_entity(identifier, entity_type, x, y, *, profile=None):
+    definition = ENTITY_PROFILES[entity_type]
+    return {
+        'id': identifier,
+        'entity_type': entity_type,
+        'asset_id': definition['asset_id'],
+        'x': x,
+        'y': y,
+        'width': definition['width'],
+        'height': definition['height'],
+        'rotation': 0,
+        'z_index': 4,
+        'behaviour_profile': profile or definition['behaviour_profile'],
+        'enabled': True,
+        'tags': [],
+    }
+
+
+def formation(identifier, name, layout, members, *, motion='formation.standard', delay=0):
+    xs = [member['x'] for member in members]
+    ys = [member['y'] for member in members]
+    return {
+        'id': identifier,
+        'name': name,
+        'layout': layout,
+        'bounds': {
+            'x': min(xs),
+            'y': min(ys),
+            'width': max(xs) - min(xs),
+            'height': max(ys) - min(ys),
+        },
+        'member_ids': [member['id'] for member in members],
+        'motion_profile': motion,
+        'entry_delay_ms': delay,
+        'repeat': 0,
+    }
+
+
+def authored_grid(slug, prefix, entity_type, rows, columns, x, y, dx, dy, *, layout='GRID', profile=None):
+    """Materialise formation coordinates before checksum/publication.
+
+    The layout remains editable metadata, but runtime does not infer a visual
+    formation from labels. It receives the exact coordinates reviewed in the
+    Designer, including wedges and arcs.
+    """
+    members = []
+    for row in range(rows):
+        for column in range(columns):
+            entity_x = x + column * dx
+            entity_y = y + row * dy
+            if layout == 'WEDGE':
+                entity_x += abs(column - (columns - 1) / 2) * (dx * 0.12)
+                entity_y += abs(column - (columns - 1) / 2) * max(8, dy * 0.32)
+            elif layout == 'ARC':
+                normalized = 0 if columns == 1 else (column / (columns - 1)) * 2 - 1
+                entity_y += int((normalized * normalized) * max(22, dy * 1.15))
+            members.append(authored_entity(
+                f'{slug}:{prefix}:r{row}:c{column}', entity_type, entity_x, entity_y, profile=profile,
+            ))
+    return members
+
+
+def hazard_emitter(identifier, hazard_type, *, initial_count, maximum_active, speed_min, speed_max, edges, pattern='ALTERNATING_EDGES', points=None, interval=3500):
+    return {
+        'id': identifier,
+        'hazard_type': hazard_type,
+        'asset_id': f'hazard.{hazard_type.lower()}',
+        'enabled': True,
+        'initial_count': initial_count,
+        'maximum_active': maximum_active,
+        'spawn_interval_ms': interval,
+        'spawn_jitter_ms': 300,
+        'speed_min': speed_min,
+        'speed_max': speed_max,
+        'angular_velocity_min': -80 if hazard_type == 'ASTEROID' else 0,
+        'angular_velocity_max': 80 if hazard_type == 'ASTEROID' else 0,
+        'entry_edges': edges,
+        'spawn_pattern': pattern,
+        'spawn_points': points or [],
+        'despawn_margin': 64,
+        'collision_damage': 1,
+    }
+
+
+def shield_structures(sequence):
+    # Level 1 keeps its accepted 8 × 32-tile topology. Later levels retain
+    # the same material count while changing the authored placement cadence.
+    y = 520 if sequence == 1 else 500 + (sequence % 2) * 12
+    spacing = 150 if sequence == 1 else 144
+    return [
+        {
+            'id': f'shield-{sequence}-{index + 1}',
+            'name': f'Bunker {index + 1}',
+            'origin': {'x': 70 + index * spacing, 'y': y + (12 if sequence in {3, 5} and index % 2 else 0)},
+            'tile_asset_id': 'shield.tile',
+            'tile_width': 10,
+            'tile_height': 10,
+            'matrix': copy.deepcopy(SHIELD_MATRIX),
+            'destructible': True,
+        }
+        for index in range(8)
+    ]
+
+
+def authored_level(sequence, name, groups, *, hazards, layouts=None, drop_rules=None, boarding_anchor=None):
+    slug = f'level-{sequence:02d}'
+    entities = []
+    formations = []
+    for group_index, group in enumerate(groups):
+        entity_type, rows, columns, origin, spacing, layout = group
+        profile = 'enemy.scout.diver' if sequence == 4 and entity_type == 'SCOUT' and group_index == 0 else None
+        members = authored_grid(
+            slug, f'formation-{group_index}', entity_type, rows, columns,
+            origin[0], origin[1], spacing[0], spacing[1], layout=layout, profile=profile,
+        )
+        entities.extend(members)
+        formations.append(formation(
+            f'formation-{group_index}',
+            f'{entity_type.title()} Formation {group_index + 1}',
+            layouts[group_index] if layouts else layout,
+            members,
+            motion='formation.crossfire' if sequence in {3, 5, 6} else 'formation.standard',
+            delay=group_index * 180,
+        ))
+    if boarding_anchor is not None:
+        source = entities[boarding_anchor]
+        anchors = [{
+            'id': 'level-04-alien-frigate-01',
+            'source_entity_id': source['id'],
+            'source_ship_type': 'ALIEN_FRIGATE',
+            'interior': {'slug': 'alien-frigate', 'version': 1, 'checksum': 'e9b1af65f0daef6725a7ddf4683b5f6d503e25dabc97aef1212102e6b1e994f3'},
+            'entry_envelope': {'width_px': 160, 'height_px': 128},
+            'offer_duration_ms': 8000,
+            'interaction': 'BOARD',
+        }]
+    else:
+        anchors = []
+    objectives = [{'id': 'destroy-hostiles', 'type': 'DESTROY_ALL_HOSTILES', 'required': True, 'target_entity_ids': [], 'duration_ms': None}]
+    if sequence == 4:
+        objectives.append({'id': 'board-frigate', 'type': 'BOARD_TARGET', 'required': False, 'target_entity_ids': [anchors[0]['source_entity_id']], 'duration_ms': None})
+    if sequence == 6:
+        boss = next(entity for entity in entities if entity['entity_type'] == 'MOTHERSHIP')
+        objectives.append({'id': 'destroy-mothership', 'type': 'DESTROY_MOTHERSHIP', 'required': True, 'target_entity_ids': [boss['id']], 'duration_ms': None})
+    return {
+        'schema_version': '1.1',
+        'id': slug,
+        'slug': slug,
+        'name': name,
+        'version': 1,
+        'status': 'PUBLISHED',
+        'sequence': sequence,
+        'seed': 12000 + sequence,
+        'canvas': {'width': 1280, 'height': 720, 'grid_size': 16, 'snap_enabled': True, 'background_asset_id': 'background.starfield'},
+        'player_spawns': [
+            {'id': 'player-1', 'slot': 1, 'asset_id': 'player.ship', 'x': 640, 'y': 610, 'rotation': 0, 'enabled': True},
+            {'id': 'player-2', 'slot': 2, 'asset_id': 'player.ship', 'x': 640, 'y': 610, 'rotation': 0, 'enabled': False},
+        ],
+        'entities': entities,
+        'formations': formations,
+        'hazard_emitters': hazards,
+        'shield_structures': shield_structures(sequence),
+        'drop_rules': drop_rules or [],
+        'objectives': objectives,
+        'boarding_anchors': anchors,
+        'gameplay': {
+            'player_lives_at_campaign_start': 3,
+            'nukes_at_campaign_start': 2,
+            'nuke_rearm_max': 150,
+            'allow_pause': True,
+            'allow_replay': True,
+            'allow_main_menu_resume': True,
+            'completion_bonus_profile': 'legacy',
+            'scoring_profile': 'LEGACY_V1_GOVERNED',
+        },
+        'performance_budget': {
+            'max_active_enemies': max(58, len(entities) + (4 if sequence == 6 else 0)),
+            'max_active_hazards': 12,
+            'max_projectiles': 96,
+            'max_shield_tiles': 512,
+            'max_total_runtime_objects': 1024,
+        },
+    }
 
 
 class Command(BaseCommand):
@@ -83,14 +281,13 @@ class Command(BaseCommand):
                 },
             )
 
-        fixture = Path(__file__).resolve().parents[2] / 'fixtures' / 'level-01.json'
-        level_one_config = json.loads(fixture.read_text(encoding='utf-8'))
         authored = {
-            2: {'name': 'Asteroid Advance', 'enemy_formations': [{'type': 'scout', 'rows': 3, 'columns': 16, 'origin': {'x': 70, 'y': 120}, 'spacing': {'x': 66, 'y': 48}}, {'type': 'cruiser', 'rows': 1, 'columns': 8, 'origin': {'x': 190, 'y': 255}, 'spacing': {'x': 128, 'y': 0}}], 'hazards': [{'type': 'asteroid', 'count': 3, 'speed': 72, 'origin': {'x': 180, 'y': 240}, 'spacing': {'x': 290, 'y': 64}}, {'type': 'comet', 'count': 1, 'speed': 112, 'origin': {'x': 860, 'y': 210}, 'spacing': {'x': 0, 'y': 0}}], 'drop_tables': [{'host': 'scout', 'entries': [{'pickup': 'nuke', 'weight': 0.6}, {'pickup': 'life', 'weight': 0.2}]}]},
-            3: {'name': 'Cruiser Crossfire', 'enemy_formations': [{'type': 'scout', 'rows': 2, 'columns': 16, 'origin': {'x': 72, 'y': 110}, 'spacing': {'x': 64, 'y': 52}}, {'type': 'cruiser', 'rows': 2, 'columns': 6, 'origin': {'x': 170, 'y': 220}, 'spacing': {'x': 168, 'y': 52}}, {'type': 'destroyer', 'rows': 1, 'columns': 4, 'origin': {'x': 220, 'y': 325}, 'spacing': {'x': 248, 'y': 0}}], 'hazards': [{'type': 'asteroid', 'count': 2, 'speed': 96, 'origin': {'x': 340, 'y': 265}, 'spacing': {'x': 520, 'y': 1}}], 'drop_tables': [{'host': 'scout', 'entries': [{'pickup': 'nuke', 'weight': 0.9}, {'pickup': 'life', 'weight': 0.12}]}]},
-            4: {'name': 'Frigate Breach', 'enemy_formations': [{'type': 'scout', 'rows': 2, 'columns': 15, 'origin': {'x': 72, 'y': 110}, 'spacing': {'x': 68, 'y': 50}, 'behaviour_profile': 'enemy.scout.diver'}, {'type': 'cruiser', 'rows': 1, 'columns': 6, 'origin': {'x': 170, 'y': 220}, 'spacing': {'x': 170, 'y': 0}}, {'type': 'destroyer', 'rows': 1, 'columns': 4, 'origin': {'x': 240, 'y': 300}, 'spacing': {'x': 240, 'y': 0}}], 'hazards': [{'type': 'comet', 'count': 2, 'speed': 132, 'origin': {'x': 230, 'y': 268}, 'spacing': {'x': 620, 'y': 1}}], 'drop_tables': [{'host': 'scout', 'entries': [{'pickup': 'nuke', 'weight': 0.75}, {'pickup': 'life', 'weight': 0.22}]}]},
-            5: {'name': 'Elite Gauntlet', 'enemy_formations': [{'type': 'scout', 'rows': 2, 'columns': 12, 'origin': {'x': 72, 'y': 105}, 'spacing': {'x': 84, 'y': 48}}, {'type': 'cruiser', 'rows': 2, 'columns': 6, 'origin': {'x': 160, 'y': 205}, 'spacing': {'x': 176, 'y': 58}}, {'type': 'destroyer', 'rows': 2, 'columns': 4, 'origin': {'x': 210, 'y': 325}, 'spacing': {'x': 255, 'y': 55}}], 'hazards': [{'type': 'comet', 'count': 3, 'speed': 155, 'origin': {'x': 160, 'y': 315}, 'spacing': {'x': 390, 'y': 1}}], 'drop_tables': [{'host': 'scout', 'entries': [{'pickup': 'nuke', 'weight': 0.45}, {'pickup': 'life', 'weight': 0.08}]}]},
-            6: {'name': 'Final Assault', 'enemy_formations': [{'type': 'scout', 'rows': 2, 'columns': 9, 'origin': {'x': 80, 'y': 96}, 'spacing': {'x': 120, 'y': 46}}, {'type': 'cruiser', 'rows': 2, 'columns': 5, 'origin': {'x': 170, 'y': 190}, 'spacing': {'x': 220, 'y': 54}}, {'type': 'destroyer', 'rows': 2, 'columns': 3, 'origin': {'x': 210, 'y': 305}, 'spacing': {'x': 330, 'y': 55}}, {'type': 'mothership', 'rows': 1, 'columns': 1, 'origin': {'x': 640, 'y': 120}, 'spacing': {'x': 0, 'y': 0}, 'width': 260, 'height': 120, 'behaviour_profile': 'enemy.mothership.boss'}], 'hazards': [{'type': 'asteroid', 'count': 3, 'speed': 118, 'origin': {'x': 150, 'y': 330}, 'spacing': {'x': 350, 'y': 1}}, {'type': 'comet', 'count': 2, 'speed': 170, 'origin': {'x': 280, 'y': 380}, 'spacing': {'x': 580, 'y': 1}}], 'drop_tables': [{'host': 'scout', 'entries': [{'pickup': 'nuke', 'weight': 0.3}, {'pickup': 'life', 'weight': 0.05}]}]},
+            1: authored_level(1, 'Frontier Screen', [('SCOUT', 2, 29, (50, 120), (40, 50), 'GRID')], hazards=[hazard_emitter('level-01-asteroids', 'ASTEROID', initial_count=1, maximum_active=2, speed_min=64, speed_max=84, edges=['LEFT', 'RIGHT'], interval=6200), hazard_emitter('level-01-comets', 'COMET', initial_count=0, maximum_active=1, speed_min=130, speed_max=150, edges=['TOP'], interval=10000)]),
+            2: authored_level(2, 'Asteroid Advance', [('SCOUT', 3, 16, (70, 112), (66, 48), 'GRID'), ('CRUISER', 1, 8, (190, 268), (128, 0), 'LINE')], hazards=[hazard_emitter('level-02-asteroids', 'ASTEROID', initial_count=3, maximum_active=5, speed_min=105, speed_max=145, edges=['LEFT', 'RIGHT'], interval=3200), hazard_emitter('level-02-comets', 'COMET', initial_count=1, maximum_active=3, speed_min=160, speed_max=210, edges=['TOP', 'RIGHT'], interval=5200)], drop_rules=[{'id': 'level-02-scout-drops', 'host_entity_types': ['SCOUT'], 'pickup_type': 'NUKE', 'probability': 0.18, 'maximum_per_level': 2, 'collection_window_ms': 6000}]),
+            3: authored_level(3, 'Cruiser Crossfire', [('SCOUT', 2, 16, (72, 108), (64, 52), 'GRID'), ('CRUISER', 2, 6, (170, 230), (168, 52), 'WEDGE'), ('DESTROYER', 1, 4, (220, 330), (248, 0), 'LINE')], hazards=[hazard_emitter('level-03-asteroids', 'ASTEROID', initial_count=2, maximum_active=5, speed_min=120, speed_max=168, edges=['LEFT', 'RIGHT'], pattern='LANE', points=[{'x': 0, 'y': 260}, {'x': 1280, 'y': 330}], interval=2600)], drop_rules=[{'id': 'level-03-combat-drops', 'host_entity_types': ['SCOUT', 'CRUISER'], 'pickup_type': 'NUKE', 'probability': 0.14, 'maximum_per_level': 2, 'collection_window_ms': 6000}, {'id': 'level-03-life-drop', 'host_entity_types': ['DESTROYER'], 'pickup_type': 'LIFE', 'probability': 0.08, 'maximum_per_level': 1, 'collection_window_ms': 6000}]),
+            4: authored_level(4, 'Frigate Breach', [('SCOUT', 2, 15, (72, 110), (68, 50), 'ARC'), ('CRUISER', 1, 6, (170, 224), (170, 0), 'LINE'), ('DESTROYER', 1, 4, (240, 310), (240, 0), 'WEDGE')], hazards=[hazard_emitter('level-04-comets', 'COMET', initial_count=2, maximum_active=4, speed_min=175, speed_max=235, edges=['LEFT', 'RIGHT'], interval=3000)], drop_rules=[{'id': 'level-04-scout-drops', 'host_entity_types': ['SCOUT'], 'pickup_type': 'NUKE', 'probability': 0.16, 'maximum_per_level': 2, 'collection_window_ms': 6000}], boarding_anchor=30),
+            5: authored_level(5, 'Elite Gauntlet', [('SCOUT', 2, 12, (72, 105), (84, 48), 'GRID'), ('CRUISER', 2, 6, (160, 205), (176, 58), 'WEDGE'), ('DESTROYER', 2, 4, (210, 325), (255, 55), 'LINE')], hazards=[hazard_emitter('level-05-asteroids', 'ASTEROID', initial_count=3, maximum_active=6, speed_min=135, speed_max=180, edges=['LEFT', 'RIGHT', 'TOP'], interval=2200), hazard_emitter('level-05-comets', 'COMET', initial_count=2, maximum_active=4, speed_min=190, speed_max=250, edges=['TOP', 'RIGHT'], interval=3600)], drop_rules=[{'id': 'level-05-scarce-drops', 'host_entity_types': ['SCOUT', 'CRUISER'], 'pickup_type': 'NUKE', 'probability': 0.08, 'maximum_per_level': 1, 'collection_window_ms': 6000}]),
+            6: authored_level(6, 'Final Assault', [('SCOUT', 2, 9, (80, 96), (120, 46), 'ARC'), ('CRUISER', 2, 5, (170, 190), (220, 54), 'WEDGE'), ('DESTROYER', 2, 3, (210, 305), (330, 55), 'LINE'), ('MOTHERSHIP', 1, 1, (640, 120), (0, 0), 'FREEFORM')], hazards=[hazard_emitter('level-06-asteroids', 'ASTEROID', initial_count=3, maximum_active=6, speed_min=145, speed_max=195, edges=['LEFT', 'RIGHT', 'TOP'], interval=2000), hazard_emitter('level-06-comets', 'COMET', initial_count=2, maximum_active=4, speed_min=210, speed_max=270, edges=['TOP', 'RIGHT'], interval=3000)], drop_rules=[{'id': 'level-06-scarce-drops', 'host_entity_types': ['SCOUT', 'CRUISER'], 'pickup_type': 'NUKE', 'probability': 0.05, 'maximum_per_level': 1, 'collection_window_ms': 6000}]),
         }
 
         for sequence in range(1, 7):
@@ -98,37 +295,13 @@ class Command(BaseCommand):
             level, _ = Level.objects.get_or_create(
                 slug=slug,
                 game_project=core_project,
-                defaults={'name': f'Level {sequence}', 'sequence': sequence},
+                defaults={'name': authored[sequence]['name'], 'sequence': sequence},
             )
-            config = copy.deepcopy(level_one_config)
-            config.update(
-                {
-                    'id': slug,
-                    'name': f'Level {sequence}',
-                    'slug': slug,
-                    'version': 1,
-                    'status': 'PUBLISHED',
-                    'sequence': sequence,
-                    'seed': 12000 + sequence,
-                }
-            )
-            if sequence > 1:
-                config.update(copy.deepcopy(authored[sequence]))
-            if sequence == 4:
-                config['boarding_anchors'] = [{
-                    'id': 'level-04-alien-frigate-01',
-                    'source_selector': {'formation_index': 0, 'row': 0, 'column': 14},
-                    'source_entity_type': 'scout',
-                    'source_ship_type': 'ALIEN_FRIGATE',
-                    'source_entity_id': 'level-04:formation-0:r0:c14',
-                    'interior': {
-                        'slug': 'alien-frigate', 'version': 1,
-                        'checksum': 'e9b1af65f0daef6725a7ddf4683b5f6d503e25dabc97aef1212102e6b1e994f3',
-                    },
-                    'entry_envelope': {'width_px': 160, 'height_px': 128},
-                    'offer_duration_ms': 8000,
-                }]
-            config = migrate_v1_to_v11(config)
+            config = copy.deepcopy(authored[sequence])
+            if level.name != config['name'] or level.sequence != sequence:
+                level.name = config['name']
+                level.sequence = sequence
+                level.save(update_fields=['name', 'sequence', 'updated_at'])
 
             if level.active_version_id:
                 if level.active_version.config == config:

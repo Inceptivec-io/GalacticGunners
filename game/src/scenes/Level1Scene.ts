@@ -38,6 +38,7 @@ type RuntimeHazardEmitter = {
   initial_count: number;
   maximum_active: number;
   spawn_interval_ms: number;
+  spawn_jitter_ms: number;
   speed_min: number;
   speed_max: number;
   angular_velocity_min: number;
@@ -130,6 +131,7 @@ export class Level1Scene extends CombatLevelScene {
   #terminalActions: Array<{ action: TerminalAction; x: number; y: number; width: number; height: number; source: 'production-asset' | 'production-derived' }> = [];
   #terminalActionHandled = false;
   #boardingActive = false;
+  #boardingOffer: { scout: Phaser.Physics.Arcade.Sprite; anchor: NonNullable<LevelDefinition['boarding_anchors']>[number]; expiresAtMs: number; controls: Phaser.GameObjects.GameObject[] } | null = null;
   #campaignSession: CampaignSession | null = null;
   #hazardEmitterState = new Map<string, { emitted: number; nextAtMs: number }>();
   #lastMothershipDeployAtMs = Number.NEGATIVE_INFINITY;
@@ -261,6 +263,12 @@ export class Level1Scene extends CombatLevelScene {
     const deltaMs = this.#lastUpdateAtMs === 0 ? 0 : Math.max(time - this.#lastUpdateAtMs, 0);
     this.#lastUpdateAtMs = time;
 
+    if (this.#boardingOffer) {
+      this.updateBoardingOffer(time);
+      this.publishQaState();
+      return;
+    }
+
     if (this.#playerState === 'hit' && time >= this.#respawnAtMs) {
       this.respawnPlayer();
     }
@@ -308,6 +316,7 @@ export class Level1Scene extends CombatLevelScene {
           scout.sprite.setData('entityId', formation.entity_id ?? `${this.#definition.slug}:formation-${formationIndex}:r${row}:c${col}`);
           scout.sprite.setData('formationId', formation.id ?? `formation-${formationIndex}`);
           scout.sprite.setData('behaviourProfile', formation.behaviour_profile ?? `enemy.${formation.type}.standard`);
+          scout.sprite.setData('motionProfile', formation.motion_profile ?? 'formation.standard');
           this.#scouts.add(scout.sprite);
         }
       }
@@ -344,8 +353,8 @@ export class Level1Scene extends CombatLevelScene {
     const formation = this.#definition.enemy_formations[formationIndex];
     if (formation.fixed_position) {
       return new Phaser.Math.Vector2(
-        (formation.origin.x / 1280) * this.scale.width,
-        (formation.origin.y / 720) * this.scale.height,
+        (formation.origin.x / 1280) * this.scale.width + this.#formationOffsetX,
+        (formation.origin.y / 720) * this.scale.height + this.#formationDropY,
       );
     }
     const travelMargin = this.formationTravelMargin();
@@ -365,7 +374,12 @@ export class Level1Scene extends CombatLevelScene {
     for (const definition of this.#definition.hazards ?? []) {
       const emitter = definition.emitter as RuntimeHazardEmitter | undefined;
       for (let index = 0; index < definition.count; index += 1) {
-        this.spawnHazard(definition.type, definition.speed, { x: definition.origin.x + definition.spacing.x * index, y: definition.origin.y + definition.spacing.y * index }, emitter, index);
+        const point = emitter?.spawn_points.length
+          ? emitter.spawn_points[index % emitter.spawn_points.length]
+          : emitter
+            ? this.hazardEntryPoint(emitter, index)
+            : { x: definition.origin.x + definition.spacing.x * index, y: definition.origin.y + definition.spacing.y * index };
+        this.spawnHazard(definition.type, definition.speed, point, emitter, index);
       }
       if (emitter) this.#hazardEmitterState.set(emitter.id, { emitted: definition.count, nextAtMs: this.time.now + emitter.spawn_interval_ms });
     }
@@ -409,7 +423,10 @@ export class Level1Scene extends CombatLevelScene {
         this.spawnHazard(definition.type, definition.speed, point, emitter, state.emitted);
         state.emitted += 1;
       }
-      state.nextAtMs = time + emitter.spawn_interval_ms;
+      const jitter = emitter.spawn_jitter_ms > 0
+        ? this.deterministicRange(-emitter.spawn_jitter_ms, emitter.spawn_jitter_ms, `${emitter.id}:jitter:${state.emitted}`)
+        : 0;
+      state.nextAtMs = time + Math.max(1, emitter.spawn_interval_ms + jitter);
     }
   }
 
@@ -671,12 +688,20 @@ export class Level1Scene extends CombatLevelScene {
       }
       const position = this.scoutPosition(formation, row, col);
       const profile = String(scout.getData('behaviourProfile') ?? '');
+      const type = scout.getData('enemyType') as 'scout' | 'cruiser' | 'destroyer' | 'mothership';
       if (profile === 'enemy.scout.diver') {
         const phaseSeed = String(scout.getData('entityId')).split('').reduce((sum, character) => sum + character.charCodeAt(0), 0);
         const cycle = ((time + phaseSeed * 31) % 5400) / 5400;
         const arc = Math.sin(cycle * Math.PI);
         position.x += Math.sin(cycle * Math.PI * 2) * this.#layout.scoutSize.width * 3.2;
         position.y += arc * Math.min(this.#layout.viewport.height * 0.42, 290);
+      }
+      if (type === 'mothership') {
+        // The authored boss remains centred in its formation envelope while
+        // moving independently; it is not a static large Scout texture.
+        const phase = (time + this.#definition.seed * 17) / 1200;
+        position.x += Math.sin(phase) * Math.min(this.scale.width * 0.22, 240);
+        position.y += Math.sin(phase * 0.63) * Math.min(this.scale.height * 0.035, 28);
       }
       scout.setPosition(position.x, position.y);
       scout.setVelocity(0, 0);
@@ -745,12 +770,27 @@ export class Level1Scene extends CombatLevelScene {
     }
     const selection = Math.floor(this.deterministicRange(0, active.length, `enemy-fire:${this.#enemyFireOrdinal++}`));
     const scout = active[Math.min(active.length - 1, selection)];
+    const type = scout.getData('enemyType') as 'scout' | 'cruiser' | 'destroyer' | 'mothership';
+    const laser = this.fireEnemyLaserFrom(scout);
+    if (!laser) return null;
+    // Cruiser, Destroyer, and Mothership fire pressure is governed by their
+    // profile, while all projectiles keep the accepted visual/speed contract.
+    const burstCount = type === 'mothership' ? 3 : type === 'destroyer' ? 2 : type === 'cruiser' ? 2 : 1;
+    for (let index = 1; index < burstCount; index += 1) {
+      this.time.delayedCall(index * 90, () => {
+        if (scout.active && !this.#terminalState) this.fireEnemyLaserFrom(scout, (index - (burstCount - 1) / 2) * this.#layout.projectileSize.width * 1.6);
+      });
+    }
+    return laser;
+  }
+
+  private fireEnemyLaserFrom(scout: Phaser.Physics.Arcade.Sprite, offsetX = 0): Phaser.Physics.Arcade.Image | null {
     const spawnY = scout.y + scout.displayHeight * 0.55;
-    const laser = this.#enemyLasers.get(scout.x, spawnY, RUNTIME_ASSETS.projectile.enemyLaser.key) as Phaser.Physics.Arcade.Image | null;
+    const laser = this.#enemyLasers.get(scout.x + offsetX, spawnY, RUNTIME_ASSETS.projectile.enemyLaser.key) as Phaser.Physics.Arcade.Image | null;
     if (!laser) {
       return null;
     }
-    laser.setPosition(scout.x, spawnY);
+    laser.setPosition(scout.x + offsetX, spawnY);
     this.configureLaser(laser, 'enemy-laser', 90, this.enemyLaserSpeed());
     this.#audio.play('enemyLaser');
     return laser;
@@ -956,25 +996,11 @@ export class Level1Scene extends CombatLevelScene {
     const anchor = this.#definition.boarding_anchors?.[0];
     if (awardScore && anchor && !this.#boardingActive
       && !scout.getData('boarding-resolved')
+      && !scout.getData('boarding-offer-resolved')
       && (scout.getData('entityId') === anchor.source_entity_id
         || (Number(scout.getData('row')) === anchor.source_selector.row
           && Number(scout.getData('col')) === anchor.source_selector.column))) {
-      this.#boardingActive = true;
-      scout.setData('boarding-anchor', true);
-      this.scene.pause();
-      this.scene.launch('BoardingScene', {
-        seed: this.#definition.seed,
-        lives: this.#lives.value,
-        nukes: this.#currentNukes,
-        anchorId: anchor.id,
-        sourceEntityId: anchor.source_entity_id,
-        sourceEntityType: anchor.source_entity_type,
-        interior: anchor.interior,
-        apiBaseUrl: this.#runtimeConfig.apiBaseUrl,
-        gameRunId: this.#session.runId ?? undefined,
-        levelVersion: this.levelRuntime?.version ?? this.#definition.version,
-        levelChecksum: this.levelRuntime?.checksum ?? '',
-      });
+      this.presentBoardingOffer(scout, anchor);
       return;
     }
     scout.setData('destroyed', true);
@@ -988,6 +1014,76 @@ export class Level1Scene extends CombatLevelScene {
     }
     this.#audio.play('explosionSmall');
     this.createExplosion(scout.x, scout.y, 70);
+  }
+
+  private presentBoardingOffer(scout: Phaser.Physics.Arcade.Sprite, anchor: NonNullable<LevelDefinition['boarding_anchors']>[number]): void {
+    if (this.#boardingOffer) return;
+    // The offer is a deliberate checkpoint: no projectile or hostile may advance
+    // while the player chooses between the governed Boarding route and Shooter.
+    this.physics.world.pause();
+    const expiresAtMs = this.time.now + anchor.offer_duration_ms;
+    const centreX = this.scale.width / 2;
+    const centreY = this.scale.height / 2;
+    const backdrop = this.add.rectangle(centreX, centreY, this.scale.width, this.scale.height, 0x02050d, 0.58).setDepth(30);
+    const heading = this.add.text(centreX, centreY - 82, 'ALIEN FRIGATE BREACHED', {
+      color: '#f7d56a', fontFamily: 'GalacticGunnersGoldDisplay, Arial, sans-serif', fontSize: `${Math.max(24, Math.min(38, this.scale.width * 0.035))}px`, align: 'center',
+    }).setOrigin(0.5).setDepth(31);
+    const detail = this.add.text(centreX, centreY - 30, 'BOARD NOW OR CONTINUE THE SHOOTER ASSAULT\nOFFER EXPIRES IN 8 SECONDS', {
+      color: '#d7e9ff', fontFamily: 'GalacticGunnersHUD, monospace', fontSize: `${Math.max(15, Math.min(22, this.scale.width * 0.021))}px`, align: 'center',
+    }).setOrigin(0.5).setDepth(31);
+    const board = this.add.text(centreX - 130, centreY + 50, 'BOARD', {
+      color: '#f7d56a', fontFamily: 'GalacticGunnersGoldDisplay, Arial, sans-serif', fontSize: '30px',
+    }).setOrigin(0.5).setDepth(31).setInteractive({ useHandCursor: true });
+    const continueShooter = this.add.text(centreX + 130, centreY + 50, 'CONTINUE', {
+      color: '#7ee8ff', fontFamily: 'GalacticGunnersSilverDisplay, Arial, sans-serif', fontSize: '26px',
+    }).setOrigin(0.5).setDepth(31).setInteractive({ useHandCursor: true });
+    board.on('pointerup', () => this.acceptBoardingOffer());
+    continueShooter.on('pointerup', () => this.dismissBoardingOffer());
+    [backdrop, heading, detail, board, continueShooter].forEach((control) => control.setData('qa', 'boarding-offer'));
+    this.#boardingOffer = { scout, anchor, expiresAtMs, controls: [backdrop, heading, detail, board, continueShooter] };
+  }
+
+  private updateBoardingOffer(time: number): void {
+    if (!this.#boardingOffer) return;
+    if (time >= this.#boardingOffer.expiresAtMs || this.#inputSystem.actions.back) {
+      this.dismissBoardingOffer();
+      return;
+    }
+    if (this.#inputSystem.actions.confirm) this.acceptBoardingOffer();
+  }
+
+  private dismissBoardingOffer(): void {
+    const offer = this.#boardingOffer;
+    if (!offer) return;
+    offer.controls.forEach((control) => control.destroy());
+    offer.scout.setData('boarding-offer-resolved', true);
+    this.#boardingOffer = null;
+    this.physics.world.resume();
+    this.#inputSystem.syncOneShotState();
+  }
+
+  private acceptBoardingOffer(): void {
+    const offer = this.#boardingOffer;
+    if (!offer) return;
+    offer.controls.forEach((control) => control.destroy());
+    this.#boardingOffer = null;
+    this.#boardingActive = true;
+    const { scout, anchor } = offer;
+    scout.setData('boarding-anchor', true);
+    this.scene.pause();
+    this.scene.launch('BoardingScene', {
+        seed: this.#definition.seed,
+        lives: this.#lives.value,
+        nukes: this.#currentNukes,
+        anchorId: anchor.id,
+        sourceEntityId: anchor.source_entity_id,
+        sourceEntityType: anchor.source_entity_type,
+        interior: anchor.interior,
+        apiBaseUrl: this.#runtimeConfig.apiBaseUrl,
+        gameRunId: this.#session.runId ?? undefined,
+        levelVersion: this.levelRuntime?.version ?? this.#definition.version,
+        levelChecksum: this.levelRuntime?.checksum ?? '',
+      });
   }
 
   private spawnPickupForHost(host: Phaser.Physics.Arcade.Sprite): void {
@@ -1012,6 +1108,7 @@ export class Level1Scene extends CombatLevelScene {
 
   private handleBoardingReturn(_system: unknown, data?: { boardingOutcome?: string; boardingReturnState?: { lives: number; nukes: number; score_delta: number; remove_source_entity_id: string } | null; boardingValidated?: boolean }): void {
     if (!this.#boardingActive) return;
+    this.physics.world.resume();
     if (!data?.boardingValidated || !data.boardingReturnState) {
       this.#boardingActive = false;
       return;
@@ -1684,7 +1781,9 @@ export class Level1Scene extends CombatLevelScene {
             && Number(candidate.getData('col')) === anchor.source_selector.column)) : null;
         if (!scout) return { launched: false, reason: 'boarding-anchor-not-available' };
         this.destroyScoutBody(scout, true);
-        return { launched: this.#boardingActive, anchorId: anchor?.id ?? null, gameRunId: this.#session.runId };
+        const offerPresented = Boolean(this.#boardingOffer);
+        this.acceptBoardingOffer();
+        return { launched: this.#boardingActive, offerPresented, anchorId: anchor?.id ?? null, gameRunId: this.#session.runId };
       },
       state: () => this.buildQaState(),
     };

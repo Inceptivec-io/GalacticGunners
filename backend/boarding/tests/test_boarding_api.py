@@ -25,7 +25,7 @@ class BoardingApiTests(TestCase):
         self.digest = 'a' * 64
 
     def payload(self):
-        return {'anchor_id': 'level-04-alien-frigate-01', 'source_entity_id': 'level-04:formation-0:r0:c14', 'source_entity_type': 'scout', 'source_ship_type': 'ALIEN_FRIGATE', 'level_version': self.game_run.level_version, 'level_checksum': self.game_run.level_checksum, 'interior_slug': 'alien-frigate', 'interior_version': 1, 'interior_checksum': 'e9b1af65f0daef6725a7ddf4683b5f6d503e25dabc97aef1212102e6b1e994f3', 'shooter_state_digest': self.digest, 'resources': {'lives': 3, 'nukes': 2}}
+        return {'anchor_id': 'level-04-alien-frigate-01', 'source_entity_id': 'level-04:formation-1:r0:c0', 'source_entity_type': 'cruiser', 'source_ship_type': 'ALIEN_FRIGATE', 'level_version': self.game_run.level_version, 'level_checksum': self.game_run.level_checksum, 'interior_slug': 'alien-frigate', 'interior_version': 1, 'interior_checksum': 'e9b1af65f0daef6725a7ddf4683b5f6d503e25dabc97aef1212102e6b1e994f3', 'shooter_state_digest': self.digest, 'resources': {'lives': 3, 'nukes': 2}}
 
     def test_start_is_idempotent_and_issues_anonymous_capability(self):
         first = self.client.post(f'/api/v1/game-runs/{self.game_run.id}/boarding-runs/start/', self.payload(), format='json')

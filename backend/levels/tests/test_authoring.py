@@ -58,6 +58,18 @@ def test_authoring_document_rejects_out_of_bounds_objects_emitters_and_runtime_b
     assert 'RUNTIME_OBJECT_BUDGET_EXCEEDED' in codes
 
 
+def test_authoring_document_accepts_signed_asteroid_spin_range():
+    document = blank_authoring_document(identifier='map-01', slug='map-01', name='Blank Map', sequence=1, seed=77)
+    document['hazard_emitters'] = [{
+        'id': 'asteroid-emitter', 'hazard_type': 'ASTEROID', 'asset_id': 'hazard.asteroid', 'enabled': True,
+        'initial_count': 1, 'maximum_active': 2, 'spawn_interval_ms': 3000, 'spawn_jitter_ms': 250,
+        'speed_min': 90, 'speed_max': 140, 'angular_velocity_min': -80, 'angular_velocity_max': 80,
+        'entry_edges': ['LEFT', 'RIGHT'], 'spawn_pattern': 'ALTERNATING_EDGES', 'spawn_points': [],
+        'despawn_margin': 64, 'collision_damage': 1,
+    }]
+    assert validate_authoring_document(document) == []
+
+
 def test_authoring_document_accepts_legacy_boarding_source_and_rejects_unknown_target():
     document = migrate_v1_to_v11(legacy_level())
     source = document['entities'][0]['id']

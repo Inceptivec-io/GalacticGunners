@@ -27,6 +27,7 @@ test('schema 1.1 compilation retains freeform mixed entities and stable IDs', ()
   assert.deepEqual(compiled.enemy_formations.map((entity) => entity.entity_id), ['scout-1', 'cruiser-1']);
   assert.deepEqual(compiled.enemy_formations.map((entity) => entity.type), ['scout', 'cruiser']);
   assert.ok(compiled.enemy_formations.every((entity) => entity.fixed_position));
+  assert.ok(compiled.enemy_formations.every((entity) => entity.motion_profile === 'formation.standard'));
 });
 
 test('canonical level checksums remain stable when nested object key insertion order differs', async () => {
@@ -66,4 +67,5 @@ test('compiler preserves authored objectives and stable Boarding target identity
   assert.deepEqual(compiled.objectives, authored.objectives);
   assert.equal(compiled.boarding_anchors?.[0].source_entity_id, 'destroyer-1');
   assert.equal(compiled.boarding_anchors?.[0].source_entity_type, 'destroyer');
+  assert.equal(compiled.boarding_anchors?.[0].source_selector.formation_index, 2);
 });

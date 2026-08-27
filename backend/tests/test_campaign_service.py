@@ -20,8 +20,18 @@ class CampaignServiceTests(TestCase):
         self.assertEqual(ServicePlan.objects.count(), 4)
         definitions = [entry.level_version.config for entry in run.campaign_version.entries.order_by('position')]
         self.assertEqual(len({item['slug'] for item in definitions}), 6)
+        self.assertTrue(all(item['schema_version'] == '1.1' for item in definitions))
         self.assertTrue(definitions[1]['hazard_emitters'])
         self.assertTrue(definitions[3]['boarding_anchors'])
+        self.assertEqual(sum(item['entity_type'] == 'SCOUT' for item in definitions[0]['entities']), 58)
+        self.assertEqual(sum(sum(row) for shield in definitions[0]['shield_structures'] for row in shield['matrix']), 256)
+        self.assertEqual(
+            [
+                sum(item['entity_type'] == entity_type for item in definitions[5]['entities'])
+                for entity_type in ('SCOUT', 'CRUISER', 'DESTROYER', 'MOTHERSHIP')
+            ],
+            [18, 10, 6, 1],
+        )
 
     def test_completion_resolves_next_entry_by_identity(self):
         run, capability = CampaignService.start(user=None, seed_root=12001)

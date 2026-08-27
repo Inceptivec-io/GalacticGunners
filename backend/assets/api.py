@@ -1,8 +1,9 @@
+from django.db.models import Q
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from games.models import OwnerScope
+from games.models import OwnerScope, Visibility
 from organizations.models import OrganizationMembership
 
 from .models import AssetRecord
@@ -20,10 +21,13 @@ class AssetCatalogueView(APIView):
             pass
         elif organization_slug:
             assets = assets.filter(
-                owner_scope=OwnerScope.ORGANIZATION,
-                organization__slug=organization_slug,
-                organization__memberships__user=request.user,
-                organization__memberships__status=OrganizationMembership.Status.ACTIVE,
+                Q(owner_scope=OwnerScope.CORE, visibility=Visibility.PUBLIC)
+                | Q(
+                    owner_scope=OwnerScope.ORGANIZATION,
+                    organization__slug=organization_slug,
+                    organization__memberships__user=request.user,
+                    organization__memberships__status=OrganizationMembership.Status.ACTIVE,
+                ),
             )
         else:
             assets = assets.filter(owner_scope=OwnerScope.CORE)
