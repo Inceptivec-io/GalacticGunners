@@ -3,6 +3,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.middleware.csrf import get_token
+from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework import status
 from rest_framework.permissions import AllowAny
@@ -42,10 +43,10 @@ class AuthenticationThrottle(AnonRateThrottle):
     scope = 'authentication'
 
 
+@method_decorator(ensure_csrf_cookie, name='dispatch')
 class CsrfView(APIView):
     permission_classes = [AllowAny]
 
-    @ensure_csrf_cookie
     def get(self, request):
         return Response({'csrf_token': get_token(request)})
 
