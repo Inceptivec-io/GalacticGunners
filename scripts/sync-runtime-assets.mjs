@@ -64,6 +64,20 @@ const runtimeAssets = [
     sha256: '3B826087AD38EB6963046260EC384B9507C80E450DFAA3B302B923875B8B21AA',
   },
   {
+    key: 'fx.asteroid',
+    assetId: 'GG-SPRITE-SPRITES-OBJECTS-GG-ASTEROID-V002-SHEET',
+    source: 'assets/sprites/objects/gg_asteroid_v002_sheet.png',
+    runtime: 'sprites/objects/gg_asteroid_v002_sheet.png',
+    sha256: '0421BFD58EA30608ADF8E0E684B22419F63F6C57DFCC06B59594BE6947625D01',
+  },
+  {
+    key: 'fx.comet',
+    assetId: 'GG-SPRITE-SPRITES-OBJECTS-GG-COMET-V002-HORIZONTAL-VERTICAL-FACING',
+    source: 'assets/sprites/objects/gg_comet_v002_horizontal_vertical_facing.png',
+    runtime: 'sprites/objects/gg_comet_v002_horizontal_vertical_facing.png',
+    sha256: 'B9EB2BD211F9A922707CCEEA4E1EB4EAA5B1205249E38D6BBECB76DFBA33978F',
+  },
+  {
     key: 'shield.tile',
     assetId: 'GG-SPRITE-SPRITES-OBJECTS-GG-SHIELD-TILE-V002',
     source: 'assets/sprites/objects/gg_shield_tile_v002.png',

@@ -61,10 +61,10 @@ class Command(BaseCommand):
             ('player.ship', 'ships', '/gg-runtime-assets/sprites/ships/gg_player_ship_v002_sheet.png', 'a3e2edbdee85b312ad1766ee00c5a5438f60abf9dfcd006b2bd8474012ddff38'),
             ('enemy.scout', 'ships', '/gg-runtime-assets/sprites/ships/gg_enemy_scout_v002_sheet.png', 'fbb60a9eb52346cb57cdf22fa1b6088dd24b08f9132540b05dfd0f1612405a7f'),
             ('projectile.nuke', 'ui', '/gg-runtime-assets/sprites/objects/gg_nuke_projectile_v002_horizontal_upright.png', '3b826087ad38eb6963046260ec384b9507c80e450dfaa3b302b923875b8b21aa'),
-            ('hazard.asteroid', 'hazards', '/gg-runtime-assets/sprites/objects/gg_asteroid_v002_sheet.png', 'c7446cab6ce8f71acac0a7c809cfe98515c26435779a86ed4cbaee8ed0be21db'),
-            ('hazard.comet', 'hazards', '/gg-runtime-assets/sprites/objects/gg_comet_v002_sheet.png', 'bfc8cf65f8f713c6fd7107ff96a2dcf17fc2e0137d794fd833ed3383406629df'),
+            ('hazard.asteroid', 'hazards', '/gg-runtime-assets/sprites/objects/gg_asteroid_v002_sheet.png', '0421bfd58ea30608adf8e0e684b22419f63f6c57dfcc06b59594be6947625d01'),
+            ('hazard.comet', 'hazards', '/gg-runtime-assets/sprites/objects/gg_comet_v002_horizontal_vertical_facing.png', 'b9eb2bd211f9a922707cceea4e1eb4eaa5b1205249e38d6bbecb76dfba33978f'),
             ('ui.life-icon', 'ui', '/gg-runtime-assets/ui/icons/gg_hud_life_icon_v002.png', '9e0f8607f264acb9614958d7043c5f69f4a4ebb303d57049203fd481d1eb0408'),
-            ('boarding.player', 'boarding', '/gg-runtime-assets/boarding/characters/player_001_v001.png', 'd0c944ed2240bfece0cb401006147a17d486514541448008148c0281e23ed7a8'),
+            ('boarding.player', 'boarding', '/gg-runtime-assets/boarding/characters/player_001_v001.png', '136304bd25e0d04f8bb843bb51b6be0c5bf10d761bfab41d6bd53f782e70d115'),
         ]
         for key, category, runtime_path, digest in catalogue:
             AssetRecord.objects.update_or_create(

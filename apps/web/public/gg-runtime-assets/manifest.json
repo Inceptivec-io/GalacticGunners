@@ -66,6 +66,22 @@
       "runtime_sha256": "3B826087AD38EB6963046260EC384B9507C80E450DFAA3B302B923875B8B21AA"
     },
     {
+      "key": "fx.asteroid",
+      "asset_id": "GG-SPRITE-SPRITES-OBJECTS-GG-ASTEROID-V002-SHEET",
+      "canonical_path": "assets/sprites/objects/gg_asteroid_v002_sheet.png",
+      "canonical_sha256": "0421BFD58EA30608ADF8E0E684B22419F63F6C57DFCC06B59594BE6947625D01",
+      "runtime_path": "/gg-runtime-assets/sprites/objects/gg_asteroid_v002_sheet.png",
+      "runtime_sha256": "0421BFD58EA30608ADF8E0E684B22419F63F6C57DFCC06B59594BE6947625D01"
+    },
+    {
+      "key": "fx.comet",
+      "asset_id": "GG-SPRITE-SPRITES-OBJECTS-GG-COMET-V002-HORIZONTAL-VERTICAL-FACING",
+      "canonical_path": "assets/sprites/objects/gg_comet_v002_horizontal_vertical_facing.png",
+      "canonical_sha256": "B9EB2BD211F9A922707CCEEA4E1EB4EAA5B1205249E38D6BBECB76DFBA33978F",
+      "runtime_path": "/gg-runtime-assets/sprites/objects/gg_comet_v002_horizontal_vertical_facing.png",
+      "runtime_sha256": "B9EB2BD211F9A922707CCEEA4E1EB4EAA5B1205249E38D6BBECB76DFBA33978F"
+    },
+    {
       "key": "shield.tile",
       "asset_id": "GG-SPRITE-SPRITES-OBJECTS-GG-SHIELD-TILE-V002",
       "canonical_path": "assets/sprites/objects/gg_shield_tile_v002.png",
