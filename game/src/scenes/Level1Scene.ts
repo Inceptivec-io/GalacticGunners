@@ -17,6 +17,7 @@ import { createPlayfieldLayout, type PlayfieldLayout } from '../systems/Playfiel
 import { ScoreSystem } from '../systems/ScoreSystem';
 import { CombatLevelScene } from './CombatLevelScene';
 import type { LevelDefinition } from '../levels/LevelDefinition';
+import type { LevelAuthoringDocument } from '../levels/LevelAuthoringDocument';
 import type { LevelRuntimeConfig } from '../levels/LevelRuntimeConfig';
 import { CAMPAIGN_DEFINITIONS } from '../levels/campaignDefinitions';
 import { validateLevelDefinition } from '../levels/LevelValidator';
@@ -1424,7 +1425,7 @@ export class Level1Scene extends CombatLevelScene {
       const serverDefinition = serverResult?.entry?.level.definition;
       const nextSequence = serverResult?.entry?.position;
       if (serverDefinition && typeof serverDefinition === 'object') {
-        const compiledDefinition = compileLevelDocument(serverDefinition);
+        const compiledDefinition = compileLevelDocument(serverDefinition as LevelDefinition | LevelAuthoringDocument);
         validateLevelDefinition(compiledDefinition);
         const runtimes = this.registry.get('campaignRuntime') as LevelRuntimeConfig[];
         const replacement = { definition: compiledDefinition, version: serverResult?.entry?.level.version ?? compiledDefinition.version, checksum: serverResult?.entry?.level.checksum ?? '', source: 'remote' as const };

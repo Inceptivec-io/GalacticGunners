@@ -12,7 +12,7 @@ export function compileLevelDocument(value: LevelDefinition | LevelAuthoringDocu
   if (!player) throw new Error('Authoring document has no enabled player spawn.');
   const ships = value.entities.filter((entity) => entity.enabled && ['SCOUT', 'CRUISER', 'DESTROYER', 'MOTHERSHIP'].includes(entity.entity_type));
   const groupedIds = new Set<string>();
-  const enemy_formations = value.formations.flatMap((formation) => {
+  const enemy_formations: LevelDefinition['enemy_formations'] = value.formations.flatMap((formation) => {
     const members = formation.member_ids.map((id) => ships.find((entity) => entity.id === id)).filter(Boolean) as typeof ships;
     members.forEach((member) => groupedIds.add(member.id));
     const types = [...new Set(members.map((member) => member.entity_type))];
@@ -34,7 +34,7 @@ export function compileLevelDocument(value: LevelDefinition | LevelAuthoringDocu
     id: entity.id, type: entity.entity_type.toLowerCase() as 'scout' | 'cruiser' | 'destroyer' | 'mothership', rows: 1, columns: 1,
     origin: { x: entity.x, y: entity.y }, spacing: { x: 0, y: 0 }, width: entity.width, height: entity.height,
     behaviour_profile: entity.behaviour_profile, entity_id: entity.id, fixed_position: true,
-  })));
+  }))) as LevelDefinition['enemy_formations'];
   const shields = value.shield_structures.map((shield) => ({ count: 1, matrix: shield.matrix, origin: shield.origin, tile_width: shield.tile_width, tile_height: shield.tile_height, id: shield.id }));
   const boarding_anchors = value.boarding_anchors.map((anchor) => {
     const source = value.entities.find((entity) => entity.id === anchor.source_entity_id);
