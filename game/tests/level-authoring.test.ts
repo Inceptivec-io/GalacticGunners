@@ -1,0 +1,52 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+
+import { compileLevelDocument } from '../src/levels/LevelCompiler';
+import type { LevelAuthoringDocument } from '../src/levels/LevelAuthoringDocument';
+import { levelChecksum } from '../src/levels/LevelChecksum';
+import { validateLevelDefinition } from '../src/levels/LevelValidator';
+import { CAMPAIGN_DEFINITIONS } from '../src/levels/campaignDefinitions';
+
+const document: LevelAuthoringDocument = {
+  schema_version: '1.1', id: 'level-02', slug: 'level-02', name: 'Mixed Formation', version: 2, status: 'DRAFT', sequence: 2, seed: 7,
+  canvas: { width: 1280, height: 720, grid_size: 16, snap_enabled: true, background_asset_id: 'background.starfield' },
+  player_spawns: [{ id: 'player-1', slot: 1, asset_id: 'player.ship', x: 640, y: 610, rotation: 0, enabled: true }, { id: 'player-2', slot: 2, asset_id: 'player.ship', x: 640, y: 610, rotation: 0, enabled: false }],
+  entities: [
+    { id: 'scout-1', entity_type: 'SCOUT', asset_id: 'enemy.scout', x: 300, y: 120, width: 44, height: 58, rotation: 0, z_index: 4, behaviour_profile: 'enemy.scout.standard', enabled: true, tags: [] },
+    { id: 'cruiser-1', entity_type: 'CRUISER', asset_id: 'enemy.cruiser', x: 560, y: 160, width: 72, height: 64, rotation: 0, z_index: 4, behaviour_profile: 'enemy.cruiser.standard', enabled: true, tags: [] },
+  ],
+  formations: [{ id: 'mixed', name: 'Mixed', layout: 'FREEFORM', bounds: { x: 280, y: 100, width: 360, height: 140 }, member_ids: ['scout-1', 'cruiser-1'], motion_profile: 'formation.standard', entry_delay_ms: 0, repeat: 0 }],
+  hazard_emitters: [], shield_structures: [], drop_rules: [], objectives: [{ id: 'clear', type: 'DESTROY_ALL_HOSTILES', required: true, target_entity_ids: [], duration_ms: null }], boarding_anchors: [],
+  gameplay: { player_lives_at_campaign_start: 3, nukes_at_campaign_start: 2, nuke_rearm_max: 150, allow_pause: true, allow_replay: true, allow_main_menu_resume: true, completion_bonus_profile: 'legacy', scoring_profile: 'LEGACY_V1_GOVERNED' }, performance_budget: { max_active_enemies: 10, max_active_hazards: 4, max_projectiles: 32, max_shield_tiles: 64, max_total_runtime_objects: 128 },
+};
+
+test('schema 1.1 compilation retains freeform mixed entities and stable IDs', () => {
+  const compiled = compileLevelDocument(document);
+  validateLevelDefinition(compiled);
+  assert.equal(compiled.enemy_formations.length, 2);
+  assert.deepEqual(compiled.enemy_formations.map((entity) => entity.entity_id), ['scout-1', 'cruiser-1']);
+  assert.deepEqual(compiled.enemy_formations.map((entity) => entity.type), ['scout', 'cruiser']);
+  assert.ok(compiled.enemy_formations.every((entity) => entity.fixed_position));
+});
+
+test('canonical level checksums remain stable when nested object key insertion order differs', async () => {
+  assert.equal(
+    await levelChecksum({ z: { beta: 2, alpha: 1 }, a: [{ y: 2, x: 1 }] }),
+    await levelChecksum({ a: [{ x: 1, y: 2 }], z: { alpha: 1, beta: 2 } }),
+  );
+});
+
+test('published package retains the governed six-level population baseline', () => {
+  const counts = CAMPAIGN_DEFINITIONS.map((definition) => definition.enemy_formations.reduce((total, formation) => total + formation.rows * formation.columns, 0));
+  const byType = (sequence: number, type: string) => CAMPAIGN_DEFINITIONS[sequence - 1].enemy_formations
+    .filter((formation) => formation.type === type)
+    .reduce((total, formation) => total + formation.rows * formation.columns, 0);
+  assert.deepEqual(counts, [58, 56, 48, 40, 44, 35]);
+  assert.equal(byType(2, 'scout'), 48);
+  assert.equal(byType(2, 'cruiser'), 8);
+  assert.deepEqual([byType(3, 'scout'), byType(3, 'cruiser'), byType(3, 'destroyer')], [32, 12, 4]);
+  assert.deepEqual([byType(4, 'scout'), byType(4, 'cruiser'), byType(4, 'destroyer')], [30, 6, 4]);
+  assert.deepEqual([byType(5, 'scout'), byType(5, 'cruiser'), byType(5, 'destroyer')], [24, 12, 8]);
+  assert.deepEqual([byType(6, 'scout'), byType(6, 'cruiser'), byType(6, 'destroyer'), byType(6, 'mothership')], [18, 10, 6, 1]);
+  assert.equal(CAMPAIGN_DEFINITIONS[0].shields[0].count * 32, 256);
+});

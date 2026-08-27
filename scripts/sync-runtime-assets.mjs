@@ -57,6 +57,20 @@ const runtimeAssets = [
     sha256: '7E0BA8F3763EE030E6BB23B6D7999E28E8F23A86A73564A1580FBD74D538D88C',
   },
   {
+    key: 'enemy.mothership',
+    assetId: 'GG-SPRITE-SPRITES-SHIPS-GG-BOSS-MOTHERSHIP-NORMAL-V002-SHEET',
+    source: 'assets/sprites/ships/gg_boss_mothership_normal_v002_sheet.png',
+    runtime: 'sprites/ships/gg_boss_mothership_normal_v002_sheet.png',
+    sha256: '5B49D62BE022A2633388BF0F8465CCEDA9A215D678AFBFC5A26E82931DF2974A',
+  },
+  {
+    key: 'enemy.mothership.hit',
+    assetId: 'GG-SPRITE-SPRITES-SHIPS-GG-BOSS-MOTHERSHIP-HIT-V002-SHEET',
+    source: 'assets/sprites/ships/gg_boss_mothership_HIT_v002_sheet.png',
+    runtime: 'sprites/ships/gg_boss_mothership_HIT_v002_sheet.png',
+    sha256: 'E829B094078363F051F41929F48E92C3288B98E2CD43425E8A0309B52B989088',
+  },
+  {
     key: 'projectile.playerLaser',
     assetId: 'GG-SPRITE-SPRITES-OBJECTS-GG-PLAYER-LASER-V002',
     source: 'assets/sprites/objects/gg_player_laser_v002.png',

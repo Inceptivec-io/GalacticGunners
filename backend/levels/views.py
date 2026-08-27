@@ -64,7 +64,12 @@ class AdminLevelActionView(APIView):
         if requested is not None:
             version = get_object_or_404(level.versions, version=requested)
         if action == 'validate':
-            validate_definition(version.config); version.status = LevelVersion.Status.VALIDATED; version.save(); audit(request, action, level, version); return Response(LevelVersionSerializer(version).data)
+            validate_definition(version.config)
+            version.status = LevelVersion.Status.VALIDATED
+            version.validation_report = {'valid': True, 'errors': [], 'warnings': []}
+            version.save()
+            audit(request, action, level, version)
+            return Response(LevelVersionSerializer(version).data)
         if action == 'publish':
             version.publish(); audit(request, action, level, version); return Response(LevelSerializer(level).data)
         if action == 'clone':
@@ -105,6 +110,8 @@ class AdminLevelDraftView(APIView):
             created_by=request.user,
             supersedes=base,
         )
+        draft.validation_report = {'valid': True, 'errors': [], 'warnings': []}
+        draft.save(update_fields=['validation_report'])
         audit(request, 'designer_save', level, draft, {'from_version': base.version, 'expected_checksum': expected_checksum})
         return Response(LevelVersionSerializer(draft).data, status=status.HTTP_201_CREATED)
 

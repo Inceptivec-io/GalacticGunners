@@ -53,6 +53,8 @@ export const RUNTIME_ASSETS = {
     },
     cruiser: { key: 'enemy.cruiser', assetId: 'GG-SPRITE-SPRITES-SHIPS-GG-ENEMY-CRUISER-V002-SHEET', canonicalPath: 'assets/sprites/ships/gg_enemy_cruiser_v002_sheet.png', sha256: '05DA611A926239711E2310EDCDC1D3C4AF06497D5B96E70761D5102B9D402AE3', runtimePath: '/gg-runtime-assets/sprites/ships/gg_enemy_cruiser_v002_sheet.png' },
     destroyer: { key: 'enemy.destroyer', assetId: 'GG-SPRITE-SPRITES-SHIPS-GG-ENEMY-DESTROYER-V002-SHEET', canonicalPath: 'assets/sprites/ships/gg_enemy_destroyer_v002_sheet.png', sha256: '7E0BA8F3763EE030E6BB23B6D7999E28E8F23A86A73564A1580FBD74D538D88C', runtimePath: '/gg-runtime-assets/sprites/ships/gg_enemy_destroyer_v002_sheet.png' },
+    mothership: { key: 'enemy.mothership', assetId: 'GG-SPRITE-SPRITES-SHIPS-GG-BOSS-MOTHERSHIP-NORMAL-V002-SHEET', canonicalPath: 'assets/sprites/ships/gg_boss_mothership_normal_v002_sheet.png', sha256: '5B49D62BE022A2633388BF0F8465CCEDA9A215D678AFBFC5A26E82931DF2974A', runtimePath: '/gg-runtime-assets/sprites/ships/gg_boss_mothership_normal_v002_sheet.png' },
+    mothershipHit: { key: 'enemy.mothership.hit', assetId: 'GG-SPRITE-SPRITES-SHIPS-GG-BOSS-MOTHERSHIP-HIT-V002-SHEET', canonicalPath: 'assets/sprites/ships/gg_boss_mothership_HIT_v002_sheet.png', sha256: 'E829B094078363F051F41929F48E92C3288B98E2CD43425E8A0309B52B989088', runtimePath: '/gg-runtime-assets/sprites/ships/gg_boss_mothership_HIT_v002_sheet.png' },
   },
   projectile: {
     playerLaser: {
@@ -274,6 +276,8 @@ export const REQUIRED_RUNTIME_ASSETS: RuntimeAsset[] = [
   RUNTIME_ASSETS.enemy.scout,
   RUNTIME_ASSETS.enemy.cruiser,
   RUNTIME_ASSETS.enemy.destroyer,
+  RUNTIME_ASSETS.enemy.mothership,
+  RUNTIME_ASSETS.enemy.mothershipHit,
   RUNTIME_ASSETS.projectile.playerLaser,
   RUNTIME_ASSETS.projectile.enemyLaser,
   RUNTIME_ASSETS.projectile.nuke,
@@ -321,6 +325,7 @@ export const FRAME_RECTS = {
   ],
   cruiser: [{ name: 'stable-0', x: 0, y: 0, width: 418, height: 941 }],
   destroyer: [{ name: 'stable-0', x: 0, y: 0, width: 543, height: 724 }],
+  mothership: [{ name: 'stable-0', x: 0, y: 0, width: 1425, height: 724 }],
   asteroid: [{ name: 'stable-0', x: 0, y: 0, width: 543, height: 724 }],
   comet: [{ name: 'stable-0', x: 0, y: 0, width: 448, height: 448 }],
   explosionSmall: { frameWidth: 494, frameHeight: 494, endFrame: 7 },

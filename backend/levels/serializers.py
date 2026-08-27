@@ -8,7 +8,7 @@ from .validation import checksum, validate_definition
 class LevelVersionSerializer(serializers.ModelSerializer):
     class Meta:
         model = LevelVersion
-        fields = ['id', 'version', 'schema_version', 'config', 'checksum', 'seed_policy', 'status', 'created_at', 'published_at']
+        fields = ['id', 'version', 'schema_version', 'config', 'checksum', 'seed_policy', 'validation_report', 'status', 'created_at', 'published_at']
         read_only_fields = ['id', 'checksum', 'created_at', 'published_at']
 
 

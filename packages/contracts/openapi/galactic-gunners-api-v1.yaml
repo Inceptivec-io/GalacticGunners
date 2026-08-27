@@ -145,6 +145,29 @@ paths:
       summary: Generate a deterministic DRAFT candidate; this endpoint never publishes.
       responses:
         '201': { description: Draft generated. }
+  /admin/levels/{levelId}/drafts/:
+    post:
+      operationId: saveLevelAuthoringDraft
+      summary: Save one checksum-constrained schema 1.1 level draft.
+      parameters:
+        - name: levelId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LevelDraftSaveRequest'
+      responses:
+        '201':
+          description: Immutable draft version created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LevelVersion'
+        '409': { $ref: '#/components/responses/Conflict' }
 components:
   parameters:
     RunId:
@@ -174,6 +197,27 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
   schemas:
+    LevelDraftSaveRequest:
+      type: object
+      additionalProperties: false
+      required: [expected_checksum, config]
+      properties:
+        expected_checksum:
+          type: string
+          pattern: '^[0-9a-f]{64}$'
+        config:
+          $ref: './schemas/level-authoring-document-v1.1.schema.json'
+    LevelVersion:
+      type: object
+      required: [id, version, schema_version, checksum, config, validation_report, status]
+      properties:
+        id: { type: string, format: uuid }
+        version: { type: integer, minimum: 1 }
+        schema_version: { type: string, enum: ['1.0', '1.1'] }
+        checksum: { type: string, pattern: '^[0-9a-f]{64}$' }
+        config: { type: object }
+        validation_report: { type: object }
+        status: { type: string, enum: [DRAFT, VALIDATED, PUBLISHED, SUPERSEDED, ARCHIVED] }
     HealthResponse:
       type: object
       additionalProperties: false

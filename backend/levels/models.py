@@ -67,6 +67,7 @@ class LevelVersion(models.Model):
 
     def save(self, *args, **kwargs):
         validate_definition(self.config)
+        self.schema_version = self.config.get('schema_version', '1.0')
         if not self.seed_policy:
             self.seed_policy = {'mode': 'fixed'}
         self.checksum = checksum(self.config)

@@ -4,6 +4,8 @@ from django.utils import timezone
 from audit.models import PlatformAuditEvent
 from games.models import OwnerScope
 from levels.models import Level
+from levels.models import LevelVersion
+from levels.authoring import blank_authoring_document
 from organizations.models import Organization
 
 from .models import OrganizationPlanAssignment
@@ -36,5 +38,7 @@ class MapQuotaService:
         if current >= limit:
             raise MapQuotaError(current, limit)
         level = Level.objects.create(slug=slug, name=name, campaign=campaign, sequence=sequence, game_project=game_project)
+        config = blank_authoring_document(identifier=str(level.id), slug=slug, name=name, sequence=sequence, seed=int(level.id.int % 2_000_000_000))
+        LevelVersion.objects.create(level=level, version=1, config=config, created_by=actor)
         PlatformAuditEvent.objects.create(actor=actor, actor_kind=PlatformAuditEvent.ActorKind.USER, organization=organization, action='map.create', target_type='Level', target_id=str(level.id), result=PlatformAuditEvent.Result.SUCCESS)
         return level

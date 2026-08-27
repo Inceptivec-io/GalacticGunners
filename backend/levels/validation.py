@@ -8,7 +8,7 @@ from .authoring import validate_authoring_document
 
 PROHIBITED_KEYS = {'__proto__', 'constructor', 'prototype'}
 PROHIBITED_TEXT = ('<script', 'javascript:', 'eval(', 'process.', 'require(', 'select ', 'insert ', 'delete ', 'drop ')
-KNOWN_ENEMIES = {'scout', 'cruiser', 'destroyer'}
+KNOWN_ENEMIES = {'scout', 'cruiser', 'destroyer', 'mothership'}
 KNOWN_PICKUPS = {'nuke', 'life'}
 KNOWN_HAZARDS = {'asteroid', 'comet'}
 
@@ -62,11 +62,12 @@ def validate_definition(value):
     for anchor in anchors:
         selector = anchor.get('source_selector', {})
         expected_id = f"{slug}:formation-{selector.get('formation_index')}:r{selector.get('row')}:c{selector.get('column')}"
+        selected = (value.get('enemy_formations') or [])[selector.get('formation_index', -1)] if isinstance(selector.get('formation_index'), int) and 0 <= selector.get('formation_index') < len(value.get('enemy_formations', [])) else {}
         interior = anchor.get('interior', {})
         if (
             anchor.get('source_entity_type') != 'scout'
             or anchor.get('source_ship_type') != 'ALIEN_FRIGATE'
-            or anchor.get('source_entity_id') != expected_id
+            or (anchor.get('source_entity_id') != expected_id and anchor.get('source_entity_id') != selected.get('entity_id'))
             or anchor.get('offer_duration_ms') != 8000
             or anchor.get('entry_envelope') != {'width_px': 160, 'height_px': 128}
             or not isinstance(interior.get('checksum'), str)

@@ -11,6 +11,7 @@ from games.models import GameProject, GameRelease, Lifecycle, OwnerScope, Visibi
 from game_runs.models import GameVersion
 from levels.models import Level, LevelVersion
 from assets.models import AssetCategory, AssetRecord
+from levels.authoring import migrate_v1_to_v11
 
 
 class Command(BaseCommand):
@@ -62,6 +63,8 @@ class Command(BaseCommand):
             ('enemy.scout', 'ships', '/gg-runtime-assets/sprites/ships/gg_enemy_scout_v002_sheet.png', 'fbb60a9eb52346cb57cdf22fa1b6088dd24b08f9132540b05dfd0f1612405a7f'),
             ('enemy.cruiser', 'ships', '/gg-runtime-assets/sprites/ships/gg_enemy_cruiser_v002_sheet.png', '05da611a926239711e2310edcdc1d3c4af06497d5b96e70761d5102b9d402ae3'),
             ('enemy.destroyer', 'ships', '/gg-runtime-assets/sprites/ships/gg_enemy_destroyer_v002_sheet.png', '7e0ba8f3763ee030e6bb23b6d7999e28e8f23a86a73564a1580fbd74d538d88c'),
+            ('enemy.mothership', 'ships', '/gg-runtime-assets/sprites/ships/gg_boss_mothership_normal_v002_sheet.png', '5b49d62be022a2633388bf0f8465cceda9a215d678afbfc5a26e82931df2974a'),
+            ('enemy.mothership.hit', 'ships', '/gg-runtime-assets/sprites/ships/gg_boss_mothership_HIT_v002_sheet.png', 'e829b094078363f051f41929f48e92c3288b98e2cd43425e8a0309b52b989088'),
             ('projectile.nuke', 'ui', '/gg-runtime-assets/sprites/objects/gg_nuke_projectile_v002_horizontal_upright.png', '3b826087ad38eb6963046260ec384b9507c80e450dfaa3b302b923875b8b21aa'),
             ('hazard.asteroid', 'hazards', '/gg-runtime-assets/sprites/objects/gg_asteroid_v002_sheet.png', '0421bfd58ea30608adf8e0e684b22419f63f6c57dfcc06b59594be6947625d01'),
             ('hazard.comet', 'hazards', '/gg-runtime-assets/sprites/objects/gg_comet_v002_horizontal_vertical_facing.png', 'b9eb2bd211f9a922707cceea4e1eb4eaa5b1205249e38d6bbecb76dfba33978f'),
@@ -83,11 +86,11 @@ class Command(BaseCommand):
         fixture = Path(__file__).resolve().parents[2] / 'fixtures' / 'level-01.json'
         level_one_config = json.loads(fixture.read_text(encoding='utf-8'))
         authored = {
-            2: {'name': 'Asteroid Advance', 'enemy_formations': [{'type': 'scout', 'rows': 3, 'columns': 18, 'origin': {'x': 70, 'y': 120}, 'spacing': {'x': 54, 'y': 48}}], 'hazards': [{'type': 'asteroid', 'count': 3, 'speed': 72, 'origin': {'x': 180, 'y': 240}, 'spacing': {'x': 290, 'y': 64}}]},
-            3: {'name': 'Cruiser Crossfire', 'enemy_formations': [{'type': 'scout', 'rows': 2, 'columns': 16, 'origin': {'x': 72, 'y': 110}, 'spacing': {'x': 64, 'y': 52}}, {'type': 'cruiser', 'rows': 1, 'columns': 6, 'origin': {'x': 180, 'y': 205}, 'spacing': {'x': 168, 'y': 1}}], 'hazards': [{'type': 'asteroid', 'count': 2, 'speed': 96, 'origin': {'x': 340, 'y': 265}, 'spacing': {'x': 520, 'y': 1}}]},
-            4: {'name': 'Frigate Breach', 'enemy_formations': [{'type': 'scout', 'rows': 2, 'columns': 17, 'origin': {'x': 72, 'y': 110}, 'spacing': {'x': 62, 'y': 50}}, {'type': 'destroyer', 'rows': 1, 'columns': 4, 'origin': {'x': 240, 'y': 210}, 'spacing': {'x': 240, 'y': 1}}], 'hazards': [{'type': 'comet', 'count': 2, 'speed': 132, 'origin': {'x': 230, 'y': 268}, 'spacing': {'x': 620, 'y': 1}}]},
-            5: {'name': 'Elite Gauntlet', 'enemy_formations': [{'type': 'scout', 'rows': 2, 'columns': 15, 'origin': {'x': 72, 'y': 105}, 'spacing': {'x': 70, 'y': 48}}, {'type': 'cruiser', 'rows': 1, 'columns': 5, 'origin': {'x': 170, 'y': 195}, 'spacing': {'x': 220, 'y': 1}}, {'type': 'destroyer', 'rows': 1, 'columns': 3, 'origin': {'x': 300, 'y': 262}, 'spacing': {'x': 320, 'y': 1}}], 'hazards': [{'type': 'comet', 'count': 3, 'speed': 155, 'origin': {'x': 160, 'y': 315}, 'spacing': {'x': 390, 'y': 1}}]},
-            6: {'name': 'Final Assault', 'enemy_formations': [{'type': 'scout', 'rows': 2, 'columns': 14, 'origin': {'x': 80, 'y': 96}, 'spacing': {'x': 74, 'y': 46}}, {'type': 'cruiser', 'rows': 2, 'columns': 5, 'origin': {'x': 170, 'y': 190}, 'spacing': {'x': 220, 'y': 54}}, {'type': 'destroyer', 'rows': 1, 'columns': 4, 'origin': {'x': 210, 'y': 305}, 'spacing': {'x': 255, 'y': 1}}], 'hazards': [{'type': 'asteroid', 'count': 3, 'speed': 118, 'origin': {'x': 150, 'y': 330}, 'spacing': {'x': 350, 'y': 1}}, {'type': 'comet', 'count': 2, 'speed': 170, 'origin': {'x': 280, 'y': 380}, 'spacing': {'x': 580, 'y': 1}}]},
+            2: {'name': 'Asteroid Advance', 'enemy_formations': [{'type': 'scout', 'rows': 3, 'columns': 16, 'origin': {'x': 70, 'y': 120}, 'spacing': {'x': 66, 'y': 48}}, {'type': 'cruiser', 'rows': 1, 'columns': 8, 'origin': {'x': 190, 'y': 255}, 'spacing': {'x': 128, 'y': 0}}], 'hazards': [{'type': 'asteroid', 'count': 3, 'speed': 72, 'origin': {'x': 180, 'y': 240}, 'spacing': {'x': 290, 'y': 64}}, {'type': 'comet', 'count': 1, 'speed': 112, 'origin': {'x': 860, 'y': 210}, 'spacing': {'x': 0, 'y': 0}}], 'drop_tables': [{'host': 'scout', 'entries': [{'pickup': 'nuke', 'weight': 0.6}, {'pickup': 'life', 'weight': 0.2}]}]},
+            3: {'name': 'Cruiser Crossfire', 'enemy_formations': [{'type': 'scout', 'rows': 2, 'columns': 16, 'origin': {'x': 72, 'y': 110}, 'spacing': {'x': 64, 'y': 52}}, {'type': 'cruiser', 'rows': 2, 'columns': 6, 'origin': {'x': 170, 'y': 220}, 'spacing': {'x': 168, 'y': 52}}, {'type': 'destroyer', 'rows': 1, 'columns': 4, 'origin': {'x': 220, 'y': 325}, 'spacing': {'x': 248, 'y': 0}}], 'hazards': [{'type': 'asteroid', 'count': 2, 'speed': 96, 'origin': {'x': 340, 'y': 265}, 'spacing': {'x': 520, 'y': 1}}], 'drop_tables': [{'host': 'scout', 'entries': [{'pickup': 'nuke', 'weight': 0.9}, {'pickup': 'life', 'weight': 0.12}]}]},
+            4: {'name': 'Frigate Breach', 'enemy_formations': [{'type': 'scout', 'rows': 2, 'columns': 15, 'origin': {'x': 72, 'y': 110}, 'spacing': {'x': 68, 'y': 50}, 'behaviour_profile': 'enemy.scout.diver'}, {'type': 'cruiser', 'rows': 1, 'columns': 6, 'origin': {'x': 170, 'y': 220}, 'spacing': {'x': 170, 'y': 0}}, {'type': 'destroyer', 'rows': 1, 'columns': 4, 'origin': {'x': 240, 'y': 300}, 'spacing': {'x': 240, 'y': 0}}], 'hazards': [{'type': 'comet', 'count': 2, 'speed': 132, 'origin': {'x': 230, 'y': 268}, 'spacing': {'x': 620, 'y': 1}}], 'drop_tables': [{'host': 'scout', 'entries': [{'pickup': 'nuke', 'weight': 0.75}, {'pickup': 'life', 'weight': 0.22}]}]},
+            5: {'name': 'Elite Gauntlet', 'enemy_formations': [{'type': 'scout', 'rows': 2, 'columns': 12, 'origin': {'x': 72, 'y': 105}, 'spacing': {'x': 84, 'y': 48}}, {'type': 'cruiser', 'rows': 2, 'columns': 6, 'origin': {'x': 160, 'y': 205}, 'spacing': {'x': 176, 'y': 58}}, {'type': 'destroyer', 'rows': 2, 'columns': 4, 'origin': {'x': 210, 'y': 325}, 'spacing': {'x': 255, 'y': 55}}], 'hazards': [{'type': 'comet', 'count': 3, 'speed': 155, 'origin': {'x': 160, 'y': 315}, 'spacing': {'x': 390, 'y': 1}}], 'drop_tables': [{'host': 'scout', 'entries': [{'pickup': 'nuke', 'weight': 0.45}, {'pickup': 'life', 'weight': 0.08}]}]},
+            6: {'name': 'Final Assault', 'enemy_formations': [{'type': 'scout', 'rows': 2, 'columns': 9, 'origin': {'x': 80, 'y': 96}, 'spacing': {'x': 120, 'y': 46}}, {'type': 'cruiser', 'rows': 2, 'columns': 5, 'origin': {'x': 170, 'y': 190}, 'spacing': {'x': 220, 'y': 54}}, {'type': 'destroyer', 'rows': 2, 'columns': 3, 'origin': {'x': 210, 'y': 305}, 'spacing': {'x': 330, 'y': 55}}, {'type': 'mothership', 'rows': 1, 'columns': 1, 'origin': {'x': 640, 'y': 120}, 'spacing': {'x': 0, 'y': 0}, 'width': 260, 'height': 120, 'behaviour_profile': 'enemy.mothership.boss'}], 'hazards': [{'type': 'asteroid', 'count': 3, 'speed': 118, 'origin': {'x': 150, 'y': 330}, 'spacing': {'x': 350, 'y': 1}}, {'type': 'comet', 'count': 2, 'speed': 170, 'origin': {'x': 280, 'y': 380}, 'spacing': {'x': 580, 'y': 1}}], 'drop_tables': [{'host': 'scout', 'entries': [{'pickup': 'nuke', 'weight': 0.3}, {'pickup': 'life', 'weight': 0.05}]}]},
         }
 
         for sequence in range(1, 7):
@@ -125,6 +128,7 @@ class Command(BaseCommand):
                     'entry_envelope': {'width_px': 160, 'height_px': 128},
                     'offer_duration_ms': 8000,
                 }]
+            config = migrate_v1_to_v11(config)
 
             if level.active_version_id:
                 if level.active_version.config == config:

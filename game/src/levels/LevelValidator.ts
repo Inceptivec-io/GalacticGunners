@@ -11,7 +11,7 @@ export function validateLevelDefinition(value: unknown): asserts value is LevelD
   const enemies = level.enemy_formations.reduce((sum, formation) => sum + formation.rows * formation.columns, 0);
   if (!Number.isInteger(enemies) || enemies < 1 || enemies > level.performance_budget.max_enemies) throw new Error('Enemy performance budget exceeded.');
   for (const formation of level.enemy_formations) {
-    if (!['scout', 'cruiser', 'destroyer'].includes(formation.type) || formation.rows < 1 || formation.columns < 1 || formation.origin.x < 0 || formation.origin.y < 0) throw new Error('Invalid enemy formation.');
+    if (!['scout', 'cruiser', 'destroyer', 'mothership'].includes(formation.type) || formation.rows < 1 || formation.columns < 1 || formation.origin.x < 0 || formation.origin.y < 0) throw new Error('Invalid enemy formation.');
   }
   for (const hazard of level.hazards ?? []) {
     if (!['asteroid', 'comet'].includes(hazard.type) || !Number.isInteger(hazard.count) || hazard.count < 1 || hazard.count > 12 || hazard.speed <= 0 || hazard.origin.x < 0 || hazard.origin.y < 0) throw new Error('Invalid hazard definition.');
@@ -23,8 +23,9 @@ export function validateLevelDefinition(value: unknown): asserts value is LevelD
     if (level.boarding_anchors.length > 1) throw new Error('A level can have at most one Boarding anchor.');
     for (const anchor of level.boarding_anchors) {
       const expected = `${level.slug}:formation-${anchor.source_selector.formation_index}:r${anchor.source_selector.row}:c${anchor.source_selector.column}`;
+      const selectedFormation = level.enemy_formations[anchor.source_selector.formation_index];
       if (anchor.source_entity_type !== 'scout' || anchor.source_ship_type !== 'ALIEN_FRIGATE'
-        || anchor.source_entity_id !== expected || anchor.offer_duration_ms !== 8000
+        || (anchor.source_entity_id !== expected && selectedFormation?.entity_id !== anchor.source_entity_id) || anchor.offer_duration_ms !== 8000
         || anchor.entry_envelope.width_px !== 160 || anchor.entry_envelope.height_px !== 128
         || !/^[0-9a-f]{64}$/.test(anchor.interior.checksum)) {
         throw new Error('Invalid Boarding anchor.');

@@ -120,6 +120,7 @@ export class BootScene extends Phaser.Scene {
     const fixedFrames = [
       [RUNTIME_ASSETS.enemy.cruiser.key, FRAME_RECTS.cruiser],
       [RUNTIME_ASSETS.enemy.destroyer.key, FRAME_RECTS.destroyer],
+      [RUNTIME_ASSETS.enemy.mothership.key, FRAME_RECTS.mothership],
       [RUNTIME_ASSETS.fx.asteroid.key, FRAME_RECTS.asteroid],
       [RUNTIME_ASSETS.fx.comet.key, FRAME_RECTS.comet],
     ] as const;
@@ -138,7 +139,7 @@ export class BootScene extends Phaser.Scene {
       frameRate: 8,
       repeat: -1,
     });
-    for (const [key, asset] of [['enemy.cruiser.idle', RUNTIME_ASSETS.enemy.cruiser], ['enemy.destroyer.idle', RUNTIME_ASSETS.enemy.destroyer]] as const) {
+    for (const [key, asset] of [['enemy.cruiser.idle', RUNTIME_ASSETS.enemy.cruiser], ['enemy.destroyer.idle', RUNTIME_ASSETS.enemy.destroyer], ['enemy.mothership.idle', RUNTIME_ASSETS.enemy.mothership]] as const) {
       this.anims.create({ key, frames: [{ key: asset.key, frame: 'stable-0' }], frameRate: 1, repeat: -1 });
     }
 
