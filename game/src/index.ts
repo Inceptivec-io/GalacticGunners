@@ -2,6 +2,8 @@ export * from './config/scoring';
 export * from './config/assets';
 export * from './config/gameConfig';
 export * from './config/levelOneSlice';
+export * from './levels/LevelDefinition';
+export * from './levels/LevelRuntimeConfig';
 export * from './systems/ScoreSystem';
 export * from './systems/LifeSystem';
 export * from './systems/InputSystem';

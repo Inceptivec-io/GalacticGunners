@@ -116,6 +116,18 @@ class AdminLevelDraftView(APIView):
         return Response(LevelVersionSerializer(draft).data, status=status.HTTP_201_CREATED)
 
 
+class AdminLevelPreviewView(APIView):
+    """Return one immutable draft/version for same-runtime, unranked preview."""
+
+    permission_classes = [IsLevelAdmin]
+
+    def get(self, request, level_id, checksum_value):
+        level = get_object_or_404(Level, pk=level_id, archived=False)
+        version = get_object_or_404(level.versions, checksum=checksum_value)
+        audit(request, 'designer_preview', level, version, {'checksum': checksum_value})
+        return Response(LevelVersionSerializer(version).data)
+
+
 class AdminLevelExportView(APIView):
     permission_classes = [IsLevelAdmin]
 

@@ -85,3 +85,18 @@ def test_game_run_binds_the_server_owned_published_level_identity(client, level_
     assert response.status_code == 201
     run = GameRun.objects.get(pk=response.json()['id'])
     assert run.level == level and run.level_version == 1 and run.level_checksum == version.checksum and run.seed == 11001
+
+
+@pytest.mark.django_db
+def test_internal_preview_is_bound_to_the_requested_immutable_draft_checksum(client, level_admin):
+    level = Level.objects.create(slug='preview-one', name='Preview', sequence=1)
+    first = LevelVersion.objects.create(level=level, version=1, config=golden_level())
+    changed = golden_level()
+    changed['name'] = 'Preview Draft'
+    second = LevelVersion.objects.create(level=level, version=2, config=changed, supersedes=first)
+    client.force_login(level_admin)
+    response = client.get(f'/api/v1/admin/levels/{level.id}/preview/{second.checksum}/')
+    assert response.status_code == 200
+    assert response.json()['checksum'] == second.checksum
+    assert response.json()['config']['name'] == 'Preview Draft'
+    assert client.get(f'/api/v1/admin/levels/{level.id}/preview/{first.checksum}x/').status_code == 404

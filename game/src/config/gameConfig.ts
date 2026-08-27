@@ -9,6 +9,9 @@ export interface GameRuntimeConfig {
   apiBaseUrl?: string;
   physicsDebug?: boolean;
   hostileQa?: boolean;
+  /** An authenticated Designer preview. It is never a ranked campaign run. */
+  previewRuntime?: LevelRuntimeConfig;
   onReady?: () => void;
   onExit?: () => void;
 }
+import type { LevelRuntimeConfig } from '../levels/LevelRuntimeConfig';

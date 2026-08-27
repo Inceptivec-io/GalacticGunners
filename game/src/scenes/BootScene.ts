@@ -67,6 +67,17 @@ export class BootScene extends Phaser.Scene {
     validateLevelDefinition(LEVEL_ONE_DEFINITION);
     // Golden Level 1 must start without an API request. Remote resolution is an
     // explicit campaign-loader capability, never an implicit gameplay dependency.
+    const previewRuntime = this.runtimeConfig.previewRuntime;
+    if (previewRuntime) {
+      validateLevelDefinition(previewRuntime.definition);
+      this.registry.set('campaignRuntime', [previewRuntime]);
+      this.registry.set('levelRuntime', previewRuntime);
+      this.registry.set('campaignPreview', true);
+      this.registry.set('campaignSession', new CampaignSession(null, previewRuntime.definition.seed));
+      this.createRuntimeAnimations();
+      this.scene.start('Level1Scene', { sequence: previewRuntime.definition.sequence });
+      return;
+    }
     const loader = new LevelLoader(this.runtimeConfig.apiBaseUrl);
     const campaignRuntime = await Promise.all(CAMPAIGN_DEFINITIONS.map(async (definition) => {
       validateLevelDefinition(definition);
@@ -79,6 +90,11 @@ export class BootScene extends Phaser.Scene {
     await campaignSession.start();
     this.registry.set('campaignSession', campaignSession);
 
+    this.createRuntimeAnimations();
+    this.scene.start('MainMenuScene');
+  }
+
+  private createRuntimeAnimations(): void {
     this.anims.create({
       key: 'fx.explosionSmall.play',
       frames: this.anims.generateFrameNumbers(RUNTIME_ASSETS.fx.explosionSmall.key, { start: 0, end: FRAME_RECTS.explosionSmall.endFrame }),
@@ -100,7 +116,6 @@ export class BootScene extends Phaser.Scene {
       hideOnComplete: true,
     });
 
-    this.scene.start('MainMenuScene');
   }
 
   private registerTextureFrames(): void {

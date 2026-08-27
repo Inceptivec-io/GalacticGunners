@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import type { LevelRuntimeConfig } from '@galactic-gunners/game';
 
 import { publicConfig } from '../lib/config/publicConfig';
 
@@ -30,10 +31,24 @@ export function GameHost() {
         const apiBaseUrl = params.get('api') === 'offline'
           ? 'http://127.0.0.1:8999/api/v1'
           : publicConfig.apiBaseUrl;
+        const previewLevelId = params.get('preview_level_id');
+        const previewChecksum = params.get('preview_checksum');
+        let previewRuntime: LevelRuntimeConfig | undefined;
+        if (previewLevelId && previewChecksum) {
+          const previewPath = params.get('preview_organization')
+            ? `/portal/organizations/${encodeURIComponent(params.get('preview_organization')!)}/maps/${encodeURIComponent(previewLevelId)}/preview/${encodeURIComponent(previewChecksum)}/`
+            : `/admin/levels/${encodeURIComponent(previewLevelId)}/preview/${encodeURIComponent(previewChecksum)}/`;
+          const response = await fetch(`${apiBaseUrl}${previewPath}`, { credentials: 'same-origin' });
+          if (!response.ok) throw new Error('The requested Designer preview is unavailable or no longer authorised.');
+          const preview = await response.json() as { config: LevelRuntimeConfig['definition']; version: number; checksum: string };
+          if (preview.checksum !== previewChecksum) throw new Error('Designer preview checksum did not reconcile.');
+          previewRuntime = { definition: preview.config, version: preview.version, checksum: preview.checksum, source: 'remote' };
+        }
         gameRef.current = await gameModule.createGalacticGunnersGame({
           parent: hostRef.current,
           apiBaseUrl,
           hostileQa: params.get('qa') === 'hostile',
+          previewRuntime,
           onReady: () => setStatus('ready'),
         });
       } catch (error) {

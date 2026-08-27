@@ -107,3 +107,23 @@ class PortalMapDraftView(APIView):
         validate_definition(config)
         draft = LevelVersion.objects.create(level=level, version=base.version + 1, config=config, seed_policy=base.seed_policy, created_by=request.user, supersedes=base)
         return Response(LevelVersionSerializer(draft).data, status=201)
+
+
+class PortalMapPreviewView(APIView):
+    """Tenant-scoped exact-version preview. A guessed checksum never crosses organisations."""
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, slug, level_id, checksum_value):
+        organization = organization_for(request, slug)
+        membership = AuthorizationPolicy.membership(request.user, organization)
+        if not AuthorizationPolicy.is_platform_owner(request.user) and (membership is None or membership.role not in {'BUSINESS_ADMIN', 'EDITOR'}):
+            raise PermissionDenied('PORTAL_ACCESS_DENIED')
+        version = LevelVersion.objects.filter(
+            level_id=level_id, level__game_project__organization=organization,
+            level__game_project__owner_scope=OwnerScope.ORGANIZATION, level__archived=False,
+            checksum=checksum_value,
+        ).first()
+        if version is None:
+            raise NotFound('Map preview not found.')
+        return Response(LevelVersionSerializer(version).data)
