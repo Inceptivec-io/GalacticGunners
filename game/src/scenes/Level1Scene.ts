@@ -154,12 +154,17 @@ export class Level1Scene extends CombatLevelScene {
       this.#lives.restore(campaignState.lives);
     }
     this.#audio = new AudioSystem((cue) => this.sound.play(RUNTIME_ASSETS.audio[cue].key));
+    const campaignRun = this.#campaignSession?.run;
     this.#session = new GameSession(this.#runtimeConfig.apiBaseUrl ? new GameApiClient(this.#runtimeConfig.apiBaseUrl) : null, {
       slug: this.#definition.slug,
       version: this.#definition.version,
       checksum: this.levelRuntime?.checksum ?? '',
       seed: this.#definition.seed,
-    });
+    }, campaignRun?.entry ? {
+      runId: campaignRun.id,
+      entryId: campaignRun.entry.id,
+      capability: campaignRun.capability,
+    } : null);
     this.#inputSystem = new InputSystem(this);
     void this.#session.start().finally(() => this.publishQaState());
 
@@ -734,6 +739,10 @@ export class Level1Scene extends CombatLevelScene {
         nukes: this.#currentNukes,
         anchorId: anchor.id,
         sourceEntityId: anchor.source_entity_id,
+        apiBaseUrl: this.#runtimeConfig.apiBaseUrl,
+        gameRunId: this.#session.runId ?? undefined,
+        levelVersion: this.#definition.version,
+        levelChecksum: this.levelRuntime?.checksum ?? '',
       });
       return;
     }
@@ -747,8 +756,12 @@ export class Level1Scene extends CombatLevelScene {
     this.createExplosion(scout.x, scout.y, 70);
   }
 
-  private handleBoardingReturn(_system: unknown, data?: { boardingOutcome?: string }): void {
+  private handleBoardingReturn(_system: unknown, data?: { boardingOutcome?: string; boardingReturnState?: { lives: number; nukes: number; score_delta: number; remove_source_entity_id: string } | null; boardingValidated?: boolean }): void {
     if (!this.#boardingActive) return;
+    if (!data?.boardingValidated || !data.boardingReturnState) {
+      this.#boardingActive = false;
+      return;
+    }
     const anchoredScout = this.getActiveScouts().find((scout) => scout.getData('boarding-anchor'));
     if (anchoredScout) {
       anchoredScout.setData('boarding-anchor', false);
@@ -756,6 +769,10 @@ export class Level1Scene extends CombatLevelScene {
       this.destroyScoutBody(anchoredScout, true);
     }
     this.#boardingActive = false;
+    this.#lives.restore(data.boardingReturnState.lives);
+    this.#currentNukes = data.boardingReturnState.nukes;
+    this.updateLifeHud();
+    this.updateNukeHud();
     if (data?.boardingOutcome === 'PLAYER_DEAD') this.damagePlayer(true);
   }
 

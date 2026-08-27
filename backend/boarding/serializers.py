@@ -55,7 +55,7 @@ class StartBoardingRunSerializer(StrictSerializer):
             raise serializers.ValidationError({'level': 'LEVEL_VERSION_MISMATCH'})
         authoritative_lives = run.lives_end if run.lives_end is not None else run.lives_start
         authoritative_nukes = run.nukes_end if run.nukes_end is not None else run.nukes_start
-        if attrs['resources'] != {'lives': authoritative_lives, 'nukes': authoritative_nukes}:
+        if attrs['resources']['lives'] > authoritative_lives or attrs['resources']['nukes'] > authoritative_nukes:
             raise serializers.ValidationError({'resources': 'RESOURCE_STATE_INVALID'})
         try:
             level_version = run.level.versions.get(version=attrs['level_version'], checksum=attrs['level_checksum'], status=LevelVersion.Status.PUBLISHED)

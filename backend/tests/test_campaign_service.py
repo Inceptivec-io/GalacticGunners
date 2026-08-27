@@ -1,5 +1,6 @@
 from django.core.management import call_command
 from django.test import TestCase
+from rest_framework.test import APIClient
 
 from campaigns.services import CampaignService
 from plans.models import ServicePlan
@@ -33,3 +34,22 @@ class CampaignServiceTests(TestCase):
         run, _capability = CampaignService.start(user=None, seed_root=12001)
         with self.assertRaisesRegex(PermissionError, 'CAMPAIGN_CAPABILITY_INVALID'):
             CampaignService.complete_entry(campaign_run=run, user=None, capability='wrong', entry_id=run.current_entry_id, score=0, lives=3, nukes=2)
+
+    def test_game_run_is_bound_to_the_current_campaign_entry_and_resources(self):
+        run, capability = CampaignService.start(user=None, seed_root=12001)
+        entry = run.current_entry
+        level_version = entry.level_version
+        response = APIClient().post('/api/v1/game-runs/', {
+            'game_version': 'v1.0-s001-l1-slice',
+            'client_type': 'web',
+            'level_slug': level_version.level.slug,
+            'level_version': level_version.version,
+            'level_checksum': level_version.checksum,
+            'seed': 12001,
+            'campaign_run_id': str(run.id),
+            'campaign_entry_id': str(entry.id),
+        }, format='json', HTTP_X_CAMPAIGN_TOKEN=capability)
+        self.assertEqual(response.status_code, 201)
+        attempt = run.attempts.get(pk=response.data['id'])
+        self.assertEqual((attempt.campaign_run_id, attempt.campaign_entry_id), (run.id, entry.id))
+        self.assertEqual((attempt.lives_start, attempt.nukes_start), (run.lives, run.nukes))

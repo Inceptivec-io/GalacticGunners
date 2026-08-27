@@ -8,6 +8,9 @@ export interface GameRunStartRequest {
   level_version: number;
   level_checksum: string;
   seed: number;
+  campaign_run_id?: string;
+  campaign_entry_id?: string;
+  campaign_capability?: string | null;
 }
 
 export interface GameRunRecord {
@@ -60,11 +63,56 @@ export interface GameRunClient {
   getLeaderboard(limit?: number, offset?: number): Promise<LeaderboardResponse>;
   startCampaign(seedRoot: number): Promise<CampaignRunRecord>;
   completeCampaignEntry(runId: string, entryId: string, payload: CampaignEntryCompletion, capability?: string | null): Promise<CampaignRunRecord>;
+  startBoardingRun(gameRunId: string, request: BoardingRunStartRequest): Promise<BoardingRunRecord>;
+  completeBoardingRun(boardingRunId: string, request: BoardingRunCompletionRequest, capability?: string | null): Promise<BoardingRunRecord>;
 }
 
 export interface CampaignEntry { id: string; position: number; level: { slug: string; version: number; checksum: string; definition: unknown }; }
 export interface CampaignRunRecord { id: string; status?: 'ACTIVE' | 'COMPLETED'; score: number; lives: number; nukes: number; entry: CampaignEntry | null; has_next_entry?: boolean; ranked: boolean; capability?: string | null; completed_entry_count?: number; }
 export interface CampaignEntryCompletion { score: number; lives: number; nukes: number; }
+
+export interface BoardingRunStartRequest {
+  anchor_id: string;
+  source_entity_id: string;
+  source_entity_type: 'scout';
+  source_ship_type: 'ALIEN_FRIGATE';
+  level_version: number;
+  level_checksum: string;
+  interior_slug: 'alien-frigate';
+  interior_version: 1;
+  interior_checksum: string;
+  shooter_state_digest: string;
+  resources: { lives: number; nukes: number };
+}
+
+export interface BoardingRunRecord {
+  id: string;
+  status: 'ACTIVE' | 'COMPLETED' | 'REJECTED';
+  validation_result: 'PENDING' | 'VALID' | 'INVALID';
+  validation_code: string;
+  seed: number;
+  time_limit_ms: number;
+  interior_slug: string;
+  interior_version: number;
+  interior_checksum: string;
+  shooter_state_digest: string;
+  resources_start: { lives: number; nukes: number };
+  return_state: { lives: number; nukes: number; score_delta: number; remove_source_entity_id: string } | null;
+  boarding_token?: string;
+}
+
+export interface BoardingRunCompletionRequest {
+  outcome: 'SUCCESS' | 'TIMEOUT' | 'PLAYER_DEAD' | 'ABORTED';
+  duration_ms: number;
+  resources_end: { lives: number; nukes: number };
+  aliens_killed: number;
+  containers_opened: number;
+  lives_found: number;
+  nukes_found: number;
+  score_events: [];
+  shooter_state_digest: string;
+  events: Array<Record<string, unknown>>;
+}
 
 export class GameApiClient implements GameRunClient {
   constructor(private readonly baseUrl: string) {}
@@ -74,9 +122,11 @@ export class GameApiClient implements GameRunClient {
   }
 
   startGameRun(request: GameRunStartRequest): Promise<GameRunRecord> {
+    const { campaign_capability, ...body } = request;
     return this.request('/game-runs/', {
       method: 'POST',
-      body: JSON.stringify(request),
+      headers: campaign_capability ? { 'X-Campaign-Token': campaign_capability } : {},
+      body: JSON.stringify(body),
     });
   }
 
@@ -97,6 +147,21 @@ export class GameApiClient implements GameRunClient {
 
   completeCampaignEntry(runId: string, entryId: string, payload: CampaignEntryCompletion, capability?: string | null): Promise<CampaignRunRecord> {
     return this.request(`/campaign-runs/${runId}/complete-entry/`, { method: 'POST', headers: capability ? { 'X-Campaign-Token': capability } : {}, body: JSON.stringify({ entry_id: entryId, ...payload }) });
+  }
+
+  startBoardingRun(gameRunId: string, request: BoardingRunStartRequest): Promise<BoardingRunRecord> {
+    return this.request(`/game-runs/${gameRunId}/boarding-runs/start/`, { method: 'POST', body: JSON.stringify(request) });
+  }
+
+  completeBoardingRun(boardingRunId: string, request: BoardingRunCompletionRequest, capability?: string | null): Promise<BoardingRunRecord> {
+    return this.request(`/boarding-runs/${boardingRunId}/complete/`, {
+      method: 'POST',
+      headers: {
+        'Idempotency-Key': `boarding-${boardingRunId}`,
+        ...(capability ? { 'X-Boarding-Token': capability } : {}),
+      },
+      body: JSON.stringify(request),
+    });
   }
 
   private async request<T>(path: string, init: RequestInit = {}): Promise<T> {

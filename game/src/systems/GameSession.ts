@@ -22,7 +22,11 @@ export class GameSession {
   #completeAttempted = false;
   #offline = false;
 
-  constructor(private readonly client: GameRunClient | null, private readonly level: { slug: string; version: number; checksum: string; seed: number } | null = null) {}
+  constructor(
+    private readonly client: GameRunClient | null,
+    private readonly level: { slug: string; version: number; checksum: string; seed: number } | null = null,
+    private readonly campaign: { runId: string; entryId: string; capability?: string | null } | null = null,
+  ) {}
 
   get runId(): string | null {
     return this.#run?.id ?? null;
@@ -53,6 +57,11 @@ export class GameSession {
         level_version: this.level.version,
         level_checksum: this.level.checksum,
         seed: this.level.seed,
+        ...(this.campaign ? {
+          campaign_run_id: this.campaign.runId,
+          campaign_entry_id: this.campaign.entryId,
+          campaign_capability: this.campaign.capability,
+        } : {}),
       });
     } catch {
       this.#offline = true;

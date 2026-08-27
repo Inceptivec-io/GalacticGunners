@@ -136,6 +136,24 @@ class FakeGameRunClient implements GameRunClient {
   completeCampaignEntry() {
     return Promise.resolve({ id: 'campaign-001', status: 'ACTIVE' as const, score: 25, lives: 3, nukes: 2, ranked: false, capability: 'test-capability', entry: { id: 'entry-002', position: 2, level: { slug: 'level-02', version: 1, checksum: '1'.repeat(64), definition: {} } } });
   }
+
+  startBoardingRun() {
+    return Promise.resolve({
+      id: 'boarding-001', status: 'ACTIVE' as const, validation_result: 'PENDING' as const,
+      validation_code: '', seed: 1, time_limit_ms: 60000, interior_slug: 'alien-frigate',
+      interior_version: 1, interior_checksum: '0'.repeat(64), shooter_state_digest: '0'.repeat(64),
+      resources_start: { lives: 3, nukes: 2 }, return_state: null,
+    });
+  }
+
+  completeBoardingRun() {
+    return Promise.resolve({
+      id: 'boarding-001', status: 'COMPLETED' as const, validation_result: 'VALID' as const,
+      validation_code: '', seed: 1, time_limit_ms: 60000, interior_slug: 'alien-frigate',
+      interior_version: 1, interior_checksum: '0'.repeat(64), shooter_state_digest: '0'.repeat(64),
+      resources_start: { lives: 3, nukes: 2 }, return_state: { lives: 3, nukes: 2, score_delta: 0, remove_source_entity_id: 'enemy-001' },
+    });
+  }
 }
 
 test('game session starts online runs and completes each run once', async () => {
