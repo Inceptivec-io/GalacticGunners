@@ -133,6 +133,7 @@ export class Level1Scene extends CombatLevelScene {
   #lastMothershipDeployAtMs = Number.NEGATIVE_INFINITY;
   #enemyFireOrdinal = 0;
   #levelStartedAtMs = 0;
+  #entryScore = 0;
 
   constructor() {
     super('Level1Scene');
@@ -182,6 +183,7 @@ export class Level1Scene extends CombatLevelScene {
       this.#score.restore(campaignState.score);
       this.#lives.restore(campaignState.lives);
     }
+    this.#entryScore = this.#score.value;
     this.#audio = new AudioSystem((cue) => this.sound.play(RUNTIME_ASSETS.audio[cue].key));
     const campaignRun = this.#campaignSession?.run;
     this.#session = new GameSession(this.#runtimeConfig.apiBaseUrl ? new GameApiClient(this.#runtimeConfig.apiBaseUrl) : null, {
@@ -218,6 +220,7 @@ export class Level1Scene extends CombatLevelScene {
     this.createHazards();
     this.createShieldZone();
     this.createHud();
+    this.createLevelEntryNotice();
       this.createCollisions();
       this.events.on('resume', this.handleBoardingReturn, this);
       this.installHostileQa();
@@ -541,6 +544,14 @@ export class Level1Scene extends CombatLevelScene {
       .setOrigin(0, 0.5)
       .setDepth(11);
     this.reflowHud();
+  }
+
+  private createLevelEntryNotice(): void {
+    const notice = this.add.text(this.scale.width / 2, this.#layout.hudSafeRect.y + 72,
+      `LEVEL ${this.#campaignSequence}: ${this.#definition.name.toUpperCase()}\nSCORE ${this.#score.value}  LIVES ${this.#lives.value}  NUKES ${this.#currentNukes}`, {
+        color: '#d7e9ff', fontFamily: 'GalacticGunnersSilverDisplay, Arial, sans-serif', fontSize: `${Math.max(16, Math.min(26, this.scale.width * 0.022))}px`, align: 'center',
+      }).setOrigin(0.5).setDepth(12);
+    this.tweens.add({ targets: notice, alpha: 0, delay: 1500, duration: 650, onComplete: () => notice.destroy() });
   }
 
   private reflowHud(): void {
@@ -1275,12 +1286,14 @@ export class Level1Scene extends CombatLevelScene {
       .setDisplaySize(panelWidth, panelHeight)
       .setDepth(20);
     const bonus = isComplete ? this.#lives.value * 100 : 0;
+    const levelScoreDelta = Math.max(0, this.#score.value - this.#entryScore);
+    const rankedState = this.#campaignSession?.run?.ranked ? 'RANKED' : 'UNRANKED';
     const heading = isComplete
       ? (isFinalLevel ? 'CAMPAIGN VICTORY' : 'MISSION CLEARED')
       : 'GAME OVER';
     const values = isComplete
-      ? `${heading}\nSCORE ${this.#score.value}\nWAVE ${this.#campaignSequence}\nBONUS ${bonus}`
-      : `${heading}\nSCORE ${this.#score.value}\nWAVE ${this.#campaignSequence}\nLIVES ${this.#lives.value}`;
+      ? `${heading}\nLEVEL ${this.#campaignSequence}: ${this.#definition.name.toUpperCase()}\nLEVEL SCORE ${levelScoreDelta}\nCAMPAIGN SCORE ${this.#score.value}\nLIVES ${this.#lives.value}  NUKES ${this.#currentNukes}\nBONUS ${bonus}  ${rankedState}`
+      : `${heading}\nLEVEL ${this.#campaignSequence}: ${this.#definition.name.toUpperCase()}\nCAMPAIGN SCORE ${this.#score.value}\nLIVES ${this.#lives.value}  NUKES ${this.#currentNukes}\n${rankedState}`;
     const text = this.add.text(centreX, centreY - panelHeight * 0.12, values, {
       color: isComplete ? '#f7d56a' : '#ff8b6e',
       fontFamily: isComplete ? 'GalacticGunnersGoldDisplay, Arial, sans-serif' : 'GalacticGunnersSilverDisplay, Arial, sans-serif',
@@ -1295,6 +1308,13 @@ export class Level1Scene extends CombatLevelScene {
     } else if (isComplete) {
       this.createProductionTerminalButton(centreX - panelWidth * 0.18, actionY + 34, 'replay');
       this.createProductionTerminalButton(centreX + panelWidth * 0.18, actionY + 34, 'menu');
+      if (!this.#campaignSession?.run?.ranked && typeof window !== 'undefined') {
+        const claim = this.add.text(centreX, actionY + 92, 'CREATE PILOT ACCOUNT TO CLAIM ELIGIBLE SCORE', {
+          color: '#7ee8ff', fontFamily: 'GalacticGunnersHUD, monospace', fontSize: `${Math.max(14, Math.min(20, panelWidth * 0.024))}px`, align: 'center',
+        }).setOrigin(0.5).setDepth(23).setInteractive({ useHandCursor: true });
+        claim.on('pointerup', () => window.location.assign('/account/register?claim=eligible'));
+        claim.setData('qa', 'anonymous-score-claim-cta');
+      }
     } else {
       this.createProductionTerminalButton(centreX - panelWidth * 0.18, actionY + 34, 'try-again');
       this.createProductionTerminalButton(centreX + panelWidth * 0.18, actionY + 34, 'menu');
