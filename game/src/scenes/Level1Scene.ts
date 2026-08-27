@@ -1376,7 +1376,6 @@ export class Level1Scene extends CombatLevelScene {
       return;
     }
     if (action === 'menu') {
-      this.registry.remove('campaignState');
       this.scene.start('MainMenuScene');
       return;
     }

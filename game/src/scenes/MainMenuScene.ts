@@ -12,6 +12,7 @@ declare global {
 export class MainMenuScene extends Phaser.Scene {
   #inputSystem!: InputSystem;
   #started = false;
+  #resumeSequence: number | null = null;
 
   constructor() {
     super('MainMenuScene');
@@ -19,6 +20,8 @@ export class MainMenuScene extends Phaser.Scene {
 
   create(): void {
     this.#inputSystem = new InputSystem(this);
+    const checkpoint = this.registry.get('campaignState') as { sequence?: number } | undefined;
+    this.#resumeSequence = checkpoint?.sequence && checkpoint.sequence > 1 ? checkpoint.sequence : null;
 
     this.add.image(this.scale.width / 2, this.scale.height / 2, RUNTIME_ASSETS.keyArt.heroBattle.key)
       .setDisplaySize(this.scale.width, this.scale.height)
@@ -37,7 +40,7 @@ export class MainMenuScene extends Phaser.Scene {
     }).setOrigin(0.5).setDepth(3);
     subtitle.setData('qa', 'main-menu-subtitle');
 
-    const start = this.add.text(this.scale.width / 2, this.scale.height * 0.63, 'START', {
+    const start = this.add.text(this.scale.width / 2, this.scale.height * 0.63, this.#resumeSequence ? 'RESUME CAMPAIGN' : 'START', {
       color: '#f7d56a',
       fontFamily: 'GalacticGunnersGoldDisplay, Arial, sans-serif',
       fontSize: `${Math.max(58, Math.min(92, this.scale.width * 0.07))}px`,
@@ -55,6 +58,24 @@ export class MainMenuScene extends Phaser.Scene {
 
     start.on('pointerover', () => this.sound.play(RUNTIME_ASSETS.audio.uiSelect.key));
     start.on('pointerdown', () => this.go());
+    if (this.#resumeSequence) {
+      const fresh = this.add.text(this.scale.width / 2, this.scale.height * 0.73, 'NEW CAMPAIGN', {
+        color: '#7ee8ff', fontFamily: 'GalacticGunnersHUD, monospace', fontSize: `${Math.max(18, Math.min(28, this.scale.width * 0.022))}px`,
+      }).setOrigin(0.5).setDepth(3).setInteractive({ useHandCursor: true });
+      let confirmationRequested = false;
+      fresh.on('pointerdown', () => {
+        if (confirmationRequested) {
+          this.registry.remove('campaignState');
+          this.#resumeSequence = null;
+          this.#started = false;
+          this.go();
+          return;
+        }
+        confirmationRequested = true;
+        fresh.setText('CONFIRM NEW CAMPAIGN');
+      });
+      fresh.setData('qa', 'new-campaign-button');
+    }
     this.publishQaState();
   }
 
@@ -71,7 +92,7 @@ export class MainMenuScene extends Phaser.Scene {
     }
     this.#started = true;
     this.sound.play(RUNTIME_ASSETS.audio.uiConfirm.key);
-    this.scene.start('Level1Scene');
+    this.scene.start('Level1Scene', { sequence: this.#resumeSequence ?? 1 });
   }
 
   private publishQaState(): void {
@@ -85,6 +106,7 @@ export class MainMenuScene extends Phaser.Scene {
         .filter((child): child is Phaser.GameObjects.Text => child instanceof Phaser.GameObjects.Text)
         .map((text) => text.text),
       heroKeyArt: RUNTIME_ASSETS.keyArt.heroBattle.assetId,
+      resumeAvailable: Boolean(this.#resumeSequence),
     };
   }
 }
