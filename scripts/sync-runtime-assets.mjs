@@ -43,6 +43,20 @@ const runtimeAssets = [
     sha256: 'FBB60A9EB52346CB57CDF22FA1B6088DD24B08F9132540B05DFD0F1612405A7F',
   },
   {
+    key: 'enemy.cruiser',
+    assetId: 'GG-SPRITE-SPRITES-SHIPS-GG-ENEMY-CRUISER-V002-SHEET',
+    source: 'assets/sprites/ships/gg_enemy_cruiser_v002_sheet.png',
+    runtime: 'sprites/ships/gg_enemy_cruiser_v002_sheet.png',
+    sha256: '05DA611A926239711E2310EDCDC1D3C4AF06497D5B96E70761D5102B9D402AE3',
+  },
+  {
+    key: 'enemy.destroyer',
+    assetId: 'GG-SPRITE-SPRITES-SHIPS-GG-ENEMY-DESTROYER-V002-SHEET',
+    source: 'assets/sprites/ships/gg_enemy_destroyer_v002_sheet.png',
+    runtime: 'sprites/ships/gg_enemy_destroyer_v002_sheet.png',
+    sha256: '7E0BA8F3763EE030E6BB23B6D7999E28E8F23A86A73564A1580FBD74D538D88C',
+  },
+  {
     key: 'projectile.playerLaser',
     assetId: 'GG-SPRITE-SPRITES-OBJECTS-GG-PLAYER-LASER-V002',
     source: 'assets/sprites/objects/gg_player_laser_v002.png',

@@ -60,6 +60,8 @@ class Command(BaseCommand):
         catalogue = [
             ('player.ship', 'ships', '/gg-runtime-assets/sprites/ships/gg_player_ship_v002_sheet.png', 'a3e2edbdee85b312ad1766ee00c5a5438f60abf9dfcd006b2bd8474012ddff38'),
             ('enemy.scout', 'ships', '/gg-runtime-assets/sprites/ships/gg_enemy_scout_v002_sheet.png', 'fbb60a9eb52346cb57cdf22fa1b6088dd24b08f9132540b05dfd0f1612405a7f'),
+            ('enemy.cruiser', 'ships', '/gg-runtime-assets/sprites/ships/gg_enemy_cruiser_v002_sheet.png', '05da611a926239711e2310edcdc1d3c4af06497d5b96e70761d5102b9d402ae3'),
+            ('enemy.destroyer', 'ships', '/gg-runtime-assets/sprites/ships/gg_enemy_destroyer_v002_sheet.png', '7e0ba8f3763ee030e6bb23b6d7999e28e8f23a86a73564a1580fbd74d538d88c'),
             ('projectile.nuke', 'ui', '/gg-runtime-assets/sprites/objects/gg_nuke_projectile_v002_horizontal_upright.png', '3b826087ad38eb6963046260ec384b9507c80e450dfaa3b302b923875b8b21aa'),
             ('hazard.asteroid', 'hazards', '/gg-runtime-assets/sprites/objects/gg_asteroid_v002_sheet.png', '0421bfd58ea30608adf8e0e684b22419f63f6c57dfcc06b59594be6947625d01'),
             ('hazard.comet', 'hazards', '/gg-runtime-assets/sprites/objects/gg_comet_v002_horizontal_vertical_facing.png', 'b9eb2bd211f9a922707cceea4e1eb4eaa5b1205249e38d6bbecb76dfba33978f'),
