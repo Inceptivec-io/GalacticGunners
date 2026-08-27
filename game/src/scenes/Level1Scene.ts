@@ -120,12 +120,13 @@ export class Level1Scene extends CombatLevelScene {
     this.#campaignSession = this.registry.get('campaignSession') as CampaignSession | undefined ?? null;
     const campaignRuntime = this.registry.get('campaignRuntime') as LevelRuntimeConfig[] | undefined ?? [];
     const packagedDefinition = CAMPAIGN_DEFINITIONS.find((definition) => definition.sequence === this.#campaignSequence);
-    if (!packagedDefinition) {
+    const configuredRuntime = campaignRuntime.find((runtime) => runtime.definition.sequence === this.#campaignSequence);
+    if (!packagedDefinition && !configuredRuntime) {
       throw new Error(`Campaign sequence ${this.#campaignSequence} is not defined.`);
     }
-    this.levelRuntime = campaignRuntime.find((runtime) => runtime.definition.sequence === this.#campaignSequence)
+    this.levelRuntime = configuredRuntime
       ?? (this.#campaignSequence === 1 ? this.registry.get('levelRuntime') as LevelRuntimeConfig | undefined ?? null : null);
-    this.#definition = this.levelRuntime?.definition ?? packagedDefinition;
+    this.#definition = this.levelRuntime?.definition ?? packagedDefinition!;
     validateLevelDefinition(this.#definition);
     this.#layout = createPlayfieldLayout(this.scale.width, this.scale.height);
     this.#terminalState = null;
@@ -994,7 +995,7 @@ export class Level1Scene extends CombatLevelScene {
     this.#playerLasers.clear(true, true);
     this.#enemyLasers.clear(true, true);
     const isComplete = state === 'complete';
-    const isFinalLevel = this.#campaignSession?.run?.entry === null || this.#campaignSequence === CAMPAIGN_DEFINITIONS.length;
+    const isFinalLevel = this.#campaignSession?.run ? !this.#campaignSession.run.has_next_entry : this.#campaignSequence >= this.campaignLength();
     const centreX = this.scale.width / 2;
     const centreY = this.scale.height / 2;
     const panelAsset = isComplete ? RUNTIME_ASSETS.ui.victoryPanel : RUNTIME_ASSETS.ui.gameOverPanel;
@@ -1047,7 +1048,7 @@ export class Level1Scene extends CombatLevelScene {
     if (this.#terminalState === 'failed') {
       return 'try-again';
     }
-    return this.#campaignSequence < CAMPAIGN_DEFINITIONS.length ? 'continue' : 'replay';
+    return this.#campaignSession?.run?.has_next_entry || this.#campaignSession?.offline && this.#campaignSequence < this.campaignLength() ? 'continue' : 'replay';
   }
 
   private createContinueControl(x: number, y: number): void {
@@ -1119,14 +1120,14 @@ export class Level1Scene extends CombatLevelScene {
     try {
       const serverResult = await this.#campaignSession?.complete(this.#score.value, this.#lives.value, this.#currentNukes);
       const serverDefinition = serverResult?.entry?.level.definition;
-      const nextSequence = serverResult?.entry?.position ?? this.#campaignSequence + 1;
+      const nextSequence = serverResult?.entry?.position;
       if (serverDefinition && typeof serverDefinition === 'object') {
         validateLevelDefinition(serverDefinition);
         const runtimes = this.registry.get('campaignRuntime') as LevelRuntimeConfig[];
         const replacement = { definition: serverDefinition, checksum: serverResult?.entry?.level.checksum ?? '', source: 'remote' as const };
         this.registry.set('campaignRuntime', [...runtimes.filter((runtime) => runtime.definition.sequence !== nextSequence), replacement]);
       }
-      if (nextSequence <= CAMPAIGN_DEFINITIONS.length) {
+      if (nextSequence && serverDefinition && typeof serverDefinition === 'object') {
         this.registry.set('campaignState', { sequence: nextSequence, score: this.#score.value, lives: this.#lives.value, nukes: this.#currentNukes } satisfies CampaignRuntimeState);
         this.scene.restart({ sequence: nextSequence });
       }
@@ -1135,12 +1136,18 @@ export class Level1Scene extends CombatLevelScene {
       // mode is explicitly deterministic and may use the packaged authority.
       if (this.#campaignSession?.offline) {
         const nextSequence = this.#campaignSequence + 1;
-        this.registry.set('campaignState', { sequence: nextSequence, score: this.#score.value, lives: this.#lives.value, nukes: this.#currentNukes } satisfies CampaignRuntimeState);
-        this.scene.restart({ sequence: nextSequence });
+        if (nextSequence <= this.campaignLength()) {
+          this.registry.set('campaignState', { sequence: nextSequence, score: this.#score.value, lives: this.#lives.value, nukes: this.#currentNukes } satisfies CampaignRuntimeState);
+          this.scene.restart({ sequence: nextSequence });
+        }
       } else {
         this.#terminalActionHandled = false;
       }
     }
+  }
+
+  private campaignLength(): number {
+    return (this.registry.get('campaignRuntime') as LevelRuntimeConfig[] | undefined)?.length ?? CAMPAIGN_DEFINITIONS.length;
   }
 
   private installHostileQa(): void {

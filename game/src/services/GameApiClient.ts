@@ -63,7 +63,7 @@ export interface GameRunClient {
 }
 
 export interface CampaignEntry { id: string; position: number; level: { slug: string; version: number; checksum: string; definition: unknown }; }
-export interface CampaignRunRecord { id: string; status?: 'ACTIVE' | 'COMPLETED'; score: number; lives: number; nukes: number; entry: CampaignEntry | null; ranked: boolean; capability?: string | null; completed_entry_count?: number; }
+export interface CampaignRunRecord { id: string; status?: 'ACTIVE' | 'COMPLETED'; score: number; lives: number; nukes: number; entry: CampaignEntry | null; has_next_entry?: boolean; ranked: boolean; capability?: string | null; completed_entry_count?: number; }
 export interface CampaignEntryCompletion { score: number; lives: number; nukes: number; }
 
 export class GameApiClient implements GameRunClient {

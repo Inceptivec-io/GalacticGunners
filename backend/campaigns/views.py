@@ -16,7 +16,7 @@ class CampaignRunStartView(APIView):
             run, capability = CampaignService.start(user=request.user, seed_root=int(request.data.get('seed_root', 12001)))
         except (TypeError, ValueError) as error:
             return Response({'code': str(error), 'detail': 'Campaign cannot be started.'}, status=status.HTTP_409_CONFLICT)
-        response = Response({'id': str(run.id), 'score': run.score, 'lives': run.lives, 'nukes': run.nukes, 'entry': CampaignService.entry_payload(run), 'ranked': bool(run.player_id), 'capability': capability}, status=status.HTTP_201_CREATED)
+        response = Response({'id': str(run.id), 'score': run.score, 'lives': run.lives, 'nukes': run.nukes, 'entry': CampaignService.entry_payload(run), 'has_next_entry': bool(run.next_entry_id), 'ranked': bool(run.player_id), 'capability': capability}, status=status.HTTP_201_CREATED)
         response['Cache-Control'] = 'no-store'
         return response
 
@@ -34,4 +34,4 @@ class CampaignRunCompleteEntryView(APIView):
             return Response({'code': str(error), 'detail': 'Campaign entry cannot be completed.'}, status=status.HTTP_403_FORBIDDEN)
         except (TypeError, ValueError) as error:
             return Response({'code': str(error), 'detail': 'Campaign entry cannot be completed.'}, status=status.HTTP_409_CONFLICT)
-        return Response({'id': str(result.id), 'status': result.status, 'score': result.score, 'lives': result.lives, 'nukes': result.nukes, 'entry': CampaignService.entry_payload(result), 'completed_entry_count': result.completed_entry_count})
+        return Response({'id': str(result.id), 'status': result.status, 'score': result.score, 'lives': result.lives, 'nukes': result.nukes, 'entry': CampaignService.entry_payload(result), 'has_next_entry': bool(result.next_entry_id), 'completed_entry_count': result.completed_entry_count})
