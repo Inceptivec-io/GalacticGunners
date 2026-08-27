@@ -4,6 +4,7 @@ from rest_framework import serializers
 
 from leaderboard.models import LeaderboardEntry
 from levels.models import Level, LevelVersion
+from games.models import OwnerScope
 from .models import CampaignRun
 from campaigns.services import capability_matches
 
@@ -44,7 +45,9 @@ class StartGameRunSerializer(serializers.Serializer):
         version = GameVersion.objects.filter(version=attrs['game_version'], is_active=True).first()
         if not version:
             raise serializers.ValidationError({'game_version': 'GAME_VERSION_MISMATCH'})
-        level = Level.objects.select_related('active_version').filter(slug=attrs['level_slug'], archived=False).first()
+        level = Level.objects.select_related('active_version').filter(
+            slug=attrs['level_slug'], archived=False, game_project__owner_scope=OwnerScope.CORE,
+        ).first()
         if not level or not level.active_version or level.active_version.status != LevelVersion.Status.PUBLISHED:
             raise serializers.ValidationError({'level_slug': 'LEVEL_NOT_PUBLISHED'})
         active = level.active_version
