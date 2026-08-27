@@ -21,7 +21,7 @@ class Command(BaseCommand):
             username, password = os.environ.get(username_key), os.environ.get(password_key)
             if not username or not password:
                 raise CommandError(f'{username_key} is unavailable.')
-            client = Client(enforce_csrf_checks=True)
+            client = Client(enforce_csrf_checks=True, HTTP_HOST='localhost')
             response = self.post(client, '/api/v1/auth/login/', {'username': username, 'password': password, 'audience': audience})
             if response.status_code != 200 or expected_grant not in response.json().get('surface_grants', []):
                 raise CommandError(f'{audience} login verification failed.')
@@ -29,7 +29,7 @@ class Command(BaseCommand):
                 raise CommandError(f'{audience} session restoration failed.')
             if self.post(client, '/api/v1/auth/logout/', {}).status_code != 200:
                 raise CommandError(f'{audience} logout verification failed.')
-        player = Client(enforce_csrf_checks=True)
+        player = Client(enforce_csrf_checks=True, HTTP_HOST='localhost')
         denied = self.post(player, '/api/v1/auth/login/', {
             'username': os.environ['PLAYER_REVIEW_USERNAME'], 'password': os.environ['PLAYER_REVIEW_PASSWORD'], 'audience': 'COMMAND_POST',
         })

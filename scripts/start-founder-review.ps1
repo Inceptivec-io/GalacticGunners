@@ -20,6 +20,10 @@ function Set-ReviewValue([string]$name, [string]$value) {
   if ($lines -match $match) { $lines = $lines | ForEach-Object { if ($_ -match $match) { "$name=$value" } else { $_ } } } else { $lines += "$name=$value" }
   Set-Content -LiteralPath $envFile -Value $lines -Encoding ascii
 }
+function Invoke-ReviewCommand([scriptblock]$command, [string]$description) {
+  & $command
+  if ($LASTEXITCODE -ne 0) { throw "Founder review $description failed." }
+}
 if (-not (Test-Path $envFile)) {
   $dbPassword = New-ReviewSecret
   @(
@@ -57,14 +61,14 @@ $values = Read-ReviewEnvironment
 $required = 'POSTGRES_DB','POSTGRES_USER','POSTGRES_PASSWORD','DATABASE_URL','DJANGO_SECRET_KEY','DJANGO_ALLOWED_HOSTS','DJANGO_CSRF_TRUSTED_ORIGINS','ENABLE_DJANGO_ADMIN','FOUNDER_REVIEW_USERNAME','FOUNDER_REVIEW_PASSWORD','FOUNDER_REVIEW_DISPLAY_NAME','COMMAND_POST_REVIEW_USERNAME','COMMAND_POST_REVIEW_PASSWORD','COMMAND_POST_REVIEW_DISPLAY_NAME','COMMAND_POST_REVIEW_ORGANIZATION_SLUG','PLAYER_REVIEW_USERNAME','PLAYER_REVIEW_PASSWORD','PLAYER_REVIEW_DISPLAY_NAME','DJANGO_LOCAL_SUPERUSER_USERNAME','DJANGO_LOCAL_SUPERUSER_PASSWORD'
 foreach ($name in $required) { if (-not $values[$name]) { throw "Founder review environment is missing $name." } }
 if ($values.DATABASE_URL -ne "postgresql://$($values.POSTGRES_USER):$($values.POSTGRES_PASSWORD)@db:5432/$($values.POSTGRES_DB)") { throw 'DATABASE_URL does not match the configured PostgreSQL authority; resolve retained-volume credential drift without deleting the volume.' }
-docker compose --env-file $envFile up --build -d
-docker compose --env-file $envFile exec -T db psql -U $values.POSTGRES_USER -d $values.POSTGRES_DB -c 'select 1;' | Out-Null
-docker compose --env-file $envFile exec -T backend python manage.py migrate --noinput
-docker compose --env-file $envFile exec -T backend python manage.py migrate --check
-docker compose --env-file $envFile exec -T backend python manage.py seed_service_plans
-docker compose --env-file $envFile exec -T backend python manage.py seed_runtime_authority
-docker compose --env-file $envFile exec -T backend python manage.py bootstrap_founder_review
-docker compose --env-file $envFile exec -T backend python manage.py review_founder_environment
+Invoke-ReviewCommand { docker compose --env-file $envFile up --build -d } 'container build/start'
+Invoke-ReviewCommand { docker compose --env-file $envFile exec -T db psql -U $values.POSTGRES_USER -d $values.POSTGRES_DB -c 'select 1;' | Out-Null } 'database authentication'
+Invoke-ReviewCommand { docker compose --env-file $envFile exec -T backend python manage.py migrate --noinput } 'migration'
+Invoke-ReviewCommand { docker compose --env-file $envFile exec -T backend python manage.py migrate --check } 'migration drift check'
+Invoke-ReviewCommand { docker compose --env-file $envFile exec -T backend python manage.py seed_service_plans } 'service-plan seed'
+Invoke-ReviewCommand { docker compose --env-file $envFile exec -T backend python manage.py seed_runtime_authority } 'campaign seed'
+Invoke-ReviewCommand { docker compose --env-file $envFile exec -T backend python manage.py bootstrap_founder_review } 'identity bootstrap'
+Invoke-ReviewCommand { docker compose --env-file $envFile exec -T backend python manage.py review_founder_environment } 'identity smoke test'
 $health = Invoke-RestMethod 'http://localhost:3002/api/v1/health/'; $build = Invoke-RestMethod 'http://localhost:3002/api/v1/system/build/'
 if ($health.status -ne 'ok' -or $build.source_sha -ne $sourceSha) { throw 'Founder review environment provenance or health check failed.' }
 @(
