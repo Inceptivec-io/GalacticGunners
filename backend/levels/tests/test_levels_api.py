@@ -6,6 +6,7 @@ from django.contrib.auth.models import Permission
 
 from levels.models import Level, LevelVersion
 from game_runs.models import GameRun, GameVersion
+from games.models import GameProject, OwnerScope, Visibility
 
 
 def golden_level():
@@ -16,12 +17,20 @@ def golden_level():
 @pytest.fixture
 def level_admin(django_user_model):
     user = django_user_model.objects.create_user(username='level-admin', password='safe-password')
-    user.user_permissions.add(Permission.objects.get(codename='change_level'))
+    user.user_permissions.add(Permission.objects.get(codename='manage_platform'))
     return user
 
 
+@pytest.fixture
+def core_project(level_admin):
+    return GameProject.objects.create(
+        slug='galactic-gunners-core', name='Galactic Gunners CORE',
+        owner_scope=OwnerScope.CORE, visibility=Visibility.PRIVATE, created_by=level_admin,
+    )
+
+
 @pytest.mark.django_db
-def test_level_one_admission_publish_and_public_resolution(client, level_admin):
+def test_level_one_admission_publish_and_public_resolution(client, level_admin, core_project):
     assert client.post('/api/v1/admin/levels/', {'slug': 'level-01', 'name': 'Level 1', 'sequence': 1, 'config': golden_level()}, content_type='application/json').status_code == 403
     client.force_login(level_admin)
     created = client.post('/api/v1/admin/levels/', {'slug': 'level-01', 'name': 'Level 1', 'sequence': 1, 'config': golden_level()}, content_type='application/json')
@@ -51,7 +60,7 @@ def test_published_version_is_immutable_and_unknown_routes_are_absent(client, le
 
 
 @pytest.mark.django_db
-def test_clone_export_and_deterministic_draft_generation(client, level_admin):
+def test_clone_export_and_deterministic_draft_generation(client, level_admin, core_project):
     client.force_login(level_admin)
     level = Level.objects.create(slug='level-01', name='Level 1', sequence=1)
     LevelVersion.objects.create(level=level, version=1, config=golden_level())

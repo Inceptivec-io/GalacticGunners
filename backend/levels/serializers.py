@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from games.models import GameProject, OwnerScope
 from .models import Level, LevelVersion
 from .validation import checksum, validate_definition
 
@@ -30,7 +31,16 @@ class LevelCreateSerializer(serializers.Serializer):
         return validate_definition(value)
 
     def create(self, data):
-        level = Level.objects.create(slug=data['slug'], name=data['name'], campaign=data['campaign'], sequence=data['sequence'])
+        core_project = GameProject.objects.filter(
+            owner_scope=OwnerScope.CORE,
+            status='ACTIVE',
+        ).order_by('created_at').first()
+        if core_project is None:
+            raise serializers.ValidationError('CORE campaign authority is not seeded.')
+        level = Level.objects.create(
+            slug=data['slug'], name=data['name'], campaign=data['campaign'],
+            sequence=data['sequence'], game_project=core_project,
+        )
         LevelVersion.objects.create(level=level, version=1, config=data['config'], seed_policy=data['seed_policy'], created_by=self.context['request'].user)
         return level
 
