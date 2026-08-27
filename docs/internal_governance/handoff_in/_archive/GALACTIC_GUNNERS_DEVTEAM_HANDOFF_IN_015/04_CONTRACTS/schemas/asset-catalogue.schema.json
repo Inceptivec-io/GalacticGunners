@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://galacticgunners.com/contracts/v1/asset-catalogue.schema.json",
+  "title": "Galactic Gunners Asset Catalogue",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "key", "category", "ownership", "visibility", "status", "runtime_path", "thumbnail_path", "mime_type", "checksum", "provenance_ref"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "key": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-z0-9][a-z0-9._-]*$" },
+    "category": { "type": "string", "enum": ["PLAYER", "ENEMY", "FORMATION", "BUNKER", "SHIELD", "HAZARD", "PICKUP", "OBJECTIVE", "BOARDING_ANCHOR", "BOARDING_TILE", "BOARDING_PLATFORM", "BOARDING_DOOR", "BOARDING_CONTAINER", "BOARDING_ENEMY", "BOARDING_EFFECT"] },
+    "ownership": { "$ref": "platform-content.schema.json#/$defs/Ownership" },
+    "visibility": { "$ref": "platform-content.schema.json#/$defs/Visibility" },
+    "status": { "enum": ["DRAFT", "ACTIVE", "RETIRED", "REJECTED"] },
+    "runtime_path": { "type": "string", "pattern": "^/[A-Za-z0-9._/-]+$", "not": { "pattern": "(?:^|/)\\.\\.(?:/|$)" } },
+    "thumbnail_path": { "type": "string", "pattern": "^/[A-Za-z0-9._/-]+$", "not": { "pattern": "(?:^|/)\\.\\.(?:/|$)" } },
+    "mime_type": { "enum": ["image/png", "image/webp", "image/svg+xml", "audio/wav", "audio/mpeg", "audio/ogg"] },
+    "width": { "type": "integer", "minimum": 1, "maximum": 16384 },
+    "height": { "type": "integer", "minimum": 1, "maximum": 16384 },
+    "frame_width": { "type": "integer", "minimum": 1, "maximum": 4096 },
+    "frame_height": { "type": "integer", "minimum": 1, "maximum": 4096 },
+    "frame_count": { "type": "integer", "minimum": 1, "maximum": 1024 },
+    "animation": { "type": "object", "maxProperties": 64 },
+    "collider": { "type": "object", "maxProperties": 16 },
+    "checksum": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "provenance_ref": { "type": "string", "minLength": 1, "maxLength": 240 }
+  }
+}
+

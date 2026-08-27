@@ -38,6 +38,10 @@ INSTALLED_APPS = [
     'levels',
     'leaderboard',
     'boarding',
+    'organizations',
+    'games',
+    'assets',
+    'audit',
 ]
 
 MIDDLEWARE = [

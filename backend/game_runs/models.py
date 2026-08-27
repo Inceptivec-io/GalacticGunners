@@ -6,6 +6,55 @@ from django.core.validators import MaxLengthValidator, MinValueValidator, RegexV
 from django.db import models
 from django.db.models import Q
 
+
+class CampaignRun(models.Model):
+    class Status(models.TextChoices):
+        ACTIVE = 'ACTIVE', 'Active'
+        COMPLETED = 'COMPLETED', 'Completed'
+        FAILED = 'FAILED', 'Failed'
+        ABANDONED = 'ABANDONED', 'Abandoned'
+        REJECTED = 'REJECTED', 'Rejected'
+
+    class ValidationState(models.TextChoices):
+        PENDING = 'PENDING', 'Pending'
+        VALID = 'VALID', 'Valid'
+        REJECTED = 'REJECTED', 'Rejected'
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    game_release = models.ForeignKey('games.GameRelease', on_delete=models.PROTECT, related_name='campaign_runs')
+    player = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.PROTECT, related_name='campaign_runs')
+    anonymous_capability_hash = models.CharField(max_length=64, null=True, blank=True)
+    status = models.CharField(max_length=16, choices=Status.choices, default=Status.ACTIVE)
+    next_sequence = models.PositiveSmallIntegerField(default=1)
+    score = models.PositiveIntegerField(default=0)
+    lives = models.PositiveSmallIntegerField(default=3)
+    nukes = models.PositiveSmallIntegerField(default=2)
+    seed_root = models.PositiveBigIntegerField()
+    validation_state = models.CharField(max_length=16, choices=ValidationState.choices, default=ValidationState.PENDING)
+    claim_expires_at = models.DateTimeField(null=True, blank=True)
+    claimed_at = models.DateTimeField(null=True, blank=True)
+    started_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=(Q(player__isnull=False, anonymous_capability_hash__isnull=True) | Q(player__isnull=True, anonymous_capability_hash__isnull=False)), name='campaign_run_single_owner'),
+            models.CheckConstraint(condition=Q(next_sequence__gte=1, next_sequence__lte=7), name='campaign_run_sequence_bounded'),
+            models.CheckConstraint(condition=Q(lives__gte=0, lives__lte=3), name='campaign_run_lives_bounded'),
+            models.CheckConstraint(condition=Q(nukes__gte=0, nukes__lte=2), name='campaign_run_nukes_bounded'),
+        ]
+
+
+class CampaignClaimEvent(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    campaign_run = models.ForeignKey(CampaignRun, on_delete=models.PROTECT, related_name='claim_events')
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name='campaign_claim_events')
+    result = models.CharField(max_length=16, choices=[('CLAIMED', 'Claimed'), ('REJECTED', 'Rejected')])
+    reason_code = models.CharField(max_length=64, blank=True)
+    correlation_id = models.UUIDField(default=uuid.uuid4, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
 class GameVersion(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     version = models.CharField(max_length=32, unique=True)
@@ -38,6 +87,9 @@ class GameRun(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     player = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name='game_runs')
+    campaign_run = models.ForeignKey(CampaignRun, null=True, blank=True, on_delete=models.PROTECT, related_name='attempts')
+    sequence = models.PositiveSmallIntegerField(null=True, blank=True)
+    attempt = models.PositiveSmallIntegerField(null=True, blank=True)
     game_version = models.ForeignKey(GameVersion, on_delete=models.PROTECT, related_name='game_runs')
     level = models.ForeignKey('levels.Level', null=True, blank=True, on_delete=models.PROTECT, related_name='game_runs')
     level_version = models.PositiveIntegerField(null=True, blank=True)
@@ -65,6 +117,15 @@ class GameRun(models.Model):
     submitted_at = models.DateTimeField(null=True, blank=True)
     accepted_at = models.DateTimeField(null=True, blank=True)
     validation_code = models.CharField(max_length=64, blank=True)
+    entry_score = models.PositiveIntegerField(default=0)
+    entry_lives = models.PositiveSmallIntegerField(default=3)
+    entry_nukes = models.PositiveSmallIntegerField(default=2)
+    score_delta = models.IntegerField(default=0)
+    exit_score = models.PositiveIntegerField(default=0)
+    exit_lives = models.PositiveSmallIntegerField(null=True, blank=True)
+    exit_nukes = models.PositiveSmallIntegerField(null=True, blank=True)
+    entry_state_digest = models.CharField(max_length=64, blank=True)
+    exit_state_digest = models.CharField(max_length=64, blank=True)
 
     class Meta:
         indexes = [
@@ -83,6 +144,7 @@ class GameRun(models.Model):
                 condition=Q(validity__in=['pending', 'valid', 'rejected']),
                 name='game_run_validity_known',
             ),
+            models.UniqueConstraint(fields=['campaign_run', 'sequence', 'attempt'], condition=Q(campaign_run__isnull=False), name='campaign_attempt_unique'),
         ]
 
     @property

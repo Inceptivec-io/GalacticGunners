@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://galacticgunners.com/contracts/v1/campaign-run.schema.json",
+  "title": "Galactic Gunners Campaign Run Contracts",
+  "$defs": {
+    "Resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lives", "nukes"],
+      "properties": {
+        "lives": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "nukes": { "type": "integer", "minimum": 0, "maximum": 2 }
+      }
+    },
+    "CampaignRun": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "game_release_id", "status", "next_sequence", "score", "resources", "ranked", "started_at"],
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "game_release_id": { "type": "string", "format": "uuid" },
+        "status": { "enum": ["ACTIVE", "COMPLETED", "FAILED", "ABANDONED", "REJECTED"] },
+        "next_sequence": { "type": "integer", "minimum": 1, "maximum": 7 },
+        "score": { "type": "integer", "minimum": 0 },
+        "resources": { "$ref": "#/$defs/Resources" },
+        "ranked": { "type": "boolean" },
+        "started_at": { "type": "string", "format": "date-time" },
+        "completed_at": { "oneOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }] }
+      }
+    },
+    "CampaignStartRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["game_project_slug", "client_type"],
+      "properties": {
+        "game_project_slug": { "type": "string", "const": "galactic-gunners-final-assault" },
+        "client_type": { "enum": ["web", "windows", "macos", "android", "ios", "unknown"] }
+      }
+    },
+    "CampaignStartResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["campaign", "level"],
+      "properties": {
+        "campaign": { "$ref": "#/$defs/CampaignRun" },
+        "campaign_token": { "type": "string", "minLength": 43, "maxLength": 128 },
+        "level": { "$ref": "platform-content.schema.json#/$defs/VersionRef" }
+      }
+    },
+    "LevelAttemptStartRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sequence", "mode"],
+      "properties": {
+        "sequence": { "type": "integer", "minimum": 1, "maximum": 6 },
+        "mode": { "enum": ["CONTINUE", "REPLAY_LEVEL"] }
+      }
+    },
+    "LevelCompletionRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["duration_ms", "outcome", "event_summary", "event_trace", "entry_state_digest"],
+      "properties": {
+        "duration_ms": { "type": "integer", "minimum": 0, "maximum": 7200000 },
+        "outcome": { "enum": ["LEVEL_COMPLETE", "PLAYER_DEAD", "ABORTED"] },
+        "event_summary": { "type": "object", "maxProperties": 64 },
+        "event_trace": { "type": "array", "maxItems": 20000, "items": { "type": "object" } },
+        "entry_state_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      }
+    },
+    "LevelCompletionResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_id", "validation_state", "level_score", "campaign_score", "resources", "level_completed", "next_sequence", "next_action", "ranked", "rejection_codes"],
+      "properties": {
+        "run_id": { "type": "string", "format": "uuid" },
+        "validation_state": { "enum": ["VALIDATED", "REJECTED"] },
+        "level_score": { "oneOf": [{ "type": "integer", "minimum": 0 }, { "type": "null" }] },
+        "campaign_score": { "type": "integer", "minimum": 0 },
+        "resources": { "$ref": "#/$defs/Resources" },
+        "level_completed": { "type": "integer", "minimum": 1, "maximum": 6 },
+        "next_sequence": { "type": "integer", "minimum": 1, "maximum": 7 },
+        "next_action": { "enum": ["CONTINUE", "CAMPAIGN_COMPLETE", "GAME_OVER", "REJECTED"] },
+        "ranked": { "type": "boolean" },
+        "rejection_codes": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^[A-Z0-9_]+$" } }
+      }
+    },
+    "ClaimRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["campaign_claim_token"],
+      "properties": { "campaign_claim_token": { "type": "string", "minLength": 43, "maxLength": 128 } }
+    }
+  },
+  "oneOf": [
+    { "$ref": "#/$defs/CampaignRun" },
+    { "$ref": "#/$defs/CampaignStartRequest" },
+    { "$ref": "#/$defs/CampaignStartResponse" },
+    { "$ref": "#/$defs/LevelAttemptStartRequest" },
+    { "$ref": "#/$defs/LevelCompletionRequest" },
+    { "$ref": "#/$defs/LevelCompletionResponse" },
+    { "$ref": "#/$defs/ClaimRequest" }
+  ]
+}

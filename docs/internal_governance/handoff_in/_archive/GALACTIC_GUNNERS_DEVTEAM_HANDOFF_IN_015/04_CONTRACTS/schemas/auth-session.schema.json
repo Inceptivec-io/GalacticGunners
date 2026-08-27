@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://galacticgunners.com/contracts/v1/auth-session.schema.json",
+  "title": "Galactic Gunners Auth Session Contracts",
+  "$defs": {
+    "Username": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 30,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{2,29}$"
+    },
+    "DisplayName": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 20,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9 _-]{2,19}$"
+    },
+    "RegisterRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["username", "display_name", "password"],
+      "properties": {
+        "username": { "$ref": "#/$defs/Username" },
+        "display_name": { "$ref": "#/$defs/DisplayName" },
+        "password": { "type": "string", "minLength": 12, "maxLength": 128 },
+        "campaign_claim_token": { "type": "string", "minLength": 43, "maxLength": 128 }
+      }
+    },
+    "LoginRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["username", "password"],
+      "properties": {
+        "username": { "$ref": "#/$defs/Username" },
+        "password": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "campaign_claim_token": { "type": "string", "minLength": 43, "maxLength": 128 }
+      }
+    },
+    "SessionUser": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "username", "display_name", "platform_permissions", "memberships"],
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "username": { "$ref": "#/$defs/Username" },
+        "display_name": { "$ref": "#/$defs/DisplayName" },
+        "platform_permissions": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z_]+\\.[a-z_]+$" }
+        },
+        "memberships": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["organization_id", "organization_slug", "role"],
+            "properties": {
+              "organization_id": { "type": "string", "format": "uuid" },
+              "organization_slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+              "role": { "enum": ["BUSINESS_ADMIN", "EDITOR", "PLAYER"] }
+            }
+          }
+        }
+      }
+    },
+    "SessionResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authenticated", "user"],
+      "properties": {
+        "authenticated": { "const": true },
+        "user": { "$ref": "#/$defs/SessionUser" },
+        "claim_result": { "enum": ["CLAIMED", "NOT_REQUESTED"] }
+      }
+    }
+  },
+  "oneOf": [
+    { "$ref": "#/$defs/RegisterRequest" },
+    { "$ref": "#/$defs/LoginRequest" },
+    { "$ref": "#/$defs/SessionResponse" }
+  ]
+}
+
