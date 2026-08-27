@@ -11,10 +11,11 @@ from levels.views import AdminLevelActionView, AdminLevelCreateView, AdminLevelE
 from accounts.api import CsrfView, LoginView, LogoutView, RegisterView, SessionView
 from campaigns.views import CampaignRunCompleteEntryView, CampaignRunStartView
 
-from .views import health
+from .views import build_provenance, health
 
 urlpatterns = [
     path('api/v1/health/', health, name='health'),
+    path('api/v1/system/build/', build_provenance, name='build-provenance'),
     path('api/v1/auth/csrf/', CsrfView.as_view(), name='csrf'),
     path('api/v1/auth/session/', SessionView.as_view(), name='session'),
     path('api/v1/auth/me/', SessionView.as_view(), name='auth-me'),
