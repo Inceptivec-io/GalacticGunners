@@ -49,7 +49,7 @@ try {
   await page.reload({ waitUntil: 'networkidle' });
   await page.waitForSelector('[data-designer-route="campaign"]');
   const afterSave = await page.evaluate(async () => (await fetch('/api/v1/admin/levels/authority/', { credentials: 'same-origin' })).json());
-  const saved = afterSave.results.find((item) => item.id === level.id).editable_version;
+  const saved = afterSave.results.find((item) => item.id === level.id).versions[0];
   assert(saved && saved.checksum !== original.checksum, 'Designer save did not create a distinct immutable draft.');
   const popup = page.waitForEvent('popup');
   await page.getByRole('button', { name: 'Same-runtime preview' }).click();
