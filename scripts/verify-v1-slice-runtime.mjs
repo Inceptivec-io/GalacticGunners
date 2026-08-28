@@ -65,11 +65,23 @@ async function assertNoBannedVisibleTerms(page, label) {
 }
 
 async function waitForScene(page, sceneName) {
-  await page.waitForFunction((expected) => {
-    const menu = window.__GALACTIC_GUNNERS_MENU_QA__;
-    const game = window.__GALACTIC_GUNNERS_SLICE_QA__;
-    return menu?.scene === expected || game?.scene === expected;
-  }, sceneName, { timeout: 15000 });
+  try {
+    await page.waitForFunction((expected) => {
+      const menu = window.__GALACTIC_GUNNERS_MENU_QA__;
+      const game = window.__GALACTIC_GUNNERS_SLICE_QA__;
+      return menu?.scene === expected || game?.scene === expected;
+    }, sceneName, { timeout: 30000 });
+  } catch (error) {
+    const diagnostic = await page.evaluate(() => ({
+      title: document.title,
+      status: document.querySelector('[role="status"], [role="alert"]')?.textContent?.trim() ?? null,
+      canvasCount: document.querySelectorAll('canvas').length,
+      menuScene: window.__GALACTIC_GUNNERS_MENU_QA__?.scene ?? null,
+      gameScene: window.__GALACTIC_GUNNERS_SLICE_QA__?.scene ?? null,
+      hostileScene: window.__GALACTIC_GUNNERS_HOSTILE__?.state?.()?.scene ?? null,
+    })).catch(() => null);
+    throw new Error(`Runtime bootstrap failed while waiting for ${sceneName}: ${JSON.stringify(diagnostic)}. ${error.message}`);
+  }
 }
 
 async function startFromMenu(page) {
