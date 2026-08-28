@@ -84,6 +84,7 @@ try {
     canvas.x + fire.x * canvas.width / active.viewport.width,
     canvas.y + fire.y * canvas.height / active.viewport.height,
   );
+  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_BOARDING_QA__?.state()?.lastTouchInput === 'fire');
   await page.waitForFunction(() => window.__GALACTIC_GUNNERS_BOARDING_QA__?.state()?.playerShotsInFlight > 0);
   await page.screenshot({ path: path.join(outputDir, '01a-boarding-touch-fire.png'), fullPage: true });
 

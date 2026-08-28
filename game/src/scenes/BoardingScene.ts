@@ -28,6 +28,7 @@ interface BoardingQaState {
   touchControls: Array<{ id: string; x: number; y: number }>;
   playerShotsInFlight: number;
   viewport: { width: number; height: number };
+  lastTouchInput: string | null;
 }
 
 declare global {
@@ -63,6 +64,7 @@ export class BoardingScene extends Phaser.Scene {
   private statusText!: Phaser.GameObjects.Text;
   private readonly touchInput = { left: false, right: false, jump: false, fire: false, interact: false };
   private readonly touchControls: Phaser.GameObjects.GameObject[] = [];
+  private lastTouchInput: string | null = null;
   private pausePressed = false;
   private launch: BoardingLaunch = { anchorId: 'level-04-alien-frigate-01', sourceEntityId: 'level-04:formation-0:r0:c14', sourceEntityType: 'scout', interior: { slug: 'alien-frigate', version: 1, checksum: 'e9b1af65f0daef6725a7ddf4683b5f6d503e25dabc97aef1212102e6b1e994f3' }, levelVersion: 1, levelChecksum: '' };
 
@@ -148,6 +150,7 @@ export class BoardingScene extends Phaser.Scene {
           })),
           playerShotsInFlight: this.playerShots.getChildren().filter((shot) => shot.active).length,
           viewport: { width: this.scale.width, height: this.scale.height },
+          lastTouchInput: this.lastTouchInput,
         }),
       };
     }
@@ -236,6 +239,7 @@ export class BoardingScene extends Phaser.Scene {
       }).setOrigin(0.5).setScrollFactor(0).setDepth(30).setAlpha(0.88).setInteractive({ useHandCursor: true });
       const release = () => { this.touchInput[input] = false; };
       control.on('pointerdown', () => {
+        this.lastTouchInput = input;
         this.touchInput[input] = true;
         if (input !== 'left' && input !== 'right') this.time.delayedCall(125, release);
       });
