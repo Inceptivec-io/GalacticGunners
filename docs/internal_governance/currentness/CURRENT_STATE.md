@@ -5,7 +5,7 @@ Programme:
 PLATFORM FOUNDATION AND CAMPAIGN CONTINUITY
 
 Stage:
-H015 CLOSEOUT RECTIFICATION IN PROGRESS / FOUNDER REVIEW NOT YET READY
+H015 REVIEW BUILD COMPLETE / PENDING FOUNDER ACCEPTANCE
 
 Branch:
 feature/v1-platform-foundation-campaign-continuity
@@ -77,4 +77,4 @@ Founder Acceptance:
 FOUNDER ACCEPTED - KNOWN PLATFORM AND RUNTIME ITEMS DEFERRED TO H015. Development does not assert unqualified Founder manual acceptance of deferred items. PR #11 remains open for Founder merge decision.
 
 H015 Closure:
-STATUS=IN_PROGRESS. FOUNDER_REVIEW_READY=NO pending the rectified fail-closed launcher, exact-build 23-item browser evidence matrix, current verification authority, complete sealed Handoff-Out, and final CI at the returned SHA. Founder acceptance and merge remain PENDING.
+STATUS=FOUNDER_REVIEW_READY. FOUNDER_REVIEW_READY=YES at reviewed runtime `4af67880de7124d793d8d71635e2c86f471b15da`; rectified launcher, browser/campaign evidence, current verification authority and GitHub Actions run `33144447817` are PASS. Founder acceptance and merge remain PENDING.
