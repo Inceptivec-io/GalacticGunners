@@ -512,6 +512,10 @@ export function CampaignDesigner({
     document?.shield_structures.find(
       (shield) => selectedIds[0] === `shield:${shield.id}`,
     ) ?? null;
+  const selectedEmitter =
+    document?.hazard_emitters.find(
+      (emitter) => selectedIds[0] === `emitter:${emitter.id}`,
+    ) ?? null;
   const chooserAssets = useMemo(
     () =>
       category
@@ -1026,6 +1030,15 @@ export function CampaignDesigner({
       ),
     }));
   }
+  function updateEmitter<K extends keyof Emitter>(field: K, value: Emitter[K]) {
+    if (!selectedEmitter) return;
+    mutate((current) => ({
+      ...current,
+      hazard_emitters: current.hazard_emitters.map((emitter) =>
+        emitter.id === selectedEmitter.id ? { ...emitter, [field]: value } : emitter,
+      ),
+    }));
+  }
   function align(axis: "x" | "y") {
     if (!document || selectedIds.length < 2) return;
     const members = document.entities.filter((entity) =>
@@ -1399,6 +1412,34 @@ export function CampaignDesigner({
                 <span>{formation.name}</span>
               </button>
             ))}
+            {document?.hazard_emitters.map((emitter, index) => {
+              const asset = assets.find((item) => item.key === emitter.asset_id);
+              const point = emitter.spawn_points[0] ?? {
+                x: 104 + index * 84,
+                y: 96,
+              };
+              return (
+                <button
+                  key={emitter.id}
+                  type="button"
+                  className={`designer-placement designer-emitter ${selectedIds.includes(`emitter:${emitter.id}`) ? "selected" : ""}`}
+                  aria-label={`${emitter.hazard_type} emitter at ${point.x}, ${point.y}`}
+                  style={{
+                    left: `${point.x / 12.8}%`,
+                    top: `${point.y / 7.2}%`,
+                    width: "38px",
+                    height: "38px",
+                    transform: "translate(-50%, -50%)",
+                  }}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setSelectedIds([`emitter:${emitter.id}`]);
+                  }}
+                >
+                  {asset ? <img src={asset.thumbnail_path} alt="" /> : emitter.hazard_type}
+                </button>
+              );
+            })}
             {document?.entities.map((entity) => {
               const asset = assets.find((item) => item.key === entity.asset_id);
               return (
@@ -1691,6 +1732,44 @@ export function CampaignDesigner({
               />
             </label>
             <p>Click any matrix cell to add or remove its real shield tile.</p>
+          </div>
+        ) : selectedEmitter ? (
+          <div className="designer-fields">
+            <label>
+              Hazard type
+              <select
+                value={selectedEmitter.hazard_type}
+                onChange={(event) =>
+                  updateEmitter("hazard_type", event.target.value as Emitter["hazard_type"])
+                }
+              >
+                <option value="ASTEROID">ASTEROID</option>
+                <option value="COMET">COMET</option>
+              </select>
+            </label>
+            <label>
+              Initial count
+              <input type="number" min="0" value={selectedEmitter.initial_count} onChange={(event) => updateEmitter("initial_count", Number(event.target.value))} />
+            </label>
+            <label>
+              Maximum active
+              <input type="number" min="0" value={selectedEmitter.maximum_active} onChange={(event) => updateEmitter("maximum_active", Number(event.target.value))} />
+            </label>
+            <label>
+              Spawn interval (ms)
+              <input type="number" min="0" value={selectedEmitter.spawn_interval_ms} onChange={(event) => updateEmitter("spawn_interval_ms", Number(event.target.value))} />
+            </label>
+            <label>
+              Minimum speed
+              <input type="number" min="0" value={selectedEmitter.speed_min} onChange={(event) => updateEmitter("speed_min", Number(event.target.value))} />
+            </label>
+            <label>
+              Maximum speed
+              <input type="number" min="0" value={selectedEmitter.speed_max} onChange={(event) => updateEmitter("speed_max", Number(event.target.value))} />
+            </label>
+            <label>
+              <input type="checkbox" checked={selectedEmitter.enabled} onChange={(event) => updateEmitter("enabled", event.target.checked)} /> Enabled
+            </label>
           </div>
         ) : selectedFormation ? (
           <div className="designer-fields">
