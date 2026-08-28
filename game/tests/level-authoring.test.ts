@@ -46,6 +46,23 @@ test('schema 1.1 permits an authored timed hazard emitter with no initial instan
   validateLevelDefinition(compiled);
 });
 
+test('sparse authored grid compiles each real member without inventing phantom ships', () => {
+  const sparse: LevelAuthoringDocument = {
+    ...document,
+    entities: [
+      { ...document.entities[0], id: 'grid-a', x: 300, y: 120 },
+      { ...document.entities[0], id: 'grid-b', x: 340, y: 120 },
+      { ...document.entities[0], id: 'grid-c', x: 300, y: 160 },
+    ],
+    formations: [{ id: 'sparse-grid', name: 'Sparse grid', layout: 'GRID', bounds: { x: 300, y: 120, width: 40, height: 40 }, member_ids: ['grid-a', 'grid-b', 'grid-c'], motion_profile: 'formation.standard', entry_delay_ms: 0, repeat: 0 }],
+  };
+  const compiled = compileLevelDocument(sparse);
+  validateLevelDefinition(compiled);
+  assert.equal(compiled.enemy_formations.length, 3);
+  assert.deepEqual(compiled.enemy_formations.map((entity) => entity.entity_id), ['grid-a', 'grid-b', 'grid-c']);
+  assert.ok(compiled.enemy_formations.every((entity) => entity.fixed_position));
+});
+
 test('canonical level checksums remain stable when nested object key insertion order differs', async () => {
   assert.equal(
     await levelChecksum({ z: { beta: 2, alpha: 1 }, a: [{ y: 2, x: 1 }] }),

@@ -19,11 +19,17 @@ export function compileLevelDocument(value: LevelDefinition | LevelAuthoringDocu
     if (formation.layout === 'GRID' && types.length === 1 && members.length > 1) {
       const xs = [...new Set(members.map((member) => member.x))].sort((a, b) => a - b);
       const ys = [...new Set(members.map((member) => member.y))].sort((a, b) => a - b);
-      return [{
-        id: formation.id, type: types[0].toLowerCase() as 'scout' | 'cruiser' | 'destroyer' | 'mothership', rows: ys.length, columns: xs.length,
-        origin: { x: xs[0], y: ys[0] }, spacing: { x: xs.length > 1 ? xs[1] - xs[0] : 0, y: ys.length > 1 ? ys[1] - ys[0] : 0 },
-        width: members[0].width, height: members[0].height, behaviour_profile: members[0].behaviour_profile, motion_profile: formation.motion_profile,
-      }];
+      // The compact runtime grid is valid only for a complete rectangle. An
+      // author may legitimately move one member, leaving a sparse layout; in
+      // that case preserve every authored ship as an explicit fixed position
+      // instead of inventing phantom grid cells.
+      if (xs.length * ys.length === members.length) {
+        return [{
+          id: formation.id, type: types[0].toLowerCase() as 'scout' | 'cruiser' | 'destroyer' | 'mothership', rows: ys.length, columns: xs.length,
+          origin: { x: xs[0], y: ys[0] }, spacing: { x: xs.length > 1 ? xs[1] - xs[0] : 0, y: ys.length > 1 ? ys[1] - ys[0] : 0 },
+          width: members[0].width, height: members[0].height, behaviour_profile: members[0].behaviour_profile, motion_profile: formation.motion_profile,
+        }];
+      }
     }
     return members.map((entity) => ({
       id: `${formation.id}:${entity.id}`, type: entity.entity_type.toLowerCase() as 'scout' | 'cruiser' | 'destroyer' | 'mothership', rows: 1, columns: 1,
