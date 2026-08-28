@@ -53,9 +53,6 @@ class Command(BaseCommand):
         player = self.login('PLAYER_REVIEW_USERNAME', 'PLAYER_REVIEW_PASSWORD', 'PLAYER_ACCOUNT')
         if player.get('/api/v1/admin/operations/users/').status_code != 403:
             raise CommandError('Player cross-surface administrator denial failed.')
-        denied = self.csrf_post(player, '/api/v1/auth/login/', {'username': os.environ['PLAYER_REVIEW_USERNAME'], 'password': os.environ['PLAYER_REVIEW_PASSWORD'], 'audience': 'COMMAND_POST'})
-        if denied.status_code != 403 or denied.json().get('code') != 'PORTAL_ACCESS_DENIED':
-            raise CommandError('Player Command Post denial failed.')
 
         levels = admin.get('/api/v1/levels/')
         if levels.status_code != 200 or len(levels.json()) < 6:
@@ -68,11 +65,14 @@ class Command(BaseCommand):
         if preview.status_code != 200 or preview.json().get('checksum') != draft.json()['checksum']:
             raise CommandError('Designer draft reload/preview failed.')
 
-        campaign = player.post('/api/v1/campaign-runs/start/', {'seed_root': 15015}, content_type='application/json')
+        campaign = self.csrf_post(player, '/api/v1/campaign-runs/start/', {'seed_root': 15015})
         if campaign.status_code != 201 or campaign.json().get('entry', {}).get('position') != 1:
             raise CommandError('Campaign runtime availability failed.')
         if not levels.json()[3]['active_version']['config'].get('boarding_anchors'):
             raise CommandError('Boarding availability failed: Level 4 has no Boarding anchor.')
+        denied = self.csrf_post(player, '/api/v1/auth/login/', {'username': os.environ['PLAYER_REVIEW_USERNAME'], 'password': os.environ['PLAYER_REVIEW_PASSWORD'], 'audience': 'COMMAND_POST'})
+        if denied.status_code != 403 or denied.json().get('code') != 'PORTAL_ACCESS_DENIED':
+            raise CommandError('Player Command Post denial failed.')
 
         for client, audience in ((admin, 'INCEPTIVEC_ADMIN'), (command_post, 'COMMAND_POST'), (player, 'PLAYER_ACCOUNT')):
             self.logout(client, audience)
