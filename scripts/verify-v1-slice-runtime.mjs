@@ -3,7 +3,7 @@ import path from 'node:path';
 import { chromium } from 'playwright';
 
 const baseUrl = process.env.GG_RUNTIME_URL ?? 'http://localhost:3002';
-const handoffId = process.env.GG_HANDOFF_ID ?? 'GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_010_REV3';
+const handoffId = process.env.GG_HANDOFF_ID ?? 'GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015';
 const outputDir = process.env.GG_EVIDENCE_DIR
   ? path.resolve(process.env.GG_EVIDENCE_DIR)
   : path.resolve(`docs/internal_governance/evidence/${handoffId}/browser_runtime`);
@@ -289,7 +289,7 @@ async function runHostileCases(browser) {
   const cases = {};
 
   await page.goto(baseUrl, { waitUntil: 'networkidle' });
-  await page.getByRole('link', { name: /^play$/i }).click();
+  await page.goto(`${baseUrl}/play?qa=hostile`, { waitUntil: 'networkidle' });
   await page.waitForSelector('canvas', { timeout: 15000 });
   await startFromMenu(page);
   cases.home_play_menu_level1 = true;

@@ -9,6 +9,8 @@ export interface GameRuntimeConfig {
   apiBaseUrl?: string;
   physicsDebug?: boolean;
   hostileQa?: boolean;
+  /** Explicit hostile-only offline exercise; never enabled for normal play. */
+  allowOfflinePackage?: boolean;
   /** An authenticated Designer preview. It is never a ranked campaign run. */
   previewRuntime?: LevelRuntimeConfig;
   onReady?: () => void;

@@ -92,7 +92,7 @@ export class BootScene extends Phaser.Scene {
         checksum: campaign.entry.level.checksum,
         source: 'remote',
       }];
-    } else if (this.runtimeConfig.apiBaseUrl) {
+    } else if (this.runtimeConfig.apiBaseUrl && !this.runtimeConfig.allowOfflinePackage) {
       // Browser campaign play is server-release governed. A healthy same-origin
       // API must never silently fall back to packaged content.
       throw new Error('Campaign release authority is unavailable.');

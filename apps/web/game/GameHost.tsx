@@ -48,6 +48,7 @@ export function GameHost() {
           parent: hostRef.current,
           apiBaseUrl,
           hostileQa: params.get('qa') === 'hostile',
+          allowOfflinePackage: params.get('api') === 'offline',
           previewRuntime,
           onReady: () => setStatus('ready'),
         });
