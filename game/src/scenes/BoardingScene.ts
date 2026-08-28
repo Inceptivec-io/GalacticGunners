@@ -77,6 +77,7 @@ export class BoardingScene extends Phaser.Scene {
   private playerShotsFired = 0;
   private playerShotAttempts = 0;
   private playerShotPoolUnavailable = 0;
+  private playerHitEnabledAt = Number.POSITIVE_INFINITY;
   private launch: BoardingLaunch = { anchorId: 'level-04-alien-frigate-01', sourceEntityId: 'level-04:formation-0:r0:c14', sourceEntityType: 'scout', interior: { slug: 'alien-frigate', version: 1, checksum: 'e9b1af65f0daef6725a7ddf4683b5f6d503e25dabc97aef1212102e6b1e994f3' }, levelVersion: 1, levelChecksum: '' };
 
   constructor() { super('BoardingScene'); }
@@ -91,6 +92,7 @@ export class BoardingScene extends Phaser.Scene {
     this.playerShotsFired = 0;
     this.playerShotAttempts = 0;
     this.playerShotPoolUnavailable = 0;
+    this.playerHitEnabledAt = Number.POSITIVE_INFINITY;
     this.serverRun = null;
     this.serverError = null;
     this.api = data.apiBaseUrl ? new GameApiClient(data.apiBaseUrl) : null;
@@ -332,7 +334,9 @@ export class BoardingScene extends Phaser.Scene {
 
   private hitPlayer(shot: Phaser.Physics.Arcade.Sprite): void {
     if (!shot.active || this.completed) return;
-    this.destroyShot(shot); this.simulation.hitPlayer(); void this.finish('PLAYER_DEAD');
+    this.destroyShot(shot);
+    if (this.time.now < this.playerHitEnabledAt) return;
+    this.simulation.hitPlayer(); void this.finish('PLAYER_DEAD');
   }
 
   private unlockExit(): void {
@@ -354,10 +358,13 @@ export class BoardingScene extends Phaser.Scene {
         const initial = this.serverRun.resources_start;
         const aborted = outcome === 'ABORTED';
         const events = aborted ? [] : snapshot.events.map((event, index) => ({ ...event, sequence: index }));
+        const resourcesEnd = (outcome === 'TIMEOUT' || outcome === 'PLAYER_DEAD')
+          ? { ...snapshot.resources, lives: Math.max(0, snapshot.resources.lives - 1) }
+          : snapshot.resources;
         const result = await this.api.completeBoardingRun(this.serverRun.id, {
           outcome,
           duration_ms: outcome === 'TIMEOUT' ? BOARDING_WORLD.durationMs : this.simulation.elapsedMs(),
-          resources_end: aborted ? initial : snapshot.resources,
+          resources_end: aborted ? initial : resourcesEnd,
           aliens_killed: aborted ? 0 : snapshot.aliens.filter((alien) => !alien.alive).length,
           containers_opened: aborted ? 0 : snapshot.containers.filter((container) => container.open).length,
           lives_found: aborted ? 0 : Math.max(0, snapshot.resources.lives - initial.lives),
@@ -383,6 +390,7 @@ export class BoardingScene extends Phaser.Scene {
     // scheduled after the scene is visibly active rather than inherited from
     // pre-admission/update timing.
     this.lastAlienFireAt = this.time.now + 1_500;
+    this.playerHitEnabledAt = this.time.now + 5_000;
     this.active = true;
     this.starting = false;
     this.statusText.destroy();

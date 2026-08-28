@@ -80,6 +80,22 @@ class BoardingApiTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.game_run.refresh_from_db()
         self.assertEqual((self.game_run.lives_end, self.game_run.nukes_end), (1, 1))
+
+    def test_player_death_loses_one_life_and_applies_parent_return_once(self):
+        payload = self.payload() | {'resources': {'lives': 3, 'nukes': 2}}
+        started = self.client.post(f'/api/v1/game-runs/{self.game_run.id}/boarding-runs/start/', payload, format='json')
+        headers = {'HTTP_X_BOARDING_TOKEN': started.data['boarding_token'], 'HTTP_IDEMPOTENCY_KEY': 'death-1'}
+        completion = {
+            'outcome': 'PLAYER_DEAD', 'duration_ms': 1_000,
+            'resources_end': {'lives': 2, 'nukes': 2},
+            'aliens_killed': 0, 'containers_opened': 0, 'lives_found': 0, 'nukes_found': 0,
+            'score_events': [], 'shooter_state_digest': self.digest,
+            'events': [{'sequence': 0, 'at_ms': 1_000, 'type': 'PLAYER_HIT', 'entity_id': 'player'}],
+        }
+        response = self.client.post(f"/api/v1/boarding-runs/{started.data['id']}/complete/", completion, format='json', **headers)
+        self.assertEqual(response.status_code, 200)
+        self.game_run.refresh_from_db()
+        self.assertEqual((self.game_run.lives_end, self.game_run.nukes_end), (2, 2))
         self.client.post(f"/api/v1/boarding-runs/{started.data['id']}/complete/", completion, format='json', **headers)
         self.game_run.refresh_from_db()
         self.assertEqual((self.game_run.lives_end, self.game_run.nukes_end), (1, 1))

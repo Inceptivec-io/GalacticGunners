@@ -178,7 +178,8 @@ export class GameApiClient implements GameRunClient {
       },
     });
     if (!response.ok) {
-      throw new Error(`Galactic Gunners API request failed: ${response.status}`);
+      const detail = await response.text().catch(() => '');
+      throw new Error(`Galactic Gunners API request failed: ${response.status}${detail ? ` ${detail}` : ''}`);
     }
     return response.json() as Promise<T>;
   }

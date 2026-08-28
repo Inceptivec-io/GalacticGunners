@@ -52,8 +52,11 @@ const networkFailures = [];
 page.on('console', (message) => {
   if (message.type() === 'error') consoleErrors.push(message.text());
 });
-page.on('response', (response) => {
-  if (response.status() >= 400) networkFailures.push(`${response.status()} ${response.url()}`);
+page.on('response', async (response) => {
+  if (response.status() >= 400) {
+    const detail = await response.text().catch(() => '<body unavailable>');
+    networkFailures.push(`${response.status()} ${response.url()} ${detail}`);
+  }
 });
 page.on('requestfailed', (request) => networkFailures.push(`FAILED ${request.url()}`));
 

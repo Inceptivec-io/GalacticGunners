@@ -1151,7 +1151,6 @@ export class Level1Scene extends CombatLevelScene {
     this.#currentNukes = data.boardingReturnState.nukes;
     this.updateLifeHud();
     this.updateNukeHud();
-    if (data?.boardingOutcome === 'PLAYER_DEAD') this.damagePlayer(true);
   }
 
   private destroyShieldTile(tile: Phaser.Physics.Arcade.Image, scorePenalty: boolean): void {

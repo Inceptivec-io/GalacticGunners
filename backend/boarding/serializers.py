@@ -165,8 +165,6 @@ class CompleteBoardingRunSerializer(StrictSerializer):
             if not any(event['type'] == 'EXIT_INTERACTED' and event['at_ms'] < 60000 for event in summary['events']):
                 raise serializers.ValidationError({'detail': 'SUCCESS_EXIT_REQUIRED'})
         resources_end = summary['resources_end']
-        if summary['outcome'] == BoardingRun.Outcome.PLAYER_DEAD and resources_end['lives'] != 0:
-            raise serializers.ValidationError({'detail': 'PLAYER_DEAD_LIVES_INVALID'})
         expected_lives = min(3, run.lives_start + summary['lives_found'])
         expected_nukes = min(2, run.nukes_start + summary['nukes_found'])
         if summary['outcome'] in (BoardingRun.Outcome.TIMEOUT, BoardingRun.Outcome.PLAYER_DEAD):
