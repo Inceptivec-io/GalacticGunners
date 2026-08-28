@@ -9,6 +9,7 @@ from .permissions import IsLevelAdmin
 from .serializers import LevelCreateSerializer, LevelSerializer, LevelVersionCreateSerializer, LevelVersionSerializer
 from .validation import checksum, validate_definition
 from .authoring import blank_authoring_document
+from campaigns.publication import publish_core_level
 
 
 class PublicLevelListView(generics.ListAPIView):
@@ -72,7 +73,9 @@ class AdminLevelActionView(APIView):
             audit(request, action, level, version)
             return Response(LevelVersionSerializer(version).data)
         if action == 'publish':
-            version.publish(); audit(request, action, level, version); return Response(LevelSerializer(level).data)
+            release = publish_core_level(level=level, version=version, actor=request.user)
+            audit(request, action, level, version, {'campaign_release_id': str(release.id) if release else None})
+            return Response({**LevelSerializer(level).data, 'campaign_release_id': str(release.id) if release else None})
         if action == 'clone':
             config = request.data.get('config', version.config)
             validate_definition(config)
@@ -82,9 +85,18 @@ class AdminLevelActionView(APIView):
         if action == 'rollback':
             if version.status != LevelVersion.Status.PUBLISHED:
                 return Response({'code': 'invalid_request', 'detail': 'Rollback target must be published.', 'errors': {}}, status=400)
-            level.active_version = version; level.archived = False; level.save(update_fields=['active_version', 'archived', 'updated_at'])
-            audit(request, action, level, version)
-            return Response(LevelSerializer(level).data)
+            clone = LevelVersion.objects.create(
+                level=level,
+                version=(level.versions.order_by('-version').first().version + 1),
+                config=version.config,
+                seed_policy=version.seed_policy,
+                created_by=request.user,
+                supersedes=version,
+                status=LevelVersion.Status.VALIDATED,
+            )
+            release = publish_core_level(level=level, version=clone, actor=request.user)
+            audit(request, action, level, clone, {'restored_from_version': version.version, 'campaign_release_id': str(release.id) if release else None})
+            return Response({**LevelSerializer(level).data, 'restored_version': LevelVersionSerializer(clone).data, 'campaign_release_id': str(release.id) if release else None})
         if action == 'archive':
             level.archived = True; level.save(update_fields=['archived', 'updated_at']); audit(request, action, level, version); return Response(LevelSerializer(level).data)
         return Response({'code': 'invalid_request', 'detail': 'Unsupported level action.', 'errors': {}}, status=400)

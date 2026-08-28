@@ -1191,6 +1191,7 @@ export function CampaignDesigner({
   }
   async function lifecycle(action: "validate" | "publish") {
     if (!selectedLevel) return;
+    if (action === "publish" && !window.confirm("Publish this immutable level revision into a new CORE campaign release? Existing campaigns remain pinned.")) return;
     try {
       await call(`/admin/levels/${selectedLevel.id}/${action}/`, {
         method: "POST",

@@ -7,6 +7,8 @@ from django.contrib.auth.models import Permission
 from levels.models import Level, LevelVersion
 from game_runs.models import GameRun, GameVersion
 from games.models import GameProject, OwnerScope, Visibility
+from campaigns.models import CampaignVersion
+from campaigns.services import CampaignService
 
 
 def golden_level():
@@ -108,3 +110,27 @@ def test_internal_preview_is_bound_to_the_requested_immutable_draft_checksum(cli
     assert response.json()['checksum'] == second.checksum
     assert response.json()['config']['name'] == 'Preview Draft'
     assert client.get(f'/api/v1/admin/levels/{level.id}/preview/{first.checksum}x/').status_code == 404
+
+
+@pytest.mark.django_db
+def test_core_publication_creates_immutable_campaign_release_without_mutating_pinned_runs(client, level_admin, core_project):
+    levels = []
+    for sequence in range(1, 7):
+        level = Level.objects.create(slug=f'level-{sequence:02d}', name=f'Level {sequence}', sequence=sequence, game_project=core_project)
+        version = LevelVersion.objects.create(level=level, version=1, config=golden_level())
+        version.status = LevelVersion.Status.VALIDATED; version.save(); version.publish()
+        levels.append(level)
+    client.force_login(level_admin)
+    first = client.post(f'/api/v1/admin/levels/{levels[-1].id}/publish/', {'version': 1}, content_type='application/json')
+    assert first.status_code == 200
+    original_run, _ = CampaignService.start(user=level_admin, seed_root=1)
+    original_campaign = original_run.campaign_version
+    changed = golden_level(); changed['name'] = 'Published changed layout'
+    draft = client.post(f'/api/v1/admin/levels/{levels[0].id}/drafts/', {'expected_checksum': levels[0].active_version.checksum, 'config': changed}, content_type='application/json')
+    assert draft.status_code == 201
+    published = client.post(f'/api/v1/admin/levels/{levels[0].id}/publish/', {'version': draft.json()['version']}, content_type='application/json')
+    assert published.status_code == 200 and published.json()['campaign_release_id']
+    fresh_run, _ = CampaignService.start(user=level_admin, seed_root=2)
+    assert fresh_run.campaign_version_id != original_campaign.id
+    assert original_run.campaign_version_id == original_campaign.id
+    assert CampaignVersion.objects.filter(campaign=original_campaign.campaign, lifecycle='PUBLISHED').count() == 2
