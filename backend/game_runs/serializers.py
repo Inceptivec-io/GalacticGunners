@@ -45,22 +45,12 @@ class StartGameRunSerializer(serializers.Serializer):
         version = GameVersion.objects.filter(version=attrs['game_version'], is_active=True).first()
         if not version:
             raise serializers.ValidationError({'game_version': 'GAME_VERSION_MISMATCH'})
-        level = Level.objects.select_related('active_version').filter(
-            slug=attrs['level_slug'], archived=False, game_project__owner_scope=OwnerScope.CORE,
-        ).first()
-        if not level or not level.active_version or level.active_version.status != LevelVersion.Status.PUBLISHED:
-            raise serializers.ValidationError({'level_slug': 'LEVEL_NOT_PUBLISHED'})
-        active = level.active_version
-        if active.version != attrs['level_version']:
-            raise serializers.ValidationError({'level_version': 'LEVEL_VERSION_MISMATCH'})
-        if active.checksum.lower() != attrs['level_checksum'].lower():
-            raise serializers.ValidationError({'level_checksum': 'LEVEL_CHECKSUM_MISMATCH'})
-        attrs['resolved_version'] = version
-        attrs['resolved_level'] = level
         campaign_run_id = attrs.get('campaign_run_id')
         campaign_entry_id = attrs.get('campaign_entry_id')
         if bool(campaign_run_id) != bool(campaign_entry_id):
             raise serializers.ValidationError({'campaign_run_id': 'CAMPAIGN_CONTEXT_INCOMPLETE'})
+        resolved_level = None
+        resolved_level_version = None
         if campaign_run_id:
             request = self.context['request']
             try:
@@ -75,10 +65,27 @@ class StartGameRunSerializer(serializers.Serializer):
             entry = campaign_run.current_entry
             if campaign_run.status != CampaignRun.Status.ACTIVE or not entry or str(entry.pk) != str(campaign_entry_id):
                 raise serializers.ValidationError({'campaign_entry_id': 'CAMPAIGN_ENTRY_MISMATCH'})
-            if entry.level_version.level_id != level.id or entry.level_version.version != active.version or entry.level_version.checksum != active.checksum:
+            pinned = entry.level_version
+            if pinned.level.slug != attrs['level_slug'] or pinned.version != attrs['level_version'] or pinned.checksum.lower() != attrs['level_checksum'].lower():
                 raise serializers.ValidationError({'level_slug': 'CAMPAIGN_LEVEL_MISMATCH'})
             attrs['campaign_run'] = campaign_run
             attrs['campaign_entry'] = entry
+            resolved_level, resolved_level_version = pinned.level, pinned
+        else:
+            level = Level.objects.select_related('active_version').filter(
+                slug=attrs['level_slug'], archived=False, game_project__owner_scope=OwnerScope.CORE,
+            ).first()
+            if not level or not level.active_version or level.active_version.status != LevelVersion.Status.PUBLISHED:
+                raise serializers.ValidationError({'level_slug': 'LEVEL_NOT_PUBLISHED'})
+            active = level.active_version
+            if active.version != attrs['level_version']:
+                raise serializers.ValidationError({'level_version': 'LEVEL_VERSION_MISMATCH'})
+            if active.checksum.lower() != attrs['level_checksum'].lower():
+                raise serializers.ValidationError({'level_checksum': 'LEVEL_CHECKSUM_MISMATCH'})
+            resolved_level, resolved_level_version = level, active
+        attrs['resolved_version'] = version
+        attrs['resolved_level'] = resolved_level
+        attrs['resolved_level_version'] = resolved_level_version
         return attrs
 
     def create(self, data):

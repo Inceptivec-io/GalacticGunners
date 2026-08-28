@@ -3,7 +3,9 @@ import * as Phaser from 'phaser';
 import { FRAME_RECTS, REQUIRED_RUNTIME_ASSETS, RUNTIME_ASSETS } from '../config/assets';
 import type { GameRuntimeConfig } from '../config/gameConfig';
 import { levelChecksum } from '../levels/LevelChecksum';
-import { LevelLoader } from '../levels/LevelLoader';
+import { compileLevelDocument } from '../levels/LevelCompiler';
+import type { LevelDefinition } from '../levels/LevelDefinition';
+import type { LevelRuntimeConfig } from '../levels/LevelRuntimeConfig';
 import { CAMPAIGN_DEFINITIONS } from '../levels/campaignDefinitions';
 import { LEVEL_ONE_DEFINITION } from '../levels/levelOneDefinition';
 import { validateLevelDefinition } from '../levels/LevelValidator';
@@ -78,16 +80,33 @@ export class BootScene extends Phaser.Scene {
       this.scene.start('Level1Scene', { sequence: previewRuntime.definition.sequence });
       return;
     }
-    const loader = new LevelLoader(this.runtimeConfig.apiBaseUrl);
-    const campaignRuntime = await Promise.all(CAMPAIGN_DEFINITIONS.map(async (definition) => {
+    const campaignSession = new CampaignSession(this.runtimeConfig.apiBaseUrl ? new GameApiClient(this.runtimeConfig.apiBaseUrl) : null, LEVEL_ONE_DEFINITION.seed);
+    const campaign = await campaignSession.start();
+    let campaignRuntime: LevelRuntimeConfig[];
+    if (campaign?.entry?.level.definition && typeof campaign.entry.level.definition === 'object') {
+      const definition = compileLevelDocument(campaign.entry.level.definition as LevelDefinition);
       validateLevelDefinition(definition);
-      const fallback = { definition, version: definition.version, checksum: await levelChecksum(definition), source: 'package' as const };
-      return loader.load(definition.slug, definition).catch(() => fallback);
-    }));
+      campaignRuntime = [{
+        definition,
+        version: campaign.entry.level.version,
+        checksum: campaign.entry.level.checksum,
+        source: 'remote',
+      }];
+    } else if (this.runtimeConfig.apiBaseUrl) {
+      // Browser campaign play is server-release governed. A healthy same-origin
+      // API must never silently fall back to packaged content.
+      throw new Error('Campaign release authority is unavailable.');
+    } else {
+      validateLevelDefinition(LEVEL_ONE_DEFINITION);
+      campaignRuntime = [{
+        definition: LEVEL_ONE_DEFINITION,
+        version: LEVEL_ONE_DEFINITION.version,
+        checksum: await levelChecksum(LEVEL_ONE_DEFINITION),
+        source: 'package',
+      }];
+    }
     this.registry.set('campaignRuntime', campaignRuntime);
     this.registry.set('levelRuntime', campaignRuntime[0]);
-    const campaignSession = new CampaignSession(this.runtimeConfig.apiBaseUrl ? new GameApiClient(this.runtimeConfig.apiBaseUrl) : null, LEVEL_ONE_DEFINITION.seed);
-    await campaignSession.start();
     this.registry.set('campaignSession', campaignSession);
 
     this.createRuntimeAnimations();

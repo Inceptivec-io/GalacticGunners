@@ -75,10 +75,17 @@ class StartBoardingRunSerializer(StrictSerializer):
         authoritative_nukes = run.nukes_end if run.nukes_end is not None else run.nukes_start
         if attrs['resources']['lives'] > authoritative_lives or attrs['resources']['nukes'] > authoritative_nukes:
             raise serializers.ValidationError({'resources': 'RESOURCE_STATE_INVALID'})
-        try:
-            level_version = run.level.versions.get(version=attrs['level_version'], checksum=attrs['level_checksum'], status=LevelVersion.Status.PUBLISHED)
-        except LevelVersion.DoesNotExist as exc:
-            raise serializers.ValidationError({'level': 'LEVEL_NOT_PUBLISHED'}) from exc
+        # A campaign attempt is pinned to its immutable CampaignEntry. A later
+        # publication may supersede the project's active revision, but cannot
+        # invalidate a run that was legitimately started against the old one.
+        level_version = run.campaign_entry.level_version if run.campaign_entry_id else None
+        if level_version is None:
+            try:
+                level_version = run.level.versions.get(version=attrs['level_version'], checksum=attrs['level_checksum'], status=LevelVersion.Status.PUBLISHED)
+            except LevelVersion.DoesNotExist as exc:
+                raise serializers.ValidationError({'level': 'LEVEL_NOT_PUBLISHED'}) from exc
+        if level_version.version != attrs['level_version'] or level_version.checksum != attrs['level_checksum']:
+            raise serializers.ValidationError({'level': 'LEVEL_VERSION_MISMATCH'})
         expected_anchor = authored_anchor(level_version.config, attrs['anchor_id'])
         if expected_anchor is None:
             raise serializers.ValidationError({'anchor_id': 'BOARDING_ANCHOR_NOT_PRESENT'})

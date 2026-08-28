@@ -155,3 +155,27 @@ def test_admin_authority_exposes_all_core_revisions_and_active_release(client, l
     assert first['editable_version']['config']['name'] == 'Persisted authoring draft'
     assert len(first['versions']) == 2
     assert response.json()['active_campaign_release']['campaign_version_id']
+
+
+@pytest.mark.django_db
+def test_pinned_campaign_entry_can_start_after_a_newer_level_is_published(client, level_admin, core_project):
+    levels = []
+    for sequence in range(1, 7):
+        level = Level.objects.create(slug=f'level-{sequence:02d}', name=f'Level {sequence}', sequence=sequence, game_project=core_project)
+        version = LevelVersion.objects.create(level=level, version=1, config=golden_level())
+        version.status = LevelVersion.Status.VALIDATED; version.save(); version.publish()
+        levels.append(level)
+    client.force_login(level_admin)
+    client.post(f'/api/v1/admin/levels/{levels[-1].id}/publish/', {'version': 1}, content_type='application/json')
+    pinned, _ = CampaignService.start(user=level_admin, seed_root=1)
+    changed = golden_level(); changed['name'] = 'New active level without mutating pinned campaign'
+    draft = client.post(f'/api/v1/admin/levels/{levels[0].id}/drafts/', {'expected_checksum': levels[0].active_version.checksum, 'config': changed}, content_type='application/json')
+    client.post(f'/api/v1/admin/levels/{levels[0].id}/publish/', {'version': draft.json()['version']}, content_type='application/json')
+    GameVersion.objects.create(version='1.0.0-dev')
+    entry = pinned.current_entry
+    response = client.post('/api/v1/game-runs/', {
+        'game_version': '1.0.0-dev', 'client_type': 'web', 'level_slug': entry.level_version.level.slug,
+        'level_version': entry.level_version.version, 'level_checksum': entry.level_version.checksum,
+        'seed': 1, 'campaign_run_id': str(pinned.id), 'campaign_entry_id': str(entry.id),
+    }, content_type='application/json')
+    assert response.status_code == 201
