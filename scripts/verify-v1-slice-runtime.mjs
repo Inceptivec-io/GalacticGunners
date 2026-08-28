@@ -354,9 +354,17 @@ async function runHostileCases(browser) {
   await loadGame(page);
   await page.keyboard.down('ArrowLeft');
   await page.keyboard.down('ArrowUp');
-  await page.waitForTimeout(6200);
-  await page.keyboard.up('ArrowUp');
-  await page.keyboard.up('ArrowLeft');
+  try {
+    await page.waitForFunction(() => {
+      const state = window.__GALACTIC_GUNNERS_HOSTILE__?.state();
+      return state?.playerBody && state?.movementBounds
+        && state.playerBody.x <= state.movementBounds.left + 2
+        && state.playerBody.y <= state.movementBounds.top + 2;
+    }, undefined, { timeout: 15_000 });
+  } finally {
+    await page.keyboard.up('ArrowUp');
+    await page.keyboard.up('ArrowLeft');
+  }
   state = await getGameState(page);
   cases.all_edge_clamp_top_left = state.playerBody.x >= state.movementBounds.left - state.playerBody.width / 2 - 2
     && state.playerBody.y >= state.movementBounds.top - state.playerBody.height / 2 - 2;
@@ -364,12 +372,20 @@ async function runHostileCases(browser) {
   await loadGame(page);
   await page.keyboard.down('ArrowRight');
   await page.keyboard.down('ArrowDown');
-  await page.waitForTimeout(6200);
-  await page.keyboard.up('ArrowDown');
-  await page.keyboard.up('ArrowRight');
+  try {
+    await page.waitForFunction(() => {
+      const state = window.__GALACTIC_GUNNERS_HOSTILE__?.state();
+      return state?.playerBody && state?.movementBounds
+        && state.playerBody.x + state.playerBody.width >= state.movementBounds.right - 2
+        && state.playerBody.y + state.playerBody.height >= state.movementBounds.bottom - 2;
+    }, undefined, { timeout: 15_000 });
+  } finally {
+    await page.keyboard.up('ArrowDown');
+    await page.keyboard.up('ArrowRight');
+  }
   state = await getGameState(page);
-  cases.all_edge_clamp_bottom_right = state.playerBody.x + state.playerBody.width <= state.movementBounds.right + state.playerBody.width / 2 + 2
-    && state.playerBody.y + state.playerBody.height <= state.movementBounds.bottom + state.playerBody.height / 2 + 2;
+  cases.all_edge_clamp_bottom_right = state.playerBody.x <= state.movementBounds.right - state.playerBody.width / 2 + 2
+    && state.playerBody.y <= state.movementBounds.bottom - state.playerBody.height / 2 + 2;
 
   await loadGame(page);
   state = await getGameState(page);
@@ -545,6 +561,8 @@ async function runHostileCases(browser) {
 
   await loadGame(page);
   state = await getGameState(page);
+  cases.life_hud_icon_only = state.hudPositions.lives.filter((icon) => icon.visible).length === state.lives
+    && !state.visibleTexts.some((text) => text.includes('LIVES') || numericHudCounterPattern.test(text));
   cases.nuke_initial_count = state.currentNukes === 2 && state.maxNukes === 2 && state.rearmProgress === 150 && state.rearmMax === 150;
   await page.evaluate((index) => window.__GALACTIC_GUNNERS_HOSTILE__.setPlayerUnderScout(index, 0), findScoutClearOfShield(state));
   await page.keyboard.press('N');
@@ -573,8 +591,6 @@ async function runHostileCases(browser) {
     && state.hudPositions.rearmBar.fillWidth <= state.hudPositions.rearmBar.width
     && Math.max(...state.hudPositions.nukes.map((icon) => icon.x)) < state.hudPositions.rearmBar.x
     && state.hudPositions.nukes.every((icon) => icon.y > state.viewport.height * 0.82);
-  cases.life_hud_icon_only = state.hudPositions.lives.filter((icon) => icon.visible).length === state.lives
-    && !state.visibleTexts.some((text) => text.includes('LIVES') || numericHudCounterPattern.test(text));
   cases.enemy_scouts_correct_orientation = state.scoutBodies.every((scout) => Math.abs(Math.abs(scout.angle) - 180) <= 1);
   cases.sound_mute_top_right = state.hudPositions.sound.x > state.viewport.width * 0.9
     && state.hudPositions.sound.y < state.viewport.height * 0.12

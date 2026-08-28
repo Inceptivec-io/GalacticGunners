@@ -583,7 +583,7 @@ export class Level1Scene extends CombatLevelScene {
 
   private createLevelEntryNotice(): void {
     const notice = this.add.text(this.scale.width / 2, this.#layout.hudSafeRect.y + 72,
-      `LEVEL ${this.#campaignSequence}: ${this.#definition.name.toUpperCase()}\nSCORE ${this.#score.value}  LIVES ${this.#lives.value}  NUKES ${this.#currentNukes}`, {
+      `LEVEL ${this.#campaignSequence}: ${this.#definition.name.toUpperCase()}`, {
         color: '#d7e9ff', fontFamily: 'GalacticGunnersSilverDisplay, Arial, sans-serif', fontSize: `${Math.max(16, Math.min(26, this.scale.width * 0.022))}px`, align: 'center',
       }).setOrigin(0.5).setDepth(12);
     this.tweens.add({ targets: notice, alpha: 0, delay: 1500, duration: 650, onComplete: () => notice.destroy() });
