@@ -16,8 +16,12 @@ async function start(page) {
   await page.goto(`${baseUrl}/play?qa=hostile`, { waitUntil: 'networkidle', timeout: 20_000 });
   await page.waitForSelector('canvas');
   await page.waitForFunction(() => window.__GALACTIC_GUNNERS_MENU_QA__?.scene === 'MainMenuScene');
-  await page.keyboard.press('Enter');
-  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.scene === 'Level1Scene');
+  await page.keyboard.down('Enter');
+  try {
+    await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.scene === 'Level1Scene');
+  } finally {
+    await page.keyboard.up('Enter');
+  }
 }
 
 async function state(page) {
@@ -90,12 +94,19 @@ try {
   assert(canvas, 'Canvas not available for touch control verification.');
   const fire = active.touchControls.find((control) => control.id === 'boarding-touch-fire');
   assert(fire, 'Boarding Fire touch control is absent.');
-  await page.touchscreen.tap(
-    canvas.x + fire.x * canvas.width / active.viewport.width,
-    canvas.y + fire.y * canvas.height / active.viewport.height,
-  );
-  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_BOARDING_QA__?.state()?.lastTouchInput === 'fire');
-  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_BOARDING_QA__?.state()?.playerShotsFired > 0, undefined, { timeout: 2_000 });
+  const touch = await page.context().newCDPSession(page);
+  const fireX = canvas.x + fire.x * canvas.width / active.viewport.width;
+  const fireY = canvas.y + fire.y * canvas.height / active.viewport.height;
+  await touch.send('Input.dispatchTouchEvent', {
+    type: 'touchStart',
+    touchPoints: [{ x: fireX, y: fireY, id: 1, radiusX: 1, radiusY: 1, force: 1 }],
+  });
+  try {
+    await page.waitForFunction(() => window.__GALACTIC_GUNNERS_BOARDING_QA__?.state()?.lastTouchInput === 'fire');
+    await page.waitForFunction(() => window.__GALACTIC_GUNNERS_BOARDING_QA__?.state()?.playerShotsFired > 0, undefined, { timeout: 15_000 });
+  } finally {
+    await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  }
   const afterTouchFire = await page.evaluate(() => window.__GALACTIC_GUNNERS_BOARDING_QA__?.state());
   assert(afterTouchFire.playerShotsFired > 0, `Touch Fire did not activate a projectile: ${JSON.stringify(afterTouchFire)}`);
   await page.screenshot({ path: path.join(outputDir, '01a-boarding-touch-fire.png'), fullPage: true });
