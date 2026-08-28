@@ -30,6 +30,11 @@ interface BoardingQaState {
   playerShotsFired: number;
   playerShotAttempts: number;
   playerShotPoolUnavailable: number;
+  activeAliens: number;
+  resources: { lives: number; nukes: number };
+  playerBody: { x: number; y: number; width: number; height: number };
+  playerShots: Array<{ x: number; y: number; body: { x: number; y: number; width: number; height: number } }>;
+  alienBodies: Array<{ id: string; x: number; y: number; body: { x: number; y: number; width: number; height: number } }>;
   viewport: { width: number; height: number };
   lastTouchInput: string | null;
 }
@@ -113,6 +118,7 @@ export class BoardingScene extends Phaser.Scene {
 
   create(): void {
     this.cameras.main.setBounds(0, 0, BOARDING_WORLD.width, BOARDING_WORLD.height);
+    this.physics.world.setBounds(0, 0, BOARDING_WORLD.width, BOARDING_WORLD.height);
     this.add.image(BOARDING_WORLD.width / 2, 360, 'boarding.background').setDisplaySize(BOARDING_WORLD.width, 720).setScrollFactor(1);
     const floor = this.physics.add.staticGroup();
     for (let x = 128; x < BOARDING_WORLD.width; x += 256) {
@@ -121,17 +127,17 @@ export class BoardingScene extends Phaser.Scene {
     }
     this.player = this.physics.add.sprite(128, 530, 'boarding.player').setCrop(40, 130, 290, 590).setDisplaySize(68, 104).setDepth(3);
     const playerBody = this.player.body as Phaser.Physics.Arcade.Body;
-    playerBody.setSize(34, 82, true).setCollideWorldBounds(true);
+    playerBody.setSize(34 / this.player.scaleX, 82 / this.player.scaleY, true).setCollideWorldBounds(true);
     this.aliens = this.physics.add.group();
-    this.playerShots = this.physics.add.group({ maxSize: 16 });
-    this.alienShots = this.physics.add.group({ maxSize: 16 });
+    this.playerShots = this.physics.add.group({ maxSize: 48 });
+    this.alienShots = this.physics.add.group({ maxSize: 48 });
     for (const alien of this.simulation.snapshot().aliens) {
       const sprite = this.aliens.create(alien.x, alien.y, 'boarding.alien') as Phaser.Physics.Arcade.Sprite;
       sprite.setCrop(40, 120, 290, 600).setDisplaySize(70, 100).setDepth(3).setData('alienId', alien.id);
-      (sprite.body as Phaser.Physics.Arcade.Body).setSize(38, 76, true).setCollideWorldBounds(true);
+      (sprite.body as Phaser.Physics.Arcade.Body).setSize(38 / sprite.scaleX, 76 / sprite.scaleY, true).setCollideWorldBounds(true);
     }
     this.exitAirlock = this.physics.add.staticSprite(BOARDING_WORLD.width - 72, 550, 'boarding.airlock').setDisplaySize(104, 180).setDepth(3);
-    (this.exitAirlock.body as Phaser.Physics.Arcade.StaticBody).setSize(86, 154, true).updateFromGameObject();
+    (this.exitAirlock.body as Phaser.Physics.Arcade.StaticBody).setSize(86 / this.exitAirlock.scaleX, 154 / this.exitAirlock.scaleY, true).updateFromGameObject();
     this.physics.add.collider(this.player, floor);
     this.physics.add.collider(this.aliens, floor);
     this.physics.add.collider(this.playerShots, floor, (shot) => this.destroyShot(shot as Phaser.Physics.Arcade.Sprite));
@@ -161,6 +167,20 @@ export class BoardingScene extends Phaser.Scene {
           playerShotsFired: this.playerShotsFired,
           playerShotAttempts: this.playerShotAttempts,
           playerShotPoolUnavailable: this.playerShotPoolUnavailable,
+          activeAliens: this.aliens.getChildren().filter((alien) => (alien as Phaser.Physics.Arcade.Sprite).active).length,
+          resources: { ...this.simulation.snapshot().resources },
+          playerBody: (() => {
+            const body = this.player.body as Phaser.Physics.Arcade.Body;
+            return { x: Math.round(body.x), y: Math.round(body.y), width: Math.round(body.width), height: Math.round(body.height) };
+          })(),
+          playerShots: (this.playerShots.getChildren().filter((shot) => shot.active) as Phaser.Physics.Arcade.Sprite[]).map((shot) => {
+            const body = shot.body as Phaser.Physics.Arcade.Body;
+            return { x: Math.round(shot.x), y: Math.round(shot.y), body: { x: Math.round(body.x), y: Math.round(body.y), width: Math.round(body.width), height: Math.round(body.height) } };
+          }),
+          alienBodies: (this.aliens.getChildren().filter((alien) => alien.active) as Phaser.Physics.Arcade.Sprite[]).map((alien) => {
+            const body = alien.body as Phaser.Physics.Arcade.Body;
+            return { id: String(alien.getData('alienId')), x: Math.round(alien.x), y: Math.round(alien.y), body: { x: Math.round(body.x), y: Math.round(body.y), width: Math.round(body.width), height: Math.round(body.height) } };
+          }),
           viewport: { width: this.scale.width, height: this.scale.height },
           lastTouchInput: this.lastTouchInput,
         }),
@@ -227,20 +247,21 @@ export class BoardingScene extends Phaser.Scene {
       this.simulation.timeout();
       this.finish('TIMEOUT');
     }
+    this.cleanupProjectiles();
   }
 
   private firePlayerShot(): void {
     this.playerShotAttempts += 1;
-    const shot = this.playerShots.get(this.player.x + 32, this.player.y - 18, 'boarding.muzzle') as Phaser.Physics.Arcade.Sprite | null;
+    const shot = this.playerShots.get(this.player.x + 32, this.player.y, 'boarding.muzzle') as Phaser.Physics.Arcade.Sprite | null;
     if (!shot) {
       this.playerShotPoolUnavailable += 1;
       return;
     }
     this.lastFireAt = this.time.now;
     this.playerShotsFired += 1;
-    shot.setPosition(this.player.x + 34, this.player.y - 18).setActive(true).setVisible(true).setDisplaySize(30, 18);
+    shot.setPosition(this.player.x + 34, this.player.y).setActive(true).setVisible(true).setDisplaySize(30, 18);
     const body = shot.body as Phaser.Physics.Arcade.Body;
-    body.enable = true; body.reset(shot.x, shot.y); body.setSize(26, 12, true);
+    body.enable = true; body.reset(shot.x, shot.y); body.setSize(26 / shot.scaleX, 12 / shot.scaleY, true);
     shot.setVelocityX(620); shot.setData('spent', false);
   }
 
@@ -285,8 +306,18 @@ export class BoardingScene extends Phaser.Scene {
     this.lastAlienFireAt = this.time.now;
     shot.setPosition(alien.x - 36, alien.y).setActive(true).setVisible(true).setDisplaySize(30, 18).setFlipX(true);
     const body = shot.body as Phaser.Physics.Arcade.Body;
-    body.enable = true; body.reset(shot.x, shot.y); body.setSize(26, 12, true);
+    body.enable = true; body.reset(shot.x, shot.y); body.setSize(26 / shot.scaleX, 12 / shot.scaleY, true);
     shot.setVelocityX(-360); shot.setData('spent', false); this.simulation.alienFire(String(alien.getData('alienId')));
+  }
+
+  private cleanupProjectiles(): void {
+    const margin = 64;
+    for (const shot of [...this.playerShots.getChildren(), ...this.alienShots.getChildren()] as Phaser.Physics.Arcade.Sprite[]) {
+      if (!shot.active) continue;
+      if (shot.x < -margin || shot.x > BOARDING_WORLD.width + margin || shot.y < -margin || shot.y > BOARDING_WORLD.height + margin) {
+        this.destroyShot(shot);
+      }
+    }
   }
 
   private destroyShot(shot: Phaser.Physics.Arcade.Sprite): void { shot.disableBody(true, true); }

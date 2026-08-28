@@ -1872,6 +1872,11 @@ export class Level1Scene extends CombatLevelScene {
       playerAlpha: this.#player?.sprite.alpha,
       playerVelocity: playerVelocity ? { x: Math.round(playerVelocity.x), y: Math.round(playerVelocity.y), speed: Math.round(Math.hypot(playerVelocity.x, playerVelocity.y)) } : null,
       terminalState: this.#terminalState,
+      boarding: {
+        active: this.#boardingActive,
+        transition: this.#boardingTransition,
+        offerPresented: Boolean(this.#boardingOffer),
+      },
       terminalActions: this.#terminalActions.map((action) => ({ ...action })),
       gameRunId: this.#session.runId,
       offlineRunMode: this.#session.offline,
