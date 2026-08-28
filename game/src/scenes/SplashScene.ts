@@ -13,7 +13,7 @@ export class SplashScene extends Phaser.Scene {
     const scale = Math.max(width / art.width, height / art.height);
     art.setDisplaySize(art.width * scale, art.height * scale);
     this.add.rectangle(width / 2, height * 0.89, width, height * 0.22, 0x02050d, 0.48);
-    this.add.text(width / 2, height * 0.9, 'Copyright © 2026. Powered by Inceptivec. All rights reserved.\nCollaborators: Aroura Leonardi', {
+    this.add.text(width / 2, height * 0.9, 'Copyright © 2026. Powered by Inceptivec. All rights reserved.\nCollaborators: Aurora Leonardi', {
       color: '#f7d56a', fontFamily: 'GalacticGunnersGoldDisplay, Arial, sans-serif', fontSize: `${Math.max(14, Math.min(24, width * 0.018))}px`, align: 'center',
       stroke: '#02050d', strokeThickness: 5,
     }).setOrigin(0.5).setDepth(2);
