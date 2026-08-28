@@ -1,0 +1,15 @@
+{
+  "tested_sha": "ad36526183a4afee5cb989e874ba0d01148b6b79",
+  "base_url": "http://localhost:3002",
+  "generated_at": "2026-08-28T12:59:55.016Z",
+  "level_4_reached": true,
+  "configured_comets_visible": true,
+  "meaningful_hazard_bodies": true,
+  "player_laser_hazard_collision": true,
+  "hazard_destroyed": true,
+  "score_applied": true,
+  "level_4_continues": true,
+  "console_errors": [],
+  "network_failures": [],
+  "result": "PASS"
+}
