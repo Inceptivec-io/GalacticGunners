@@ -80,6 +80,9 @@ class BoardingApiTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.game_run.refresh_from_db()
         self.assertEqual((self.game_run.lives_end, self.game_run.nukes_end), (1, 1))
+        self.client.post(f"/api/v1/boarding-runs/{started.data['id']}/complete/", completion, format='json', **headers)
+        self.game_run.refresh_from_db()
+        self.assertEqual((self.game_run.lives_end, self.game_run.nukes_end), (1, 1))
 
     def test_player_death_loses_one_life_and_applies_parent_return_once(self):
         payload = self.payload() | {'resources': {'lives': 3, 'nukes': 2}}
@@ -98,4 +101,4 @@ class BoardingApiTests(TestCase):
         self.assertEqual((self.game_run.lives_end, self.game_run.nukes_end), (2, 2))
         self.client.post(f"/api/v1/boarding-runs/{started.data['id']}/complete/", completion, format='json', **headers)
         self.game_run.refresh_from_db()
-        self.assertEqual((self.game_run.lives_end, self.game_run.nukes_end), (1, 1))
+        self.assertEqual((self.game_run.lives_end, self.game_run.nukes_end), (2, 2))
