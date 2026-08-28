@@ -40,10 +40,10 @@ try {
   const previewState = await preview.evaluate(() => window.__GALACTIC_GUNNERS_SLICE_QA__);
   assert(previewState.campaign.checksum === saved.checksum && previewState.gameRunId === null, 'Preview was not exact-checksum and unranked.');
   await preview.close();
-  await page.getByRole('button', { name: 'Validate' }).click();
+  await page.getByRole('button', { name: 'Validate', exact: true }).click();
   await page.getByText(/validate completed through the authenticated version workflow/).waitFor();
   page.once('dialog', (dialog) => dialog.accept());
-  await page.getByRole('button', { name: 'Publish' }).click();
+  await page.getByRole('button', { name: 'Publish', exact: true }).click();
   await page.getByText(/publish completed through the authenticated version workflow/).waitFor();
   await page.goto(`${baseUrl}/play?qa=hostile`, { waitUntil: 'networkidle' });
   await page.waitForFunction(() => window.__GALACTIC_GUNNERS_SLICE_QA__?.campaign?.checksum);
