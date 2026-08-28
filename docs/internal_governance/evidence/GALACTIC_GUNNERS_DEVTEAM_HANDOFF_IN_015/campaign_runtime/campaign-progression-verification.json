@@ -1,5 +1,7 @@
 {
   "url": "http://localhost:3002",
+  "tested_sha": "34e08540d7d0cf0deaa29a42885ce53292e920de",
+  "generated_at": "2026-08-28T09:48:25.122Z",
   "progression": [
     2,
     3,
