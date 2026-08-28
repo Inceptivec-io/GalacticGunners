@@ -20,6 +20,7 @@
     "test:boarding": "npm --workspace game run test -- tests/boarding-simulation.test.ts",
     "runtime:boarding": "node scripts/verify-boarding-runtime.mjs",
     "runtime:h015:stage1": "node scripts/verify-h015-stage1.mjs",
+    "runtime:h015:designer-roundtrip": "node scripts/verify-h015-designer-roundtrip.mjs",
     "runtime:boarding:hostile": "npm run test:boarding && node scripts/verify-boarding-runtime.mjs",
     "contracts:validate": "node scripts/validate-contracts.mjs",
     "quality": "npm run assets:sync && npm run contracts:validate && npm run game:typecheck && npm run game:test && npm run web:typecheck && npm run web:build"
