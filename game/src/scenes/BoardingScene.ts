@@ -263,7 +263,9 @@ export class BoardingScene extends Phaser.Scene {
       control.on('pointerup', () => {
         if (input === 'left' || input === 'right') release();
       });
-      control.on('pointerout', release);
+      control.on('pointerout', () => {
+        if (input === 'left' || input === 'right') release();
+      });
       control.setData('qa', `boarding-touch-${input}`);
       this.touchControls.push(control);
     };

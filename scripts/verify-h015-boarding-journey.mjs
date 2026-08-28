@@ -85,7 +85,9 @@ try {
     canvas.y + fire.y * canvas.height / active.viewport.height,
   );
   await page.waitForFunction(() => window.__GALACTIC_GUNNERS_BOARDING_QA__?.state()?.lastTouchInput === 'fire');
-  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_BOARDING_QA__?.state()?.playerShotsFired > 0);
+  await page.waitForTimeout(500);
+  const afterTouchFire = await page.evaluate(() => window.__GALACTIC_GUNNERS_BOARDING_QA__?.state());
+  assert(afterTouchFire.playerShotsFired > 0, `Touch Fire did not activate a projectile: ${JSON.stringify(afterTouchFire)}`);
   await page.screenshot({ path: path.join(outputDir, '01a-boarding-touch-fire.png'), fullPage: true });
 
   await page.keyboard.press('p');
