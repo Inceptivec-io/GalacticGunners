@@ -82,6 +82,7 @@ async function startFromMenu(page) {
 }
 
 async function loadGame(page, suffix = '') {
+  await page.bringToFront();
   await page.goto(`${baseUrl}/play?qa=hostile${suffix}`, { waitUntil: 'networkidle' });
   await page.waitForSelector('canvas', { timeout: 15000 });
   await startFromMenu(page);
@@ -104,6 +105,7 @@ async function clickTerminalButton(page, action) {
 
 async function createPage(browser, viewport) {
   const page = await browser.newPage({ viewport });
+  await page.bringToFront();
   const consoleEntries = [];
   const failedRequests = [];
   page.on('console', (message) => {

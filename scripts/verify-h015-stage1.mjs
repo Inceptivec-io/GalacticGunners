@@ -12,6 +12,7 @@ function assert(condition, message) {
 
 const browser = await chromium.launch({ headless: true, args: ['--disable-gpu', '--disable-dev-shm-usage'] });
 const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+await page.bringToFront();
 const errors = [];
 page.on('console', (message) => {
   if (message.type() === 'error') errors.push(message.text());

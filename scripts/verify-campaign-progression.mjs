@@ -12,6 +12,7 @@ function assert(value, message) {
 }
 
 async function start(page) {
+  await page.bringToFront();
   await page.goto(`${baseUrl}/play?qa=hostile`, { waitUntil: 'networkidle' });
   await page.waitForSelector('canvas');
   await page.waitForFunction(() => window.__GALACTIC_GUNNERS_MENU_QA__?.scene === 'MainMenuScene');
