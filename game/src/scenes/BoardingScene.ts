@@ -25,8 +25,9 @@ interface BoardingQaState {
   elapsedMs: number;
   player: { x: number; y: number };
   exitUnlocked: boolean;
-  touchControls: string[];
+  touchControls: Array<{ id: string; x: number; y: number }>;
   playerShotsInFlight: number;
+  viewport: { width: number; height: number };
 }
 
 declare global {
@@ -140,8 +141,13 @@ export class BoardingScene extends Phaser.Scene {
           elapsedMs: this.simulation.elapsedMs(),
           player: { x: Math.round(this.player.x), y: Math.round(this.player.y) },
           exitUnlocked: this.exitUnlocked,
-          touchControls: this.touchControls.map((control) => String(control.getData('qa'))),
+          touchControls: this.touchControls.map((control) => ({
+            id: String(control.getData('qa')),
+            x: Math.round((control as Phaser.GameObjects.Text).x),
+            y: Math.round((control as Phaser.GameObjects.Text).y),
+          })),
           playerShotsInFlight: this.playerShots.getChildren().filter((shot) => shot.active).length,
+          viewport: { width: this.scale.width, height: this.scale.height },
         }),
       };
     }

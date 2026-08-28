@@ -73,12 +73,17 @@ try {
   assert(active.active, `Boarding did not become active: ${JSON.stringify(active)}`);
   assert(active.serverRunId, 'Boarding did not receive a server-authoritative run.');
   assert(!active.serverError, `Boarding server error: ${active.serverError}`);
-  assert(active.touchControls.length === 5, `Expected five touch controls, received ${active.touchControls.join(', ')}`);
+  assert(active.touchControls.length === 5, `Expected five touch controls, received ${JSON.stringify(active.touchControls)}`);
   await page.screenshot({ path: path.join(outputDir, '01-boarding-active.png'), fullPage: true });
 
   const canvas = await page.locator('canvas').boundingBox();
   assert(canvas, 'Canvas not available for touch control verification.');
-  await page.touchscreen.tap(canvas.x + canvas.width - 178, canvas.y + canvas.height - 58);
+  const fire = active.touchControls.find((control) => control.id === 'boarding-touch-fire');
+  assert(fire, 'Boarding Fire touch control is absent.');
+  await page.touchscreen.tap(
+    canvas.x + fire.x * canvas.width / active.viewport.width,
+    canvas.y + fire.y * canvas.height / active.viewport.height,
+  );
   await page.waitForFunction(() => window.__GALACTIC_GUNNERS_BOARDING_QA__?.state()?.playerShotsInFlight > 0);
   await page.screenshot({ path: path.join(outputDir, '01a-boarding-touch-fire.png'), fullPage: true });
 
