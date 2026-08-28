@@ -65,7 +65,7 @@ try {
   await page.getByText(/publish completed through the authenticated version workflow/).waitFor();
   await page.bringToFront();
   await page.goto(`${baseUrl}/play?qa=hostile`, { waitUntil: 'networkidle' });
-  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_SLICE_QA__?.campaign?.checksum);
+  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_SLICE_QA__?.campaign?.checksum, { timeout: 15000 });
   const playState = await page.evaluate(() => window.__GALACTIC_GUNNERS_SLICE_QA__);
   assert(playState.campaign.checksum === saved.checksum, 'A new campaign did not receive the published authored checksum.');
   await page.goto(`${baseUrl}/inceptivec-gamification-admin`, { waitUntil: 'networkidle' });
