@@ -61,6 +61,7 @@ try {
   page.once('dialog', (dialog) => dialog.accept());
   await page.getByRole('button', { name: 'Publish', exact: true }).click();
   await page.getByText(/publish completed through the authenticated version workflow/).waitFor();
+  await page.bringToFront();
   await page.goto(`${baseUrl}/play?qa=hostile`, { waitUntil: 'networkidle' });
   await page.waitForFunction(() => window.__GALACTIC_GUNNERS_SLICE_QA__?.campaign?.checksum);
   const playState = await page.evaluate(() => window.__GALACTIC_GUNNERS_SLICE_QA__);
