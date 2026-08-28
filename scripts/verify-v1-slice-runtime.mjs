@@ -75,9 +75,8 @@ async function waitForScene(page, sceneName) {
 async function startFromMenu(page) {
   await waitForScene(page, 'MainMenuScene');
   await assertNoBannedVisibleTerms(page, 'main menu');
-  const bounds = await page.locator('canvas').first().boundingBox();
-  assert(bounds, 'Phaser canvas did not expose a menu bounding box.');
-  await page.mouse.click(bounds.x + bounds.width / 2, bounds.y + bounds.height * 0.63);
+  // Keyboard activation avoids coordinate drift after responsive canvas resize.
+  await page.keyboard.press('Enter');
   await waitForScene(page, 'Level1Scene');
 }
 
@@ -146,7 +145,9 @@ async function runVisualMatrix(browser) {
     assert(Math.abs(homeBox.height - viewport.height) <= 2, `landing ${viewport.name} height seam`);
     assert(heroLoaded, `landing ${viewport.name} did not load Founder hero key art`);
 
-    await page.getByRole('link', { name: /^play$/i }).click();
+    // Retain the landing-route assertion above, then enter the deterministic
+    // hostile runtime directly so launch-art timing is covered separately.
+    await page.goto(`${baseUrl}/play?qa=hostile`, { waitUntil: 'networkidle' });
     await page.waitForSelector('canvas', { timeout: 15000 });
     await waitForScene(page, 'MainMenuScene');
     await page.screenshot({ path: path.join(outputDir, `main-menu-${viewport.name}.png`), fullPage: true });

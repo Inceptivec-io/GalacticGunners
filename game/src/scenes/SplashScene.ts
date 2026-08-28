@@ -17,6 +17,6 @@ export class SplashScene extends Phaser.Scene {
       color: '#f7d56a', fontFamily: 'GalacticGunnersGoldDisplay, Arial, sans-serif', fontSize: `${Math.max(14, Math.min(24, width * 0.018))}px`, align: 'center',
       stroke: '#02050d', strokeThickness: 5,
     }).setOrigin(0.5).setDepth(2);
-    this.time.delayedCall(2000, () => this.scene.start('MainMenuScene'));
+    this.time.delayedCall(4000, () => this.scene.start('MainMenuScene'));
   }
 }
