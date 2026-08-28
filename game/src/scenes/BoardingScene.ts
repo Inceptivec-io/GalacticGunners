@@ -28,6 +28,8 @@ interface BoardingQaState {
   touchControls: Array<{ id: string; x: number; y: number }>;
   playerShotsInFlight: number;
   playerShotsFired: number;
+  playerShotAttempts: number;
+  playerShotPoolUnavailable: number;
   viewport: { width: number; height: number };
   lastTouchInput: string | null;
 }
@@ -68,6 +70,8 @@ export class BoardingScene extends Phaser.Scene {
   private lastTouchInput: string | null = null;
   private pausePressed = false;
   private playerShotsFired = 0;
+  private playerShotAttempts = 0;
+  private playerShotPoolUnavailable = 0;
   private launch: BoardingLaunch = { anchorId: 'level-04-alien-frigate-01', sourceEntityId: 'level-04:formation-0:r0:c14', sourceEntityType: 'scout', interior: { slug: 'alien-frigate', version: 1, checksum: 'e9b1af65f0daef6725a7ddf4683b5f6d503e25dabc97aef1212102e6b1e994f3' }, levelVersion: 1, levelChecksum: '' };
 
   constructor() { super('BoardingScene'); }
@@ -80,6 +84,8 @@ export class BoardingScene extends Phaser.Scene {
     this.starting = true;
     this.completed = false;
     this.playerShotsFired = 0;
+    this.playerShotAttempts = 0;
+    this.playerShotPoolUnavailable = 0;
     this.serverRun = null;
     this.serverError = null;
     this.api = data.apiBaseUrl ? new GameApiClient(data.apiBaseUrl) : null;
@@ -153,6 +159,8 @@ export class BoardingScene extends Phaser.Scene {
           })),
           playerShotsInFlight: this.playerShots.getChildren().filter((shot) => shot.active).length,
           playerShotsFired: this.playerShotsFired,
+          playerShotAttempts: this.playerShotAttempts,
+          playerShotPoolUnavailable: this.playerShotPoolUnavailable,
           viewport: { width: this.scale.width, height: this.scale.height },
           lastTouchInput: this.lastTouchInput,
         }),
@@ -222,8 +230,12 @@ export class BoardingScene extends Phaser.Scene {
   }
 
   private firePlayerShot(): void {
+    this.playerShotAttempts += 1;
     const shot = this.playerShots.get(this.player.x + 32, this.player.y - 18, 'boarding.muzzle') as Phaser.Physics.Arcade.Sprite | null;
-    if (!shot) return;
+    if (!shot) {
+      this.playerShotPoolUnavailable += 1;
+      return;
+    }
     this.lastFireAt = this.time.now;
     this.playerShotsFired += 1;
     shot.setPosition(this.player.x + 34, this.player.y - 18).setActive(true).setVisible(true).setDisplaySize(30, 18);
