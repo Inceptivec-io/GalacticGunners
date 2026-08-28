@@ -77,6 +77,7 @@ interface HostileQaApi {
   replay: () => void;
   menu: () => void;
   triggerBoarding: () => Record<string, unknown>;
+  firePlayerLaserAtHazard: (index?: number) => Record<string, unknown>;
   state: () => Record<string, unknown>;
 }
 
@@ -1813,6 +1814,12 @@ export class Level1Scene extends CombatLevelScene {
         this.acceptBoardingOffer();
         return { launched: this.#boardingActive, offerPresented, transition: this.#boardingTransition, anchorId: anchor?.id ?? null, gameRunId: this.#session.runId };
       },
+      firePlayerLaserAtHazard: (index = 0) => {
+        const hazard = (this.#hazards.getChildren().filter((candidate) => candidate.active) as Phaser.Physics.Arcade.Sprite[])[index];
+        if (!hazard) return { fired: false, reason: 'no-hazard' };
+        const laser = this.firePlayerLaser(Number.POSITIVE_INFINITY, hazard.x, hazard.y + this.#layout.projectileSize.height);
+        return { fired: Boolean(laser), hazardX: hazard.x, hazardY: hazard.y, laserX: laser?.x };
+      },
       state: () => this.buildQaState(),
     };
   }
@@ -1937,6 +1944,10 @@ export class Level1Scene extends CombatLevelScene {
       shieldBodies: this.getActiveShieldTiles().map((tile) => {
         const body = tile.body as Phaser.Physics.Arcade.Body;
         return { x: Math.round(tile.x), y: Math.round(tile.y), body: { x: Math.round(body.x), y: Math.round(body.y), width: Math.round(body.width), height: Math.round(body.height) } };
+      }),
+      hazardBodies: (this.#hazards?.getChildren().filter((hazard) => hazard.active) as Phaser.Physics.Arcade.Sprite[] ?? []).map((hazard) => {
+        const body = hazard.body as Phaser.Physics.Arcade.Body;
+        return { type: hazard.getData('hazardType'), x: Math.round(hazard.x), y: Math.round(hazard.y), body: { x: Math.round(body.x), y: Math.round(body.y), width: Math.round(body.width), height: Math.round(body.height) } };
       }),
       playerLaserBodies: (this.#playerLasers?.getChildren().filter((child) => child.active) as Phaser.Physics.Arcade.Image[] ?? []).map((laser) => {
         const body = laser.body as Phaser.Physics.Arcade.Body;
