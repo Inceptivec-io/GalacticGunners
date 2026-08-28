@@ -5,7 +5,7 @@ Programme:
 PLATFORM FOUNDATION AND CAMPAIGN CONTINUITY
 
 Stage:
-H015 RECTIFIED / FOUNDER REVIEW READY / PENDING FOUNDER ACCEPTANCE
+H015 FINAL RECTIFICATION IN PROGRESS / FOUNDER REVIEW REJECTED
 
 Branch:
 feature/v1-platform-foundation-campaign-continuity
@@ -77,4 +77,4 @@ Founder Acceptance:
 FOUNDER ACCEPTED - KNOWN PLATFORM AND RUNTIME ITEMS DEFERRED TO H015. Development does not assert unqualified Founder manual acceptance of deferred items. PR #11 remains open for Founder merge decision.
 
 H015 Closure:
-STATUS=RECTIFIED. FOUNDER_REVIEW_READY=YES at `67e2eb9e81b4b83be2fcdfe42c0da9dd1f5d0e9f`. The clean fail-closed launcher passed Docker provenance, retained-volume database authentication, migrations/drift, bootstrap, three audience/session/CSRF/denial checks, repository quality, hostile runtime, campaign continuity, Level 4 hazards, Boarding entry/success, immutable Designer round-trip and the 23-surface browser matrix. GitHub Actions run `33187829041` is SUCCESS at that exact reviewed runtime. Founder acceptance and merge remain pending.
+STATUS=IN_PROGRESS. FOUNDER_REVIEW_READY=NO. The prior readiness assertion is rejected because the final-SHA evidence bundle, CI artifacts, genuine Designer journey, and remaining rectification stages are incomplete. PR #12 remains draft/open/unmerged. No Founder re-test is requested.

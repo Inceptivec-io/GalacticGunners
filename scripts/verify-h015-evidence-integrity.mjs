@@ -1,0 +1,71 @@
+import { createHash } from 'node:crypto';
+import { existsSync, readFileSync, statSync } from 'node:fs';
+import path from 'node:path';
+
+export const REQUIRED_GATES = [
+  'runtime-hostile', 'campaign-progression', 'boarding-entry-abort',
+  'boarding-success-return', 'level4-hazards', 'designer-roundtrip',
+  'designer-review-matrix', 'splash-navigation', 'auth-redirect',
+  'player-logout', 'closure-audit',
+];
+
+const GENERIC_OBSERVATIONS = new Set(['Rendered and interacted without console or network failure.']);
+const FULL_SHA = /^[a-f0-9]{40}$/i;
+const SHA256 = /^[a-f0-9]{64}$/i;
+
+export function sha256(file) {
+  return createHash('sha256').update(readFileSync(file)).digest('hex');
+}
+
+export function auditManifest(manifest, { root, expectedSha }) {
+  const failures = [];
+  const fail = (message) => failures.push(message);
+  if (manifest.schema_version !== '1.0') fail('schema_version must be 1.0.');
+  if (manifest.repository !== 'Inceptivec-io/GalacticGunners') fail('repository identity is invalid.');
+  if (!FULL_SHA.test(expectedSha ?? '')) fail('GG_TESTED_SHA must be a full commit SHA.');
+  if (manifest.commit_sha !== expectedSha) fail('manifest commit_sha does not equal GG_TESTED_SHA.');
+  if (!Array.isArray(manifest.gates)) fail('gates must be an array.');
+
+  const gates = new Map((manifest.gates ?? []).map((gate) => [gate.id, gate]));
+  for (const required of REQUIRED_GATES) if (!gates.has(required)) fail(`required gate missing: ${required}`);
+  const screenshotHashes = new Map();
+  for (const gate of manifest.gates ?? []) {
+    if (gate.tested_sha !== expectedSha || !FULL_SHA.test(gate.tested_sha ?? '')) fail(`gate ${gate.id} has invalid tested_sha.`);
+    if (!Array.isArray(gate.actions) || gate.actions.length === 0) fail(`gate ${gate.id} has no action trace.`);
+    if (!Array.isArray(gate.assertions) || gate.assertions.length === 0) fail(`gate ${gate.id} has no assertions.`);
+    if (GENERIC_OBSERVATIONS.has(gate.observed)) fail(`gate ${gate.id} has only generic observation text.`);
+    if (gate.result !== 'PASS') fail(`gate ${gate.id} is not PASS.`);
+    if ((gate.console_errors ?? []).length) fail(`gate ${gate.id} has console errors.`);
+    if ((gate.network_failures ?? []).length) fail(`gate ${gate.id} has network failures.`);
+    if (!Array.isArray(gate.evidence) || gate.evidence.length === 0) fail(`gate ${gate.id} has no evidence.`);
+    for (const evidence of gate.evidence ?? []) {
+      const file = path.resolve(root, evidence.path ?? '');
+      if (!existsSync(file) || !statSync(file).isFile()) { fail(`missing evidence: ${gate.id}:${evidence.path}`); continue; }
+      const digest = sha256(file);
+      if (digest !== evidence.sha256) fail(`evidence hash mismatch: ${gate.id}:${evidence.path}`);
+      if (evidence.mime_type === 'image/png') {
+        const prior = screenshotHashes.get(digest);
+        if (prior) fail(`duplicate screenshot hash: ${prior} and ${gate.id}`);
+        screenshotHashes.set(digest, gate.id);
+      }
+    }
+  }
+  const artifact = manifest.artifact;
+  if (!artifact?.name || !artifact?.path || !SHA256.test(artifact.sha256 ?? '')) fail('artifact metadata is incomplete.');
+  else {
+    const artifactPath = path.resolve(root, artifact.path);
+    if (!existsSync(artifactPath)) fail('artifact file is missing.');
+    else if (sha256(artifactPath) !== artifact.sha256) fail('artifact hash mismatch.');
+  }
+  return failures;
+}
+
+if (import.meta.url === `file:///${process.argv[1].replaceAll('\\', '/')}`) {
+  const manifestPath = process.env.GG_EVIDENCE_MANIFEST
+    ?? path.resolve(process.env.GG_EVIDENCE_DIR ?? 'FOUNDER_REVIEW_EVIDENCE.local', 'h015-evidence-manifest.json');
+  const expectedSha = process.env.GG_TESTED_SHA;
+  if (!existsSync(manifestPath)) throw new Error(`H015 evidence manifest does not exist: ${manifestPath}`);
+  const failures = auditManifest(JSON.parse(readFileSync(manifestPath, 'utf8')), { root: path.dirname(manifestPath), expectedSha });
+  if (failures.length) throw new Error(`H015 closure audit failed:\n${failures.map((failure) => `- ${failure}`).join('\n')}`);
+  console.log(`H015_EVIDENCE_IDENTITY=PASS\nH015_EVIDENCE_UNIQUENESS=PASS\nH015_CLOSURE_AUDIT=PASS`);
+}
