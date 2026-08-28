@@ -134,3 +134,24 @@ def test_core_publication_creates_immutable_campaign_release_without_mutating_pi
     assert fresh_run.campaign_version_id != original_campaign.id
     assert original_run.campaign_version_id == original_campaign.id
     assert CampaignVersion.objects.filter(campaign=original_campaign.campaign, lifecycle='PUBLISHED').count() == 2
+
+
+@pytest.mark.django_db
+def test_admin_authority_exposes_all_core_revisions_and_active_release(client, level_admin, core_project):
+    levels = []
+    for sequence in range(1, 7):
+        level = Level.objects.create(slug=f'level-{sequence:02d}', name=f'Level {sequence}', sequence=sequence, game_project=core_project)
+        version = LevelVersion.objects.create(level=level, version=1, config=golden_level())
+        version.status = LevelVersion.Status.VALIDATED; version.save(); version.publish()
+        levels.append(level)
+    client.force_login(level_admin)
+    assert client.post(f'/api/v1/admin/levels/{levels[-1].id}/publish/', {'version': 1}, content_type='application/json').status_code == 200
+    changed = golden_level(); changed['name'] = 'Persisted authoring draft'
+    assert client.post(f'/api/v1/admin/levels/{levels[0].id}/drafts/', {'expected_checksum': levels[0].active_version.checksum, 'config': changed}, content_type='application/json').status_code == 201
+    response = client.get('/api/v1/admin/levels/authority/')
+    assert response.status_code == 200
+    assert len(response.json()['results']) == 6
+    first = response.json()['results'][0]
+    assert first['editable_version']['config']['name'] == 'Persisted authoring draft'
+    assert len(first['versions']) == 2
+    assert response.json()['active_campaign_release']['campaign_version_id']

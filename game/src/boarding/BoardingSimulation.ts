@@ -40,6 +40,7 @@ export class BoardingSimulation {
   }
 
   hitPlayer(): void { if (this.state.player.health > 0) { this.state.player.health = 0; this.event('PLAYER_HIT', 'player'); } }
+  alienFire(id: string): void { this.event('ALIEN_FIRE', id); }
   killAlien(id: string): void { const alien = this.state.aliens.find((candidate) => candidate.id === id); if (alien?.alive) { alien.alive = false; this.event('ALIEN_KILLED', id); } }
   exit(): boolean {
     if (this.state.player.x < BOARDING_WORLD.width - 128) return false;

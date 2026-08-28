@@ -7,7 +7,7 @@ from game_runs.views import GameRunCompleteView, GameRunStartView
 from boarding.views import BoardingCompleteView, BoardingRunDetailView, BoardingStartView
 from leaderboard.views import LeaderboardListView, LeaderboardMeView, ModerationView
 from players.api import LeaderboardProfileView
-from levels.views import AdminLevelActionView, AdminLevelCreateView, AdminLevelDraftView, AdminLevelExportView, AdminLevelGenerateView, AdminLevelImportView, AdminLevelPreviewView, PublicLevelDetailView, PublicLevelListView, PublicVersionView
+from levels.views import AdminCoreLevelAuthorityView, AdminLevelActionView, AdminLevelCreateView, AdminLevelDraftView, AdminLevelExportView, AdminLevelGenerateView, AdminLevelImportView, AdminLevelPreviewView, PublicLevelDetailView, PublicLevelListView, PublicVersionView
 from accounts.api import CsrfView, LoginView, LogoutView, RegisterView, SessionView
 from accounts.admin_api import AdminOperationsView
 from campaigns.views import CampaignRunCompleteEntryView, CampaignRunStartView
@@ -53,6 +53,7 @@ urlpatterns = [
     path('api/v1/levels/<slug:slug>/', PublicLevelDetailView.as_view(), name='level-detail'),
     path('api/v1/levels/<slug:slug>/versions/<int:version>/', PublicVersionView.as_view(), name='level-version'),
     path('api/v1/admin/levels/', AdminLevelCreateView.as_view(), name='admin-level-create'),
+    path('api/v1/admin/levels/authority/', AdminCoreLevelAuthorityView.as_view(), name='admin-level-authority'),
     path('api/v1/admin/levels/import/', AdminLevelImportView.as_view(), name='admin-level-import'),
     path('api/v1/admin/levels/generate/', AdminLevelGenerateView.as_view(), name='admin-level-generate'),
     path('api/v1/admin/levels/<uuid:level_id>/export/', AdminLevelExportView.as_view(), name='admin-level-export'),

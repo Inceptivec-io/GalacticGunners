@@ -35,7 +35,15 @@ declare global {
 export class BoardingScene extends Phaser.Scene {
   private coordinator = new BoardingCoordinator();
   private simulation!: BoardingSimulation;
-  private player!: Phaser.GameObjects.Image;
+  private player!: Phaser.Physics.Arcade.Sprite;
+  private aliens!: Phaser.Physics.Arcade.Group;
+  private playerShots!: Phaser.Physics.Arcade.Group;
+  private alienShots!: Phaser.Physics.Arcade.Group;
+  private exitAirlock!: Phaser.Physics.Arcade.Sprite;
+  private exitUnlocked = false;
+  private lastFireAt = Number.NEGATIVE_INFINITY;
+  private lastAlienFireAt = Number.NEGATIVE_INFINITY;
+  private readonly keys: Record<string, Phaser.Input.Keyboard.Key> = {};
   private timer!: Phaser.GameObjects.Text;
   private elapsed = 0;
   private starting = true;
@@ -78,14 +86,39 @@ export class BoardingScene extends Phaser.Scene {
     this.load.image('boarding.player', `${ASSET_ROOT}characters/player_001_v001.png`);
     this.load.image('boarding.alien', `${ASSET_ROOT}characters/alien_001_v001.png`);
     this.load.image('boarding.platform', `${ASSET_ROOT}boarding/tiles/gg_boarding_tiles_floor_a_v001.png`);
+    this.load.image('boarding.airlock', `${ASSET_ROOT}transit/gg_boarding_door_airlock_v001.png`);
+    this.load.image('boarding.airlock-open', `${ASSET_ROOT}transit/gg_boarding_door_airlock_open_v001.png`);
+    this.load.image('boarding.muzzle', `${ASSET_ROOT}effects/gg_boarding_fx_muzzle_flash_v001.png`);
+    this.load.image('boarding.explosion', `${ASSET_ROOT}effects/gg_boarding_fx_explosion_v001.png`);
   }
 
   create(): void {
     this.cameras.main.setBounds(0, 0, BOARDING_WORLD.width, BOARDING_WORLD.height);
     this.add.image(BOARDING_WORLD.width / 2, 360, 'boarding.background').setDisplaySize(BOARDING_WORLD.width, 720).setScrollFactor(1);
-    for (let x = 128; x < BOARDING_WORLD.width; x += 256) this.add.image(x, 648, 'boarding.platform').setDisplaySize(256, 72);
-    this.player = this.add.image(128, 576, 'boarding.player').setDisplaySize(86, 104).setDepth(3);
-    for (const alien of this.simulation.snapshot().aliens) this.add.image(alien.x, alien.y, 'boarding.alien').setDisplaySize(90, 92).setDepth(3);
+    const floor = this.physics.add.staticGroup();
+    for (let x = 128; x < BOARDING_WORLD.width; x += 256) {
+      const tile = floor.create(x, 648, 'boarding.platform') as Phaser.Physics.Arcade.Sprite;
+      tile.setDisplaySize(256, 72).refreshBody();
+    }
+    this.player = this.physics.add.sprite(128, 530, 'boarding.player').setCrop(40, 130, 290, 590).setDisplaySize(68, 104).setDepth(3);
+    const playerBody = this.player.body as Phaser.Physics.Arcade.Body;
+    playerBody.setSize(34, 82, true).setCollideWorldBounds(true);
+    this.aliens = this.physics.add.group();
+    this.playerShots = this.physics.add.group({ maxSize: 16 });
+    this.alienShots = this.physics.add.group({ maxSize: 16 });
+    for (const alien of this.simulation.snapshot().aliens) {
+      const sprite = this.aliens.create(alien.x, alien.y, 'boarding.alien') as Phaser.Physics.Arcade.Sprite;
+      sprite.setCrop(40, 120, 290, 600).setDisplaySize(70, 100).setDepth(3).setData('alienId', alien.id);
+      (sprite.body as Phaser.Physics.Arcade.Body).setSize(38, 76, true).setCollideWorldBounds(true);
+    }
+    this.exitAirlock = this.physics.add.staticSprite(BOARDING_WORLD.width - 72, 550, 'boarding.airlock').setDisplaySize(104, 180).setDepth(3);
+    (this.exitAirlock.body as Phaser.Physics.Arcade.StaticBody).setSize(86, 154, true).updateFromGameObject();
+    this.physics.add.collider(this.player, floor);
+    this.physics.add.collider(this.aliens, floor);
+    this.physics.add.collider(this.playerShots, floor, (shot) => this.destroyShot(shot as Phaser.Physics.Arcade.Sprite));
+    this.physics.add.collider(this.alienShots, floor, (shot) => this.destroyShot(shot as Phaser.Physics.Arcade.Sprite));
+    this.physics.add.overlap(this.playerShots, this.aliens, (shot, alien) => this.hitAlien(shot as Phaser.Physics.Arcade.Sprite, alien as Phaser.Physics.Arcade.Sprite));
+    this.physics.add.overlap(this.alienShots, this.player, (shot) => this.hitPlayer(shot as Phaser.Physics.Arcade.Sprite));
     this.timer = this.add.text(24, 24, 'BOARDING 60', { fontFamily: 'GalacticGunnersHUD, monospace', fontSize: '28px', color: '#d9f8ff' }).setScrollFactor(0).setDepth(10);
     this.statusText = this.add.text(this.scale.width / 2, this.scale.height * 0.18, 'ALIEN FRIGATE BREACH\nESTABLISHING SECURE BOARDING LINK...', { align: 'center', fontFamily: 'GalacticGunnersGoldDisplay, monospace', fontSize: '30px', color: '#f5d15f' }).setOrigin(0.5).setScrollFactor(0).setDepth(20);
     this.cameras.main.startFollow(this.player, true, 0.12, 0.12);
@@ -97,6 +130,7 @@ export class BoardingScene extends Phaser.Scene {
     }
     this.input.keyboard?.once('keydown-ESC', () => this.finish('ABORTED'));
     this.input.keyboard?.on('keydown-P', this.pauseBoarding, this);
+    for (const key of ['A', 'D', 'LEFT', 'RIGHT', 'W', 'UP', 'SPACE', 'E']) this.keys[key] = this.input.keyboard!.addKey(key);
     this.events.on('resume', this.onResume, this);
     this.events.once('shutdown', () => {
       this.input.keyboard?.off('keydown-P', this.pauseBoarding, this);
@@ -126,19 +160,69 @@ export class BoardingScene extends Phaser.Scene {
       return;
     }
     this.elapsed += delta;
-    const keys = this.input.keyboard;
-    const horizontal = keys?.addKey('D').isDown || keys?.addKey('RIGHT').isDown ? 1 : keys?.addKey('A').isDown || keys?.addKey('LEFT').isDown ? -1 : 0;
-    const interact = Boolean(keys?.addKey('E').isDown);
-    this.simulation.step({ horizontal, jump: Boolean(keys?.addKey('W').isDown || keys?.addKey('UP').isDown), fire: Boolean(keys?.addKey('SPACE').isDown), interact });
-    const state = this.simulation.snapshot();
-    this.player.setPosition(state.player.x, state.player.y);
+    const horizontal = this.keys.D.isDown || this.keys.RIGHT.isDown ? 1 : this.keys.A.isDown || this.keys.LEFT.isDown ? -1 : 0;
+    const jump = Phaser.Input.Keyboard.JustDown(this.keys.W) || Phaser.Input.Keyboard.JustDown(this.keys.UP);
+    const fire = this.keys.SPACE.isDown;
+    const interact = Phaser.Input.Keyboard.JustDown(this.keys.E);
+    this.player.setVelocityX(horizontal * 260);
+    if (jump && (this.player.body as Phaser.Physics.Arcade.Body).blocked.down) this.player.setVelocityY(-440);
+    if (fire && this.time.now - this.lastFireAt >= 180) this.firePlayerShot();
+    this.simulation.step({ horizontal, jump, fire, interact });
+    if (this.time.now - this.lastAlienFireAt >= 1250) this.fireAlienShot();
     const remaining = Math.max(0, Math.ceil((BOARDING_WORLD.durationMs - this.simulation.elapsedMs()) / 1000));
     this.timer.setText(`BOARDING ${remaining}`);
-    if (interact && this.simulation.exit()) this.finish('SUCCESS');
+    const atExit = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.exitAirlock.x, this.exitAirlock.y) < 110;
+    if (!this.exitUnlocked && !this.aliens.getChildren().some((alien) => (alien as Phaser.Physics.Arcade.Sprite).active)) this.unlockExit();
+    if (interact && this.exitUnlocked && atExit && this.simulation.exit()) this.finish('SUCCESS');
     else if (this.simulation.elapsedMs() >= BOARDING_WORLD.durationMs) {
       this.simulation.timeout();
       this.finish('TIMEOUT');
     }
+  }
+
+  private firePlayerShot(): void {
+    const shot = this.playerShots.get(this.player.x + 32, this.player.y - 18, 'boarding.muzzle') as Phaser.Physics.Arcade.Sprite | null;
+    if (!shot) return;
+    this.lastFireAt = this.time.now;
+    shot.setPosition(this.player.x + 34, this.player.y - 18).setActive(true).setVisible(true).setDisplaySize(30, 18);
+    const body = shot.body as Phaser.Physics.Arcade.Body;
+    body.enable = true; body.reset(shot.x, shot.y); body.setSize(26, 12, true);
+    shot.setVelocityX(620); shot.setData('spent', false);
+  }
+
+  private fireAlienShot(): void {
+    const candidates = this.aliens.getChildren().filter((alien) => (alien as Phaser.Physics.Arcade.Sprite).active) as Phaser.Physics.Arcade.Sprite[];
+    const alien = candidates.find((item) => item.x > this.player.x) ?? candidates[0];
+    if (!alien) return;
+    const shot = this.alienShots.get(alien.x - 36, alien.y, 'boarding.muzzle') as Phaser.Physics.Arcade.Sprite | null;
+    if (!shot) return;
+    this.lastAlienFireAt = this.time.now;
+    shot.setPosition(alien.x - 36, alien.y).setActive(true).setVisible(true).setDisplaySize(30, 18).setFlipX(true);
+    const body = shot.body as Phaser.Physics.Arcade.Body;
+    body.enable = true; body.reset(shot.x, shot.y); body.setSize(26, 12, true);
+    shot.setVelocityX(-360); shot.setData('spent', false); this.simulation.alienFire(String(alien.getData('alienId')));
+  }
+
+  private destroyShot(shot: Phaser.Physics.Arcade.Sprite): void { shot.disableBody(true, true); }
+
+  private hitAlien(shot: Phaser.Physics.Arcade.Sprite, alien: Phaser.Physics.Arcade.Sprite): void {
+    if (!shot.active || !alien.active) return;
+    this.destroyShot(shot); alien.disableBody(true, true);
+    this.simulation.killAlien(String(alien.getData('alienId')));
+    const effect = this.add.image(alien.x, alien.y, 'boarding.explosion').setDisplaySize(72, 72).setDepth(6);
+    this.tweens.add({ targets: effect, alpha: 0, scale: 1.4, duration: 280, onComplete: () => effect.destroy() });
+  }
+
+  private hitPlayer(shot: Phaser.Physics.Arcade.Sprite): void {
+    if (!shot.active || this.completed) return;
+    this.destroyShot(shot); this.simulation.hitPlayer(); void this.finish('PLAYER_DEAD');
+  }
+
+  private unlockExit(): void {
+    this.exitUnlocked = true;
+    this.exitAirlock.setTexture('boarding.airlock-open');
+    this.statusText.setText('AIRLOCK UNLOCKED\nMOVE TO EXIT AND PRESS E');
+    this.time.delayedCall(1800, () => { if (!this.completed && this.statusText.active) this.statusText.setText(''); });
   }
 
   private async finish(outcome: BoardingOutcome): Promise<void> {

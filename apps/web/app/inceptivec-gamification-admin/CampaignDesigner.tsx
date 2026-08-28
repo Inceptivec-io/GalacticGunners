@@ -167,6 +167,14 @@ type DesignerLevel = {
     checksum: string;
     config: Record<string, unknown>;
   } | null;
+  versions?: Array<{
+    version: number;
+    status: string;
+    checksum: string;
+    config: Record<string, unknown>;
+    created_at?: string;
+    published_at?: string | null;
+  }>;
 };
 export interface DesignerContext {
   surface: "INCEPTIVEC_ADMIN" | "COMMAND_POST";
@@ -471,6 +479,10 @@ export function CampaignDesigner({
   );
   const [zoom, setZoom] = useState(1);
   const [portalProjectId, setPortalProjectId] = useState<string | null>(null);
+  const [activeCampaignRelease, setActiveCampaignRelease] = useState<{
+    version: string;
+    campaign_checksum: string;
+  } | null>(null);
   const [dragStart, setDragStart] = useState<{
     x: number;
     y: number;
@@ -569,7 +581,7 @@ export function CampaignDesigner({
       const [levelData, assetData] = await Promise.all([
         context.surface === "COMMAND_POST" && context.organizationSlug
           ? call(`/portal/organizations/${context.organizationSlug}/`)
-          : call("/levels/"),
+          : call("/admin/levels/authority/"),
         call(
           context.surface === "COMMAND_POST" && context.organizationSlug
             ? `/assets/catalogue/?organization=${encodeURIComponent(context.organizationSlug)}`
@@ -581,13 +593,14 @@ export function CampaignDesigner({
           ? (levelData.maps ?? [])
           : (levelData.results ?? levelData);
       setLevels(nextLevels);
+      setActiveCampaignRelease(levelData.active_campaign_release ?? null);
       setAssets(assetData.results ?? []);
       setPortalProjectId(
         (current) =>
           current ?? context.project_id ?? levelData.projects?.[0]?.id ?? null,
       );
       setSelectedLevelId((current) => current ?? nextLevels[0]?.id ?? null);
-      setMessage("Published campaign authority and approved assets loaded.");
+      setMessage("Authenticated campaign authority, revision lineage and approved assets loaded.");
     } catch (error) {
       setMessage(
         error instanceof Error
@@ -1200,15 +1213,16 @@ export function CampaignDesigner({
       );
     }
   }
-  async function lifecycle(action: "validate" | "publish") {
+  async function lifecycle(action: "validate" | "publish" | "rollback", version?: number) {
     if (!selectedLevel) return;
     if (action === "publish" && !window.confirm("Publish this immutable level revision into a new CORE campaign release? Existing campaigns remain pinned.")) return;
+    if (action === "rollback" && !window.confirm("Create a new published revision from this historical record? Campaign audit history remains immutable.")) return;
     try {
       await call(`/admin/levels/${selectedLevel.id}/${action}/`, {
         method: "POST",
-        body: "{}",
+        body: JSON.stringify({ version: version ?? (selectedLevel.editable_version ?? selectedLevel.active_version)?.version }),
       });
-      setMessage(`${action} completed.`);
+      setMessage(`${action} completed through the authenticated version workflow.`);
       await load();
     } catch (error) {
       setMessage(error instanceof Error ? error.message : `${action} failed.`);
@@ -1241,6 +1255,12 @@ export function CampaignDesigner({
         <button onClick={saveDraft} disabled={!selectedLevel || !editable}>
           Save immutable draft
         </button>
+        {context.surface === "INCEPTIVEC_ADMIN" ? (
+          <p className="designer-authority-status">
+            Active CORE release: {activeCampaignRelease?.version ?? "not yet published"}
+            {activeCampaignRelease ? ` / ${activeCampaignRelease.campaign_checksum.slice(0, 12)}` : ""}
+          </p>
+        ) : null}
         <section>
           <h2>Palette</h2>
           {(Object.keys(categoryTypes) as Category[]).map((item) => (
@@ -1507,6 +1527,21 @@ export function CampaignDesigner({
             </small>
           </button>
         ))}
+        {context.surface === "INCEPTIVEC_ADMIN" && selectedLevel?.versions?.length ? (
+          <section className="designer-version-history" aria-label="Immutable version history">
+            <h2>Version history</h2>
+            {selectedLevel.versions.map((version) => (
+              <div key={`${version.version}-${version.checksum}`}>
+                <span>v{version.version} {version.status} {version.checksum.slice(0, 10)}</span>
+                {version.status === "PUBLISHED" ? (
+                  <button type="button" onClick={() => lifecycle("rollback", version.version)}>
+                    Restore as new version
+                  </button>
+                ) : null}
+              </div>
+            ))}
+          </section>
+        ) : null}
         <h2>Layers</h2>
         <p>
           {document?.entities.length ?? 0} entities /{" "}

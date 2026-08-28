@@ -10,6 +10,8 @@ from .serializers import LevelCreateSerializer, LevelSerializer, LevelVersionCre
 from .validation import checksum, validate_definition
 from .authoring import blank_authoring_document
 from campaigns.publication import publish_core_level
+from campaigns.models import Campaign, CampaignVersion
+from games.models import GameRelease, Lifecycle
 
 
 class PublicLevelListView(generics.ListAPIView):
@@ -45,6 +47,52 @@ class AdminLevelCreateView(APIView):
         level = serializer.save()
         audit(request, 'create', level, level.versions.first())
         return Response(LevelSerializer(level).data, status=status.HTTP_201_CREATED)
+
+
+class AdminCoreLevelAuthorityView(APIView):
+    """Complete, authenticated CORE authoring authority for the product Designer.
+
+    This deliberately differs from the public level list: administrators need the
+    immutable revision lineage and active campaign release, while players only
+    receive the active published level configuration.
+    """
+
+    permission_classes = [IsLevelAdmin]
+
+    def get(self, request):
+        levels = Level.objects.filter(
+            archived=False,
+            game_project__owner_scope=OwnerScope.CORE,
+        ).select_related('active_version').prefetch_related('versions').order_by('sequence')
+        project = levels.first().game_project if levels else None
+        release = None
+        if project:
+            release = GameRelease.objects.filter(
+                game_project=project,
+                status=Lifecycle.PUBLISHED,
+            ).order_by('-published_at').first()
+        payload = []
+        for level in levels:
+            versions = list(level.versions.order_by('-version'))
+            editable = next(
+                (version for version in versions if version.status in {LevelVersion.Status.DRAFT, LevelVersion.Status.VALIDATED}),
+                None,
+            )
+            payload.append({
+                **LevelSerializer(level).data,
+                'editable_version': LevelVersionSerializer(editable).data if editable else None,
+                'versions': LevelVersionSerializer(versions, many=True).data,
+            })
+        return Response({
+            'results': payload,
+            'active_campaign_release': ({
+                'id': str(release.id),
+                'version': release.version,
+                'campaign_version_id': release.manifest.get('campaign_version_id'),
+                'campaign_checksum': release.manifest.get('campaign_checksum'),
+                'published_at': release.published_at,
+            } if release else None),
+        })
 
 
 def audit(request, action, level=None, version=None, detail=None):
