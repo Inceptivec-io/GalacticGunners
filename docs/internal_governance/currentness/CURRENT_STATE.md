@@ -5,7 +5,7 @@ Programme:
 PLATFORM FOUNDATION AND CAMPAIGN CONTINUITY
 
 Stage:
-H015 REVIEW BUILD COMPLETE / PENDING FOUNDER ACCEPTANCE
+H015 FOUNDER-REJECTED RECTIFICATION IN PROGRESS
 
 Branch:
 feature/v1-platform-foundation-campaign-continuity
@@ -77,4 +77,4 @@ Founder Acceptance:
 FOUNDER ACCEPTED - KNOWN PLATFORM AND RUNTIME ITEMS DEFERRED TO H015. Development does not assert unqualified Founder manual acceptance of deferred items. PR #11 remains open for Founder merge decision.
 
 H015 Closure:
-STATUS=FOUNDER_REVIEW_READY. FOUNDER_REVIEW_READY=YES at reviewed runtime `4af67880de7124d793d8d71635e2c86f471b15da`; rectified launcher, browser/campaign evidence, current verification authority and GitHub Actions run `33144447817` are PASS. Founder acceptance and merge remain PENDING.
+STATUS=IN_PROGRESS. FOUNDER_REVIEW_READY=NO. Founder rejected the claimed readiness after direct browser review; no previous automated, browser, CI, launcher, seal, or currentness record grants review readiness. The active work is the sequential runtime and evidence rectification recorded at `docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/FOUNDER_ACCEPTANCE_REJECTION_RECTIFICATION.md`.

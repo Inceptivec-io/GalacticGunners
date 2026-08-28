@@ -10,4 +10,5 @@ $build = Invoke-RestMethod 'http://localhost:3002/api/v1/system/build/'
 if ($health.status -ne 'ok' -or $build.source_sha -ne $sourceSha) { throw 'Founder review status found unhealthy or stale container provenance.' }
 $health | ConvertTo-Json -Compress
 $build | ConvertTo-Json -Compress
-Write-Output 'FOUNDER_REVIEW_READY=YES'
+Write-Output 'FOUNDER_REVIEW_GATES=PASS'
+Write-Output 'FOUNDER_REVIEW_READY=NO'
