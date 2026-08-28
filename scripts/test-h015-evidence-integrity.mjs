@@ -10,8 +10,8 @@ const artifact = path.join(root, 'artifact.json');
 writeFileSync(image, 'distinct test image');
 writeFileSync(artifact, '{}');
 const sha = 'a'.repeat(40);
-const gate = (id, index) => ({ id, classification: 'AUTOMATED_BROWSER', route: '/play', setup: ['start clean runtime'], actions: [`perform action ${index}`], assertions: [`assert outcome ${index}`], tested_sha: sha, observed: `Observed outcome ${index}`, result: 'PASS', evidence: [{ path: 'evidence.png', sha256: sha256(image), mime_type: index ? 'application/json' : 'image/png' }], console_errors: [], network_failures: [] });
-const manifest = { schema_version: '1.0', repository: 'Inceptivec-io/GalacticGunners', branch: 'feature/v1-platform-foundation-campaign-continuity', commit_sha: sha, ci_run_id: '1', generated_at: new Date().toISOString(), runner: { kind: 'local-founder', os: process.platform, browser: 'Chromium' }, gates: REQUIRED_GATES.map(gate), artifact: { name: 'test', path: 'artifact.json', sha256: sha256(artifact) } };
+const gate = (id, index) => ({ id, classification: 'AUTOMATED_BROWSER', route: '/play', setup: ['start clean runtime'], actions: [`perform action ${index}`], assertions: [`assert outcome ${index}`], tested_sha: sha, observed: `Observed outcome ${index}`, normal_gameplay_interaction: true, result: 'PASS', evidence: [{ path: 'evidence.png', sha256: sha256(image), mime_type: index ? 'application/json' : 'image/png' }], console_errors: [], network_failures: [] });
+const manifest = { schema_version: '1.0', repository: 'Inceptivec-io/GalacticGunners', branch: 'feature/v1-platform-foundation-campaign-continuity', commit_sha: sha, ci_run_id: '1', generated_at: new Date().toISOString(), runner: { kind: 'local-founder', os: process.platform, browser: 'Chromium' }, gates: REQUIRED_GATES.map(gate), artifact: { name: 'test', url: 'file:///artifact.json', path: 'artifact.json', sha256: sha256(artifact) } };
 assert.deepEqual(auditManifest(manifest, { root, expectedSha: sha }), []);
 
 const cloneManifest = () => structuredClone(manifest);

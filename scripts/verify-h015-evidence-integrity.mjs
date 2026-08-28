@@ -12,6 +12,8 @@ export const REQUIRED_GATES = [
 const GENERIC_OBSERVATIONS = new Set(['Rendered and interacted without console or network failure.']);
 const FULL_SHA = /^[a-f0-9]{40}$/i;
 const SHA256 = /^[a-f0-9]{64}$/i;
+const GATE_CLASSIFICATIONS = new Set(['AUTOMATED_BROWSER', 'MANUAL_FOUNDER', 'API', 'UNIT']);
+const NORMAL_GAMEPLAY_GATES = new Set(['runtime-hostile', 'campaign-progression', 'boarding-entry-abort', 'boarding-success-return', 'level4-hazards']);
 
 export function sha256(file) {
   return createHash('sha256').update(readFileSync(file)).digest('hex');
@@ -30,10 +32,14 @@ export function auditManifest(manifest, { root, expectedSha }) {
   for (const required of REQUIRED_GATES) if (!gates.has(required)) fail(`required gate missing: ${required}`);
   const screenshotHashes = new Map();
   for (const gate of manifest.gates ?? []) {
+    if (!GATE_CLASSIFICATIONS.has(gate.classification)) fail(`gate ${gate.id} has an invalid classification.`);
+    if (typeof gate.route !== 'string' || gate.route.length === 0) fail(`gate ${gate.id} has no route.`);
+    if (!Array.isArray(gate.setup) || gate.setup.length === 0) fail(`gate ${gate.id} has no setup trace.`);
     if (gate.tested_sha !== expectedSha || !FULL_SHA.test(gate.tested_sha ?? '')) fail(`gate ${gate.id} has invalid tested_sha.`);
     if (!Array.isArray(gate.actions) || gate.actions.length === 0) fail(`gate ${gate.id} has no action trace.`);
     if (!Array.isArray(gate.assertions) || gate.assertions.length === 0) fail(`gate ${gate.id} has no assertions.`);
-    if (GENERIC_OBSERVATIONS.has(gate.observed)) fail(`gate ${gate.id} has only generic observation text.`);
+    if (GENERIC_OBSERVATIONS.has(gate.observed) || !gate.observed || /^rendered and interacted/i.test(gate.observed)) fail(`gate ${gate.id} has only generic observation text.`);
+    if (NORMAL_GAMEPLAY_GATES.has(gate.id) && gate.normal_gameplay_interaction !== true) fail(`gate ${gate.id} does not prove normal gameplay interaction.`);
     if (gate.result !== 'PASS') fail(`gate ${gate.id} is not PASS.`);
     if ((gate.console_errors ?? []).length) fail(`gate ${gate.id} has console errors.`);
     if ((gate.network_failures ?? []).length) fail(`gate ${gate.id} has network failures.`);
@@ -51,7 +57,7 @@ export function auditManifest(manifest, { root, expectedSha }) {
     }
   }
   const artifact = manifest.artifact;
-  if (!artifact?.name || !artifact?.path || !SHA256.test(artifact.sha256 ?? '')) fail('artifact metadata is incomplete.');
+  if (!artifact?.name || !artifact?.path || !/^https?:\/\/|^file:\/\//.test(artifact.url ?? '') || !SHA256.test(artifact.sha256 ?? '')) fail('artifact metadata is incomplete.');
   else {
     const artifactPath = path.resolve(root, artifact.path);
     if (!existsSync(artifactPath)) fail('artifact file is missing.');

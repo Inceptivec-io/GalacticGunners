@@ -39,20 +39,25 @@ const sources = {
   'closure-audit': 'closure_audit',
 };
 const gates = REQUIRED_GATES.map((id) => {
-  const items = evidence(sources[id]);
+  const directory = sources[id];
+  const metadataPath = path.join(root, directory, 'h015-gate.json');
+  const items = evidence(directory).filter((item) => item.path !== relative(metadataPath));
+  const metadata = existsSync(metadataPath) ? JSON.parse(readFileSync(metadataPath, 'utf8')) : null;
+  const validMetadata = metadata?.id === id && metadata?.tested_sha === sha;
   return {
     id,
-    classification: 'AUTOMATED_BROWSER',
-    route: '/play',
-    setup: ['CI or local review runtime started from exact commit'],
-    actions: items.length ? [`Execute ${id} browser journey.`] : [],
-    assertions: items.length ? [`Generated evidence was stamped with ${sha}.`] : [],
+    classification: metadata?.classification ?? 'AUTOMATED_BROWSER',
+    route: metadata?.route ?? '',
+    setup: metadata?.setup ?? [],
+    actions: metadata?.actions ?? [],
+    assertions: metadata?.assertions ?? [],
     tested_sha: sha,
-    observed: items.length ? `${id} generated ${items.length} evidence files.` : 'Evidence absent.',
-    result: items.length ? 'PASS' : 'FAIL',
+    observed: metadata?.observed ?? 'Evidence metadata absent.',
+    normal_gameplay_interaction: metadata?.normal_gameplay_interaction === true,
+    result: validMetadata && items.length ? metadata.result : 'FAIL',
     evidence: items,
-    console_errors: [],
-    network_failures: [],
+    console_errors: metadata?.console_errors ?? [],
+    network_failures: metadata?.network_failures ?? [],
   };
 });
 const index = { commit_sha: sha, generated_at: new Date().toISOString(), files: files(root).filter((file) => !file.endsWith('h015-evidence-manifest.json')).map((file) => ({ path: relative(file), sha256: sha256(file), bytes: statSync(file).size })) };
@@ -64,7 +69,7 @@ const manifest = {
   ci_run_id: process.env.GITHUB_RUN_ID ?? 'local-founder', generated_at: new Date().toISOString(),
   runner: { kind: process.env.GITHUB_ACTIONS ? 'github-actions' : 'local-founder', os: process.platform, browser: 'Chromium' },
   gates,
-  artifact: { name: `h015-browser-evidence-${sha}`, path: 'h015-evidence-index.json', sha256: sha256(indexPath) },
+  artifact: { name: `h015-browser-evidence-${sha}`, url: process.env.GG_EVIDENCE_ARTIFACT_URL ?? `file://${indexPath.replaceAll('\\', '/')}`, path: 'h015-evidence-index.json', sha256: sha256(indexPath) },
 };
 writeFileSync(path.join(root, 'h015-evidence-manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
 console.log(path.join(root, 'h015-evidence-manifest.json'));
