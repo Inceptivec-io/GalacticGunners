@@ -352,40 +352,42 @@ async function runHostileCases(browser) {
     && state.projectileSpeeds.player === 300;
 
   await loadGame(page);
+  await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__.prepareMovementBoundsProbe());
   await page.keyboard.down('ArrowLeft');
   await page.keyboard.down('ArrowUp');
   try {
     await page.waitForFunction(() => {
       const state = window.__GALACTIC_GUNNERS_HOSTILE__?.state();
-      return state?.playerBody && state?.movementBounds
-        && state.playerBody.x <= state.movementBounds.left + 2
-        && state.playerBody.y <= state.movementBounds.top + 2;
+      return state?.movementBounds
+        && state.playerX <= state.movementBounds.left + 2
+        && state.playerY <= state.movementBounds.top + 2;
     }, undefined, { timeout: 15_000 });
   } finally {
     await page.keyboard.up('ArrowUp');
     await page.keyboard.up('ArrowLeft');
   }
   state = await getGameState(page);
-  cases.all_edge_clamp_top_left = state.playerBody.x >= state.movementBounds.left - state.playerBody.width / 2 - 2
-    && state.playerBody.y >= state.movementBounds.top - state.playerBody.height / 2 - 2;
+  cases.all_edge_clamp_top_left = state.playerX >= state.movementBounds.left - 2
+    && state.playerY >= state.movementBounds.top - 2;
 
   await loadGame(page);
+  await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__.prepareMovementBoundsProbe());
   await page.keyboard.down('ArrowRight');
   await page.keyboard.down('ArrowDown');
   try {
     await page.waitForFunction(() => {
       const state = window.__GALACTIC_GUNNERS_HOSTILE__?.state();
-      return state?.playerBody && state?.movementBounds
-        && state.playerBody.x + state.playerBody.width >= state.movementBounds.right - 2
-        && state.playerBody.y + state.playerBody.height >= state.movementBounds.bottom - 2;
+      return state?.movementBounds
+        && state.playerX >= state.movementBounds.right - 2
+        && state.playerY >= state.movementBounds.bottom - 2;
     }, undefined, { timeout: 15_000 });
   } finally {
     await page.keyboard.up('ArrowDown');
     await page.keyboard.up('ArrowRight');
   }
   state = await getGameState(page);
-  cases.all_edge_clamp_bottom_right = state.playerBody.x <= state.movementBounds.right - state.playerBody.width / 2 + 2
-    && state.playerBody.y <= state.movementBounds.bottom - state.playerBody.height / 2 + 2;
+  cases.all_edge_clamp_bottom_right = state.playerX <= state.movementBounds.right + 2
+    && state.playerY <= state.movementBounds.bottom + 2;
 
   await loadGame(page);
   state = await getGameState(page);

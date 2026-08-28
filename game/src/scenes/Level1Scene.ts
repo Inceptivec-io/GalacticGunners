@@ -70,6 +70,7 @@ interface HostileQaApi {
   verifyNukeAmmoGuard: () => Record<string, unknown>;
   verifyNukeRearmLifecycle: () => Record<string, unknown>;
   setPlayerUnderScout: (index?: number, offsetX?: number) => Record<string, unknown>;
+  prepareMovementBoundsProbe: () => Record<string, unknown>;
   gamepadY: () => Record<string, unknown>;
   forceComplete: () => void;
   forceFail: () => void;
@@ -1795,6 +1796,14 @@ export class Level1Scene extends CombatLevelScene {
         playerBody.reset(this.#player.sprite.x, this.#player.sprite.y);
         playerBody.prev.set(playerBody.x, playerBody.y);
         return { moved: true, playerX: this.#player.sprite.x, scoutX: scout.x, offsetX };
+      },
+      prepareMovementBoundsProbe: () => {
+        // Bounds verification drives normal keyboard input through the live
+        // player body. It only suppresses combat interruption while crossing
+        // the hostile formation at the top of the playfield.
+        this.#playerState = 'regenerating';
+        this.#invulnerableUntilMs = this.time.now + 30_000;
+        return { playerState: this.#playerState, invulnerableUntilMs: this.#invulnerableUntilMs };
       },
       gamepadY: () => {
         const nuke = this.fireNuke();
