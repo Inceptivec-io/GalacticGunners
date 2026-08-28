@@ -1,7 +1,7 @@
 {
   "url": "http://localhost:3002",
   "handoff_id": "GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015",
-  "generated_at": "2026-08-27T16:07:16.269Z",
+  "generated_at": "2026-08-28T10:46:23.749Z",
   "banned_visible_terms": [
     "LEVEL 1 VERTICAL SLICE",
     "VERTICAL SLICE",
@@ -92,216 +92,216 @@
           "expectedX": 51.83999999999999,
           "spriteX": 51.83999999999999,
           "bodyCenterX": 51.83999999999999,
-          "bodyCenterY": 656.7776,
+          "bodyCenterY": 614.7242666666666,
           "previousBodyCenterX": 51.83999999999999,
-          "previousBodyCenterY": 656.7776
+          "previousBodyCenterY": 614.7242666666666
         },
         {
           "cycle": 2,
           "expectedX": 682.5,
           "spriteX": 682.5,
           "bodyCenterX": 682.5,
-          "bodyCenterY": 656.7776,
+          "bodyCenterY": 614.7242666666666,
           "previousBodyCenterX": 682.5,
-          "previousBodyCenterY": 656.7776
+          "previousBodyCenterY": 614.7242666666666
         },
         {
           "cycle": 3,
           "expectedX": 1313.1599999999999,
           "spriteX": 1313.1599999999999,
           "bodyCenterX": 1313.1599999999999,
-          "bodyCenterY": 656.7776,
+          "bodyCenterY": 614.7242666666666,
           "previousBodyCenterX": 1313.1599999999999,
-          "previousBodyCenterY": 656.7776
+          "previousBodyCenterY": 614.7242666666666
         },
         {
           "cycle": 4,
           "expectedX": 51.83999999999999,
           "spriteX": 51.83999999999999,
           "bodyCenterX": 51.83999999999999,
-          "bodyCenterY": 656.7776,
+          "bodyCenterY": 614.7242666666666,
           "previousBodyCenterX": 51.83999999999999,
-          "previousBodyCenterY": 656.7776
+          "previousBodyCenterY": 614.7242666666666
         },
         {
           "cycle": 5,
           "expectedX": 682.5,
           "spriteX": 682.5,
           "bodyCenterX": 682.5,
-          "bodyCenterY": 656.7776,
+          "bodyCenterY": 614.7242666666666,
           "previousBodyCenterX": 682.5,
-          "previousBodyCenterY": 656.7776
+          "previousBodyCenterY": 614.7242666666666
         },
         {
           "cycle": 6,
           "expectedX": 1313.1599999999999,
           "spriteX": 1313.1599999999999,
           "bodyCenterX": 1313.1599999999999,
-          "bodyCenterY": 656.7776,
+          "bodyCenterY": 614.7242666666666,
           "previousBodyCenterX": 1313.1599999999999,
-          "previousBodyCenterY": 656.7776
+          "previousBodyCenterY": 614.7242666666666
         },
         {
           "cycle": 7,
           "expectedX": 51.83999999999999,
           "spriteX": 51.83999999999999,
           "bodyCenterX": 51.83999999999999,
-          "bodyCenterY": 656.7776,
+          "bodyCenterY": 614.7242666666666,
           "previousBodyCenterX": 51.83999999999999,
-          "previousBodyCenterY": 656.7776
+          "previousBodyCenterY": 614.7242666666666
         },
         {
           "cycle": 8,
           "expectedX": 682.5,
           "spriteX": 682.5,
           "bodyCenterX": 682.5,
-          "bodyCenterY": 656.7776,
+          "bodyCenterY": 614.7242666666666,
           "previousBodyCenterX": 682.5,
-          "previousBodyCenterY": 656.7776
+          "previousBodyCenterY": 614.7242666666666
         },
         {
           "cycle": 9,
           "expectedX": 1313.1599999999999,
           "spriteX": 1313.1599999999999,
           "bodyCenterX": 1313.1599999999999,
-          "bodyCenterY": 656.7776,
+          "bodyCenterY": 614.7242666666666,
           "previousBodyCenterX": 1313.1599999999999,
-          "previousBodyCenterY": 656.7776
+          "previousBodyCenterY": 614.7242666666666
         },
         {
           "cycle": 10,
           "expectedX": 51.83999999999999,
           "spriteX": 51.83999999999999,
           "bodyCenterX": 51.83999999999999,
-          "bodyCenterY": 656.7776,
+          "bodyCenterY": 614.7242666666666,
           "previousBodyCenterX": 51.83999999999999,
-          "previousBodyCenterY": 656.7776
+          "previousBodyCenterY": 614.7242666666666
         },
         {
           "cycle": 11,
           "expectedX": 682.5,
           "spriteX": 682.5,
           "bodyCenterX": 682.5,
-          "bodyCenterY": 656.7776,
+          "bodyCenterY": 614.7242666666666,
           "previousBodyCenterX": 682.5,
-          "previousBodyCenterY": 656.7776
+          "previousBodyCenterY": 614.7242666666666
         },
         {
           "cycle": 12,
           "expectedX": 1313.1599999999999,
           "spriteX": 1313.1599999999999,
           "bodyCenterX": 1313.1599999999999,
-          "bodyCenterY": 656.7776,
+          "bodyCenterY": 614.7242666666666,
           "previousBodyCenterX": 1313.1599999999999,
-          "previousBodyCenterY": 656.7776
+          "previousBodyCenterY": 614.7242666666666
         },
         {
           "cycle": 13,
           "expectedX": 51.83999999999999,
           "spriteX": 51.83999999999999,
           "bodyCenterX": 51.83999999999999,
-          "bodyCenterY": 656.7776,
+          "bodyCenterY": 614.7242666666666,
           "previousBodyCenterX": 51.83999999999999,
-          "previousBodyCenterY": 656.7776
+          "previousBodyCenterY": 614.7242666666666
         },
         {
           "cycle": 14,
           "expectedX": 682.5,
           "spriteX": 682.5,
           "bodyCenterX": 682.5,
-          "bodyCenterY": 656.7776,
+          "bodyCenterY": 614.7242666666666,
           "previousBodyCenterX": 682.5,
-          "previousBodyCenterY": 656.7776
+          "previousBodyCenterY": 614.7242666666666
         },
         {
           "cycle": 15,
           "expectedX": 1313.1599999999999,
           "spriteX": 1313.1599999999999,
           "bodyCenterX": 1313.1599999999999,
-          "bodyCenterY": 656.7776,
+          "bodyCenterY": 614.7242666666666,
           "previousBodyCenterX": 1313.1599999999999,
-          "previousBodyCenterY": 656.7776
+          "previousBodyCenterY": 614.7242666666666
         },
         {
           "cycle": 16,
           "expectedX": 51.83999999999999,
           "spriteX": 51.83999999999999,
           "bodyCenterX": 51.83999999999999,
-          "bodyCenterY": 656.7776,
+          "bodyCenterY": 614.7242666666666,
           "previousBodyCenterX": 51.83999999999999,
-          "previousBodyCenterY": 656.7776
+          "previousBodyCenterY": 614.7242666666666
         },
         {
           "cycle": 17,
           "expectedX": 682.5,
           "spriteX": 682.5,
           "bodyCenterX": 682.5,
-          "bodyCenterY": 656.7776,
+          "bodyCenterY": 614.7242666666666,
           "previousBodyCenterX": 682.5,
-          "previousBodyCenterY": 656.7776
+          "previousBodyCenterY": 614.7242666666666
         },
         {
           "cycle": 18,
           "expectedX": 1313.1599999999999,
           "spriteX": 1313.1599999999999,
           "bodyCenterX": 1313.1599999999999,
-          "bodyCenterY": 656.7776,
+          "bodyCenterY": 614.7242666666666,
           "previousBodyCenterX": 1313.1599999999999,
-          "previousBodyCenterY": 656.7776
+          "previousBodyCenterY": 614.7242666666666
         },
         {
           "cycle": 19,
           "expectedX": 51.83999999999999,
           "spriteX": 51.83999999999999,
           "bodyCenterX": 51.83999999999999,
-          "bodyCenterY": 656.7776,
+          "bodyCenterY": 614.7242666666666,
           "previousBodyCenterX": 51.83999999999999,
-          "previousBodyCenterY": 656.7776
+          "previousBodyCenterY": 614.7242666666666
         },
         {
           "cycle": 20,
           "expectedX": 682.5,
           "spriteX": 682.5,
           "bodyCenterX": 682.5,
-          "bodyCenterY": 656.7776,
+          "bodyCenterY": 614.7242666666666,
           "previousBodyCenterX": 682.5,
-          "previousBodyCenterY": 656.7776
+          "previousBodyCenterY": 614.7242666666666
         },
         {
           "cycle": 21,
           "expectedX": 1313.1599999999999,
           "spriteX": 1313.1599999999999,
           "bodyCenterX": 1313.1599999999999,
-          "bodyCenterY": 656.7776,
+          "bodyCenterY": 614.7242666666666,
           "previousBodyCenterX": 1313.1599999999999,
-          "previousBodyCenterY": 656.7776
+          "previousBodyCenterY": 614.7242666666666
         },
         {
           "cycle": 22,
           "expectedX": 51.83999999999999,
           "spriteX": 51.83999999999999,
           "bodyCenterX": 51.83999999999999,
-          "bodyCenterY": 656.7776,
+          "bodyCenterY": 614.7242666666666,
           "previousBodyCenterX": 51.83999999999999,
-          "previousBodyCenterY": 656.7776
+          "previousBodyCenterY": 614.7242666666666
         },
         {
           "cycle": 23,
           "expectedX": 682.5,
           "spriteX": 682.5,
           "bodyCenterX": 682.5,
-          "bodyCenterY": 656.7776,
+          "bodyCenterY": 614.7242666666666,
           "previousBodyCenterX": 682.5,
-          "previousBodyCenterY": 656.7776
+          "previousBodyCenterY": 614.7242666666666
         },
         {
           "cycle": 24,
           "expectedX": 1313.1599999999999,
           "spriteX": 1313.1599999999999,
           "bodyCenterX": 1313.1599999999999,
-          "bodyCenterY": 656.7776,
+          "bodyCenterY": 614.7242666666666,
           "previousBodyCenterX": 1313.1599999999999,
-          "previousBodyCenterY": 656.7776
+          "previousBodyCenterY": 614.7242666666666
         }
       ],
       "nuke_cycles": [
@@ -310,27 +310,27 @@
           "expectedX": 77.75999999999999,
           "spriteX": 77.75999999999999,
           "bodyCenterX": 77.75999999999999,
-          "bodyCenterY": 649.8656000000001,
+          "bodyCenterY": 607.8122666666667,
           "previousBodyCenterX": 77.75999999999999,
-          "previousBodyCenterY": 649.8656000000001
+          "previousBodyCenterY": 607.8122666666667
         },
         {
           "cycle": 2,
           "expectedX": 682.5,
           "spriteX": 682.5,
           "bodyCenterX": 682.5,
-          "bodyCenterY": 649.8656000000001,
+          "bodyCenterY": 607.8122666666667,
           "previousBodyCenterX": 682.5,
-          "previousBodyCenterY": 649.8656000000001
+          "previousBodyCenterY": 607.8122666666667
         },
         {
           "cycle": 3,
           "expectedX": 1287.24,
           "spriteX": 1287.24,
           "bodyCenterX": 1287.24,
-          "bodyCenterY": 649.8656000000001,
+          "bodyCenterY": 607.8122666666667,
           "previousBodyCenterX": 1287.24,
-          "previousBodyCenterY": 649.8656000000001
+          "previousBodyCenterY": 607.8122666666667
         }
       ],
       "nuke_ammo_guard": {
@@ -359,58 +359,10 @@
       {
         "type": "error",
         "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED"
-      },
-      {
-        "type": "error",
-        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED"
-      },
-      {
-        "type": "error",
-        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED"
-      },
-      {
-        "type": "error",
-        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED"
-      },
-      {
-        "type": "error",
-        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED"
-      },
-      {
-        "type": "error",
-        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED"
-      },
-      {
-        "type": "error",
-        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED"
       }
     ],
     "console_warnings": [],
     "network_failures_or_4xx_5xx": [
-      {
-        "url": "http://127.0.0.1:8999/api/v1/levels/level-01/",
-        "failure": "net::ERR_CONNECTION_REFUSED"
-      },
-      {
-        "url": "http://127.0.0.1:8999/api/v1/levels/level-02/",
-        "failure": "net::ERR_CONNECTION_REFUSED"
-      },
-      {
-        "url": "http://127.0.0.1:8999/api/v1/levels/level-03/",
-        "failure": "net::ERR_CONNECTION_REFUSED"
-      },
-      {
-        "url": "http://127.0.0.1:8999/api/v1/levels/level-04/",
-        "failure": "net::ERR_CONNECTION_REFUSED"
-      },
-      {
-        "url": "http://127.0.0.1:8999/api/v1/levels/level-05/",
-        "failure": "net::ERR_CONNECTION_REFUSED"
-      },
-      {
-        "url": "http://127.0.0.1:8999/api/v1/levels/level-06/",
-        "failure": "net::ERR_CONNECTION_REFUSED"
-      },
       {
         "url": "http://127.0.0.1:8999/api/v1/auth/csrf/",
         "failure": "net::ERR_CONNECTION_REFUSED"
@@ -430,57 +382,9 @@
       {
         "type": "error",
         "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED"
-      },
-      {
-        "type": "error",
-        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED"
-      },
-      {
-        "type": "error",
-        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED"
-      },
-      {
-        "type": "error",
-        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED"
-      },
-      {
-        "type": "error",
-        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED"
-      },
-      {
-        "type": "error",
-        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED"
-      },
-      {
-        "type": "error",
-        "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED"
       }
     ],
     "network_failures": [
-      {
-        "url": "http://127.0.0.1:8999/api/v1/levels/level-01/",
-        "failure": "net::ERR_CONNECTION_REFUSED"
-      },
-      {
-        "url": "http://127.0.0.1:8999/api/v1/levels/level-02/",
-        "failure": "net::ERR_CONNECTION_REFUSED"
-      },
-      {
-        "url": "http://127.0.0.1:8999/api/v1/levels/level-03/",
-        "failure": "net::ERR_CONNECTION_REFUSED"
-      },
-      {
-        "url": "http://127.0.0.1:8999/api/v1/levels/level-04/",
-        "failure": "net::ERR_CONNECTION_REFUSED"
-      },
-      {
-        "url": "http://127.0.0.1:8999/api/v1/levels/level-05/",
-        "failure": "net::ERR_CONNECTION_REFUSED"
-      },
-      {
-        "url": "http://127.0.0.1:8999/api/v1/levels/level-06/",
-        "failure": "net::ERR_CONNECTION_REFUSED"
-      },
       {
         "url": "http://127.0.0.1:8999/api/v1/auth/csrf/",
         "failure": "net::ERR_CONNECTION_REFUSED"
