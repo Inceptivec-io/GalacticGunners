@@ -74,6 +74,10 @@ try {
   assert(active.serverRunId, 'Boarding did not receive a server-authoritative run.');
   assert(!active.serverError, `Boarding server error: ${active.serverError}`);
   assert(active.touchControls.length === 5, `Expected five touch controls, received ${JSON.stringify(active.touchControls)}`);
+  assert(active.playerBody.width >= 30 && active.playerBody.height >= 78,
+    `Boarding player collider is not aligned to the rendered envelope: ${JSON.stringify(active.playerBody)}`);
+  assert(active.alienBodies.length === 6 && active.alienBodies.every((alien) => alien.body.width >= 34 && alien.body.height >= 72),
+    `Boarding alien colliders are not aligned to their rendered envelopes: ${JSON.stringify(active.alienBodies)}`);
   await page.screenshot({ path: path.join(outputDir, '01-boarding-active.png'), fullPage: true });
 
   const canvas = await page.locator('canvas').boundingBox();
@@ -85,7 +89,7 @@ try {
     canvas.y + fire.y * canvas.height / active.viewport.height,
   );
   await page.waitForFunction(() => window.__GALACTIC_GUNNERS_BOARDING_QA__?.state()?.lastTouchInput === 'fire');
-  await page.waitForTimeout(500);
+  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_BOARDING_QA__?.state()?.playerShotsFired > 0, undefined, { timeout: 2_000 });
   const afterTouchFire = await page.evaluate(() => window.__GALACTIC_GUNNERS_BOARDING_QA__?.state());
   assert(afterTouchFire.playerShotsFired > 0, `Touch Fire did not activate a projectile: ${JSON.stringify(afterTouchFire)}`);
   await page.screenshot({ path: path.join(outputDir, '01a-boarding-touch-fire.png'), fullPage: true });
@@ -115,6 +119,7 @@ try {
     boarding_offer_to_active: true,
     server_authoritative_run: true,
     touch_controls_visible_and_fire: true,
+    boarding_collision_envelopes: true,
     boarding_pause_resume: true,
     abort_returns_to_level_4_shooter: true,
     console_errors: consoleErrors,
