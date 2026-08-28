@@ -476,6 +476,7 @@ export function CampaignDesigner({
     y: number;
     ids: string[];
   } | null>(null);
+  const [dragInitial, setDragInitial] = useState<AuthoringDocument | null>(null);
   const [selectionStart, setSelectionStart] = useState<{
     x: number;
     y: number;
@@ -1067,6 +1068,15 @@ export function CampaignDesigner({
     setSelectedIds([]);
   }
   function canvasPointerUp(event: MouseEvent<HTMLDivElement>) {
+    if (dragStart) {
+      if (dragInitial) {
+        setHistory((past) => [...past.slice(-49), dragInitial]);
+        setFuture([]);
+      }
+      setDragStart(null);
+      setDragInitial(null);
+      return;
+    }
     if (!selectionStart || !document) return;
     const end = point(event);
     const left = Math.min(selectionStart.x, end.x);
@@ -1096,6 +1106,7 @@ export function CampaignDesigner({
         ? selectedIds
         : [id];
     setSelectedIds(ids);
+    setDragInitial(document);
     setDragStart({ ...position, ids });
   }
   function dragMove(event: MouseEvent<HTMLDivElement>) {
@@ -1104,7 +1115,7 @@ export function CampaignDesigner({
     const dx = at.x - dragStart.x;
     const dy = at.y - dragStart.y;
     if (dx || dy) {
-      mutate((current) => ({
+      setDocument((current) => current ? ({
         ...current,
         entities: current.entities.map((entity) =>
           dragStart.ids.includes(entity.id)
@@ -1124,7 +1135,7 @@ export function CampaignDesigner({
               }
             : spawn,
         ),
-      }));
+      }) : current);
       setDragStart({ ...at, ids: dragStart.ids });
     }
   }
