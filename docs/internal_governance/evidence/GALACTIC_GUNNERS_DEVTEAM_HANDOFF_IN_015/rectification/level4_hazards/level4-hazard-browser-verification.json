@@ -1,7 +1,7 @@
 {
-  "tested_sha": "ad36526183a4afee5cb989e874ba0d01148b6b79",
+  "tested_sha": "UNSPECIFIED",
   "base_url": "http://localhost:3002",
-  "generated_at": "2026-08-28T12:59:55.016Z",
+  "generated_at": "2026-08-28T15:10:10.860Z",
   "level_4_reached": true,
   "configured_comets_visible": true,
   "meaningful_hazard_bodies": true,
