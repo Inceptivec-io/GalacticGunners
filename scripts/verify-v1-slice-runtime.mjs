@@ -87,9 +87,14 @@ async function waitForScene(page, sceneName) {
 async function startFromMenu(page) {
   await waitForScene(page, 'MainMenuScene');
   await assertNoBannedVisibleTerms(page, 'main menu');
-  // Keyboard activation avoids coordinate drift after responsive canvas resize.
-  await page.keyboard.press('Enter');
-  await waitForScene(page, 'Level1Scene');
+  // Hold through the Phaser update that consumes input; a synthetic press may
+  // begin and end between browser frames on a busy Linux CI runner.
+  await page.keyboard.down('Enter');
+  try {
+    await waitForScene(page, 'Level1Scene');
+  } finally {
+    await page.keyboard.up('Enter');
+  }
 }
 
 async function loadGame(page, suffix = '') {
