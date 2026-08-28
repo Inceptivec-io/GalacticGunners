@@ -179,3 +179,22 @@ def test_pinned_campaign_entry_can_start_after_a_newer_level_is_published(client
         'seed': 1, 'campaign_run_id': str(pinned.id), 'campaign_entry_id': str(entry.id),
     }, content_type='application/json')
     assert response.status_code == 201
+
+
+@pytest.mark.django_db
+def test_superseded_release_history_can_be_restored_as_a_new_immutable_release(client, level_admin, core_project):
+    level = Level.objects.create(slug='level-01', name='Level 1', sequence=1, game_project=core_project)
+    initial = LevelVersion.objects.create(level=level, version=1, config=golden_level())
+    initial.status = LevelVersion.Status.VALIDATED; initial.save(); initial.publish()
+    changed = golden_level(); changed['name'] = 'Changed release'
+    client.force_login(level_admin)
+    draft = client.post(f'/api/v1/admin/levels/{level.id}/drafts/', {'expected_checksum': initial.checksum, 'config': changed}, content_type='application/json')
+    assert draft.status_code == 201
+    assert client.post(f'/api/v1/admin/levels/{level.id}/publish/', {'version': draft.json()['version']}, content_type='application/json').status_code == 200
+    initial.refresh_from_db()
+    assert initial.status == LevelVersion.Status.SUPERSEDED
+    restored = client.post(f'/api/v1/admin/levels/{level.id}/rollback/', {'version': initial.version}, content_type='application/json')
+    assert restored.status_code == 200
+    level.refresh_from_db()
+    assert level.active_version.config == initial.config
+    assert level.active_version.version == 3

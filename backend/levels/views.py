@@ -131,8 +131,11 @@ class AdminLevelActionView(APIView):
             audit(request, action, level, clone, {'from_version': version.version})
             return Response(LevelVersionSerializer(clone).data, status=status.HTTP_201_CREATED)
         if action == 'rollback':
-            if version.status != LevelVersion.Status.PUBLISHED:
-                return Response({'code': 'invalid_request', 'detail': 'Rollback target must be published.', 'errors': {}}, status=400)
+            # Release history is immutable: once a newer revision is published,
+            # the former published revision is SUPERSEDED but remains a valid
+            # restore source. Rollback always creates a new revision/release.
+            if version.status not in {LevelVersion.Status.PUBLISHED, LevelVersion.Status.SUPERSEDED}:
+                return Response({'code': 'invalid_request', 'detail': 'Rollback target must be a published release-history version.', 'errors': {}}, status=400)
             clone = LevelVersion.objects.create(
                 level=level,
                 version=(level.versions.order_by('-version').first().version + 1),

@@ -1574,7 +1574,7 @@ export function CampaignDesigner({
             {selectedLevel.versions.map((version) => (
               <div key={`${version.version}-${version.checksum}`}>
                 <span>v{version.version} {version.status} {version.checksum.slice(0, 10)}</span>
-                {version.status === "PUBLISHED" ? (
+                {["PUBLISHED", "SUPERSEDED"].includes(version.status) ? (
                   <button type="button" onClick={() => lifecycle("rollback", version.version)}>
                     Restore as new version
                   </button>
