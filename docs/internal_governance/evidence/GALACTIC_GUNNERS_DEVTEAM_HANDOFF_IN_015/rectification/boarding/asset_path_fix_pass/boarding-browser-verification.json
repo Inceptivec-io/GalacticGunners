@@ -1,0 +1,13 @@
+{
+  "tested_sha": "1c497cdd927f1a9a13f453f77aab2bb417ab07c2",
+  "base_url": "http://localhost:3002",
+  "generated_at": "2026-08-28T11:22:16.919Z",
+  "level_4_reached": true,
+  "boarding_offer_to_active": true,
+  "server_authoritative_run": true,
+  "boarding_pause_resume": true,
+  "abort_returns_to_level_4_shooter": true,
+  "console_errors": [],
+  "network_failures": [],
+  "result": "PASS"
+}

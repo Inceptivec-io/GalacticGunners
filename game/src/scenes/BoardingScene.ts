@@ -23,6 +23,10 @@ interface BoardingQaState {
   serverRunId: string | null;
   serverError: string | null;
   elapsedMs: number;
+  player: { x: number; y: number };
+  exitUnlocked: boolean;
+  touchControls: string[];
+  playerShotsInFlight: number;
 }
 
 declare global {
@@ -56,6 +60,9 @@ export class BoardingScene extends Phaser.Scene {
   private gameRunId: string | null = null;
   private shooterStateDigest = '';
   private statusText!: Phaser.GameObjects.Text;
+  private readonly touchInput = { left: false, right: false, jump: false, fire: false, interact: false };
+  private readonly touchControls: Phaser.GameObjects.GameObject[] = [];
+  private pausePressed = false;
   private launch: BoardingLaunch = { anchorId: 'level-04-alien-frigate-01', sourceEntityId: 'level-04:formation-0:r0:c14', sourceEntityType: 'scout', interior: { slug: 'alien-frigate', version: 1, checksum: 'e9b1af65f0daef6725a7ddf4683b5f6d503e25dabc97aef1212102e6b1e994f3' }, levelVersion: 1, levelChecksum: '' };
 
   constructor() { super('BoardingScene'); }
@@ -125,16 +132,28 @@ export class BoardingScene extends Phaser.Scene {
     void this.openServerRun();
     if (typeof window !== 'undefined') {
       window.__GALACTIC_GUNNERS_BOARDING_QA__ = {
-        state: () => ({ active: this.active, completed: this.completed, serverRunId: this.serverRun?.id ?? null, serverError: this.serverError, elapsedMs: this.simulation.elapsedMs() }),
+        state: () => ({
+          active: this.active,
+          completed: this.completed,
+          serverRunId: this.serverRun?.id ?? null,
+          serverError: this.serverError,
+          elapsedMs: this.simulation.elapsedMs(),
+          player: { x: Math.round(this.player.x), y: Math.round(this.player.y) },
+          exitUnlocked: this.exitUnlocked,
+          touchControls: this.touchControls.map((control) => String(control.getData('qa'))),
+          playerShotsInFlight: this.playerShots.getChildren().filter((shot) => shot.active).length,
+        }),
       };
     }
     this.input.keyboard?.once('keydown-ESC', () => this.finish('ABORTED'));
     this.input.keyboard?.on('keydown-P', this.pauseBoarding, this);
     for (const key of ['A', 'D', 'LEFT', 'RIGHT', 'W', 'UP', 'SPACE', 'E']) this.keys[key] = this.input.keyboard!.addKey(key);
+    this.createTouchControls();
     this.events.on('resume', this.onResume, this);
     this.events.once('shutdown', () => {
       this.input.keyboard?.off('keydown-P', this.pauseBoarding, this);
       this.events.off('resume', this.onResume, this);
+      this.touchControls.splice(0).forEach((control) => control.destroy());
     });
   }
 
@@ -160,10 +179,19 @@ export class BoardingScene extends Phaser.Scene {
       return;
     }
     this.elapsed += delta;
-    const horizontal = this.keys.D.isDown || this.keys.RIGHT.isDown ? 1 : this.keys.A.isDown || this.keys.LEFT.isDown ? -1 : 0;
-    const jump = Phaser.Input.Keyboard.JustDown(this.keys.W) || Phaser.Input.Keyboard.JustDown(this.keys.UP);
-    const fire = this.keys.SPACE.isDown;
-    const interact = Phaser.Input.Keyboard.JustDown(this.keys.E);
+    const gamepad = this.input.gamepad?.getPad(0);
+    const axisX = gamepad?.axes[0]?.getValue() ?? 0;
+    const horizontal = this.keys.D.isDown || this.keys.RIGHT.isDown || this.touchInput.right || gamepad?.buttons[15]?.pressed || axisX > 0.35
+      ? 1
+      : this.keys.A.isDown || this.keys.LEFT.isDown || this.touchInput.left || gamepad?.buttons[14]?.pressed || axisX < -0.35
+        ? -1
+        : 0;
+    const jump = Phaser.Input.Keyboard.JustDown(this.keys.W) || Phaser.Input.Keyboard.JustDown(this.keys.UP) || this.touchInput.jump || Boolean(gamepad?.buttons[1]?.pressed);
+    const fire = this.keys.SPACE.isDown || this.touchInput.fire || Boolean(gamepad?.buttons[0]?.pressed);
+    const interact = Phaser.Input.Keyboard.JustDown(this.keys.E) || this.touchInput.interact || Boolean(gamepad?.buttons[2]?.pressed);
+    const pauseDown = Boolean(gamepad?.buttons[9]?.pressed);
+    if (pauseDown && !this.pausePressed) this.pauseBoarding();
+    this.pausePressed = pauseDown;
     this.player.setVelocityX(horizontal * 260);
     if (jump && (this.player.body as Phaser.Physics.Arcade.Body).blocked.down) this.player.setVelocityY(-440);
     if (fire && this.time.now - this.lastFireAt >= 180) this.firePlayerShot();
@@ -188,6 +216,35 @@ export class BoardingScene extends Phaser.Scene {
     const body = shot.body as Phaser.Physics.Arcade.Body;
     body.enable = true; body.reset(shot.x, shot.y); body.setSize(26, 12, true);
     shot.setVelocityX(620); shot.setData('spent', false);
+  }
+
+  private createTouchControls(): void {
+    const { width, height } = this.scale;
+    const bind = (x: number, label: string, input: keyof typeof this.touchInput) => {
+      const control = this.add.text(x, height - 58, label, {
+        color: '#d7f8ff',
+        backgroundColor: '#123763',
+        fontFamily: 'GalacticGunnersHUD, monospace',
+        fontSize: '22px',
+        padding: { x: 16, y: 10 },
+      }).setOrigin(0.5).setScrollFactor(0).setDepth(30).setAlpha(0.88).setInteractive({ useHandCursor: true });
+      const release = () => { this.touchInput[input] = false; };
+      control.on('pointerdown', () => {
+        this.touchInput[input] = true;
+        if (input !== 'left' && input !== 'right') this.time.delayedCall(125, release);
+      });
+      control.on('pointerup', () => {
+        if (input === 'left' || input === 'right') release();
+      });
+      control.on('pointerout', release);
+      control.setData('qa', `boarding-touch-${input}`);
+      this.touchControls.push(control);
+    };
+    bind(58, 'LEFT', 'left');
+    bind(154, 'RIGHT', 'right');
+    bind(width - 284, 'JUMP', 'jump');
+    bind(width - 178, 'FIRE', 'fire');
+    bind(width - 70, 'EXIT', 'interact');
   }
 
   private fireAlienShot(): void {

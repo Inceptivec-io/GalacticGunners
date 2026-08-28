@@ -73,7 +73,14 @@ try {
   assert(active.active, `Boarding did not become active: ${JSON.stringify(active)}`);
   assert(active.serverRunId, 'Boarding did not receive a server-authoritative run.');
   assert(!active.serverError, `Boarding server error: ${active.serverError}`);
+  assert(active.touchControls.length === 5, `Expected five touch controls, received ${active.touchControls.join(', ')}`);
   await page.screenshot({ path: path.join(outputDir, '01-boarding-active.png'), fullPage: true });
+
+  const canvas = await page.locator('canvas').boundingBox();
+  assert(canvas, 'Canvas not available for touch control verification.');
+  await page.touchscreen.tap(canvas.x + canvas.width - 178, canvas.y + canvas.height - 58);
+  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_BOARDING_QA__?.state()?.playerShotsInFlight > 0);
+  await page.screenshot({ path: path.join(outputDir, '01a-boarding-touch-fire.png'), fullPage: true });
 
   await page.keyboard.press('p');
   await page.waitForFunction(() => window.__GALACTIC_GUNNERS_PAUSE_QA__?.scene === 'PauseScene');
@@ -99,6 +106,7 @@ try {
     level_4_reached: true,
     boarding_offer_to_active: true,
     server_authoritative_run: true,
+    touch_controls_visible_and_fire: true,
     boarding_pause_resume: true,
     abort_returns_to_level_4_shooter: true,
     console_errors: consoleErrors,
