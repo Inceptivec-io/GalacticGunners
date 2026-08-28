@@ -190,17 +190,26 @@ export class Level1Scene extends CombatLevelScene {
     }
     this.#entryScore = this.#score.value;
     this.#audio = new AudioSystem((cue) => this.sound.play(RUNTIME_ASSETS.audio[cue].key));
-    const campaignRun = this.#campaignSession?.run;
-    this.#session = new GameSession(this.#runtimeConfig.apiBaseUrl ? new GameApiClient(this.#runtimeConfig.apiBaseUrl) : null, {
+    const isCampaignPreview = Boolean(this.registry.get('campaignPreview'));
+    const campaignRun = isCampaignPreview ? null : this.#campaignSession?.run;
+    // A checksum-bound Designer preview must render the exact authored content
+    // without creating a score-bearing run or mutating campaign continuity.
+    this.#session = new GameSession(
+      !isCampaignPreview && this.#runtimeConfig.apiBaseUrl
+        ? new GameApiClient(this.#runtimeConfig.apiBaseUrl)
+        : null,
+      {
       slug: this.#definition.slug,
       version: this.levelRuntime?.version ?? this.#definition.version,
       checksum: this.levelRuntime?.checksum ?? '',
       seed: this.#definition.seed,
-    }, campaignRun?.entry ? {
-      runId: campaignRun.id,
-      entryId: campaignRun.entry.id,
-      capability: campaignRun.capability,
-    } : null);
+      },
+      campaignRun?.entry ? {
+        runId: campaignRun.id,
+        entryId: campaignRun.entry.id,
+        capability: campaignRun.capability,
+      } : null,
+    );
     this.#inputSystem = new InputSystem(this);
     void this.#session.start().finally(() => this.publishQaState());
 
@@ -1840,6 +1849,7 @@ export class Level1Scene extends CombatLevelScene {
         checksum: this.levelRuntime?.checksum ?? null,
         source: this.levelRuntime?.source ?? 'package',
         finalSequence: CAMPAIGN_DEFINITIONS.length,
+        preview: Boolean(this.registry.get('campaignPreview')),
       },
       score: this.#score.value,
       lives: this.#lives.value,
