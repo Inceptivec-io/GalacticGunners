@@ -29,7 +29,13 @@ try {
     await x.fill(String(currentX + 8));
     await page.getByRole('button', { name: 'Save immutable draft' }).click();
     await page.waitForTimeout(350);
-    return page.getByText('Reload the latest level version before saving.').isVisible().catch(() => false);
+    const conflict = await page.getByText('Reload the latest level version before saving.').isVisible().catch(() => false);
+    if (conflict) {
+      const authority = await page.evaluate(async () => (await fetch('/api/v1/admin/levels/authority/', { credentials: 'same-origin' })).json());
+      const current = authority.results.find((item) => item.id === level.id);
+      console.error(JSON.stringify({ designer_conflict: { latest: current?.versions?.[0], editable: current?.editable_version, active: current?.active_version } }));
+    }
+    return conflict;
   };
   const conflicted = await saveChangedDraft();
   if (conflicted) {

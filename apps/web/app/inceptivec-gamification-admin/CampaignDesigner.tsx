@@ -1180,8 +1180,12 @@ export function CampaignDesigner({
     }
   }
   async function saveDraft() {
-    const baseVersion =
-      selectedLevel?.editable_version ?? selectedLevel?.active_version;
+    // The server's optimistic-concurrency contract is the newest immutable
+    // version, regardless of lifecycle state. Authority returns this lineage
+    // newest first, so use it rather than a potentially stale active shortcut.
+    const baseVersion = selectedLevel?.versions?.[0]
+      ?? selectedLevel?.editable_version
+      ?? selectedLevel?.active_version;
     if (!selectedLevel || !baseVersion || !document) return;
     try {
       const path =
@@ -1242,6 +1246,7 @@ export function CampaignDesigner({
     }
   }
   const draftChecksum =
+    selectedLevel?.versions?.[0]?.checksum ??
     selectedLevel?.editable_version?.checksum ??
     selectedLevel?.active_version?.checksum;
   const previewUrl =
