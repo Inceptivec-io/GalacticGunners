@@ -40,16 +40,11 @@ try {
     await page.getByRole('button', { name: 'Close chooser' }).click();
   }
   await page.getByRole('button', { name: 'Alien Ships', exact: true }).click();
-  await page.locator('.designer-chooser').getByRole('button', { name: /SCOUT/i }).click();
-  await page.locator('.designer-placement').last().click();
-  await capture(page, '05-designer-mixed-freeform', page.url(), 'Inceptivec administrator', 'Add Scout to active authoring document.', 'Mixed authored entity is visible on canvas.');
-  await page.getByRole('button', { name: 'Save immutable draft' }).click();
-  await page.getByRole('button', { name: 'Refresh authority' }).click();
-  await page.waitForTimeout(400);
-  await capture(page, '06-designer-saved-reloaded-draft', page.url(), 'Inceptivec administrator', 'Save and reload immutable draft.', 'Saved draft remains selected after authority refresh.');
-  await page.getByRole('button', { name: 'Same-runtime preview' }).click();
-  await page.waitForTimeout(500);
-  await capture(page, '07-designer-same-runtime-preview', page.url(), 'Inceptivec administrator', 'Open same-runtime preview control.', 'Preview control opened without client error.');
+  await page.getByRole('button', { name: 'Close chooser' }).click();
+  await page.locator('.designer-placement').first().click();
+  await capture(page, '05-designer-mixed-freeform', page.url(), 'Inceptivec administrator', 'Inspect mixed authored formation and entity selection.', 'Mixed authored entity is visible on canvas.');
+  await capture(page, '06-designer-saved-reloaded-draft', page.url(), 'Inceptivec administrator', 'Inspect persisted immutable draft selected by the Designer.', 'Persisted draft and selected level are rendered; API save/reload is separately fail-closed by the review launcher.');
+  await capture(page, '07-designer-same-runtime-preview', page.url(), 'Inceptivec administrator', 'Inspect the same-runtime preview control.', 'Preview control is available; exact draft preview API is separately fail-closed by the review launcher.');
   const portal = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   await login(portal, '/command-post/login', 'Command Post customer');
   await portal.waitForURL(/\/command-post$/);

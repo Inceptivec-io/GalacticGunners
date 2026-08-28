@@ -1,26 +1,21 @@
-# H015 Runtime Verification
+# H015 Runtime Verification Authority
 
-**Handoff:** `GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015` with REV1 and additive authority  
-**Candidate SHA:** `e5becaff20d0857845b67119587eb6a8b8e84cf3`  
+**Handoff:** `GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015` BASE + REV1 + additive authority  
+**Rectification status:** `IN_PROGRESS`  
+**Current tested build:** `42e401d866bbdc77d9a20c48d857695ce34e0d45`  
 **Branch:** `feature/v1-platform-foundation-campaign-continuity`
 
-## Results
+## Superseded Preliminary Evidence
 
-- `npm run quality`: PASS.
-- Docker backend pytest: PASS, `38 passed`.
-- `npm run runtime:campaign`: PASS. Touch Continue loaded distinct Level 2 and completed the valid Level 1-6 chain, replay, Game Over, and menu paths with zero console or network failures.
-- `npm run runtime:boarding:hostile`: PASS.
-- GitHub Actions run `33118960366`: PASS. All jobs succeeded, including backend, contracts, Docker smoke, runtime-browser, runtime-hostile, campaign, Boarding, authentication, tenant isolation, score validation, moderation, and client/game quality.
-- Pooling correction: player laser, enemy laser, and nuke activation now use object-level body enablement followed by reset at the current visual spawn coordinate. A direct browser probe confirmed a visible enemy projectile and matching world-axis body after activation.
+The former candidate `e5becaff20d0857845b67119587eb6a8b8e84cf3` and CI run `33118960366` remain historical preliminary evidence only. They do not assert final review readiness and are superseded by this rectification record.
 
-## Browser Evidence
+## Current Results
 
-`final_runtime/hostile/` retains the responsive runtime screenshots, projectile/body captures, pause, result-state, and nuke captures from the correction run. `final_runtime/campaign/` contains campaign progression and result-state captures.
+- Fail-closed local Founder-review launcher: PASS after health, database authentication, migrations/no drift, idempotent seed/bootstrap, three-audience login, session, CSRF mutation, logout, protected-route denial, tenant isolation, Designer draft/reload, campaign availability, Boarding anchor, and container health checks.
+- Campaign browser progression: PASS through Levels 1-6, discrete touch Continue, replay, Game Over, final terminal state, and zero console/network failures. See `review_matrix/campaign/`.
+- Browser Designer and Command Post capture: PASS with zero console/network failures. See `review_matrix/browser-matrix-index.json`.
+- Corrected defects: duplicate immutable-draft checksum preview selection and Next.js asynchronous Command Post route parameter handling.
 
-## Boundary
+## Remaining Closure Work
 
-The H015, H015 REV1, and H014 imagery transport ZIPs were reconciled against their admitted canonical repository content and removed from the POST_BOX. The active POST_BOX contains boundary control files only.
-
-## Acceptance
-
-Automated verification is PASS. Founder acceptance remains PENDING; this record does not grant acceptance or merge authority.
+`FOUNDER_REVIEW_READY=NO` until the complete 23-item exact-build matrix, final CI at the final returned SHA, complete non-self-referential Handoff-Out, and seal are complete. Founder acceptance and merge remain pending.

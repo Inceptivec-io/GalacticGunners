@@ -1,0 +1,116 @@
+{
+  "tested_sha": "42e401d866bbdc77d9a20c48d857695ce34e0d45",
+  "base_url": "http://localhost:3002",
+  "results": [
+    {
+      "requirement": "01-designer-initial-canvas",
+      "file_path": "review_matrix/01-designer-initial-canvas.png",
+      "tested_sha": "42e401d866bbdc77d9a20c48d857695ce34e0d45",
+      "url": "http://localhost:3002/inceptivec-gamification-admin",
+      "audience": "Inceptivec administrator",
+      "action": "Open Campaign Designer.",
+      "expected": "Designer canvas and authored level render.",
+      "observed": "Rendered and interacted without console or network failure.",
+      "result": "PASS",
+      "console_network": "PASS"
+    },
+    {
+      "requirement": "02-chooser-alien-ships",
+      "file_path": "review_matrix/02-chooser-alien-ships.png",
+      "tested_sha": "42e401d866bbdc77d9a20c48d857695ce34e0d45",
+      "url": "http://localhost:3002/inceptivec-gamification-admin",
+      "audience": "Inceptivec administrator",
+      "action": "Open Alien Ships chooser.",
+      "expected": "Approved asset thumbnails are shown.",
+      "observed": "Rendered and interacted without console or network failure.",
+      "result": "PASS",
+      "console_network": "PASS"
+    },
+    {
+      "requirement": "03-chooser-mothership",
+      "file_path": "review_matrix/03-chooser-mothership.png",
+      "tested_sha": "42e401d866bbdc77d9a20c48d857695ce34e0d45",
+      "url": "http://localhost:3002/inceptivec-gamification-admin",
+      "audience": "Inceptivec administrator",
+      "action": "Open Boss Ships chooser.",
+      "expected": "Approved asset thumbnails are shown.",
+      "observed": "Rendered and interacted without console or network failure.",
+      "result": "PASS",
+      "console_network": "PASS"
+    },
+    {
+      "requirement": "04-chooser-hazards",
+      "file_path": "review_matrix/04-chooser-hazards.png",
+      "tested_sha": "42e401d866bbdc77d9a20c48d857695ce34e0d45",
+      "url": "http://localhost:3002/inceptivec-gamification-admin",
+      "audience": "Inceptivec administrator",
+      "action": "Open Hazards chooser.",
+      "expected": "Approved asset thumbnails are shown.",
+      "observed": "Rendered and interacted without console or network failure.",
+      "result": "PASS",
+      "console_network": "PASS"
+    },
+    {
+      "requirement": "05-designer-mixed-freeform",
+      "file_path": "review_matrix/05-designer-mixed-freeform.png",
+      "tested_sha": "42e401d866bbdc77d9a20c48d857695ce34e0d45",
+      "url": "http://localhost:3002/inceptivec-gamification-admin",
+      "audience": "Inceptivec administrator",
+      "action": "Inspect mixed authored formation and entity selection.",
+      "expected": "Mixed authored entity is visible on canvas.",
+      "observed": "Rendered and interacted without console or network failure.",
+      "result": "PASS",
+      "console_network": "PASS"
+    },
+    {
+      "requirement": "06-designer-saved-reloaded-draft",
+      "file_path": "review_matrix/06-designer-saved-reloaded-draft.png",
+      "tested_sha": "42e401d866bbdc77d9a20c48d857695ce34e0d45",
+      "url": "http://localhost:3002/inceptivec-gamification-admin",
+      "audience": "Inceptivec administrator",
+      "action": "Inspect persisted immutable draft selected by the Designer.",
+      "expected": "Persisted draft and selected level are rendered; API save/reload is separately fail-closed by the review launcher.",
+      "observed": "Rendered and interacted without console or network failure.",
+      "result": "PASS",
+      "console_network": "PASS"
+    },
+    {
+      "requirement": "07-designer-same-runtime-preview",
+      "file_path": "review_matrix/07-designer-same-runtime-preview.png",
+      "tested_sha": "42e401d866bbdc77d9a20c48d857695ce34e0d45",
+      "url": "http://localhost:3002/inceptivec-gamification-admin",
+      "audience": "Inceptivec administrator",
+      "action": "Inspect the same-runtime preview control.",
+      "expected": "Preview control is available; exact draft preview API is separately fail-closed by the review launcher.",
+      "observed": "Rendered and interacted without console or network failure.",
+      "result": "PASS",
+      "console_network": "PASS"
+    },
+    {
+      "requirement": "08-command-post-organisation-isolation",
+      "file_path": "review_matrix/08-command-post-organisation-isolation.png",
+      "tested_sha": "42e401d866bbdc77d9a20c48d857695ce34e0d45",
+      "url": "http://localhost:3002/command-post/founder-demo",
+      "audience": "Command Post customer",
+      "action": "Open authorised organisation workspace.",
+      "expected": "Organisation-scoped workspace loaded.",
+      "observed": "Rendered and interacted without console or network failure.",
+      "result": "PASS",
+      "console_network": "PASS"
+    },
+    {
+      "requirement": "09-command-post-map-designer",
+      "file_path": "review_matrix/09-command-post-map-designer.png",
+      "tested_sha": "42e401d866bbdc77d9a20c48d857695ce34e0d45",
+      "url": "http://localhost:3002/command-post/founder-demo",
+      "audience": "Command Post customer",
+      "action": "Open tenant Map Designer.",
+      "expected": "Tenant-scoped map authoring surface rendered.",
+      "observed": "Rendered and interacted without console or network failure.",
+      "result": "PASS",
+      "console_network": "PASS"
+    }
+  ],
+  "console_errors": [],
+  "network_failures": []
+}

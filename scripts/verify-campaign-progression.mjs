@@ -85,6 +85,9 @@ try {
       const value = window.__GALACTIC_GUNNERS_HOSTILE__?.state();
       return value?.terminalState === null && value?.campaign?.sequence === nextSequence;
     }, sequence + 1);
+    if (sequence + 1 >= 3) {
+      await page.screenshot({ path: path.join(outputDir, `level-${sequence + 1}-running.png`), fullPage: true });
+    }
     progression.push(sequence + 1);
   }
   const final = await forceComplete(page);
