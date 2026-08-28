@@ -1,0 +1,10 @@
+{
+  "tested_sha": "b7ab56ebe6c30ead9f99b7fcdd2e32ea647ff3fd",
+  "generated_at": "2026-08-28T14:49:56.796Z",
+  "result": "PASS",
+  "combat_cleared": true,
+  "physical_exit": true,
+  "server_return": true,
+  "consoleErrors": [],
+  "networkFailures": []
+}

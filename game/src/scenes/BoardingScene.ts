@@ -33,6 +33,10 @@ interface BoardingQaState {
   activeAliens: number;
   resources: { lives: number; nukes: number };
   playerBody: { x: number; y: number; width: number; height: number };
+  playerPhysics: { velocityX: number; blockedLeft: boolean; blockedRight: boolean; touchingLeft: boolean; touchingRight: boolean; enabled: boolean; moves: boolean; embedded: boolean; allowGravity: boolean; worldPaused: boolean };
+  simulationPlayerX: number;
+  floorBodies: Array<{ x: number; y: number; width: number; height: number }>;
+  runtime: { sceneActive: boolean; sceneSleeping: boolean; scenePaused: boolean; loopRunning: boolean; documentHidden: boolean; documentFocused: boolean; updateTicks: number };
   playerShots: Array<{ x: number; y: number; body: { x: number; y: number; width: number; height: number } }>;
   alienBodies: Array<{ id: string; x: number; y: number; body: { x: number; y: number; width: number; height: number } }>;
   viewport: { width: number; height: number };
@@ -50,6 +54,7 @@ export class BoardingScene extends Phaser.Scene {
   private coordinator = new BoardingCoordinator();
   private simulation!: BoardingSimulation;
   private player!: Phaser.Physics.Arcade.Sprite;
+  private floor!: Phaser.Physics.Arcade.StaticGroup;
   private aliens!: Phaser.Physics.Arcade.Group;
   private playerShots!: Phaser.Physics.Arcade.Group;
   private alienShots!: Phaser.Physics.Arcade.Group;
@@ -78,6 +83,7 @@ export class BoardingScene extends Phaser.Scene {
   private playerShotAttempts = 0;
   private playerShotPoolUnavailable = 0;
   private playerHitEnabledAt = Number.POSITIVE_INFINITY;
+  private updateTicks = 0;
   private launch: BoardingLaunch = { anchorId: 'level-04-alien-frigate-01', sourceEntityId: 'level-04:formation-0:r0:c14', sourceEntityType: 'scout', interior: { slug: 'alien-frigate', version: 1, checksum: 'e9b1af65f0daef6725a7ddf4683b5f6d503e25dabc97aef1212102e6b1e994f3' }, levelVersion: 1, levelChecksum: '' };
 
   constructor() { super('BoardingScene'); }
@@ -92,6 +98,7 @@ export class BoardingScene extends Phaser.Scene {
     this.playerShotsFired = 0;
     this.playerShotAttempts = 0;
     this.playerShotPoolUnavailable = 0;
+    this.updateTicks = 0;
     this.playerHitEnabledAt = Number.POSITIVE_INFINITY;
     this.serverRun = null;
     this.serverError = null;
@@ -119,14 +126,24 @@ export class BoardingScene extends Phaser.Scene {
   }
 
   create(): void {
+    // Level1 pauses while handing control to Boarding. Arcade Physics is shared
+    // by the game, so Boarding must explicitly resume its own active world.
+    this.physics.world.resume();
     this.cameras.main.setBounds(0, 0, BOARDING_WORLD.width, BOARDING_WORLD.height);
     this.physics.world.setBounds(0, 0, BOARDING_WORLD.width, BOARDING_WORLD.height);
     this.add.image(BOARDING_WORLD.width / 2, 360, 'boarding.background').setDisplaySize(BOARDING_WORLD.width, 720).setScrollFactor(1);
-    const floor = this.physics.add.staticGroup();
     for (let x = 128; x < BOARDING_WORLD.width; x += 256) {
-      const tile = floor.create(x, 648, 'boarding.platform') as Phaser.Physics.Arcade.Sprite;
-      tile.setDisplaySize(256, 72).refreshBody();
+      this.add.image(x, 648, 'boarding.platform').setDisplaySize(256, 72);
     }
+    // The tiled floor is visual decoration. One continuous physics deck prevents
+    // decorative tile seams from becoming invisible horizontal blockers.
+    this.floor = this.physics.add.staticGroup();
+    const deck = this.floor.create(BOARDING_WORLD.width / 2, 648, 'boarding.platform') as Phaser.Physics.Arcade.Sprite;
+    deck.setVisible(false).setDisplaySize(BOARDING_WORLD.width, 72);
+    const deckBody = deck.body as Phaser.Physics.Arcade.StaticBody;
+    deckBody.setSize(BOARDING_WORLD.width / deck.scaleX, 72 / deck.scaleY, true).updateFromGameObject();
+    deckBody.checkCollision.left = false;
+    deckBody.checkCollision.right = false;
     this.player = this.physics.add.sprite(128, 530, 'boarding.player').setCrop(40, 130, 290, 590).setDisplaySize(68, 104).setDepth(3);
     const playerBody = this.player.body as Phaser.Physics.Arcade.Body;
     playerBody.setSize(34 / this.player.scaleX, 82 / this.player.scaleY, true).setCollideWorldBounds(true);
@@ -140,12 +157,15 @@ export class BoardingScene extends Phaser.Scene {
     }
     this.exitAirlock = this.physics.add.staticSprite(BOARDING_WORLD.width - 72, 550, 'boarding.airlock').setDisplaySize(104, 180).setDepth(3);
     (this.exitAirlock.body as Phaser.Physics.Arcade.StaticBody).setSize(86 / this.exitAirlock.scaleX, 154 / this.exitAirlock.scaleY, true).updateFromGameObject();
-    this.physics.add.collider(this.player, floor);
-    this.physics.add.collider(this.aliens, floor);
-    this.physics.add.collider(this.playerShots, floor, (shot) => this.destroyShot(shot as Phaser.Physics.Arcade.Sprite));
-    this.physics.add.collider(this.alienShots, floor, (shot) => this.destroyShot(shot as Phaser.Physics.Arcade.Sprite));
+    this.physics.add.collider(this.player, this.floor);
+    this.physics.add.collider(this.aliens, this.floor);
+    this.physics.add.collider(this.playerShots, this.floor, (shot) => this.destroyShot(shot as Phaser.Physics.Arcade.Sprite));
+    this.physics.add.collider(this.alienShots, this.floor, (shot) => this.destroyShot(shot as Phaser.Physics.Arcade.Sprite));
     this.physics.add.overlap(this.playerShots, this.aliens, (shot, alien) => this.hitAlien(shot as Phaser.Physics.Arcade.Sprite, alien as Phaser.Physics.Arcade.Sprite));
-    this.physics.add.overlap(this.alienShots, this.player, (shot) => this.hitPlayer(shot as Phaser.Physics.Arcade.Sprite));
+    this.physics.add.overlap(this.alienShots, this.player, (first, second) => {
+      const shot = first === this.player ? second : first;
+      this.hitPlayer(shot as Phaser.Physics.Arcade.Sprite);
+    });
     this.timer = this.add.text(24, 24, 'BOARDING 60', { fontFamily: 'GalacticGunnersHUD, monospace', fontSize: '28px', color: '#d9f8ff' }).setScrollFactor(0).setDepth(10);
     this.statusText = this.add.text(this.scale.width / 2, this.scale.height * 0.18, 'ALIEN FRIGATE BREACH\nESTABLISHING SECURE BOARDING LINK...', { align: 'center', fontFamily: 'GalacticGunnersGoldDisplay, monospace', fontSize: '30px', color: '#f5d15f' }).setOrigin(0.5).setScrollFactor(0).setDepth(20);
     this.cameras.main.startFollow(this.player, true, 0.12, 0.12);
@@ -175,6 +195,37 @@ export class BoardingScene extends Phaser.Scene {
             const body = this.player.body as Phaser.Physics.Arcade.Body;
             return { x: Math.round(body.x), y: Math.round(body.y), width: Math.round(body.width), height: Math.round(body.height) };
           })(),
+          playerPhysics: (() => {
+            const body = this.player.body as Phaser.Physics.Arcade.Body;
+            return {
+              velocityX: Math.round(body.velocity.x),
+              blockedLeft: body.blocked.left,
+              blockedRight: body.blocked.right,
+              touchingLeft: body.touching.left,
+              touchingRight: body.touching.right,
+              enabled: body.enable,
+              moves: body.moves,
+              embedded: body.embedded,
+              allowGravity: body.allowGravity,
+              worldPaused: this.physics.world.isPaused,
+            };
+          })(),
+          simulationPlayerX: Math.round(this.simulation.snapshot().player.x),
+          floorBodies: (this.floor.getChildren() as Phaser.Physics.Arcade.Sprite[])
+            .filter((tile) => Math.abs(tile.x - this.player.x) < 300)
+            .map((tile) => {
+              const body = tile.body as Phaser.Physics.Arcade.StaticBody;
+              return { x: Math.round(body.x), y: Math.round(body.y), width: Math.round(body.width), height: Math.round(body.height) };
+            }),
+          runtime: {
+            sceneActive: this.scene.isActive(),
+            sceneSleeping: this.scene.isSleeping(),
+            scenePaused: this.scene.isPaused(),
+            loopRunning: this.game.loop.running,
+            documentHidden: document.hidden,
+            documentFocused: document.hasFocus(),
+            updateTicks: this.updateTicks,
+          },
           playerShots: (this.playerShots.getChildren().filter((shot) => shot.active) as Phaser.Physics.Arcade.Sprite[]).map((shot) => {
             const body = shot.body as Phaser.Physics.Arcade.Body;
             return { x: Math.round(shot.x), y: Math.round(shot.y), body: { x: Math.round(body.x), y: Math.round(body.y), width: Math.round(body.width), height: Math.round(body.height) } };
@@ -212,6 +263,7 @@ export class BoardingScene extends Phaser.Scene {
   }
 
   update(_time: number, delta: number): void {
+    this.updateTicks += 1;
     if (this.completed) return;
     if (!this.active) {
       if (this.serverError) {
@@ -322,7 +374,12 @@ export class BoardingScene extends Phaser.Scene {
     }
   }
 
-  private destroyShot(shot: Phaser.Physics.Arcade.Sprite): void { shot.disableBody(true, true); }
+  private destroyShot(shot: Phaser.Physics.Arcade.Sprite): void {
+    if (shot === this.player) {
+      throw new Error('Boarding projectile cleanup received the player sprite.');
+    }
+    shot.disableBody(true, true);
+  }
 
   private hitAlien(shot: Phaser.Physics.Arcade.Sprite, alien: Phaser.Physics.Arcade.Sprite): void {
     if (!shot.active || !alien.active) return;
@@ -335,15 +392,20 @@ export class BoardingScene extends Phaser.Scene {
   private hitPlayer(shot: Phaser.Physics.Arcade.Sprite): void {
     if (!shot.active || this.completed) return;
     this.destroyShot(shot);
-    if (this.time.now < this.playerHitEnabledAt) return;
+    if (this.simulation.elapsedMs() < this.playerHitEnabledAt) return;
     this.simulation.hitPlayer(); void this.finish('PLAYER_DEAD');
   }
 
   private unlockExit(): void {
     this.exitUnlocked = true;
+    for (const shot of this.alienShots.getChildren() as Phaser.Physics.Arcade.Sprite[]) {
+      if (shot.active) this.destroyShot(shot);
+    }
     this.exitAirlock.setTexture('boarding.airlock-open');
-    this.statusText.setText('AIRLOCK UNLOCKED\nMOVE TO EXIT AND PRESS E');
-    this.time.delayedCall(1800, () => { if (!this.completed && this.statusText.active) this.statusText.setText(''); });
+    const notice = this.add.text(this.scale.width / 2, this.scale.height * 0.18, 'AIRLOCK UNLOCKED\nMOVE TO EXIT AND PRESS E', {
+      align: 'center', fontFamily: 'GalacticGunnersGoldDisplay, monospace', fontSize: '30px', color: '#f5d15f',
+    }).setOrigin(0.5).setScrollFactor(0).setDepth(20);
+    this.time.delayedCall(1800, () => notice.destroy());
   }
 
   private async finish(outcome: BoardingOutcome): Promise<void> {
@@ -390,7 +452,7 @@ export class BoardingScene extends Phaser.Scene {
     // scheduled after the scene is visibly active rather than inherited from
     // pre-admission/update timing.
     this.lastAlienFireAt = this.time.now + 1_500;
-    this.playerHitEnabledAt = this.time.now + 5_000;
+    this.playerHitEnabledAt = 5_000;
     this.active = true;
     this.starting = false;
     this.statusText.destroy();
