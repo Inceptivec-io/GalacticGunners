@@ -22,11 +22,21 @@ try {
   const initial = await page.evaluate(async () => (await fetch('/api/v1/admin/levels/authority/', { credentials: 'same-origin' })).json());
   const level = initial.results[0];
   const original = level.active_version;
-  await page.locator('.designer-placement').first().click();
-  const x = page.locator('.designer-inspector label').filter({ hasText: /^X/ }).locator('input');
-  const originalX = Number(await x.inputValue());
-  await x.fill(String(originalX + 8));
-  await page.getByRole('button', { name: 'Save immutable draft' }).click();
+  const saveChangedDraft = async () => {
+    await page.locator('.designer-placement').first().click();
+    const x = page.locator('.designer-inspector label').filter({ hasText: /^X/ }).locator('input');
+    const currentX = Number(await x.inputValue());
+    await x.fill(String(currentX + 8));
+    await page.getByRole('button', { name: 'Save immutable draft' }).click();
+    await page.waitForTimeout(350);
+    return page.getByText('Reload the latest level version before saving.').isVisible().catch(() => false);
+  };
+  const conflicted = await saveChangedDraft();
+  if (conflicted) {
+    await page.reload({ waitUntil: 'networkidle' });
+    await page.waitForSelector('[data-designer-route="campaign"]');
+    assert(!(await saveChangedDraft()), 'Designer did not recover from a version conflict after reload.');
+  }
   await page.getByText(/Draft v\d+ saved with immutable checksum/).waitFor();
   await page.reload({ waitUntil: 'networkidle' });
   await page.waitForSelector('[data-designer-route="campaign"]');
