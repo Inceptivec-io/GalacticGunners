@@ -86,10 +86,10 @@ export class BoardingScene extends Phaser.Scene {
     this.load.image('boarding.player', `${ASSET_ROOT}characters/player_001_v001.png`);
     this.load.image('boarding.alien', `${ASSET_ROOT}characters/alien_001_v001.png`);
     this.load.image('boarding.platform', `${ASSET_ROOT}boarding/tiles/gg_boarding_tiles_floor_a_v001.png`);
-    this.load.image('boarding.airlock', `${ASSET_ROOT}transit/gg_boarding_door_airlock_v001.png`);
-    this.load.image('boarding.airlock-open', `${ASSET_ROOT}transit/gg_boarding_door_airlock_open_v001.png`);
-    this.load.image('boarding.muzzle', `${ASSET_ROOT}effects/gg_boarding_fx_muzzle_flash_v001.png`);
-    this.load.image('boarding.explosion', `${ASSET_ROOT}effects/gg_boarding_fx_explosion_v001.png`);
+    this.load.image('boarding.airlock', `${ASSET_ROOT}boarding/transit/gg_boarding_door_airlock_v001.png`);
+    this.load.image('boarding.airlock-open', `${ASSET_ROOT}boarding/transit/gg_boarding_door_airlock_open_v001.png`);
+    this.load.image('boarding.muzzle', `${ASSET_ROOT}boarding/effects/gg_boarding_fx_muzzle_flash_v001.png`);
+    this.load.image('boarding.explosion', `${ASSET_ROOT}boarding/effects/gg_boarding_fx_explosion_v001.png`);
   }
 
   create(): void {
