@@ -91,7 +91,7 @@ export class BootScene extends Phaser.Scene {
     this.registry.set('campaignSession', campaignSession);
 
     this.createRuntimeAnimations();
-    this.scene.start('MainMenuScene');
+    this.scene.start('SplashScene');
   }
 
   private createRuntimeAnimations(): void {

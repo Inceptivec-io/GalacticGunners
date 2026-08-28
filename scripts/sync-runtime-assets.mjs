@@ -8,6 +8,13 @@ const outputRoot = path.join(root, 'apps', 'web', 'public', 'gg-runtime-assets')
 
 const runtimeAssets = [
   {
+    key: 'keyArt.launch',
+    assetId: 'GG-BI-079',
+    source: 'assets/key_art/marketing_v1.0/gg_key_art_primary_v001.png',
+    runtime: 'key_art/marketing_v1.0/gg_key_art_primary_v001.png',
+    sha256: '819E2F0C372A03913166282EDCC68F19207DC50A7FE45D71BAA98375B57CCFBC',
+  },
+  {
     key: 'background.starfield',
     assetId: 'GG-BACKGROUND-BACKGROUNDS-OWNED-GG-BG-STARFIELD-V002',
     source: 'assets/backgrounds/owned/gg_bg_starfield_v002.png',

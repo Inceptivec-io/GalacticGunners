@@ -2,6 +2,14 @@
   "generated_by": "scripts/sync-runtime-assets.mjs",
   "assets": [
     {
+      "key": "keyArt.launch",
+      "asset_id": "GG-BI-079",
+      "canonical_path": "assets/key_art/marketing_v1.0/gg_key_art_primary_v001.png",
+      "canonical_sha256": "819E2F0C372A03913166282EDCC68F19207DC50A7FE45D71BAA98375B57CCFBC",
+      "runtime_path": "/gg-runtime-assets/key_art/marketing_v1.0/gg_key_art_primary_v001.png",
+      "runtime_sha256": "819E2F0C372A03913166282EDCC68F19207DC50A7FE45D71BAA98375B57CCFBC"
+    },
+    {
       "key": "background.starfield",
       "asset_id": "GG-BACKGROUND-BACKGROUNDS-OWNED-GG-BG-STARFIELD-V002",
       "canonical_path": "assets/backgrounds/owned/gg_bg_starfield_v002.png",

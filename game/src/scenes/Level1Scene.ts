@@ -131,6 +131,7 @@ export class Level1Scene extends CombatLevelScene {
   #terminalActions: Array<{ action: TerminalAction; x: number; y: number; width: number; height: number; source: 'production-asset' | 'production-derived' }> = [];
   #terminalActionHandled = false;
   #boardingActive = false;
+  #boardingTransition: 'SHOOTER_ACTIVE' | 'BOARDING_OFFER' | 'BOARDING_ACTIVE' | 'BOARDING_RESOLVING' = 'SHOOTER_ACTIVE';
   #boardingOffer: { scout: Phaser.Physics.Arcade.Sprite; anchor: NonNullable<LevelDefinition['boarding_anchors']>[number]; expiresAtMs: number; controls: Phaser.GameObjects.GameObject[] } | null = null;
   #campaignSession: CampaignSession | null = null;
   #hazardEmitterState = new Map<string, { emitted: number; nextAtMs: number }>();
@@ -1017,7 +1018,7 @@ export class Level1Scene extends CombatLevelScene {
   }
 
   private presentBoardingOffer(scout: Phaser.Physics.Arcade.Sprite, anchor: NonNullable<LevelDefinition['boarding_anchors']>[number]): void {
-    if (this.#boardingOffer) return;
+    if (this.#boardingOffer || this.#boardingTransition !== 'SHOOTER_ACTIVE') return;
     // The offer is a deliberate checkpoint: no projectile or hostile may advance
     // while the player chooses between the governed Boarding route and Shooter.
     this.physics.world.pause();
@@ -1041,6 +1042,7 @@ export class Level1Scene extends CombatLevelScene {
     continueShooter.on('pointerup', () => this.dismissBoardingOffer());
     [backdrop, heading, detail, board, continueShooter].forEach((control) => control.setData('qa', 'boarding-offer'));
     this.#boardingOffer = { scout, anchor, expiresAtMs, controls: [backdrop, heading, detail, board, continueShooter] };
+    this.#boardingTransition = 'BOARDING_OFFER';
   }
 
   private updateBoardingOffer(time: number): void {
@@ -1058,18 +1060,21 @@ export class Level1Scene extends CombatLevelScene {
     offer.controls.forEach((control) => control.destroy());
     offer.scout.setData('boarding-offer-resolved', true);
     this.#boardingOffer = null;
+    this.#boardingTransition = 'SHOOTER_ACTIVE';
     this.physics.world.resume();
     this.#inputSystem.syncOneShotState();
   }
 
   private acceptBoardingOffer(): void {
     const offer = this.#boardingOffer;
-    if (!offer) return;
+    if (!offer || this.#boardingTransition !== 'BOARDING_OFFER') return;
     offer.controls.forEach((control) => control.destroy());
     this.#boardingOffer = null;
     this.#boardingActive = true;
+    this.#boardingTransition = 'BOARDING_ACTIVE';
     const { scout, anchor } = offer;
     scout.setData('boarding-anchor', true);
+    this.physics.world.resume();
     this.scene.pause();
     this.scene.launch('BoardingScene', {
         seed: this.#definition.seed,
@@ -1107,10 +1112,17 @@ export class Level1Scene extends CombatLevelScene {
   }
 
   private handleBoardingReturn(_system: unknown, data?: { boardingOutcome?: string; boardingReturnState?: { lives: number; nukes: number; score_delta: number; remove_source_entity_id: string } | null; boardingValidated?: boolean }): void {
-    if (!this.#boardingActive) return;
+    if (!this.#boardingActive || this.#boardingTransition !== 'BOARDING_ACTIVE') return;
+    this.#boardingTransition = 'BOARDING_RESOLVING';
     this.physics.world.resume();
     if (!data?.boardingValidated || !data.boardingReturnState) {
+      const anchoredScout = this.getActiveScouts().find((scout) => scout.getData('boarding-anchor'));
+      anchoredScout?.setData('boarding-anchor', false);
+      // A completed attempt may never recreate the same offer, even if the
+      // server rejects the return payload. The player remains in Shooter.
+      anchoredScout?.setData('boarding-offer-resolved', true);
       this.#boardingActive = false;
+      this.#boardingTransition = 'SHOOTER_ACTIVE';
       return;
     }
     const anchoredScout = this.getActiveScouts().find((scout) => scout.getData('boarding-anchor'));
@@ -1120,6 +1132,7 @@ export class Level1Scene extends CombatLevelScene {
       this.destroyScoutBody(anchoredScout, true);
     }
     this.#boardingActive = false;
+    this.#boardingTransition = 'SHOOTER_ACTIVE';
     this.#lives.restore(data.boardingReturnState.lives);
     this.#currentNukes = data.boardingReturnState.nukes;
     this.updateLifeHud();
@@ -1251,11 +1264,12 @@ export class Level1Scene extends CombatLevelScene {
   }
 
   private pauseLevel(): void {
-    if (this.scene.isSleeping()) {
+    if (this.scene.isSleeping() || this.scene.isPaused() || this.#boardingActive) {
       return;
     }
     this.#player.stop();
-    this.scene.launch('PauseScene');
+    this.physics.world.pause();
+    this.scene.launch('PauseScene', { sequence: this.#campaignSequence });
     this.scene.sleep();
   }
 
@@ -1268,6 +1282,7 @@ export class Level1Scene extends CombatLevelScene {
   }
 
   private handleResume(): void {
+    this.physics.world.resume();
     this.input.keyboard?.resetKeys();
     this.#inputSystem.syncOneShotState();
     this.#lastUpdateAtMs = 0;
@@ -1783,7 +1798,7 @@ export class Level1Scene extends CombatLevelScene {
         this.destroyScoutBody(scout, true);
         const offerPresented = Boolean(this.#boardingOffer);
         this.acceptBoardingOffer();
-        return { launched: this.#boardingActive, offerPresented, anchorId: anchor?.id ?? null, gameRunId: this.#session.runId };
+        return { launched: this.#boardingActive, offerPresented, transition: this.#boardingTransition, anchorId: anchor?.id ?? null, gameRunId: this.#session.runId };
       },
       state: () => this.buildQaState(),
     };

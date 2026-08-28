@@ -41,3 +41,15 @@ test('boarding coordinator freezes score authority at the scene boundary', async
   assert.deepEqual(result.resources, { lives: 3, nukes: 0 });
   assert.equal(result.offer.sourceEntityId, 'level-04:formation-0:r0:c14');
 });
+
+test('boarding coordinator rejects duplicate transitions and never creates a second active offer', async () => {
+  const simulation = new BoardingSimulation(44, { lives: 3, nukes: 2 });
+  const coordinator = new BoardingCoordinator();
+  const offer = { anchorId: 'anchor-1', sourceEntityId: 'frigate-1', resources: { lives: 3, nukes: 2 }, snapshot: simulation.snapshot() };
+  await coordinator.open(offer);
+  await assert.rejects(() => coordinator.open(offer), /already active/);
+  coordinator.accept();
+  assert.throws(() => coordinator.accept(), /Illegal Boarding transition/);
+  coordinator.complete('ABORTED', simulation.snapshot().resources);
+  assert.equal(coordinator.state, 'RETURNED');
+});

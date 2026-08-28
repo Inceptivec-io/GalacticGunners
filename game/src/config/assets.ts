@@ -17,6 +17,13 @@ export const RUNTIME_ASSETS = {
     },
   },
   keyArt: {
+    launch: {
+      key: 'keyArt.launch',
+      assetId: 'GG-BI-079',
+      canonicalPath: 'assets/key_art/marketing_v1.0/gg_key_art_primary_v001.png',
+      sha256: '819E2F0C372A03913166282EDCC68F19207DC50A7FE45D71BAA98375B57CCFBC',
+      runtimePath: '/gg-runtime-assets/key_art/marketing_v1.0/gg_key_art_primary_v001.png',
+    },
     heroBattle: {
       key: 'keyArt.heroBattle',
       assetId: 'GG-KEYART-KEY-ART-POSTERS-GG-HERO-IMAGE-PLAYER-FIGHTING-V002-4K-UHD-MASTER',
@@ -270,6 +277,7 @@ export const RUNTIME_ASSETS = {
 
 export const REQUIRED_RUNTIME_ASSETS: RuntimeAsset[] = [
   RUNTIME_ASSETS.background.starfield,
+  RUNTIME_ASSETS.keyArt.launch,
   RUNTIME_ASSETS.keyArt.heroBattle,
   RUNTIME_ASSETS.branding.primaryLogo,
   RUNTIME_ASSETS.player.ship,

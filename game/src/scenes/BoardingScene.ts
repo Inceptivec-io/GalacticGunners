@@ -7,7 +7,6 @@ import { digestBoardingSnapshot } from '../boarding/snapshot';
 import { GameApiClient, type BoardingRunRecord } from '../services/GameApiClient';
 
 const ASSET_ROOT = '/gg-runtime-assets/boarding/';
-const OFFER_DURATION_MS = 8000;
 
 interface BoardingLaunch {
   anchorId: string;
@@ -39,17 +38,16 @@ export class BoardingScene extends Phaser.Scene {
   private player!: Phaser.GameObjects.Image;
   private timer!: Phaser.GameObjects.Text;
   private elapsed = 0;
-  private offerElapsed = 0;
+  private starting = true;
   private active = false;
   private completed = false;
+  private pauseBlockedUntil = 0;
   private serverRun: BoardingRunRecord | null = null;
   private serverError: string | null = null;
   private api: GameApiClient | null = null;
   private gameRunId: string | null = null;
   private shooterStateDigest = '';
-  private offerText!: Phaser.GameObjects.Text;
-  private enterLabel!: Phaser.GameObjects.Text;
-  private enterButton!: Phaser.GameObjects.Image;
+  private statusText!: Phaser.GameObjects.Text;
   private launch: BoardingLaunch = { anchorId: 'level-04-alien-frigate-01', sourceEntityId: 'level-04:formation-0:r0:c14', sourceEntityType: 'scout', interior: { slug: 'alien-frigate', version: 1, checksum: 'e9b1af65f0daef6725a7ddf4683b5f6d503e25dabc97aef1212102e6b1e994f3' }, levelVersion: 1, levelChecksum: '' };
 
   constructor() { super('BoardingScene'); }
@@ -57,9 +55,9 @@ export class BoardingScene extends Phaser.Scene {
   init(data: { seed?: number; lives?: number; nukes?: number; anchorId?: string; sourceEntityId?: string; sourceEntityType?: 'scout' | 'cruiser' | 'destroyer'; interior?: { slug: 'alien-frigate'; version: 1; checksum: string }; apiBaseUrl?: string; gameRunId?: string; levelVersion?: number; levelChecksum?: string } = {}): void {
     this.simulation = new BoardingSimulation(data.seed ?? 1, { lives: data.lives ?? 3, nukes: data.nukes ?? 2 });
     this.coordinator = new BoardingCoordinator();
-    this.offerElapsed = 0;
     this.elapsed = 0;
     this.active = false;
+    this.starting = true;
     this.completed = false;
     this.serverRun = null;
     this.serverError = null;
@@ -89,12 +87,7 @@ export class BoardingScene extends Phaser.Scene {
     this.player = this.add.image(128, 576, 'boarding.player').setDisplaySize(86, 104).setDepth(3);
     for (const alien of this.simulation.snapshot().aliens) this.add.image(alien.x, alien.y, 'boarding.alien').setDisplaySize(90, 92).setDepth(3);
     this.timer = this.add.text(24, 24, 'BOARDING 60', { fontFamily: 'GalacticGunnersHUD, monospace', fontSize: '28px', color: '#d9f8ff' }).setScrollFactor(0).setDepth(10);
-    this.offerText = this.add.text(this.scale.width / 2, this.scale.height * 0.3, 'ALIEN FRIGATE BREACH\nSECURING BOARDING LINK...', { align: 'center', fontFamily: 'GalacticGunnersGoldDisplay, monospace', fontSize: '30px', color: '#f5d15f' }).setOrigin(0.5).setScrollFactor(0).setDepth(20);
-    this.enterButton = this.add.image(this.scale.width / 2, this.scale.height * 0.48, 'boarding.platform').setDisplaySize(240, 80).setTint(0x72d8ff).setScrollFactor(0).setDepth(20).setInteractive({ useHandCursor: true });
-    this.enterButton.on('pointerover', () => this.enterButton.setTint(0xf5d15f));
-    this.enterButton.on('pointerout', () => this.enterButton.setTint(0x72d8ff));
-    this.enterButton.on('pointerup', () => this.acceptOffer());
-    this.enterLabel = this.add.text(this.scale.width / 2, this.scale.height * 0.48, 'ENTER', { fontFamily: 'GalacticGunnersHUD, monospace', fontSize: '26px', color: '#ffffff' }).setOrigin(0.5).setScrollFactor(0).setDepth(21);
+    this.statusText = this.add.text(this.scale.width / 2, this.scale.height * 0.18, 'ALIEN FRIGATE BREACH\nESTABLISHING SECURE BOARDING LINK...', { align: 'center', fontFamily: 'GalacticGunnersGoldDisplay, monospace', fontSize: '30px', color: '#f5d15f' }).setOrigin(0.5).setScrollFactor(0).setDepth(20);
     this.cameras.main.startFollow(this.player, true, 0.12, 0.12);
     void this.openServerRun();
     if (typeof window !== 'undefined') {
@@ -102,20 +95,34 @@ export class BoardingScene extends Phaser.Scene {
         state: () => ({ active: this.active, completed: this.completed, serverRunId: this.serverRun?.id ?? null, serverError: this.serverError, elapsedMs: this.simulation.elapsedMs() }),
       };
     }
-    this.input.keyboard?.once('keydown-ENTER', () => this.acceptOffer());
     this.input.keyboard?.once('keydown-ESC', () => this.finish('ABORTED'));
+    this.input.keyboard?.on('keydown-P', this.pauseBoarding, this);
+    this.events.on('resume', this.onResume, this);
+    this.events.once('shutdown', () => {
+      this.input.keyboard?.off('keydown-P', this.pauseBoarding, this);
+      this.events.off('resume', this.onResume, this);
+    });
+  }
+
+  private pauseBoarding(): void {
+    if (this.completed || !this.active || this.time.now < this.pauseBlockedUntil) return;
+    this.scene.launch('PauseScene', { targetScene: 'BoardingScene' });
+    this.scene.sleep();
+  }
+
+  onResume(): void {
+    this.pauseBlockedUntil = this.time.now + 250;
+    this.input.keyboard?.resetKeys();
   }
 
   update(_time: number, delta: number): void {
     if (this.completed) return;
     if (!this.active) {
       if (this.serverError) {
-        this.offerText.setText(`BOARDING LINK UNAVAILABLE\n${this.serverError}`);
+        this.statusText.setText(`BOARDING LINK UNAVAILABLE\n${this.serverError}`);
         return;
       }
-      this.offerElapsed += delta;
-      this.offerText.setText(`ALIEN FRIGATE BREACH\nENTER BOARDING MODE? ${Math.max(0, Math.ceil((OFFER_DURATION_MS - this.offerElapsed) / 1000))}`);
-      if (this.offerElapsed >= OFFER_DURATION_MS) this.finish('ABORTED');
+      this.statusText.setText('ALIEN FRIGATE BREACH\nESTABLISHING SECURE BOARDING LINK...');
       return;
     }
     this.elapsed += delta;
@@ -168,13 +175,12 @@ export class BoardingScene extends Phaser.Scene {
     this.scene.resume('Level1Scene', { boardingOutcome: outcome, boardingSnapshot: this.simulation.snapshot(), boardingReturnState: returnState, boardingValidated: Boolean(returnState) });
   }
 
-  private acceptOffer(): void {
+  private startActive(): void {
     if (this.active || this.completed || !this.serverRun) return;
     this.coordinator.accept();
     this.active = true;
-    this.offerText.destroy();
-    this.enterButton.destroy();
-    this.enterLabel.destroy();
+    this.starting = false;
+    this.statusText.destroy();
   }
 
   private async openServerRun(): Promise<void> {
@@ -199,6 +205,7 @@ export class BoardingScene extends Phaser.Scene {
         shooter_state_digest: this.shooterStateDigest,
         resources: snapshot.resources,
       });
+      this.startActive();
     } catch {
       this.serverError = 'SERVER AUTHORITY REQUIRED';
     }
