@@ -1,163 +1,58 @@
-# Galactic Gunners Docker Local Founder Guide
+# Galactic Gunners Founder Review
 
-## PREREQUISITES
+## Prerequisites
 
-- Docker Desktop installed/running
-- Repository path: `C:\Users\Michael\dev\GalacticGunners`
-- Required branch: `feature/v1-platform-foundation-campaign-continuity`
+- Docker Desktop is installed and running.
+- The repository is `C:\Users\Michael\dev\GalacticGunners`.
+- The checked-out branch is `feature/v1-platform-foundation-campaign-continuity`.
 
-## START COMMAND
+## Start Review
+
+Run the single governed command:
 
 ```powershell
 cd C:\Users\Michael\dev\GalacticGunners
 .\scripts\start-founder-review.ps1
 ```
 
-## STOP COMMAND
+It fails before starting a review when the branch, upstream SHA, worktree, build provenance, database, migrations, bootstrap data, audience access, API boundaries, campaign, Boarding, or container health is invalid. On success it writes `FOUNDER_REVIEW_READY=YES` and generates the ignored local access file `FOUNDER_REVIEW_ACCESS.local.txt`.
+
+Use the exact URLs and generated credentials in that access file. Product review is always on `http://localhost:3002`; port `8010` is backend diagnostics only. Do not edit Docker Compose files or local environment files.
+
+## Review Routes
+
+- Player: `/play`, `/leaderboard`, and `/account`.
+- Inceptivec Gamification Admin: `/inceptivec-gamification-admin`.
+- Command Post: `/command-post`.
+
+The access file contains one generated local identity for each audience. Verify each can reach its permitted surface and is denied from the other protected surface. The launcher also performs server-side denial checks; a browser redirect is not the authority boundary.
+
+## Founder Review
+
+1. Sign in as the Inceptivec administrator and inspect Campaign Designer. Add/select an asset, save a draft, reload it, and open the same-runtime preview.
+2. Sign in as the Command Post customer. Confirm the organisation, maps, plan, members, scores, and profile are scoped to that organisation. Create or edit only its map.
+3. Sign in as the player. Start the campaign, complete a level, use Continue, replay, return to menu, and verify score/lives/nukes continuity. Reach the Level 4 Boarding offer and return from Boarding to the shooter.
+4. Complete a valid registered run and inspect leaderboard eligibility. Confirm anonymous play remains unranked.
+5. Exercise logout for each audience and confirm the protected route returns to its sign-in gate.
+
+Founder visual, functional, and acceptance decisions remain manual and pending until Michael records them.
+
+## Failure Capture
+
+Do not alter configuration to work around a review failure. Capture the failing URL, audience, action, browser console/network output, and a screenshot. Collect service logs with:
 
 ```powershell
-docker compose down
+docker compose logs --tail 200 web backend db
 ```
 
-## REBUILD COMMAND
+The diagnostic health endpoints are `http://localhost:3002/api/health` and `http://localhost:8010/api/v1/health/`.
+
+## Status, Stop, Restart
 
 ```powershell
-docker compose build
-docker compose up
+.\scripts\status-founder-review.ps1
+.\scripts\stop-founder-review.ps1
+.\scripts\start-founder-review.ps1
 ```
 
-## CLEAN REBUILD COMMAND
-
-```powershell
-docker compose down
-docker compose build --no-cache
-docker compose up
-```
-
-## LOCAL URL
-
-All product review uses `http://localhost:3002`:
-
-- `/play`
-- `/leaderboard`
-- `/inceptivec-gamification-admin`
-- `/command-post`
-
-## EXPECTED CONTAINER NAME
-
-`galacticgunners-web-1`, `galacticgunners-backend-1`, and `galacticgunners-db-1`
-
-## EXPECTED SERVICE NAME
-
-`web`, `backend`, and `db`
-
-## LOG COMMAND
-
-```powershell
-docker compose logs -f web backend
-```
-
-## HOW TO CONFIRM CONTAINER HEALTH
-
-```powershell
-docker compose ps
-```
-
-Expected result after startup: `running healthy`
-
-## HOW TO CONFIRM CURRENT FEATURE SHA
-
-```powershell
-git branch --show-current
-git rev-parse HEAD
-git rev-parse origin/feature/v1-platform-foundation-campaign-continuity
-```
-
-Expected branch: `feature/v1-platform-foundation-campaign-continuity`
-
-## HOW TO TROUBLESHOOT PORT CONFLICT
-
-If Docker reports that port `8027` is already allocated, stop the conflicting local service or temporarily edit `docker-compose.yml` to map another unused host port to container port `80`, for example:
-
-```yaml
-ports:
-  - "8028:80"
-```
-
-Then open `http://localhost:8028`.
-
-## HOW TO TROUBLESHOOT ASSET 404
-
-Run:
-
-```powershell
-docker compose logs galactic-gunners
-powershell -ExecutionPolicy Bypass -File tools\verify_docker_founder_runtime.ps1
-```
-
-If a specific asset reports HTTP 404, confirm the file exists in the repository under `assets\` and rebuild with:
-
-```powershell
-docker compose down
-docker compose up --build
-```
-
-## HOW TO TROUBLESHOOT STALE DOCKER CACHE
-
-Run:
-
-```powershell
-docker compose down
-docker compose build --no-cache
-docker compose up
-```
-
-Then rerun `.\scripts\start-founder-review.ps1` and use the URLs in `FOUNDER_REVIEW_ACCESS.local.txt`.
-
-## OPTIONAL VERIFICATION COMMAND
-
-With the service running in another terminal:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File tools\verify_docker_founder_runtime.ps1
-```
-
-This checks the Docker service, game root, core JavaScript, owned branding, owned sprites, owned background, and owned nuke audio over HTTP.
-
-## FOUNDER ACCEPTANCE CHECKLIST
-
-Founder visual acceptance remains manual.
-
-Current required state:
-
-```text
-FOUNDER_VISUAL_ACCEPTANCE = PENDING
-```
-
-- [ ] main menu appearance
-- [ ] Galactic Gunners branding
-- [ ] owned background
-- [ ] player sprite
-- [ ] scout
-- [ ] cruiser
-- [ ] destroyer
-- [ ] boss/mothership
-- [ ] asteroid/comet
-- [ ] explosion
-- [ ] nuke visual
-- [ ] nuke sound
-- [ ] sound/mute UI
-- [ ] info screen
-- [ ] pause/resume
-- [ ] restart
-- [ ] game-over
-- [ ] victory
-- [ ] typography/readability
-- [ ] keyboard controls
-- [ ] touch where practical
-- [ ] Xbox controller if Founder attaches one
-- [ ] Haute M-series controller if Founder attaches one
-- [ ] browser console
-- [ ] missing assets / HTTP 404
-- [ ] desktop sizing
-- [ ] general commercial visual quality
+Stop and restart preserve the governed local database volume and local credentials. They do not remove volumes or require manual environment changes.

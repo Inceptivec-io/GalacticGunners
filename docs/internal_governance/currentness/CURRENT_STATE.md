@@ -5,7 +5,7 @@ Programme:
 PLATFORM FOUNDATION AND CAMPAIGN CONTINUITY
 
 Stage:
-H015 IMPLEMENTATION COMPLETE / PENDING FOUNDER REVIEW
+H015 CLOSEOUT RECTIFICATION IN PROGRESS / FOUNDER REVIEW NOT YET READY
 
 Branch:
 feature/v1-platform-foundation-campaign-continuity
@@ -77,4 +77,4 @@ Founder Acceptance:
 FOUNDER ACCEPTED - KNOWN PLATFORM AND RUNTIME ITEMS DEFERRED TO H015. Development does not assert unqualified Founder manual acceptance of deferred items. PR #11 remains open for Founder merge decision.
 
 H015 Closure:
-FOUNDER_REVIEW_READY=YES. Legacy playability, schema 1.1, freeform mixed Designer, distinct enemy classes, recurring hazards, Mothership finale, Levels 1-6, gameplay UX and browser evidence all PASS. Founder acceptance and merge remain PENDING.
+STATUS=IN_PROGRESS. FOUNDER_REVIEW_READY=NO pending the rectified fail-closed launcher, exact-build 23-item browser evidence matrix, current verification authority, complete sealed Handoff-Out, and final CI at the returned SHA. Founder acceptance and merge remain PENDING.

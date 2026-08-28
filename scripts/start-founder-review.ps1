@@ -71,6 +71,10 @@ Invoke-ReviewCommand { docker compose --env-file $envFile exec -T backend python
 Invoke-ReviewCommand { docker compose --env-file $envFile exec -T backend python manage.py seed_runtime_authority } 'campaign seed'
 Invoke-ReviewCommand { docker compose --env-file $envFile exec -T backend python manage.py bootstrap_founder_review } 'identity bootstrap'
 Invoke-ReviewCommand { docker compose --env-file $envFile exec -T backend python manage.py review_founder_environment } 'identity smoke test'
+foreach ($service in 'db','backend','web') {
+  $state = docker compose --env-file $envFile ps --format json $service | ConvertFrom-Json
+  if (-not $state -or $state.Health -ne 'healthy') { throw "Founder review $service container is not healthy." }
+}
 $health = Invoke-RestMethod 'http://localhost:3002/api/v1/health/'; $build = Invoke-RestMethod 'http://localhost:3002/api/v1/system/build/'
 if ($health.status -ne 'ok' -or $build.source_sha -ne $sourceSha) { throw 'Founder review environment provenance or health check failed.' }
 $webSession = New-Object Microsoft.PowerShell.Commands.WebRequestSession
