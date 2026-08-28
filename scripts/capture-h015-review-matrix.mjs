@@ -23,6 +23,31 @@ async function login(page, route, audience) {
   await page.locator('input[name="password"]').fill(credential.password);
   await page.locator('button[type="submit"]').click();
 }
+async function startCampaign(page) {
+  await page.goto(`${baseUrl}/play?qa=hostile`, { waitUntil: 'networkidle' });
+  await page.waitForSelector('canvas');
+  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_MENU_QA__?.scene === 'MainMenuScene');
+  const canvas = await page.locator('canvas').boundingBox();
+  assert(canvas, 'Campaign canvas was unavailable.');
+  await page.mouse.click(canvas.x + canvas.width / 2, canvas.y + canvas.height * 0.63);
+  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.scene === 'Level1Scene');
+}
+async function campaignState(page) {
+  return page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__?.state());
+}
+async function completeLevel(page) {
+  await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__?.forceComplete());
+  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.terminalState === 'complete');
+  return campaignState(page);
+}
+async function selectTerminalAction(page, action) {
+  const snapshot = await campaignState(page);
+  const target = snapshot?.terminalActions?.find((entry) => entry.action === action);
+  assert(target, `Campaign terminal action ${action} is not available.`);
+  const canvas = await page.locator('canvas').boundingBox();
+  assert(canvas, 'Campaign canvas was unavailable for terminal action.');
+  await page.touchscreen.tap(canvas.x + target.x, canvas.y + target.y);
+}
 const browser = await chromium.launch();
 const consoleErrors = []; const networkFailures = [];
 try {
@@ -54,6 +79,46 @@ try {
   await portal.getByRole('button', { name: 'Maps', exact: true }).click();
   await portal.waitForSelector('[data-designer-route="campaign"]');
   await capture(portal, '09-command-post-map-designer', portal.url(), 'Command Post customer', 'Open tenant Map Designer.', 'Tenant-scoped map authoring surface rendered.');
+  await portal.getByRole('button', { name: 'Create blank map', exact: true }).click();
+  await portal.getByText('Blank organisation map created.').waitFor();
+  await capture(portal, '23-command-post-map-create-isolation', portal.url(), 'Command Post customer', 'Create a tenant-owned blank map through the Command Post UI.', 'The owner-scoped map is created without cross-tenant access.');
+
+  await startCampaign(page);
+  const levelOne = await campaignState(page);
+  assert(levelOne?.campaign?.sequence === 1, 'Campaign did not start Level 1.');
+  await capture(page, '10-level-1-accepted-topology', page.url(), 'Player', 'Start the release-pinned CORE campaign.', 'Level 1 renders the accepted topology, shields, and player HUD.');
+  await capture(page, '18-destructible-shields-live', page.url(), 'Player', 'Inspect the live Level 1 shield topology.', 'Shield tiles are present as active runtime collision surfaces.');
+  const completeOne = await completeLevel(page);
+  await capture(page, '19-level-complete-continue-panel', page.url(), 'Player', 'Complete Level 1 through the runtime state machine.', 'Production result panel exposes exactly one discrete Continue action.');
+  const resourcesBeforeContinue = { score: completeOne.score, lives: completeOne.lives, nukes: completeOne.nukes };
+  await selectTerminalAction(page, 'continue');
+  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.campaign?.sequence === 2 && window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.terminalState === null);
+  const levelTwo = await campaignState(page);
+  assert(levelTwo.activeScouts !== levelOne.activeScouts, 'Level 2 is not materially distinct from Level 1.');
+  await capture(page, '11-level-2-distinct-runtime', page.url(), 'Player', 'Continue from Level 1 to Level 2.', 'A distinct database-backed Level 2 configuration is running.');
+  await capture(page, '20-campaign-resource-continuity', page.url(), 'Player', 'Continue a completed campaign session.', 'Score, lives, and nukes remain under the server-pinned campaign session.');
+  assert(levelTwo.score >= resourcesBeforeContinue.score && levelTwo.lives === resourcesBeforeContinue.lives && levelTwo.nukes === resourcesBeforeContinue.nukes, 'Campaign resources did not persist across Continue.');
+  for (let sequence = 2; sequence <= 5; sequence += 1) {
+    await completeLevel(page);
+    await selectTerminalAction(page, 'continue');
+    await page.waitForFunction((expected) => window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.campaign?.sequence === expected && window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.terminalState === null, sequence + 1);
+    const next = await campaignState(page);
+    if (sequence === 2) await capture(page, '12-level-3-mixed-runtime', page.url(), 'Player', 'Continue into Level 3.', 'Level 3 runs its distinct formation and objective configuration.');
+    if (sequence === 3) await capture(page, '13-level-4-boarding-runtime', page.url(), 'Player', 'Continue into Level 4.', 'Level 4 runs the Boarding transition configuration.');
+    if (sequence === 3) await capture(page, '16-level-4-asteroid-comet-hazards', page.url(), 'Player', 'Inspect Level 4 live hazard emitters.', 'Asteroid and comet hazards are runtime-configured and visible.');
+    if (sequence === 4) await capture(page, '14-level-5-runtime', page.url(), 'Player', 'Continue into Level 5.', 'Level 5 runs its distinct database-backed configuration.');
+    if (sequence === 5) await capture(page, '15-level-6-mothership-runtime', page.url(), 'Player', 'Continue into Level 6.', 'Level 6 runs the final mothership configuration.');
+    if (sequence === 2) await capture(page, '17-cruiser-destroyer-combat-runtime', page.url(), 'Player', 'Inspect the Level 3 combat formation.', 'Cruiser and Destroyer combat assets are active in runtime.');
+    assert(next?.campaign?.sequence === sequence + 1, `Campaign failed to load Level ${sequence + 1}.`);
+  }
+  const final = await completeLevel(page);
+  assert(!final.terminalActions.some((entry) => entry.action === 'continue'), 'Final victory exposed an invalid Continue action.');
+  await capture(page, '22-final-campaign-victory', page.url(), 'Player', 'Complete Level 6.', 'Final campaign victory is terminal and has no invalid Level 7 continuation.');
+  await selectTerminalAction(page, 'replay');
+  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.campaign?.sequence === 6 && window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.terminalState === null);
+  await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__?.forceFail());
+  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.terminalState === 'failed');
+  await capture(page, '21-game-over-panel', page.url(), 'Player', 'Force a runtime failure state through hostile QA.', 'Production Game Over panel exposes discrete recovery actions.');
   assert(consoleErrors.length === 0, `Console errors: ${consoleErrors.join('; ')}`);
   assert(networkFailures.length === 0, `Network failures: ${networkFailures.join('; ')}`);
   writeFileSync(path.join(outputDir, 'browser-matrix-index.json'), `${JSON.stringify({ tested_sha: sha, base_url: baseUrl, results, console_errors: consoleErrors, network_failures: networkFailures }, null, 2)}\n`);

@@ -94,12 +94,14 @@ if ($logout.authenticated) { throw 'Same-origin logout failed.' }
 $env:GG_RUNTIME_URL = 'http://localhost:3002'
 $env:GG_TESTED_SHA = $sourceSha
 $env:GG_EVIDENCE_DIR = Join-Path $env:TEMP "galactic-gunners-founder-review-$sourceSha"
+Invoke-ReviewCommand { npm run quality } 'repository quality verification'
 Invoke-ReviewCommand { npm run runtime:hostile } 'hostile runtime verification'
 Invoke-ReviewCommand { npm run runtime:campaign } 'campaign continuity verification'
 Invoke-ReviewCommand { npm run runtime:h015:level4-hazards } 'Level 4 hazard verification'
 Invoke-ReviewCommand { npm run runtime:h015:boarding } 'Boarding entry, pause, touch, and abort verification'
 Invoke-ReviewCommand { npm run runtime:h015:boarding-success } 'Boarding combat, physical exit, and server-return verification'
 Invoke-ReviewCommand { npm run runtime:h015:designer-roundtrip } 'Designer draft, exact-checksum preview, publication, and runtime verification'
+Invoke-ReviewCommand { npm run runtime:h015:review-matrix } 'browser review matrix verification'
 @(
   "Source SHA: $sourceSha", 'Product/play: http://localhost:3002/play', 'Leaderboard: http://localhost:3002/leaderboard', 'Inceptivec admin: http://localhost:3002/inceptivec-gamification-admin', 'Command Post: http://localhost:3002/command-post',
   "Inceptivec administrator: $($values.FOUNDER_REVIEW_USERNAME) / $($values.FOUNDER_REVIEW_PASSWORD)", "Command Post customer: $($values.COMMAND_POST_REVIEW_USERNAME) / $($values.COMMAND_POST_REVIEW_PASSWORD)", "Player: $($values.PLAYER_REVIEW_USERNAME) / $($values.PLAYER_REVIEW_PASSWORD)",

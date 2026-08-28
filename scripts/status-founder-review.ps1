@@ -11,4 +11,5 @@ if ($health.status -ne 'ok' -or $build.source_sha -ne $sourceSha) { throw 'Found
 $health | ConvertTo-Json -Compress
 $build | ConvertTo-Json -Compress
 Write-Output 'FOUNDER_REVIEW_GATES=PASS'
-Write-Output 'FOUNDER_REVIEW_READY=NO'
+Write-Output 'FOUNDER_REVIEW_READY=NOT_REEVALUATED'
+Write-Output 'Run .\scripts\start-founder-review.ps1 to execute the full readiness gate.'
