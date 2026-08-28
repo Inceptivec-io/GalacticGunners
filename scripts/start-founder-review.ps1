@@ -85,7 +85,8 @@ $login = Invoke-RestMethod 'http://localhost:3002/api/v1/auth/login/' -Method Po
 if (-not $login.authenticated -or -not $login.platform_access) { throw 'Same-origin Founder administrator login failed.' }
 $session = Invoke-RestMethod 'http://localhost:3002/api/v1/auth/me/' -WebSession $webSession
 if (-not $session.authenticated -or -not $session.surface_grants.Contains('INCEPTIVEC_ADMIN')) { throw 'Same-origin session restoration failed.' }
-$logout = Invoke-RestMethod 'http://localhost:3002/api/v1/auth/logout/' -Method Post -WebSession $webSession -Headers $headers -ContentType 'application/json' -Body '{}'
+$logoutCsrf = Invoke-RestMethod 'http://localhost:3002/api/v1/auth/csrf/' -WebSession $webSession
+$logout = Invoke-RestMethod 'http://localhost:3002/api/v1/auth/logout/' -Method Post -WebSession $webSession -Headers @{ 'X-CSRFToken' = $logoutCsrf.csrf_token } -ContentType 'application/json' -Body '{}'
 if ($logout.authenticated) { throw 'Same-origin logout failed.' }
 @(
   "Source SHA: $sourceSha", 'Product/play: http://localhost:3002/play', 'Leaderboard: http://localhost:3002/leaderboard', 'Inceptivec admin: http://localhost:3002/inceptivec-gamification-admin', 'Command Post: http://localhost:3002/command-post',
