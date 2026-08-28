@@ -1,5 +1,7 @@
 # GALACTIC GUNNERS DEVTEAM HANDOFF OUT 015
 
+> **SUPERSEDED HISTORICAL RETURN.** This prior record is retained unchanged as evidence of the rejected pre-rectification closure. The current governed status is defined by `docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/H015_RUNTIME_VERIFICATION.md` and the subsequent rectified non-self-referential return.
+
 ## Authority and Reconciliation
 
 | Field | Value |
