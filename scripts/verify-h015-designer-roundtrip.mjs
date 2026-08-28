@@ -1,7 +1,12 @@
 import { chromium } from 'playwright';
-import { readFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import path from 'node:path';
 
 const baseUrl = process.env.GG_RUNTIME_URL ?? 'http://localhost:3002';
+const testedSha = process.env.GG_TESTED_SHA ?? 'UNSPECIFIED';
+const outputDir = path.resolve(process.env.GG_EVIDENCE_DIR
+  ?? 'docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/rectification/designer_roundtrip');
+mkdirSync(outputDir, { recursive: true });
 const access = Object.fromEntries(readFileSync('FOUNDER_REVIEW_ACCESS.local.txt', 'utf8').split(/\r?\n/).flatMap((line) => {
   const match = line.match(/^(Inceptivec administrator): ([^/]+) \/ (.+)$/);
   return match ? [[match[1], { username: match[2].trim(), password: match[3].trim() }]] : [];
@@ -28,12 +33,16 @@ try {
     await page.locator('[aria-label="SCOUT at 50, 170"]').click();
     const rotation = page.locator('.designer-inspector label').filter({ hasText: /^Rotation/ }).locator('input');
     const currentRotation = Number(await rotation.inputValue());
-    await rotation.fill(String((currentRotation + 10) % 360));
+    const expectedRotation = (currentRotation + 16) % 360;
+    await rotation.fill(String(expectedRotation));
+    await rotation.blur();
+    assert(Number(await rotation.inputValue()) === expectedRotation, 'Designer rotation field did not retain the requested edit before save.');
     const draftResponse = page.waitForResponse((response) =>
       response.request().method() === 'POST' && /\/api\/v1\/admin\/levels\/[^/]+\/drafts\/$/.test(new URL(response.url()).pathname),
     );
     await page.getByRole('button', { name: 'Save immutable draft' }).click();
     const response = await draftResponse;
+    const draftBody = await response.json();
     const conflict = response.status() === 409;
     assert(conflict || response.status() === 201, `Unexpected immutable draft status: ${response.status()}.`);
     if (conflict) {
@@ -41,6 +50,7 @@ try {
       const current = authority.results.find((item) => item.id === level.id);
       console.error(JSON.stringify({ designer_conflict: { latest: current?.versions?.[0], editable: current?.editable_version, active: current?.active_version } }));
     }
+    if (!conflict) console.log(JSON.stringify({ designer_draft_response: { version: draftBody.version, checksum: draftBody.checksum, rotation: draftBody.config?.entities?.find((entity) => entity.id === 'level-01:formation-0:r0:c0')?.rotation } }));
     return conflict;
   };
   const conflicted = await saveChangedDraft();
@@ -58,6 +68,7 @@ try {
     latest: { version: saved?.version, checksum: saved?.checksum },
   } }));
   assert(saved && saved.checksum !== original.checksum, 'Designer save did not create a distinct immutable draft.');
+  await page.screenshot({ path: path.join(outputDir, '01-designer-immutable-draft.png'), fullPage: true });
   const popup = page.waitForEvent('popup');
   await page.getByRole('button', { name: 'Same-runtime preview' }).click();
   const preview = await popup;
@@ -74,6 +85,7 @@ try {
   const previewState = await preview.evaluate(() => window.__GALACTIC_GUNNERS_SLICE_QA__);
   assert(previewState.campaign.checksum === saved.checksum && previewState.gameRunId === null, 'Preview was not exact-checksum and unranked.');
   assert(previewErrors.length === 0, `Preview console errors: ${previewErrors.join('; ')}`);
+  await preview.screenshot({ path: path.join(outputDir, '02-designer-exact-checksum-preview.png'), fullPage: true });
   await preview.close();
   await page.getByRole('button', { name: 'Validate', exact: true }).click();
   await page.getByText(/validate completed through the authenticated version workflow/).waitFor();
@@ -90,6 +102,7 @@ try {
   await page.waitForFunction(() => window.__GALACTIC_GUNNERS_SLICE_QA__?.campaign?.checksum, { timeout: 15000 });
   const playState = await page.evaluate(() => window.__GALACTIC_GUNNERS_SLICE_QA__);
   assert(playState.campaign.checksum === saved.checksum, 'A new campaign did not receive the published authored checksum.');
+  await page.screenshot({ path: path.join(outputDir, '03-core-published-gameplay.png'), fullPage: true });
   await page.goto(`${baseUrl}/inceptivec-gamification-admin`, { waitUntil: 'networkidle' });
   await page.waitForSelector('[data-designer-route="campaign"]');
   page.once('dialog', (dialog) => dialog.accept());
@@ -100,5 +113,7 @@ try {
   const restored = afterRollback.results.find((item) => item.id === level.id).versions[0];
   assert(restored.checksum === original.checksum, 'Rollback did not restore the original immutable configuration.');
   assert(consoleErrors.length === 0, `Console errors: ${consoleErrors.join('; ')}`);
-  console.log(JSON.stringify({ result: 'PASS', draft_checksum: saved.checksum, gameplay_checksum: playState.campaign.checksum, rollback_source_version: original.version }, null, 2));
+  const result = { tested_sha: testedSha, generated_at: new Date().toISOString(), result: 'PASS', draft_checksum: saved.checksum, gameplay_checksum: playState.campaign.checksum, rollback_source_version: original.version, console_errors: consoleErrors };
+  writeFileSync(path.join(outputDir, 'designer-runtime-roundtrip.json'), `${JSON.stringify(result, null, 2)}\n`);
+  console.log(JSON.stringify(result, null, 2));
 } finally { await browser.close(); }

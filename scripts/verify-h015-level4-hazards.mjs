@@ -50,7 +50,16 @@ try {
 
   const fired = await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__?.firePlayerLaserAtHazard(0));
   assert(fired?.fired, `Could not fire at Level 4 hazard: ${JSON.stringify(fired)}`);
-  await page.waitForFunction((count) => (window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.hazardBodies?.length ?? 0) === count, before.hazardBodies.length - 1, { timeout: 3_000 });
+  try {
+    await page.waitForFunction((count) => (window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.hazardBodies?.length ?? 0) === count, before.hazardBodies.length - 1, { timeout: 3_000 });
+  } catch (error) {
+    const diagnostic = await state(page);
+    throw new Error(`Configured comet did not resolve after a helper-fired player laser. fired=${JSON.stringify(fired)} state=${JSON.stringify({
+      score: diagnostic?.score,
+      hazardBodies: diagnostic?.hazardBodies,
+      playerLaserBodies: diagnostic?.playerLaserBodies,
+    })} original=${error.message}`);
+  }
   const after = await state(page);
   assert(after.score > before.score, `Hazard destruction did not apply a runtime score event: ${before.score} -> ${after.score}.`);
   assert(after.terminalState === null && after.campaign.sequence === 4, 'Hazard collision interrupted Level 4 gameplay.');

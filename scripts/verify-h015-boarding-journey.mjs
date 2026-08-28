@@ -71,7 +71,10 @@ try {
   const launch = await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__?.triggerBoarding());
   assert(launch?.launched && launch.offerPresented, `Boarding did not launch: ${JSON.stringify(launch)}`);
   await page.waitForFunction(() => Boolean(window.__GALACTIC_GUNNERS_BOARDING_QA__), undefined, { timeout: 15_000 });
-  await page.waitForTimeout(750);
+  await page.waitForFunction(() => {
+    const value = window.__GALACTIC_GUNNERS_BOARDING_QA__?.state();
+    return Boolean(value?.active && value?.serverRunId && !value?.serverError);
+  }, undefined, { timeout: 15_000 });
   const active = await page.evaluate(() => window.__GALACTIC_GUNNERS_BOARDING_QA__?.state());
   assert(active.active, `Boarding did not become active: ${JSON.stringify(active)}`);
   assert(active.serverRunId, 'Boarding did not receive a server-authoritative run.');
