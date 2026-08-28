@@ -26,7 +26,9 @@ try {
     await page.locator('.designer-placement').first().click();
     const x = page.locator('.designer-inspector label').filter({ hasText: /^X/ }).locator('input');
     const currentX = Number(await x.inputValue());
-    await x.fill(String(currentX + 8));
+    // Use a full grid-cell delta so the authoring document necessarily changes
+    // even when the canvas snap policy is enabled.
+    await x.fill(String(currentX + 32));
     await page.getByRole('button', { name: 'Save immutable draft' }).click();
     await page.waitForTimeout(350);
     const conflict = await page.getByText('Reload the latest level version before saving.').isVisible().catch(() => false);
