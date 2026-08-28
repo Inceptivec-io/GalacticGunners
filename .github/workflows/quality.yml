@@ -237,10 +237,7 @@ jobs:
   runtime-browser:
     runs-on: ubuntu-latest
     env:
-      GG_TESTED_SHA: ${{ github.sha }}
       GG_EVIDENCE_DIR: /tmp/h015-browser-evidence
-      SOURCE_SHA: ${{ github.sha }}
-      BUILD_ID: ${{ github.sha }}
       FOUNDER_REVIEW_MODE: 'true'
       FOUNDER_REVIEW_USERNAME: ci-founder-review
       FOUNDER_REVIEW_PASSWORD: ci-founder-review-password
@@ -250,6 +247,19 @@ jobs:
       PLAYER_REVIEW_PASSWORD: ci-player-review-password
     steps:
       - uses: actions/checkout@v4
+        if: github.event_name == 'pull_request'
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/checkout@v4
+        if: github.event_name != 'pull_request'
+      - name: Bind exact tested source revision
+        id: source-sha
+        run: |
+          tested_sha="$(git rev-parse HEAD)"
+          echo "value=$tested_sha" >> "$GITHUB_OUTPUT"
+          echo "GG_TESTED_SHA=$tested_sha" >> "$GITHUB_ENV"
+          echo "SOURCE_SHA=$tested_sha" >> "$GITHUB_ENV"
+          echo "BUILD_ID=$tested_sha" >> "$GITHUB_ENV"
       - uses: actions/setup-node@v4
         with: { node-version: '22', cache: npm }
       - run: npm ci
@@ -275,7 +285,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: h015-browser-evidence-${{ github.sha }}
+          name: h015-browser-evidence-${{ steps.source-sha.outputs.value }}
           path: /tmp/h015-browser-evidence
           if-no-files-found: error
           retention-days: 30

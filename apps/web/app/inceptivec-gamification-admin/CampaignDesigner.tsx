@@ -1221,9 +1221,9 @@ export function CampaignDesigner({
           sequence: nextSequence,
         }),
       });
-      setMessage("Blank organisation map created.");
       setSelectedLevelId(null);
       await load();
+      setMessage("Blank organisation map created.");
     } catch (error) {
       setMessage(
         error instanceof Error ? error.message : "Map creation failed.",
