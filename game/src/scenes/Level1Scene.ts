@@ -563,6 +563,11 @@ export class Level1Scene extends CombatLevelScene {
     this.#rearmBarFill = this.add.rectangle(0, 0, 150, 8, 0x7ee8ff, 0.95)
       .setOrigin(0, 0.5)
       .setDepth(11);
+    if (this.registry.get('campaignPreview')) {
+      this.add.text(this.scale.width / 2, this.#layout.hudSafeRect.y + 22, 'PREVIEW - UNRANKED', {
+        color: '#f7d56a', fontFamily: 'GalacticGunnersGoldDisplay, Arial, sans-serif', fontSize: '20px',
+      }).setOrigin(0.5).setDepth(12).setData('qa', 'preview-unranked');
+    }
     this.reflowHud();
   }
 
