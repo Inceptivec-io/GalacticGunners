@@ -1789,6 +1789,11 @@ export class Level1Scene extends CombatLevelScene {
         const x = Phaser.Math.Clamp(scout.x + offsetX, this.#layout.movementBounds.left, this.#layout.movementBounds.right);
         this.#player.sprite.setPosition(x, this.#player.sprite.y);
         this.#player.clampToPlayfield(this.#layout);
+        const playerBody = this.#player.sprite.body as Phaser.Physics.Arcade.Body;
+        // QA relocation must preserve the same sprite/body invariant required
+        // of pooled projectiles before an input-driven collision check begins.
+        playerBody.reset(this.#player.sprite.x, this.#player.sprite.y);
+        playerBody.prev.set(playerBody.x, playerBody.y);
         return { moved: true, playerX: this.#player.sprite.x, scoutX: scout.x, offsetX };
       },
       gamepadY: () => {

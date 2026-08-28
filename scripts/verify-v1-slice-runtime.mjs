@@ -264,8 +264,10 @@ function findScoutClearOfShield(state) {
   let candidate = null;
   for (let index = 0; index < state.scoutBodies.length; index += 1) {
     const scout = state.scoutBodies[index];
+    const reachable = scout.x >= state.movementBounds.left + state.scoutSize.width
+      && scout.x <= state.movementBounds.right - state.scoutSize.width;
     const intersectsShield = state.shieldBodies.some((shield) => Math.abs(shield.x - scout.x) <= (shield.body.width / 2 + state.projectileSize.height / 2 + 2));
-    if (!intersectsShield) {
+    if (reachable && !intersectsShield) {
       if (!candidate || scout.y > candidate.scout.y) {
         candidate = { index, scout };
       }
@@ -367,9 +369,32 @@ async function runHostileCases(browser) {
   await loadGame(page);
   state = await getGameState(page);
   const clearScoutIndex = findScoutClearOfShield(state);
-  await page.evaluate((index) => window.__GALACTIC_GUNNERS_HOSTILE__.setPlayerUnderScout(index, 0), clearScoutIndex);
-  await page.keyboard.press('Space');
-  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__.state().score === 25, null, { timeout: 6500 });
+  const alignment = await page.evaluate((index) => window.__GALACTIC_GUNNERS_HOSTILE__.setPlayerUnderScout(index, 0), clearScoutIndex);
+  assert(alignment.moved && Math.abs(alignment.playerX - alignment.scoutX) <= 0.5,
+    `Hostile direct-hit setup could not align the player with a reachable Scout: ${JSON.stringify(alignment)}.`);
+  await page.keyboard.down('Space');
+  await page.waitForFunction(() => (window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.playerLaserBodies?.length ?? 0) > 0, null, { timeout: 2000 });
+  const afterSpawn = await getGameState(page);
+  await page.keyboard.up('Space');
+  try {
+    await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__.state().score === 25, null, { timeout: 6500 });
+  } catch (error) {
+    const diagnostic = await getGameState(page);
+    throw new Error(`Normal player laser did not destroy the aligned Scout. state=${JSON.stringify({
+      score: diagnostic.score,
+      alignment,
+      afterSpawn: {
+        playerX: afterSpawn.playerX,
+        playerBody: afterSpawn.playerBody,
+        playerLaserBodies: afterSpawn.playerLaserBodies,
+      },
+      playerX: diagnostic.playerX,
+      playerBody: diagnostic.playerBody,
+      playerLaserBodies: diagnostic.playerLaserBodies,
+      scoutBodies: diagnostic.scoutBodies,
+      shieldBodies: diagnostic.shieldBodies,
+    })} original=${error.message}`);
+  }
   await page.waitForTimeout(250);
   state = await getGameState(page);
   cases.direct_player_laser_hit_score_once = state.score === 25 && state.activeScouts === 57;
