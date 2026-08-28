@@ -124,7 +124,11 @@ class AdminLevelPreviewView(APIView):
 
     def get(self, request, level_id, checksum_value):
         level = get_object_or_404(Level, pk=level_id, archived=False)
-        version = get_object_or_404(level.versions, checksum=checksum_value)
+        # Drafts are immutable and a no-op save legitimately produces the same
+        # content checksum. Preview identity is the latest matching revision.
+        version = level.versions.filter(checksum=checksum_value).order_by('-version').first()
+        if version is None:
+            return Response({'code': 'NOT_FOUND', 'detail': 'Preview version not found.'}, status=status.HTTP_404_NOT_FOUND)
         audit(request, 'designer_preview', level, version, {'checksum': checksum_value})
         return Response(LevelVersionSerializer(version).data)
 

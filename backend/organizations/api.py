@@ -148,7 +148,7 @@ class PortalMapPreviewView(APIView):
             level_id=level_id, level__game_project__organization=organization,
             level__game_project__owner_scope=OwnerScope.ORGANIZATION, level__archived=False,
             checksum=checksum_value,
-        ).first()
+        ).order_by('-version').first()
         if version is None:
             raise NotFound('Map preview not found.')
         return Response(LevelVersionSerializer(version).data)
