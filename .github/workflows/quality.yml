@@ -237,10 +237,10 @@ jobs:
   runtime-browser:
     runs-on: ubuntu-latest
     env:
-      GG_TESTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-      GG_EVIDENCE_DIR: ${{ runner.temp }}/h015-browser-evidence
-      SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-      BUILD_ID: ${{ github.event.pull_request.head.sha || github.sha }}
+      GG_TESTED_SHA: ${{ github.sha }}
+      GG_EVIDENCE_DIR: /tmp/h015-browser-evidence
+      SOURCE_SHA: ${{ github.sha }}
+      BUILD_ID: ${{ github.sha }}
       FOUNDER_REVIEW_MODE: 'true'
       FOUNDER_REVIEW_USERNAME: ci-founder-review
       FOUNDER_REVIEW_PASSWORD: ci-founder-review-password
@@ -275,8 +275,8 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: h015-browser-evidence-${{ github.event.pull_request.head.sha || github.sha }}
-          path: ${{ runner.temp }}/h015-browser-evidence
+          name: h015-browser-evidence-${{ github.sha }}
+          path: /tmp/h015-browser-evidence
           if-no-files-found: error
           retention-days: 30
       - if: always()
