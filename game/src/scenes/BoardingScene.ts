@@ -379,6 +379,10 @@ export class BoardingScene extends Phaser.Scene {
   private startActive(): void {
     if (this.active || this.completed || !this.serverRun) return;
     this.coordinator.accept();
+    // Admission must begin from a playable state. A first hostile shot is
+    // scheduled after the scene is visibly active rather than inherited from
+    // pre-admission/update timing.
+    this.lastAlienFireAt = this.time.now + 1_500;
     this.active = true;
     this.starting = false;
     this.statusText.destroy();
