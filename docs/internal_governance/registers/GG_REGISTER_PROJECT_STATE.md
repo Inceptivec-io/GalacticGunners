@@ -7,15 +7,15 @@
 | Commercial Repository | `Inceptivec-io/GalacticGunners` |
 | Historical Repository | `michael-leese/GallacticGunners` READ-ONLY |
 | Current Programme | H015 PLATFORM FOUNDATION AND CAMPAIGN CONTINUITY |
-| Current Stage | H015 FINAL RECTIFICATION IN PROGRESS / FOUNDER REVIEW REJECTED |
+| Current Stage | H015 FINAL RECTIFICATION COMPLETE / PENDING FOUNDER ACCEPTANCE |
 | Active Handoff | GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015 |
 | Current Feature Branch | `feature/v1-platform-foundation-campaign-continuity` |
 | Base Branch | `dev` |
 | Entry/Base SHA | `3270be64c67863dc848ebad26e2a33daf8b70742` |
 | Branch Model | `feature/* -> dev -> stage -> prod` |
 | Default Branch Target | `prod` |
-| Current Feature HEAD | exact H015 review runtime `67e2eb9e81b4b83be2fcdfe42c0da9dd1f5d0e9f`; final closeout SHA recorded after documentation push to avoid a Git self-reference loop |
-| Closure State | IN PROGRESS / `FOUNDER_REVIEW_READY=NO` / FOUNDER ACCEPTANCE REJECTED |
+| Current Feature HEAD | exact H015 review runtime `d38504d230f588c71a77603c1561b9fce5b5c24a`; governance closeout SHA recorded externally after its exact-SHA audit to avoid a Git self-reference loop |
+| Closure State | IMPLEMENTATION COMPLETE / `FOUNDER_REVIEW_READY=YES` at `d38504d...`; FOUNDER ACCEPTANCE PENDING |
 | Root Execution Contract | `AGENTS.md` |
 | External Boundary | `_EXTERNAL_GalacticGunners` |
 | Internal Governance Root | `docs/internal_governance` |

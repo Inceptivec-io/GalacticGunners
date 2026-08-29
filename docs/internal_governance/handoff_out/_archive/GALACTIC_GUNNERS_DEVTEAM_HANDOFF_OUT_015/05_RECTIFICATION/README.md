@@ -1,5 +1,5 @@
-# H015 Rectified Return
+# H015 Rectified Return Closeout Candidate
 
-The `04_SEALED_RETURN` record is superseded historical evidence. The H015 rectification was reviewed locally at exact runtime SHA `67e2eb9e81b4b83be2fcdfe42c0da9dd1f5d0e9f` and remotely by successful GitHub Actions run `33187829041`.
+The `04_SEALED_RETURN` record is superseded historical evidence. H015 implementation was reviewed locally at exact runtime SHA `d38504d230f588c71a77603c1561b9fce5b5c24a` with `FOUNDER_REVIEW_READY=YES`, and remotely by successful GitHub Actions run `33256528095`.
 
-The final non-self-referential Handoff-Out is sealed after the documentation-closeout push. It records that final local/remote SHA, clean-worktree proof, PR #12 state, POST_BOX inventory, and its own SHA-256 without creating a Git SHA loop.
+PR #12 remains draft/open/unmerged; POST_BOX holds boundary controls only; Founder acceptance is pending. The final non-self-referential Handoff-Out is sealed after this documentation-closeout push and exact-SHA audit. It records that final local/remote SHA, clean-worktree proof, PR state, POST_BOX inventory, and its SHA-256 without creating a Git SHA loop.
