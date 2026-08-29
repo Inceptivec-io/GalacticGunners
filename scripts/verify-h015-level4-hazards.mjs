@@ -78,7 +78,7 @@ try {
   assert(fired?.fired, `Could not fire at Level 4 hazard: ${JSON.stringify(fired)}`);
   assert(fired.overlapsTarget, `Player projectile body did not overlap the intended live comet: ${JSON.stringify(fired)}`);
   try {
-    await page.waitForFunction((count) => (window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.hazardBodies?.length ?? 0) === count, liveBefore.hazardBodies.length - 1, { timeout: 3_000 });
+    await page.waitForFunction((score) => (window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.score ?? score) > score, liveBefore.score, { timeout: 3_000 });
   } catch (error) {
     const diagnostic = await state(page);
     throw new Error(`Configured comet did not resolve after a helper-fired player laser. fired=${JSON.stringify(fired)} state=${JSON.stringify({
