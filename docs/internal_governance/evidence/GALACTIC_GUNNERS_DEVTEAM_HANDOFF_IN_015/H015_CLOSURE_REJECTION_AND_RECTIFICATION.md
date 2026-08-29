@@ -16,6 +16,22 @@ CONTINUATION_AUTHORISED=YES
 PR_12=DRAFT_OPEN_UNMERGED
 ```
 
+## Final Evidence Attestation Result
+
+At exact SHA `b7e98a1c39fda3ae7fe7bea1b9f06dbf97f20dac`, [GitHub Actions run 33272670524](https://github.com/Inceptivec-io/GalacticGunners/actions/runs/33272670524) completed SUCCESS and retained both required artifacts for 30 days:
+
+- Evidence: `h015-browser-evidence-b7e98a1c39fda3ae7fe7bea1b9f06dbf97f20dac`, ID `9720659158`, SHA-256 `d319163863e46a5e2c6372f85f669ae0890a1a09536188a38bfc3d43f2654877`.
+- Attestation: `h015-closure-attestation-b7e98a1c39fda3ae7fe7bea1b9f06dbf97f20dac`, ID `9720659385`, SHA-256 `226cc45564afdaf09385e800d612123c2d446e04e99c23bccc5ca00b1bff5988`.
+
+The downloaded attestation reports every required gate PASS, `EVIDENCE_UNIQUENESS=PASS`, `CLOSURE_AUDIT=PASS`, `FAILED_GATES=0`, and `PENDING_GATES=0`. The strict auditor has negative coverage for a pending closure gate and missing closure evidence.
+
+```text
+H015_STATUS=FINAL_EVIDENCE_ATTESTATION_COMPLETE
+FOUNDER_REVIEW_READY=YES
+FOUNDER_ACCEPTANCE=PENDING
+MERGE_AUTHORISED=NO
+```
+
 ## Rejected Evidence Conditions
 
 - The returned artifact recorded `campaign-progression.result=FAIL` while the closure audit reported `PASS`.
