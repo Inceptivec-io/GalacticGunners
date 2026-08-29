@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
 export const REQUIRED_GATES = [
@@ -87,6 +87,7 @@ function promoteClosureGate(manifestPath, manifest, expectedSha) {
   const closureGate = manifest.gates.find((gate) => gate.id === 'closure-audit');
   if (!closureGate || closureGate.result !== 'PENDING') return false;
   const root = path.dirname(manifestPath);
+  mkdirSync(path.join(root, 'closure_audit'), { recursive: true });
   const resultPath = path.join(root, 'closure_audit', 'closure-audit-result.json');
   const digest = evidenceDigest(manifest.gates);
   const result = {
