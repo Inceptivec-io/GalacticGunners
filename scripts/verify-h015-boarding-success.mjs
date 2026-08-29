@@ -11,6 +11,14 @@ mkdirSync(outputDir, { recursive: true });
 function assert(value, message) { if (!value) throw new Error(message); }
 function fileHash(file) { return createHash('sha256').update(readFileSync(file)).digest('hex'); }
 async function state(page) { return page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__?.state()); }
+
+async function waitForRenderedFrames(page, frames = 3) {
+  await page.evaluate(async (frameCount) => {
+    for (let frame = 0; frame < frameCount; frame += 1) {
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+    }
+  }, frames);
+}
 async function clickAction(page, action) {
   const snapshot = await state(page);
   const actionState = snapshot.terminalActions.find((entry) => entry.action === action);
@@ -88,6 +96,7 @@ try {
   assert(boarding.activeAliens === 0, `Live Boarding combat did not clear every alien: ${JSON.stringify(boarding)}`);
   assert(boarding.exitUnlocked && boarding.player.x >= 3968, `Exit was not physically reachable: ${JSON.stringify(boarding)}`);
   const exitCapture = path.join(outputDir, '01-boarding-exit-unlocked.png');
+  await waitForRenderedFrames(page);
   await page.screenshot({ path: exitCapture, fullPage: true });
   await page.keyboard.down('e');
   await page.waitForTimeout(250);
@@ -96,6 +105,10 @@ try {
   const returned = await state(page);
   assert(returned.campaign.sequence === 4 && returned.terminalState === null, 'Successful Boarding did not return to active Level 4 Shooter.');
   const returnCapture = path.join(outputDir, '02-boarding-success-return.png');
+  // The scene state changes before the WebGL canvas necessarily presents the
+  // next frame on a loaded CI runner. Capture only after the confirmed Shooter
+  // state has had multiple animation frames to render.
+  await waitForRenderedFrames(page);
   await page.screenshot({ path: returnCapture, fullPage: true });
   assert(fileHash(exitCapture) !== fileHash(returnCapture), 'Boarding exit-unlocked and Shooter-return captures are visually identical.');
   assert(consoleErrors.length === 0 && networkFailures.length === 0, `Console errors: ${consoleErrors.join(' | ')}; network failures: ${networkFailures.join(' | ')}`);
