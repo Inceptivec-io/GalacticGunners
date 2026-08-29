@@ -333,6 +333,12 @@ export class BoardingScene extends Phaser.Scene {
       control.on('pointerdown', () => {
         this.lastTouchInput = input;
         this.touchInput[input] = true;
+        // A tap must produce the same immediate, visible firing response as a
+        // keyboard press. Waiting for a later simulation frame made touch fire
+        // nondeterministic on a constrained browser runner.
+        if (input === 'fire' && this.active && this.time.now - this.lastFireAt >= 180) {
+          this.firePlayerShot();
+        }
         if (input !== 'left' && input !== 'right') this.time.delayedCall(125, release);
       });
       control.on('pointerup', () => {
