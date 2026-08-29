@@ -1848,6 +1848,7 @@ export class Level1Scene extends CombatLevelScene {
           body.reset(hazard.x, hazard.y);
           body.prev.set(body.x, body.y);
           body.setVelocity(0, 0);
+          this.resolveSweptProjectileCollisions();
         }
         return { fired: Boolean(laser), hazardX: hazard.x, hazardY: hazard.y, laserX: laser?.x };
       },
