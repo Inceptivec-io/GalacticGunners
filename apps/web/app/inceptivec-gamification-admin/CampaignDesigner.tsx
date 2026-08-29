@@ -1261,11 +1261,11 @@ export function CampaignDesigner({
           config: document,
         }),
       });
+      setHistory([]);
+      await load();
       setMessage(
         `Draft v${draft.version} saved with immutable checksum ${draft.checksum.slice(0, 12)}.`,
       );
-      setHistory([]);
-      await load();
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Draft save failed.");
     }
@@ -1301,8 +1301,8 @@ export function CampaignDesigner({
         method: "POST",
         body: JSON.stringify({ version: version ?? (selectedLevel.editable_version ?? selectedLevel.active_version)?.version }),
       });
-      setMessage(`${action} completed through the authenticated version workflow.`);
       await load();
+      setMessage(`${action} completed through the authenticated version workflow.`);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : `${action} failed.`);
     }
