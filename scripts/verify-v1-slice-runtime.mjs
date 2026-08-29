@@ -295,6 +295,35 @@ async function movementProbe(page, keys, duration = 350) {
   return { before, during, after: await getGameState(page) };
 }
 
+async function driveToMovementEdge(page, keys, edge) {
+  for (const key of keys) {
+    await page.keyboard.down(key);
+  }
+  try {
+    await page.waitForFunction((target) => {
+      const state = window.__GALACTIC_GUNNERS_HOSTILE__?.state();
+      if (!state?.movementBounds) return false;
+      return target === 'top-left'
+        ? state.playerX <= state.movementBounds.left + 2 && state.playerY <= state.movementBounds.top + 2
+        : state.playerX >= state.movementBounds.right - 2 && state.playerY >= state.movementBounds.bottom - 2;
+    }, edge, { timeout: 15_000 });
+  } catch (error) {
+    const state = await getGameState(page);
+    throw new Error(`Movement edge probe ${edge} did not reach its authoritative bound: ${JSON.stringify({
+      playerX: state?.playerX,
+      playerY: state?.playerY,
+      playerVelocity: state?.playerVelocity,
+      movementBounds: state?.movementBounds,
+      terminalState: state?.terminalState,
+      playerState: state?.playerState,
+    })}. ${error.message}`);
+  } finally {
+    for (const key of [...keys].reverse()) {
+      await page.keyboard.up(key);
+    }
+  }
+}
+
 async function waitForOnlineRun(page) {
   await page.waitForFunction(() => {
     const state = window.__GALACTIC_GUNNERS_HOSTILE__?.state();
@@ -353,38 +382,14 @@ async function runHostileCases(browser) {
 
   await loadGame(page);
   await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__.prepareMovementBoundsProbe());
-  await page.keyboard.down('ArrowLeft');
-  await page.keyboard.down('ArrowUp');
-  try {
-    await page.waitForFunction(() => {
-      const state = window.__GALACTIC_GUNNERS_HOSTILE__?.state();
-      return state?.movementBounds
-        && state.playerX <= state.movementBounds.left + 2
-        && state.playerY <= state.movementBounds.top + 2;
-    }, undefined, { timeout: 15_000 });
-  } finally {
-    await page.keyboard.up('ArrowUp');
-    await page.keyboard.up('ArrowLeft');
-  }
+  await driveToMovementEdge(page, ['ArrowLeft', 'ArrowUp'], 'top-left');
   state = await getGameState(page);
   cases.all_edge_clamp_top_left = state.playerX >= state.movementBounds.left - 2
     && state.playerY >= state.movementBounds.top - 2;
 
   await loadGame(page);
   await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__.prepareMovementBoundsProbe());
-  await page.keyboard.down('ArrowRight');
-  await page.keyboard.down('ArrowDown');
-  try {
-    await page.waitForFunction(() => {
-      const state = window.__GALACTIC_GUNNERS_HOSTILE__?.state();
-      return state?.movementBounds
-        && state.playerX >= state.movementBounds.right - 2
-        && state.playerY >= state.movementBounds.bottom - 2;
-    }, undefined, { timeout: 15_000 });
-  } finally {
-    await page.keyboard.up('ArrowDown');
-    await page.keyboard.up('ArrowRight');
-  }
+  await driveToMovementEdge(page, ['ArrowRight', 'ArrowDown'], 'bottom-right');
   state = await getGameState(page);
   cases.all_edge_clamp_bottom_right = state.playerX <= state.movementBounds.right + 2
     && state.playerY <= state.movementBounds.bottom + 2;

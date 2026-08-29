@@ -1,7 +1,7 @@
 {
   "url": "http://localhost:3002",
   "handoff_id": "GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015",
-  "generated_at": "2026-08-28T15:43:17.378Z",
+  "generated_at": "2026-08-29T12:01:08.969Z",
   "banned_visible_terms": [
     "LEVEL 1 VERTICAL SLICE",
     "VERTICAL SLICE",
@@ -58,6 +58,7 @@
       "sustained_fire": true,
       "projectile_cleanup": true,
       "projectile_mapping": true,
+      "life_hud_icon_only": true,
       "nuke_initial_count": true,
       "nuke_fire_decrements_once": true,
       "nuke_projectile_visible": true,
@@ -66,7 +67,6 @@
       "nuke_rearm_progresses": true,
       "nuke_hud_live": true,
       "nuke_hud_bottom_right_bar": true,
-      "life_hud_icon_only": true,
       "enemy_scouts_correct_orientation": true,
       "sound_mute_top_right": true,
       "nuke_count_never_negative": true,
