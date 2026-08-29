@@ -67,14 +67,16 @@ try {
     `Level 4 hazard emitters produced stationary hazards: ${JSON.stringify(before.hazardBodies)}`);
   await page.waitForFunction(() => {
     const snapshot = window.__GALACTIC_GUNNERS_HOSTILE__?.state();
-    return snapshot?.hazardBodies?.some((hazard) => hazard.x >= 0 && hazard.x <= window.innerWidth
-      && hazard.y >= 0 && hazard.y <= window.innerHeight);
+    return snapshot?.hazardBodies?.some((hazard) => hazard.body.x >= 0
+      && hazard.body.x + hazard.body.width <= window.innerWidth
+      && hazard.body.y >= 0 && hazard.body.y + hazard.body.height <= window.innerHeight);
   }, null, { timeout: 5_000 });
   const liveBefore = await state(page);
   await page.screenshot({ path: path.join(outputDir, '01-level4-live-comets.png'), fullPage: true });
 
   const fired = await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__?.firePlayerLaserAtHazard(0));
   assert(fired?.fired, `Could not fire at Level 4 hazard: ${JSON.stringify(fired)}`);
+  assert(fired.overlapsTarget, `Player projectile body did not overlap the intended live comet: ${JSON.stringify(fired)}`);
   try {
     await page.waitForFunction((count) => (window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.hazardBodies?.length ?? 0) === count, liveBefore.hazardBodies.length - 1, { timeout: 3_000 });
   } catch (error) {

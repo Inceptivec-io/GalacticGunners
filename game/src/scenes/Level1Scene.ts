@@ -635,10 +635,7 @@ export class Level1Scene extends CombatLevelScene {
       this.handleNukeScoutOverlap(nuke as Phaser.Physics.Arcade.Sprite, scout as Phaser.Physics.Arcade.Sprite);
     });
     this.physics.add.overlap(this.#playerLasers, this.#hazards, (laser, hazard) => {
-      if (!(laser as Phaser.Physics.Arcade.Image).getData('spent')) {
-        this.destroyProjectile(laser as Phaser.Physics.Arcade.Image);
-        this.destroyHazard(hazard as Phaser.Physics.Arcade.Sprite);
-      }
+      this.handlePlayerLaserHazardOverlap(laser as Phaser.Physics.Arcade.Image, hazard as Phaser.Physics.Arcade.Sprite);
     });
     this.physics.add.overlap(this.#player.sprite, this.#hazards, (_player, hazard) => {
       (hazard as Phaser.Physics.Arcade.Sprite).disableBody(true, true);
@@ -913,6 +910,15 @@ export class Level1Scene extends CombatLevelScene {
     this.createExplosion(hazard.x, hazard.y, 60);
   }
 
+  private handlePlayerLaserHazardOverlap(laser: Phaser.Physics.Arcade.Image, hazard: Phaser.Physics.Arcade.Sprite): void {
+    if (laser.getData('spent')) {
+      return;
+    }
+    laser.setData('spent', true);
+    this.destroyProjectile(laser);
+    this.destroyHazard(hazard);
+  }
+
   private handlePlayerLaserShieldOverlap(laser: Phaser.Physics.Arcade.Image, tile: Phaser.Physics.Arcade.Image): void {
     if (laser.getData('spent')) {
       return;
@@ -938,8 +944,7 @@ export class Level1Scene extends CombatLevelScene {
       } else if (hit?.kind === 'scout') {
         this.handlePlayerLaserScoutOverlap(laser, hit.scout);
       } else if (hit?.kind === 'hazard') {
-        this.destroyProjectile(laser);
-        this.destroyHazard(hit.hazard);
+        this.handlePlayerLaserHazardOverlap(laser, hit.hazard);
       }
     }
 
@@ -1832,12 +1837,15 @@ export class Level1Scene extends CombatLevelScene {
       },
       firePlayerLaserAtHazard: (index = 0) => {
         const activeHazards = this.#hazards.getChildren().filter((candidate) => candidate.active) as Phaser.Physics.Arcade.Sprite[];
-        // The hostile contract must target a hazard that is still in the live playfield,
-        // rather than a pooled object retained just beyond an entry/exit boundary.
-        const liveHazards = activeHazards.filter((candidate) => candidate.x >= 0 && candidate.x <= this.scale.width
-          && candidate.y >= 0 && candidate.y <= this.scale.height);
-        const hazard = liveHazards[index] ?? activeHazards[index];
-        if (!hazard) return { fired: false, reason: 'no-hazard' };
+        // The hostile contract must target an entire collision body in the live
+        // playfield. Edge-entry pooled hazards are not stable collision targets.
+        const liveHazards = activeHazards.filter((candidate) => {
+          const body = candidate.body as Phaser.Physics.Arcade.Body | undefined;
+          return Boolean(body && body.left >= 0 && body.right <= this.scale.width
+            && body.top >= 0 && body.bottom <= this.scale.height);
+        });
+        const hazard = liveHazards[index];
+        if (!hazard) return { fired: false, reason: 'no-fully-live-hazard' };
         const laser = this.firePlayerLaser(Number.POSITIVE_INFINITY, hazard.x, hazard.y);
         if (laser) {
           const body = laser.body as Phaser.Physics.Arcade.Body;
@@ -1846,11 +1854,20 @@ export class Level1Scene extends CombatLevelScene {
           // a collision invariant into a timing race.
           laser.setPosition(hazard.x, hazard.y);
           body.reset(hazard.x, hazard.y);
+          body.position.set(laser.x - body.width / 2, laser.y - body.height / 2);
           body.prev.set(body.x, body.y);
+          laser.setData('previousBodyCenterX', body.x + body.width / 2);
+          laser.setData('previousBodyCenterY', body.y + body.height / 2);
           body.setVelocity(0, 0);
-          this.resolveSweptProjectileCollisions();
+          const overlapsTarget = this.physics.world.overlap(laser, hazard);
+          if (overlapsTarget) {
+            this.handlePlayerLaserHazardOverlap(laser, hazard);
+          } else {
+            this.resolveSweptProjectileCollisions();
+          }
+          return { fired: true, overlapsTarget, hazardX: hazard.x, hazardY: hazard.y, laserX: laser.x };
         }
-        return { fired: Boolean(laser), hazardX: hazard.x, hazardY: hazard.y, laserX: laser?.x };
+        return { fired: false, reason: 'laser-pool-unavailable' };
       },
       state: () => this.buildQaState(),
     };
