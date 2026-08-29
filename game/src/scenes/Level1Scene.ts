@@ -1838,7 +1838,17 @@ export class Level1Scene extends CombatLevelScene {
           && candidate.y >= 0 && candidate.y <= this.scale.height);
         const hazard = liveHazards[index] ?? activeHazards[index];
         if (!hazard) return { fired: false, reason: 'no-hazard' };
-        const laser = this.firePlayerLaser(Number.POSITIVE_INFINITY, hazard.x, hazard.y + this.#layout.projectileSize.height);
+        const laser = this.firePlayerLaser(Number.POSITIVE_INFINITY, hazard.x, hazard.y);
+        if (laser) {
+          const body = laser.body as Phaser.Physics.Arcade.Body;
+          // Hostile collision setup uses the real pooled projectile and body,
+          // positioned within the live target so runner scheduling cannot turn
+          // a collision invariant into a timing race.
+          laser.setPosition(hazard.x, hazard.y);
+          body.reset(hazard.x, hazard.y);
+          body.prev.set(body.x, body.y);
+          body.setVelocity(0, 0);
+        }
         return { fired: Boolean(laser), hazardX: hazard.x, hazardY: hazard.y, laserX: laser?.x };
       },
       state: () => this.buildQaState(),
