@@ -17,6 +17,7 @@ const assert = (condition, message) => { if (!condition) throw new Error(message
 const browser = await chromium.launch();
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  page.setDefaultTimeout(10_000);
   const consoleErrors = [];
   page.on('console', (message) => { if (message.type() === 'error') consoleErrors.push(message.text()); });
   await page.goto(`${baseUrl}/inceptivec-gamification-admin/login`, { waitUntil: 'networkidle' });
@@ -27,12 +28,14 @@ try {
   const initial = await page.evaluate(async () => (await fetch('/api/v1/admin/levels/authority/', { credentials: 'same-origin' })).json());
   const level = initial.results[0];
   const original = level.active_version;
+  const targetEntity = original.config.entities.find((entity) => entity.entity_type === 'SCOUT');
+  assert(targetEntity, 'The active campaign definition has no Scout available for the mixed-composition roundtrip.');
   const saveChangedDraft = async () => {
-    await page.locator('[aria-label="SCOUT at 50, 170"]').click();
+    await page.locator(`[aria-label="${targetEntity.entity_type} at ${targetEntity.x}, ${targetEntity.y}"]`).click();
     const entityType = page.locator('.designer-inspector').getByLabel('Type');
     await entityType.selectOption('CRUISER');
     assert(await entityType.inputValue() === 'CRUISER', 'Designer entity composition edit did not retain before save.');
-    await page.locator('[aria-label="CRUISER at 50, 120"]').waitFor();
+    await page.locator(`[aria-label="CRUISER at ${targetEntity.x}, ${targetEntity.y}"]`).waitFor();
     await page.locator('.designer-formation-box').first().click();
     const layout = page.locator('.designer-inspector').getByLabel('Layout');
     await layout.selectOption('WEDGE');
@@ -57,7 +60,7 @@ try {
       const current = authority.results.find((item) => item.id === level.id);
       console.error(JSON.stringify({ designer_conflict: { latest: current?.versions?.[0], editable: current?.editable_version, active: current?.active_version } }));
     }
-    if (!conflict) console.log(JSON.stringify({ designer_draft_response: { version: draftBody.version, checksum: draftBody.checksum, entity: draftBody.config?.entities?.find((entity) => entity.id === 'level-01:formation-0:r0:c0'), formation: draftBody.config?.formations?.[0], hazards: draftBody.config?.hazard_emitters } }));
+    if (!conflict) console.log(JSON.stringify({ designer_draft_response: { version: draftBody.version, checksum: draftBody.checksum, entity: draftBody.config?.entities?.find((entity) => entity.id === targetEntity.id), formation: draftBody.config?.formations?.[0], hazards: draftBody.config?.hazard_emitters } }));
     return conflict;
   };
   const conflicted = await saveChangedDraft();
@@ -75,7 +78,7 @@ try {
     latest: { version: saved?.version, checksum: saved?.checksum },
   } }));
   assert(saved && saved.checksum !== original.checksum, 'Designer save did not create a distinct immutable draft.');
-  assert(saved.config.entities.find((entity) => entity.id === 'level-01:formation-0:r0:c0')?.entity_type === 'CRUISER', 'Reloaded draft lost the authored mixed enemy composition.');
+  assert(saved.config.entities.find((entity) => entity.id === targetEntity.id)?.entity_type === 'CRUISER', 'Reloaded draft lost the authored mixed enemy composition.');
   assert(saved.config.formations[0]?.layout === 'WEDGE', 'Reloaded draft lost the authored formation layout.');
   assert(saved.config.hazard_emitters.some((emitter) => emitter.hazard_type === 'ASTEROID' && emitter.speed_min === 173), 'Reloaded draft lost the authored hazard property.');
   await page.screenshot({ path: path.join(outputDir, '01-designer-immutable-draft.png'), fullPage: true });
