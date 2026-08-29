@@ -269,13 +269,24 @@ class Command(BaseCommand):
             ('ui.life-icon', 'ui', '/gg-runtime-assets/ui/icons/gg_hud_life_icon_v002.png', '9e0f8607f264acb9614958d7043c5f69f4a4ebb303d57049203fd481d1eb0408'),
             ('boarding.player', 'boarding', '/gg-runtime-assets/boarding/characters/player_001_v001.png', '136304bd25e0d04f8bb843bb51b6be0c5bf10d761bfab41d6bd53f782e70d115'),
         ]
+        designer_previews = {
+            'player.ship': '/gg-runtime-assets/designer-previews/player-ship.svg',
+            'enemy.scout': '/gg-runtime-assets/designer-previews/enemy-scout.svg',
+            'enemy.cruiser': '/gg-runtime-assets/designer-previews/enemy-cruiser.svg',
+            'enemy.destroyer': '/gg-runtime-assets/designer-previews/enemy-destroyer.svg',
+            'enemy.mothership': '/gg-runtime-assets/designer-previews/enemy-mothership.svg',
+            'projectile.nuke': '/gg-runtime-assets/designer-previews/projectile-nuke.svg',
+            'hazard.asteroid': '/gg-runtime-assets/designer-previews/hazard-asteroid.svg',
+            'hazard.comet': '/gg-runtime-assets/designer-previews/hazard-comet.svg',
+        }
         for key, category, runtime_path, digest in catalogue:
             AssetRecord.objects.update_or_create(
                 key=key,
                 defaults={
                     'category': category_rows[category], 'owner_scope': OwnerScope.CORE,
                     'visibility': Visibility.PUBLIC, 'status': AssetRecord.Status.ACTIVE,
-                    'runtime_path': runtime_path, 'thumbnail_path': runtime_path,
+                    'runtime_path': runtime_path,
+                    'thumbnail_path': designer_previews.get(key, runtime_path),
                     'mime_type': 'image/png', 'checksum': digest,
                     'provenance_ref': 'apps/web/public/gg-runtime-assets/manifest.json',
                 },

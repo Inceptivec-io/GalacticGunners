@@ -8,7 +8,7 @@ import {
   type CSSProperties,
   type DragEvent,
   type KeyboardEvent,
-  type MouseEvent,
+  type PointerEvent,
 } from "react";
 
 type EntityType =
@@ -487,13 +487,26 @@ export function CampaignDesigner({
     x: number;
     y: number;
     ids: string[];
+    pointerId: number;
+    bounds: { left: number; top: number; width: number; height: number };
   } | null>(null);
   const [dragInitial, setDragInitial] = useState<AuthoringDocument | null>(null);
   const [selectionStart, setSelectionStart] = useState<{
     x: number;
     y: number;
   } | null>(null);
-  const canvasRef = useRef<HTMLDivElement>(null);
+  const playfieldRef = useRef<HTMLDivElement>(null);
+  // Pointer moves can arrive before React has committed state from pointerdown.
+  // Keep the active gesture synchronously available for mouse, pen, and touch.
+  const dragStartRef = useRef<{
+    x: number;
+    y: number;
+    ids: string[];
+    pointerId: number;
+    bounds: { left: number; top: number; width: number; height: number };
+  } | null>(null);
+  const dragInitialRef = useRef<AuthoringDocument | null>(null);
+  const selectionStartRef = useRef<{ x: number; y: number } | null>(null);
   const selectedLevel = useMemo(
     () => levels.find((level) => level.id === selectedLevelId) ?? null,
     [levels, selectedLevelId],
@@ -640,9 +653,14 @@ export function CampaignDesigner({
       ? Math.round(value / grid) * grid
       : Math.round(value);
   };
-  const point = (event: { clientX: number; clientY: number }) => {
-    const bounds = canvasRef.current?.getBoundingClientRect();
-    return !bounds
+  const point = (
+    event: { clientX: number; clientY: number },
+    fixedBounds?: { left: number; top: number; width: number; height: number },
+  ) => {
+    // The transformed playfield, rather than its scrollable outer wrapper, is
+    // the sole pointer-to-authoring coordinate authority.
+    const bounds = fixedBounds ?? playfieldRef.current?.getBoundingClientRect();
+    const mapped = !bounds
       ? { x: 640, y: 360 }
       : {
           x: snap(
@@ -664,6 +682,7 @@ export function CampaignDesigner({
             ),
           ),
         };
+    return mapped;
   };
   function addEntity(type: EntityType, x = 640, y = 360) {
     const [width, height] = dimensions[type];
@@ -1088,27 +1107,38 @@ export function CampaignDesigner({
       addEntity(type, position.x, position.y);
     }
   }
-  function canvasPointerDown(event: MouseEvent<HTMLDivElement>) {
+  function canvasPointerDown(event: PointerEvent<HTMLDivElement>) {
     if (event.target !== event.currentTarget) return;
-    setSelectionStart(point(event));
+    event.currentTarget.setPointerCapture(event.pointerId);
+    const start = point(event);
+    selectionStartRef.current = start;
+    setSelectionStart(start);
     setSelectedIds([]);
   }
-  function canvasPointerUp(event: MouseEvent<HTMLDivElement>) {
-    if (dragStart) {
-      if (dragInitial) {
-        setHistory((past) => [...past.slice(-49), dragInitial]);
+  function canvasPointerUp(event: PointerEvent<HTMLDivElement>) {
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+    const activeDrag = dragStartRef.current;
+    if (activeDrag) {
+      if (dragInitialRef.current) {
+        const initial = dragInitialRef.current;
+        setHistory((past) => [...past.slice(-49), initial]);
         setFuture([]);
       }
+      dragStartRef.current = null;
+      dragInitialRef.current = null;
       setDragStart(null);
       setDragInitial(null);
       return;
     }
-    if (!selectionStart || !document) return;
+    const activeSelection = selectionStartRef.current;
+    if (!activeSelection || !document) return;
     const end = point(event);
-    const left = Math.min(selectionStart.x, end.x);
-    const right = Math.max(selectionStart.x, end.x);
-    const top = Math.min(selectionStart.y, end.y);
-    const bottom = Math.max(selectionStart.y, end.y);
+    const left = Math.min(activeSelection.x, end.x);
+    const right = Math.max(activeSelection.x, end.x);
+    const top = Math.min(activeSelection.y, end.y);
+    const bottom = Math.max(activeSelection.y, end.y);
     if (Math.abs(right - left) >= 8 || Math.abs(bottom - top) >= 8)
       setSelectedIds(
         document.entities
@@ -1121,30 +1151,51 @@ export function CampaignDesigner({
           )
           .map((entity) => entity.id),
       );
+    selectionStartRef.current = null;
     setSelectionStart(null);
   }
-  function beginDrag(event: MouseEvent<HTMLButtonElement>, id: string) {
+  function beginDrag(event: PointerEvent<HTMLButtonElement>, id: string) {
     event.stopPropagation();
-    const position = point(event);
+    event.preventDefault();
+    event.currentTarget.focus({ preventScroll: true });
+    const rect = playfieldRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const bounds = {
+      left: rect.left,
+      top: rect.top,
+      width: rect.width,
+      height: rect.height,
+    };
+    const position = point(event, bounds);
     const ids = event.shiftKey
       ? [...new Set([...selectedIds, id])]
       : selectedIds.includes(id)
         ? selectedIds
         : [id];
     setSelectedIds(ids);
+    dragInitialRef.current = document;
     setDragInitial(document);
-    setDragStart({ ...position, ids });
+    try {
+      playfieldRef.current?.setPointerCapture(event.pointerId);
+    } catch {
+      // Synthetic accessibility and browser-verification events have no native
+      // active pointer to capture; their explicit target remains the playfield.
+    }
+    const nextDrag = { ...position, ids, pointerId: event.pointerId, bounds };
+    dragStartRef.current = nextDrag;
+    setDragStart(nextDrag);
   }
-  function dragMove(event: MouseEvent<HTMLDivElement>) {
-    if (!dragStart) return;
-    const at = point(event);
-    const dx = at.x - dragStart.x;
-    const dy = at.y - dragStart.y;
+  function dragMove(event: PointerEvent<HTMLDivElement>) {
+    const activeDrag = dragStartRef.current;
+    if (!activeDrag || activeDrag.pointerId !== event.pointerId) return;
+    const at = point(event, activeDrag.bounds);
+    const dx = at.x - activeDrag.x;
+    const dy = at.y - activeDrag.y;
     if (dx || dy) {
       setDocument((current) => current ? ({
         ...current,
         entities: current.entities.map((entity) =>
-          dragStart.ids.includes(entity.id)
+          activeDrag.ids.includes(entity.id)
             ? {
                 ...entity,
                 x: snap(Math.max(0, Math.min(1280, entity.x + dx))),
@@ -1153,7 +1204,7 @@ export function CampaignDesigner({
             : entity,
         ),
         player_spawns: current.player_spawns.map((spawn) =>
-          dragStart.ids.includes(`player:${spawn.id}`)
+          activeDrag.ids.includes(`player:${spawn.id}`)
             ? {
                 ...spawn,
                 x: snap(Math.max(0, Math.min(1280, spawn.x + dx))),
@@ -1162,7 +1213,9 @@ export function CampaignDesigner({
             : spawn,
         ),
       }) : current);
-      setDragStart({ ...at, ids: dragStart.ids });
+      const nextDrag = { ...at, ids: activeDrag.ids, pointerId: activeDrag.pointerId, bounds: activeDrag.bounds };
+      dragStartRef.current = nextDrag;
+      setDragStart(nextDrag);
     }
   }
   function keyMove(event: KeyboardEvent<HTMLButtonElement>) {
@@ -1313,26 +1366,29 @@ export function CampaignDesigner({
             <input
               aria-label="Canvas zoom"
               type="range"
-              min="0.6"
+              min="0.5"
               max="1.5"
-              step="0.1"
+              step="0.25"
               value={zoom}
               onChange={(event) => setZoom(Number(event.target.value))}
             />
           </label>
         </header>
         <div
-          ref={canvasRef}
           className="designer-canvas"
           style={{ "--designer-zoom": zoom } as CSSProperties}
           aria-label="Level canvas"
           onDragOver={(event) => event.preventDefault()}
           onDrop={onCanvasDrop}
-          onMouseDown={canvasPointerDown}
-          onMouseMove={dragMove}
-          onMouseUp={canvasPointerUp}
         >
-          <div className="designer-playfield">
+          <div
+            ref={playfieldRef}
+            className="designer-playfield"
+            onPointerDown={canvasPointerDown}
+            onPointerMove={dragMove}
+            onPointerUp={canvasPointerUp}
+            onPointerCancel={canvasPointerUp}
+          >
             {document?.player_spawns
               .filter((spawn) => spawn.enabled)
               .map((spawn) => {
@@ -1350,11 +1406,12 @@ export function CampaignDesigner({
                       height: "48px",
                       transform: `translate(-50%, -50%) rotate(${spawn.rotation}deg)`,
                     }}
+                    onMouseDown={(event) => event.preventDefault()}
                     onClick={(event) => {
                       event.stopPropagation();
                       setSelectedIds([`player:${spawn.id}`]);
                     }}
-                    onMouseDown={(event) => beginDrag(event, `player:${spawn.id}`)}
+                    onPointerDown={(event) => beginDrag(event, `player:${spawn.id}`)}
                     onKeyDown={keyMove}
                   >
                     {asset ? <img src={asset.thumbnail_path} alt="" /> : "PLAYER"}
@@ -1460,7 +1517,8 @@ export function CampaignDesigner({
                     height: `${Math.max(22, entity.height * 0.55)}px`,
                     transform: `translate(-50%, -50%) rotate(${entity.rotation}deg)`,
                   }}
-                  onMouseDown={(event) => beginDrag(event, entity.id)}
+                  onMouseDown={(event) => event.preventDefault()}
+                  onPointerDown={(event) => beginDrag(event, entity.id)}
                   onClick={(event) => {
                     event.stopPropagation();
                     setSelectedIds(

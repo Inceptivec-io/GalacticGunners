@@ -310,6 +310,20 @@ const runtimeAssets = [
   },
 ];
 
+// Designer thumbnails are generated runtime derivatives, not CSS crops.  Each
+// definition names the canonical transparent frame rectangle from the admitted
+// sheet metadata used by the Phaser runtime.
+const designerPreviewFrames = {
+  'player.ship': { sourceWidth: 2172, sourceHeight: 724, x: 0, y: 0, width: 543, height: 724 },
+  'enemy.scout': { sourceWidth: 1983, sourceHeight: 793, x: 0, y: 0, width: 480, height: 793 },
+  'enemy.cruiser': { sourceWidth: 418, sourceHeight: 941, x: 0, y: 0, width: 418, height: 941 },
+  'enemy.destroyer': { sourceWidth: 543, sourceHeight: 724, x: 0, y: 0, width: 543, height: 724 },
+  'enemy.mothership': { sourceWidth: 1425, sourceHeight: 724, x: 0, y: 0, width: 1425, height: 724 },
+  'projectile.nuke': { sourceWidth: 2880, sourceHeight: 800, x: 0, y: 0, width: 720, height: 800 },
+  'fx.asteroid': { name: 'hazard-asteroid', sourceWidth: 543, sourceHeight: 724, x: 0, y: 0, width: 543, height: 724 },
+  'fx.comet': { name: 'hazard-comet', sourceWidth: 448, sourceHeight: 448, x: 0, y: 0, width: 448, height: 448 },
+};
+
 const h014Matrix = path.join(root, 'docs', 'internal_governance', 'handoff_in', '_archive', 'GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_014', 'GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_014_BOARDING_MODE_PLATFORM_IMPLEMENTATION', 'registers', 'H014_ASSET_USE_MATRIX.csv');
 if (existsSync(h014Matrix)) {
   const lines = readFileSync(h014Matrix, 'utf8').trim().split(/\r?\n/).slice(1);
@@ -361,6 +375,19 @@ for (const asset of runtimeAssets) {
   if (runtimeSha !== asset.sha256) {
     throw new Error(`Runtime copy hash mismatch for ${asset.runtime}: expected ${asset.sha256}, got ${runtimeSha}`);
   }
+  const preview = designerPreviewFrames[asset.key];
+  let thumbnailPath = `/gg-runtime-assets/${asset.runtime.replaceAll(path.sep, '/')}`;
+  let thumbnailSha = runtimeSha;
+  if (preview) {
+    const previewName = `${preview.name ?? asset.key.replaceAll('.', '-')}.svg`;
+    const previewPath = path.join(outputRoot, 'designer-previews', previewName);
+    const imagePath = `/gg-runtime-assets/${asset.runtime.replaceAll(path.sep, '/')}`;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${preview.x} ${preview.y} ${preview.width} ${preview.height}" width="${preview.width}" height="${preview.height}"><image href="${imagePath}" width="${preview.sourceWidth}" height="${preview.sourceHeight}"/></svg>\n`;
+    mkdirSync(path.dirname(previewPath), { recursive: true });
+    writeFileSync(previewPath, svg);
+    thumbnailPath = `/gg-runtime-assets/designer-previews/${previewName}`;
+    thumbnailSha = sha256(previewPath);
+  }
   manifest.push({
     key: asset.key,
     asset_id: asset.assetId,
@@ -368,6 +395,8 @@ for (const asset of runtimeAssets) {
     canonical_sha256: asset.sha256,
     runtime_path: `/gg-runtime-assets/${asset.runtime.replaceAll(path.sep, '/')}`,
     runtime_sha256: runtimeSha,
+    thumbnail_path: thumbnailPath,
+    thumbnail_sha256: thumbnailSha,
   });
 }
 
