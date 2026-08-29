@@ -13,7 +13,10 @@ export default function AccountPage() {
   async function logout() {
     const csrf = await fetch('/api/v1/auth/csrf/', { credentials: 'same-origin' }).then((response) => response.json() as Promise<{ csrf_token: string }>);
     const response = await fetch('/api/v1/auth/logout/', { method: 'POST', credentials: 'same-origin', headers: { 'X-CSRFToken': csrf.csrf_token } });
-    if (response.ok) router.replace('/account');
+    if (response.ok) {
+      setSession({ authenticated: false, user: null, surface_grants: [], memberships: [] });
+      router.replace('/account');
+    }
   }
   return <main className="admin-session-state"><h1>{session.user.display_name}</h1><p>@{session.user.username}</p><nav><a href="/play">Play</a><a href="/leaderboard">Leaderboard</a>{session.surface_grants.includes('COMMAND_POST') ? <a href="/command-post">Command Post</a> : null}{session.surface_grants.includes('INCEPTIVEC_ADMIN') ? <a href="/inceptivec-gamification-admin">Inceptivec Admin</a> : null}<button type="button" onClick={() => void logout()}>Logout</button></nav><p>Registered scores are eligible for server validation. Anonymous play remains unranked.</p></main>;
 }
