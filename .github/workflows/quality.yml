@@ -275,6 +275,7 @@ jobs:
           printf 'Inceptivec administrator: %s / %s\nCommand Post customer: %s / %s\nPlayer: %s / %s\n' "$FOUNDER_REVIEW_USERNAME" "$FOUNDER_REVIEW_PASSWORD" "$COMMAND_POST_REVIEW_USERNAME" "$COMMAND_POST_REVIEW_PASSWORD" "$PLAYER_REVIEW_USERNAME" "$PLAYER_REVIEW_PASSWORD" > FOUNDER_REVIEW_ACCESS.local.txt
           mkdir -p "$GG_EVIDENCE_DIR"
           GG_RUNTIME_URL=http://localhost:3002 GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/hostile" npm run runtime:hostile
+          GG_RUNTIME_URL=http://localhost:3002 GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/rectification/stage-1" npm run runtime:h015:stage1
           GG_RUNTIME_URL=http://localhost:3002 GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/rectification/stage-2" npm run runtime:h015:stage2
           GG_RUNTIME_URL=http://localhost:3002 GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/rectification/stage-3" npm run runtime:h015:stage3
           GG_RUNTIME_URL=http://localhost:3002 GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/rectification/stage-4" npm run runtime:h015:stage4
@@ -286,6 +287,7 @@ jobs:
           GG_RUNTIME_URL=http://localhost:3002 GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/rectification/designer_roundtrip" npm run runtime:h015:designer-roundtrip
           GG_RUNTIME_URL=http://localhost:3002 GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/review_matrix" npm run runtime:h015:review-matrix
           npm run h015:build-evidence-manifest
+          GG_EVIDENCE_MANIFEST="$GG_EVIDENCE_DIR/h015-evidence-manifest.json" npm run h015:closure-audit
       - name: Upload H015 browser evidence
         if: always()
         uses: actions/upload-artifact@v4

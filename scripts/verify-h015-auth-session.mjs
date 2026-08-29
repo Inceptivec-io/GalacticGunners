@@ -42,6 +42,7 @@ try {
   await page.goto(`${baseUrl}/account`, { waitUntil: 'networkidle' });
   await page.getByRole('button', { name: 'Logout' }).waitFor();
   await logout();
+  await page.screenshot({ path: path.join(evidenceDir, '02-player-logout.png'), fullPage: true });
 
   const rejected = ['//example.invalid', 'https://example.invalid/path', 'javascript:alert(1)', '/%2f%2fexample.invalid', '/%5cexample.invalid', 'relative-path'];
   for (const candidate of rejected) {

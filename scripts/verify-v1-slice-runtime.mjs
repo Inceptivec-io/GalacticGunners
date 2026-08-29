@@ -4,6 +4,7 @@ import { chromium } from 'playwright';
 
 const baseUrl = process.env.GG_RUNTIME_URL ?? 'http://localhost:3002';
 const handoffId = process.env.GG_HANDOFF_ID ?? 'GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015';
+const testedSha = process.env.GG_TESTED_SHA ?? 'UNSPECIFIED';
 const outputDir = process.env.GG_EVIDENCE_DIR
   ? path.resolve(process.env.GG_EVIDENCE_DIR)
   : path.resolve(`docs/internal_governance/evidence/${handoffId}/browser_runtime`);
@@ -750,6 +751,7 @@ try {
   const result = {
     url: baseUrl,
     handoff_id: handoffId,
+    tested_sha: testedSha,
     generated_at: new Date().toISOString(),
     banned_visible_terms: bannedVisibleTerms,
     hostile,
@@ -761,6 +763,7 @@ try {
     unexpected_network_failures_or_4xx_5xx: unexpectedNetworkFailures,
     visual_matrix: visualMatrix,
     assertions,
+    result: Object.values(assertions).every(Boolean) ? 'PASS' : 'FAIL',
   };
   writeFileSync(path.join(outputDir, 'runtime-hostile-verification.json'), `${JSON.stringify(result, null, 2)}\n`);
   const failed = Object.entries(assertions).filter(([, passed]) => !passed);

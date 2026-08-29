@@ -31,6 +31,7 @@ try {
   await page.waitForSelector('canvas', { timeout: 10_000 });
   await page.waitForFunction(() => window.__GALACTIC_GUNNERS_SPLASH_QA__?.scene === 'SplashScene', { timeout: 15_000 });
   const splash = await page.evaluate(() => window.__GALACTIC_GUNNERS_SPLASH_QA__);
+  await page.screenshot({ path: path.join(outputDir, '01-governed-launch-splash.png'), fullPage: true });
   await page.waitForFunction(() => window.__GALACTIC_GUNNERS_MENU_QA__?.scene === 'MainMenuScene', { timeout: 5_000 });
   const splashDuration = await page.evaluate((startedAt) => window.__GALACTIC_GUNNERS_MENU_QA__.createdAt - startedAt, splash.startedAt);
   assert(splash.durationMs === 2_000 && splashDuration >= 1_700 && splashDuration <= 3_400,
@@ -52,6 +53,7 @@ try {
   await page.keyboard.press('p');
   await page.waitForFunction(() => window.__GALACTIC_GUNNERS_PAUSE_QA__?.scene === 'PauseScene', { timeout: 5_000 });
   const pause = await page.evaluate(() => window.__GALACTIC_GUNNERS_PAUSE_QA__);
+  await page.screenshot({ path: path.join(outputDir, '02-pause-actions-visible.png'), fullPage: true });
   assert(pause?.backdrop?.texture === 'translucent-overlay' && pause.backdrop.alpha > 0 && pause.backdrop.alpha < 1,
     `Pause backdrop is not translucent: ${JSON.stringify(pause?.backdrop)}`);
   assert(['RESUME', 'RESTART', 'MAIN MENU'].every((label) => pause.visibleTexts.includes(label)), 'Pause actions are incomplete.');
