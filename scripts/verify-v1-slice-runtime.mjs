@@ -297,6 +297,11 @@ async function movementProbe(page, keys, duration = 350) {
 }
 
 async function driveToMovementEdge(page, keys, edge) {
+  const canvas = await page.locator('canvas').boundingBox();
+  assert(canvas, 'Canvas is unavailable for movement bounds probe.');
+  // Chromium runners can retain focus on a previous terminal control after a
+  // scene transition. Focus the real game surface before exercising keyboard input.
+  await page.mouse.click(canvas.x + canvas.width / 2, canvas.y + canvas.height / 2);
   for (const key of keys) {
     await page.keyboard.down(key);
   }
