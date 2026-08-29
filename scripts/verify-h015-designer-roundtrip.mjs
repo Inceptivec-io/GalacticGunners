@@ -25,17 +25,19 @@ try {
   await page.locator('input[name="password"]').fill(admin.password);
   await page.locator('button[type="submit"]').click();
   await page.waitForSelector('[data-designer-route="campaign"]');
+  await page.waitForFunction(() => document.querySelectorAll('button.designer-placement').length > 1);
   const initial = await page.evaluate(async () => (await fetch('/api/v1/admin/levels/authority/', { credentials: 'same-origin' })).json());
   const level = initial.results[0];
-  const original = level.active_version;
-  const targetEntity = original.config.entities.find((entity) => entity.entity_type === 'SCOUT');
-  assert(targetEntity, 'The active campaign definition has no Scout available for the mixed-composition roundtrip.');
+  const original = level.editable_version ?? level.versions?.[0] ?? level.active_version;
+  const targetEntity = original.config.entities.find((entity) => entity.entity_type === 'SCOUT') ?? original.config.entities[0];
+  assert(targetEntity, 'The editable campaign definition has no entity available for the mixed-composition roundtrip.');
+  const replacementType = targetEntity.entity_type === 'CRUISER' ? 'SCOUT' : 'CRUISER';
   const saveChangedDraft = async () => {
     await page.locator(`[aria-label="${targetEntity.entity_type} at ${targetEntity.x}, ${targetEntity.y}"]`).click();
     const entityType = page.locator('.designer-inspector').getByLabel('Type');
-    await entityType.selectOption('CRUISER');
-    assert(await entityType.inputValue() === 'CRUISER', 'Designer entity composition edit did not retain before save.');
-    await page.locator(`[aria-label="CRUISER at ${targetEntity.x}, ${targetEntity.y}"]`).waitFor();
+    await entityType.selectOption(replacementType);
+    assert(await entityType.inputValue() === replacementType, 'Designer entity composition edit did not retain before save.');
+    await page.locator(`[aria-label="${replacementType} at ${targetEntity.x}, ${targetEntity.y}"]`).waitFor();
     await page.locator('.designer-formation-box').first().click();
     const layout = page.locator('.designer-inspector').getByLabel('Layout');
     await layout.selectOption('WEDGE');
@@ -78,7 +80,7 @@ try {
     latest: { version: saved?.version, checksum: saved?.checksum },
   } }));
   assert(saved && saved.checksum !== original.checksum, 'Designer save did not create a distinct immutable draft.');
-  assert(saved.config.entities.find((entity) => entity.id === targetEntity.id)?.entity_type === 'CRUISER', 'Reloaded draft lost the authored mixed enemy composition.');
+  assert(saved.config.entities.find((entity) => entity.id === targetEntity.id)?.entity_type === replacementType, 'Reloaded draft lost the authored mixed enemy composition.');
   assert(saved.config.formations[0]?.layout === 'WEDGE', 'Reloaded draft lost the authored formation layout.');
   assert(saved.config.hazard_emitters.some((emitter) => emitter.hazard_type === 'ASTEROID' && emitter.speed_min === 173), 'Reloaded draft lost the authored hazard property.');
   await page.screenshot({ path: path.join(outputDir, '01-designer-immutable-draft.png'), fullPage: true });
