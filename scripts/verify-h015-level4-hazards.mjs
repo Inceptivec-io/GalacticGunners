@@ -46,12 +46,20 @@ try {
     `Level 4 did not visibly instantiate its configured comet hazards: ${JSON.stringify(before.hazardBodies)}`);
   assert(before.hazardBodies.every((hazard) => hazard.body.width > 10 && hazard.body.height > 10),
     `Level 4 hazard collision bodies are not meaningful: ${JSON.stringify(before.hazardBodies)}`);
+  assert(before.hazardBodies.every((hazard) => Math.abs(hazard.body.velocityX) > 0 || Math.abs(hazard.body.velocityY) > 0),
+    `Level 4 hazard emitters produced stationary hazards: ${JSON.stringify(before.hazardBodies)}`);
+  await page.waitForFunction(() => {
+    const snapshot = window.__GALACTIC_GUNNERS_HOSTILE__?.state();
+    return snapshot?.hazardBodies?.some((hazard) => hazard.x >= 0 && hazard.x <= window.innerWidth
+      && hazard.y >= 0 && hazard.y <= window.innerHeight);
+  }, null, { timeout: 5_000 });
+  const liveBefore = await state(page);
   await page.screenshot({ path: path.join(outputDir, '01-level4-live-comets.png'), fullPage: true });
 
   const fired = await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__?.firePlayerLaserAtHazard(0));
   assert(fired?.fired, `Could not fire at Level 4 hazard: ${JSON.stringify(fired)}`);
   try {
-    await page.waitForFunction((count) => (window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.hazardBodies?.length ?? 0) === count, before.hazardBodies.length - 1, { timeout: 3_000 });
+    await page.waitForFunction((count) => (window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.hazardBodies?.length ?? 0) === count, liveBefore.hazardBodies.length - 1, { timeout: 3_000 });
   } catch (error) {
     const diagnostic = await state(page);
     throw new Error(`Configured comet did not resolve after a helper-fired player laser. fired=${JSON.stringify(fired)} state=${JSON.stringify({
@@ -61,7 +69,7 @@ try {
     })} original=${error.message}`);
   }
   const after = await state(page);
-  assert(after.score > before.score, `Hazard destruction did not apply a runtime score event: ${before.score} -> ${after.score}.`);
+  assert(after.score > liveBefore.score, `Hazard destruction did not apply a runtime score event: ${liveBefore.score} -> ${after.score}.`);
   assert(after.terminalState === null && after.campaign.sequence === 4, 'Hazard collision interrupted Level 4 gameplay.');
   await page.screenshot({ path: path.join(outputDir, '02-level4-comet-destroyed.png'), fullPage: true });
 
@@ -69,7 +77,7 @@ try {
     `Console errors: ${consoleErrors.join(' | ')}; network failures: ${networkFailures.join(' | ')}`);
   const result = {
     tested_sha: testedSha, base_url: baseUrl, generated_at: new Date().toISOString(),
-    level_4_reached: true, configured_comets_visible: true, meaningful_hazard_bodies: true,
+    level_4_reached: true, configured_comets_visible: true, meaningful_hazard_bodies: true, hazard_motion: true,
     player_laser_hazard_collision: true, hazard_destroyed: true, score_applied: true,
     level_4_continues: true, console_errors: consoleErrors, network_failures: networkFailures, result: 'PASS',
   };

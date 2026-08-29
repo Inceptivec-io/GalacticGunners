@@ -408,13 +408,15 @@ export class Level1Scene extends CombatLevelScene {
     const magnitude = emitter ? this.deterministicRange(emitter.speed_min, emitter.speed_max, `${emitter.id}:speed:${ordinal}`) : speed;
     const direction = edge === 'LEFT' ? new Phaser.Math.Vector2(1, 0.4) : edge === 'RIGHT' ? new Phaser.Math.Vector2(-1, 0.4) : edge === 'BOTTOM' ? new Phaser.Math.Vector2(0, -1) : new Phaser.Math.Vector2(0, 1);
     direction.normalize().scale(magnitude);
-    hazard.setVelocity(direction.x, direction.y);
     if (type === 'asteroid') {
       hazard.setAngularVelocity(emitter ? this.deterministicRange(emitter.angular_velocity_min, emitter.angular_velocity_max, `${emitter.id}:spin:${ordinal}`) : 28);
     } else {
       hazard.setRotation(direction.angle() + Math.PI / 2);
     }
     this.#hazards.add(hazard);
+    // Arcade group admission applies its defaults to a child. Set the motion
+    // afterwards so edge-emitted hazards retain their authored trajectory.
+    body.setVelocity(direction.x, direction.y);
   }
 
   private deterministicRange(minimum: number, maximum: number, key: string): number {
@@ -1829,7 +1831,12 @@ export class Level1Scene extends CombatLevelScene {
         return { launched: this.#boardingActive, offerPresented, transition: this.#boardingTransition, anchorId: anchor?.id ?? null, gameRunId: this.#session.runId };
       },
       firePlayerLaserAtHazard: (index = 0) => {
-        const hazard = (this.#hazards.getChildren().filter((candidate) => candidate.active) as Phaser.Physics.Arcade.Sprite[])[index];
+        const activeHazards = this.#hazards.getChildren().filter((candidate) => candidate.active) as Phaser.Physics.Arcade.Sprite[];
+        // The hostile contract must target a hazard that is still in the live playfield,
+        // rather than a pooled object retained just beyond an entry/exit boundary.
+        const liveHazards = activeHazards.filter((candidate) => candidate.x >= 0 && candidate.x <= this.scale.width
+          && candidate.y >= 0 && candidate.y <= this.scale.height);
+        const hazard = liveHazards[index] ?? activeHazards[index];
         if (!hazard) return { fired: false, reason: 'no-hazard' };
         const laser = this.firePlayerLaser(Number.POSITIVE_INFINITY, hazard.x, hazard.y + this.#layout.projectileSize.height);
         return { fired: Boolean(laser), hazardX: hazard.x, hazardY: hazard.y, laserX: laser?.x };
@@ -1961,7 +1968,13 @@ export class Level1Scene extends CombatLevelScene {
       }),
       hazardBodies: (this.#hazards?.getChildren().filter((hazard) => hazard.active) as Phaser.Physics.Arcade.Sprite[] ?? []).map((hazard) => {
         const body = hazard.body as Phaser.Physics.Arcade.Body;
-        return { type: hazard.getData('hazardType'), x: Math.round(hazard.x), y: Math.round(hazard.y), body: { x: Math.round(body.x), y: Math.round(body.y), width: Math.round(body.width), height: Math.round(body.height) } };
+        return {
+          type: hazard.getData('hazardType'), x: Math.round(hazard.x), y: Math.round(hazard.y),
+          body: {
+            x: Math.round(body.x), y: Math.round(body.y), width: Math.round(body.width), height: Math.round(body.height),
+            velocityX: Math.round(body.velocity.x), velocityY: Math.round(body.velocity.y),
+          },
+        };
       }),
       playerLaserBodies: (this.#playerLasers?.getChildren().filter((child) => child.active) as Phaser.Physics.Arcade.Image[] ?? []).map((laser) => {
         const body = laser.body as Phaser.Physics.Arcade.Body;
