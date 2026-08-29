@@ -32,3 +32,22 @@ PR_12=DRAFT_OPEN_UNMERGED
 - Re-run the complete local and remote exact-SHA closure workflow before issuing any replacement Handoff-Out.
 
 No product, gameplay, platform or creative scope is authorised by this rectification.
+
+## Replacement Evidence Result
+
+The bounded correction completed at tested SHA `ded96d0d99c69bac43726068d166a4386fcd6385`.
+
+- Local generated artifact: `C:\Users\Michael\AppData\Local\Temp\galactic-gunners-founder-review-ded96d0d99c69bac43726068d166a4386fcd6385\h015-evidence-manifest.json`
+- Artifact index SHA-256: `05c1a175208c27f39fa8e9bf3cd05c6ae40e7ab2eee06e62458277bcf454e748`
+- Every required manifest gate: `PASS`, including `campaign-progression`, Designer roundtrip/review matrix, Boarding entry/abort, Boarding success/return, and generated `closure-audit` evidence.
+- Negative audit coverage: PASS for failed gate, missing gate, missing evidence, SHA mismatch, duplicate Designer state, and duplicate Boarding state.
+- Boarding success evidence: the real EXIT touch control was accepted only after the exit unlocked; server completion stopped Boarding and resumed Shooter with different rendered capture hashes.
+- GitHub Actions: [run 33268555046](https://github.com/Inceptivec-io/GalacticGunners/actions/runs/33268555046) SUCCESS at the same SHA, including `runtime-browser` and `runtime-hostile`.
+
+```text
+H015_STATUS=REPLACEMENT_RETURN_READY
+FOUNDER_REVIEW_READY=YES
+FOUNDER_ACCEPTANCE=PENDING
+MERGE_AUTHORISED=NO
+PR_12=DRAFT_OPEN_UNMERGED
+```

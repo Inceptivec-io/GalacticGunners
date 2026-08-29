@@ -1,8 +1,8 @@
 # H015 Runtime Verification Authority
 
 **Handoff:** `GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015` BASE + REV1 + additive authority  
-**Rectification status:** `IMPLEMENTATION COMPLETE / FOUNDER ACCEPTANCE PENDING`
-**Current tested build:** `0032d36b5efc66f9213421ec261c01c45d62038e`
+**Rectification status:** `CLOSURE EVIDENCE RECTIFICATION COMPLETE / FOUNDER ACCEPTANCE PENDING`
+**Current tested build:** `ded96d0d99c69bac43726068d166a4386fcd6385`
 **Branch:** `feature/v1-platform-foundation-campaign-continuity`
 
 ## Superseded Preliminary Evidence
@@ -20,4 +20,4 @@ The former candidate `e5becaff20d0857845b67119587eb6a8b8e84cf3` and CI run `3311
 
 ## Current Closure State
 
-`FOUNDER_REVIEW_READY=YES` at the current tested build. The local fail-closed Founder-review launcher completed every gate and GitHub Actions run `33260144571` is green for the same SHA. PR #12 remains draft/open/unmerged; Founder acceptance remains pending. The final sealed Handoff-Out records the post-documentation SHA externally to avoid a Git self-reference loop.
+`FOUNDER_REVIEW_READY=YES` at the current tested build. The local fail-closed Founder-review launcher completed every gate, including the generated exact-SHA manifest and two-phase closure audit. GitHub Actions run `33268555046` is green for the same SHA. PR #12 remains draft/open/unmerged; Founder acceptance remains pending. The final sealed Handoff-Out records the post-documentation SHA externally to avoid a Git self-reference loop.

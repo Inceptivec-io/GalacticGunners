@@ -5,7 +5,7 @@ Programme:
 PLATFORM FOUNDATION AND CAMPAIGN CONTINUITY
 
 Stage:
-H015 CLOSURE EVIDENCE RECTIFICATION IN PROGRESS / FOUNDER TESTING NOT AUTHORISED
+H015 CLOSURE EVIDENCE RECTIFICATION COMPLETE / FOUNDER REVIEW READY / FOUNDER ACCEPTANCE PENDING
 
 Branch:
 feature/v1-platform-foundation-campaign-continuity
@@ -29,7 +29,7 @@ Current Repository Head Authority:
 origin/feature/v1-platform-foundation-campaign-continuity
 
 Local/Remote Reconciliation At Current Checkpoint:
-PASS at rejected readiness-return SHA `1b919d614fdb7fe72e9f04d62653dd436ac4676f`; closure evidence rectification is active on the same authorised branch.
+PASS at replacement tested SHA `ded96d0d99c69bac43726068d166a4386fcd6385`; local HEAD equalled `origin/feature/v1-platform-foundation-campaign-continuity` when the replacement artifact and remote CI completed.
 
 Worktree At Return:
 CLEAN before non-self-referential governance closeout commit.
@@ -77,4 +77,4 @@ Founder Acceptance:
 FOUNDER ACCEPTED - KNOWN PLATFORM AND RUNTIME ITEMS DEFERRED TO H015. Development does not assert unqualified Founder manual acceptance of deferred items. PR #11 remains open for Founder merge decision.
 
 H015 Closure:
-REJECTED / RECTIFICATION IN PROGRESS. The prior readiness claim at `1b919d614fdb7fe72e9f04d62653dd436ac4676f` is superseded because its generated artifact contained a failed `campaign-progression` gate and duplicate/nominal Designer and Boarding evidence while the closure audit still reported PASS. `FOUNDER_REVIEW_READY=NO`; Founder testing, acceptance and merge are not authorised. PR #12 remains draft/open/unmerged. The closure auditor, generated-artifact lifecycle, campaign gate record and browser evidence journeys must pass again at a new exact remote SHA before a replacement return is issued.
+RECTIFICATION COMPLETE / REPLACEMENT RETURN READY. The prior readiness claim at `1b919d614fdb7fe72e9f04d62653dd436ac4676f` remains rejected historical evidence. At `ded96d0d99c69bac43726068d166a4386fcd6385`, the locally generated exact-SHA artifact passed every required gate and the fail-closed two-phase closure audit; GitHub Actions run `33268555046` is SUCCESS at the same SHA. `FOUNDER_REVIEW_READY=YES`; Founder acceptance remains PENDING and PR #12 remains draft/open/unmerged. No merge is authorised.
