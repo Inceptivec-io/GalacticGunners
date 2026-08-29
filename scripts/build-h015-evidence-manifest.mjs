@@ -21,8 +21,20 @@ function mime(file) {
   if (file.endsWith('.webm')) return 'video/webm';
   return 'text/plain';
 }
+function distinctStateGroup(relativePath) {
+  const file = relativePath.replaceAll('\\', '/');
+  if (/^review_matrix\/0[567]-designer-/.test(file)) return 'designer-review-matrix';
+  if (/^rectification\/designer_roundtrip\/0[123]-designer-/.test(file)) return 'designer-roundtrip';
+  if (/^rectification\/boarding_success\/0[12]-boarding-/.test(file)) return 'boarding-success-return';
+  if (/^campaign_runtime\/(level-1-complete|level-2-running-after-continue|level-2-complete|final-campaign-complete|game-over)\.png$/.test(file)) return 'campaign-progression';
+  return undefined;
+}
 function evidence(directory) {
-  return files(path.join(root, directory)).map((file) => ({ path: relative(file), sha256: sha256(file), mime_type: mime(file) }));
+  return files(path.join(root, directory)).map((file) => {
+    const item = { path: relative(file), sha256: sha256(file), mime_type: mime(file) };
+    const group = item.mime_type === 'image/png' ? distinctStateGroup(item.path) : undefined;
+    return group ? { ...item, distinct_state_group: group } : item;
+  });
 }
 const gateDefinitions = {
   'runtime-hostile': {

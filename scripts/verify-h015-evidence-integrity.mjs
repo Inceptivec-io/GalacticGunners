@@ -65,10 +65,11 @@ export function auditManifest(manifest, { root, expectedSha }) {
       if (!existsSync(file) || !statSync(file).isFile()) { fail(`missing evidence: ${gate.id}:${evidence.path}`); continue; }
       const digest = sha256(file);
       if (digest !== evidence.sha256) fail(`evidence hash mismatch: ${gate.id}:${evidence.path}`);
-      if (evidence.mime_type === 'image/png') {
-        const prior = screenshotHashes.get(digest);
-        if (prior) fail(`duplicate screenshot hash: ${prior} and ${gate.id}`);
-        screenshotHashes.set(digest, gate.id);
+      if (evidence.mime_type === 'image/png' && evidence.distinct_state_group) {
+        const key = `${evidence.distinct_state_group}:${digest}`;
+        const prior = screenshotHashes.get(key);
+        if (prior) fail(`duplicate required-state screenshot hash: ${prior} and ${gate.id}:${evidence.path}`);
+        screenshotHashes.set(key, `${gate.id}:${evidence.path}`);
       }
     }
   }

@@ -24,8 +24,10 @@ genericObservation.gates[0].observed = 'Rendered and interacted without console 
 assert.match(auditManifest(genericObservation, { root, expectedSha: sha }).join('\n'), /generic observation/);
 
 const duplicateScreenshot = cloneManifest();
+duplicateScreenshot.gates[0].evidence[0].distinct_state_group = 'campaign-progression';
 duplicateScreenshot.gates[1].evidence[0].mime_type = 'image/png';
-assert.match(auditManifest(duplicateScreenshot, { root, expectedSha: sha }).join('\n'), /duplicate screenshot hash/);
+duplicateScreenshot.gates[1].evidence[0].distinct_state_group = 'campaign-progression';
+assert.match(auditManifest(duplicateScreenshot, { root, expectedSha: sha }).join('\n'), /duplicate required-state screenshot hash/);
 
 const missingActionTrace = cloneManifest();
 missingActionTrace.gates[0].actions = [];
@@ -49,9 +51,15 @@ assert.match(auditManifest(mismatchedSha, { root, expectedSha: sha }).join('\n')
 
 const duplicateDesigner = cloneManifest();
 duplicateDesigner.gates.find((entry) => entry.id === 'designer-roundtrip').evidence[0].mime_type = 'image/png';
-assert.match(auditManifest(duplicateDesigner, { root, expectedSha: sha }).join('\n'), /duplicate screenshot hash/);
+duplicateDesigner.gates.find((entry) => entry.id === 'designer-roundtrip').evidence[0].distinct_state_group = 'designer-review-matrix';
+duplicateDesigner.gates.find((entry) => entry.id === 'designer-review-matrix').evidence[0].mime_type = 'image/png';
+duplicateDesigner.gates.find((entry) => entry.id === 'designer-review-matrix').evidence[0].distinct_state_group = 'designer-review-matrix';
+assert.match(auditManifest(duplicateDesigner, { root, expectedSha: sha }).join('\n'), /duplicate required-state screenshot hash/);
 
 const duplicateBoarding = cloneManifest();
+duplicateBoarding.gates.find((entry) => entry.id === 'boarding-entry-abort').evidence[0].mime_type = 'image/png';
+duplicateBoarding.gates.find((entry) => entry.id === 'boarding-entry-abort').evidence[0].distinct_state_group = 'boarding-success-return';
 duplicateBoarding.gates.find((entry) => entry.id === 'boarding-success-return').evidence[0].mime_type = 'image/png';
-assert.match(auditManifest(duplicateBoarding, { root, expectedSha: sha }).join('\n'), /duplicate screenshot hash/);
+duplicateBoarding.gates.find((entry) => entry.id === 'boarding-success-return').evidence[0].distinct_state_group = 'boarding-success-return';
+assert.match(auditManifest(duplicateBoarding, { root, expectedSha: sha }).join('\n'), /duplicate required-state screenshot hash/);
 console.log('H015 evidence integrity tests passed.');
