@@ -287,13 +287,29 @@ jobs:
           GG_RUNTIME_URL=http://localhost:3002 GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/rectification/designer_roundtrip" npm run runtime:h015:designer-roundtrip
           GG_RUNTIME_URL=http://localhost:3002 GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/review_matrix" npm run runtime:h015:review-matrix
           npm run h015:build-evidence-manifest
-          GG_EVIDENCE_MANIFEST="$GG_EVIDENCE_DIR/h015-evidence-manifest.json" npm run h015:closure-audit
-      - name: Upload H015 browser evidence
-        if: always()
+      - name: Upload immutable H015 browser evidence
+        id: upload-evidence
         uses: actions/upload-artifact@v4
         with:
           name: h015-browser-evidence-${{ steps.source-sha.outputs.value }}
           path: /tmp/h015-browser-evidence
+          if-no-files-found: error
+          retention-days: 30
+      - name: Generate H015 closure attestation
+        env:
+          GG_EVIDENCE_MANIFEST: /tmp/h015-browser-evidence/h015-evidence-manifest.json
+          GG_EVIDENCE_ARTIFACT_ID: ${{ steps.upload-evidence.outputs.artifact-id }}
+          GG_EVIDENCE_ARTIFACT_NAME: h015-browser-evidence-${{ steps.source-sha.outputs.value }}
+          GG_EVIDENCE_ARTIFACT_DIGEST: ${{ steps.upload-evidence.outputs.artifact-digest }}
+          GG_CI_RUN_ID: ${{ github.run_id }}
+          GG_CLOSURE_ATTESTATION_DIR: /tmp/h015-closure-attestation
+        run: npm run h015:closure-attest
+      - name: Upload H015 closure attestation
+        id: upload-closure-attestation
+        uses: actions/upload-artifact@v4
+        with:
+          name: h015-closure-attestation-${{ steps.source-sha.outputs.value }}
+          path: /tmp/h015-closure-attestation
           if-no-files-found: error
           retention-days: 30
       - if: always()

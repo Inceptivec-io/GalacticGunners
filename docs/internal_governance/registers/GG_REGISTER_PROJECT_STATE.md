@@ -7,7 +7,7 @@
 | Commercial Repository | `Inceptivec-io/GalacticGunners` |
 | Historical Repository | `michael-leese/GallacticGunners` READ-ONLY |
 | Current Programme | H015 PLATFORM FOUNDATION AND CAMPAIGN CONTINUITY |
-| Current Stage | H015 CLOSURE EVIDENCE RECTIFICATION COMPLETE / FOUNDER REVIEW READY / FOUNDER ACCEPTANCE PENDING |
+| Current Stage | H015 FINAL EVIDENCE ATTESTATION IN PROGRESS / FOUNDER TESTING NOT AUTHORISED |
 | Active Handoff | GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015 |
 | Current Feature Branch | `feature/v1-platform-foundation-campaign-continuity` |
 | Base Branch | `dev` |
@@ -15,7 +15,7 @@
 | Branch Model | `feature/* -> dev -> stage -> prod` |
 | Default Branch Target | `prod` |
 | Current Feature HEAD | replacement tested SHA `ded96d0d99c69bac43726068d166a4386fcd6385`; PR #12 remains draft/open/unmerged |
-| Closure State | REPLACEMENT RETURN READY / `FOUNDER_REVIEW_READY=YES`; generated exact-SHA evidence and fail-closed closure audit PASS, GitHub Actions run `33268555046` SUCCESS; Founder acceptance and merge remain pending |
+| Closure State | IN PROGRESS / `FOUNDER_REVIEW_READY=NO`; CI evidence requires a separate strict closure-attestation artifact bound to the uploaded evidence ID and digest before Founder testing can be authorised |
 | Root Execution Contract | `AGENTS.md` |
 | External Boundary | `_EXTERNAL_GalacticGunners` |
 | Internal Governance Root | `docs/internal_governance` |

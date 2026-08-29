@@ -114,7 +114,13 @@ Invoke-EvidenceRuntime 'rectification/designer_roundtrip' { npm run runtime:h015
 Invoke-EvidenceRuntime 'review_matrix' { npm run runtime:h015:review-matrix } 'browser review matrix verification'
 $env:GG_EVIDENCE_DIR = $evidenceRoot
 Invoke-ReviewCommand { npm run h015:build-evidence-manifest } 'generated evidence manifest build'
-Invoke-ReviewCommand { npm run h015:closure-audit } 'generated evidence closure audit'
+$env:GG_EVIDENCE_MANIFEST = Join-Path $evidenceRoot 'h015-evidence-manifest.json'
+$env:GG_EVIDENCE_ARTIFACT_ID = "local-$sourceSha"
+$env:GG_EVIDENCE_ARTIFACT_NAME = "h015-browser-evidence-$sourceSha"
+$env:GG_EVIDENCE_ARTIFACT_DIGEST = (Get-FileHash (Join-Path $evidenceRoot 'h015-evidence-index.json') -Algorithm SHA256).Hash.ToLowerInvariant()
+$env:GG_CI_RUN_ID = 'local-founder'
+$env:GG_CLOSURE_ATTESTATION_DIR = Join-Path (Split-Path -Parent $evidenceRoot) 'h015-closure-attestation'
+Invoke-ReviewCommand { npm run h015:closure-attest } 'generated evidence closure attestation'
 @(
   "Source SHA: $sourceSha", 'Product/play: http://localhost:3002/play', 'Leaderboard: http://localhost:3002/leaderboard', 'Inceptivec admin: http://localhost:3002/inceptivec-gamification-admin', 'Command Post: http://localhost:3002/command-post',
   "Inceptivec administrator: $($values.FOUNDER_REVIEW_USERNAME) / $($values.FOUNDER_REVIEW_PASSWORD)", "Command Post customer: $($values.COMMAND_POST_REVIEW_USERNAME) / $($values.COMMAND_POST_REVIEW_PASSWORD)", "Player: $($values.PLAYER_REVIEW_USERNAME) / $($values.PLAYER_REVIEW_PASSWORD)",

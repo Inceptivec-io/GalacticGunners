@@ -30,6 +30,7 @@
     "runtime:h015:designer-roundtrip": "node scripts/verify-h015-designer-roundtrip.mjs",
     "runtime:h015:review-matrix": "node scripts/capture-h015-review-matrix.mjs",
     "h015:closure-audit": "node scripts/verify-h015-evidence-integrity.mjs",
+    "h015:closure-attest": "node scripts/generate-h015-closure-attestation.mjs",
     "h015:build-evidence-manifest": "node scripts/build-h015-evidence-manifest.mjs",
     "test:h015:evidence-integrity": "node scripts/test-h015-evidence-integrity.mjs",
     "runtime:boarding:hostile": "npm run test:boarding && node scripts/verify-boarding-runtime.mjs",

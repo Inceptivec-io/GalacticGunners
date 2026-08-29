@@ -51,3 +51,15 @@ FOUNDER_ACCEPTANCE=PENDING
 MERGE_AUTHORISED=NO
 PR_12=DRAFT_OPEN_UNMERGED
 ```
+
+## Final Evidence Attestation Gate
+
+The external audit found that CI run `33269330174` uploaded its evidence artifact before a durable closure report was bound to the upload. This is a Gate 0 closure defect only. The correction requires immutable evidence upload first, then a separate closure-attestation artifact containing the evidence artifact ID, digest, manifest digest, strict gate results, and zero failed or pending gates. Until that artifact pair exists at a new exact SHA:
+
+```text
+H015_STATUS=IN_PROGRESS
+FOUNDER_REVIEW_READY=NO
+FOUNDER_TESTING_AUTHORISED=NO
+FOUNDER_ACCEPTANCE=PENDING
+MERGE_AUTHORISED=NO
+```

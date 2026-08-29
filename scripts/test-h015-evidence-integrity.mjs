@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtempSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { auditManifest, REQUIRED_GATES, sha256 } from './verify-h015-evidence-integrity.mjs';
@@ -7,10 +7,14 @@ import { auditManifest, REQUIRED_GATES, sha256 } from './verify-h015-evidence-in
 const root = mkdtempSync(path.join(os.tmpdir(), 'gg-h015-evidence-test-'));
 const image = path.join(root, 'evidence.png');
 const artifact = path.join(root, 'artifact.json');
+const closureDirectory = path.join(root, 'closure_audit');
+const closureEvidence = path.join(closureDirectory, 'closure-audit-result.json');
 writeFileSync(image, 'distinct test image');
 writeFileSync(artifact, '{}');
+mkdirSync(closureDirectory);
+writeFileSync(closureEvidence, '{"result":"PASS"}');
 const sha = 'a'.repeat(40);
-const gate = (id, index) => ({ id, classification: 'AUTOMATED_BROWSER', route: '/play', setup: ['start clean runtime'], actions: [`perform action ${index}`], assertions: [`assert outcome ${index}`], tested_sha: sha, observed: `Observed outcome ${index}`, normal_gameplay_interaction: true, result: 'PASS', evidence: [{ path: 'evidence.png', sha256: sha256(image), mime_type: index ? 'application/json' : 'image/png' }], console_errors: [], network_failures: [] });
+const gate = (id, index) => ({ id, classification: 'AUTOMATED_BROWSER', route: '/play', setup: ['start clean runtime'], actions: [`perform action ${index}`], assertions: [`assert outcome ${index}`], tested_sha: sha, observed: `Observed outcome ${index}`, normal_gameplay_interaction: true, result: 'PASS', evidence: id === 'closure-audit' ? [{ path: 'closure_audit/closure-audit-result.json', sha256: sha256(closureEvidence), mime_type: 'application/json' }] : [{ path: 'evidence.png', sha256: sha256(image), mime_type: index ? 'application/json' : 'image/png' }], console_errors: [], network_failures: [] });
 const manifest = { schema_version: '1.0', repository: 'Inceptivec-io/GalacticGunners', branch: 'feature/v1-platform-foundation-campaign-continuity', commit_sha: sha, ci_run_id: '1', generated_at: new Date().toISOString(), runner: { kind: 'local-founder', os: process.platform, browser: 'Chromium' }, gates: REQUIRED_GATES.map(gate), artifact: { name: 'test', url: 'file:///artifact.json', path: 'artifact.json', sha256: sha256(artifact) } };
 assert.deepEqual(auditManifest(manifest, { root, expectedSha: sha }), []);
 
@@ -36,6 +40,14 @@ assert.match(auditManifest(missingActionTrace, { root, expectedSha: sha }).join(
 const failedGate = cloneManifest();
 failedGate.gates.find((entry) => entry.id === 'campaign-progression').result = 'FAIL';
 assert.match(auditManifest(failedGate, { root, expectedSha: sha }).join('\n'), /campaign-progression is not PASS/);
+
+const pendingClosureGate = cloneManifest();
+pendingClosureGate.gates.find((entry) => entry.id === 'closure-audit').result = 'PENDING';
+assert.match(auditManifest(pendingClosureGate, { root, expectedSha: sha }).join('\n'), /closure-audit is not PASS/);
+
+const missingClosureEvidence = cloneManifest();
+missingClosureEvidence.gates.find((entry) => entry.id === 'closure-audit').evidence = [];
+assert.match(auditManifest(missingClosureEvidence, { root, expectedSha: sha }).join('\n'), /closure-audit has no closure evidence/);
 
 const missingGate = cloneManifest();
 missingGate.gates = missingGate.gates.filter((entry) => entry.id !== 'boarding-success-return');

@@ -5,7 +5,7 @@ Programme:
 PLATFORM FOUNDATION AND CAMPAIGN CONTINUITY
 
 Stage:
-H015 CLOSURE EVIDENCE RECTIFICATION COMPLETE / FOUNDER REVIEW READY / FOUNDER ACCEPTANCE PENDING
+H015 FINAL EVIDENCE ATTESTATION IN PROGRESS / FOUNDER TESTING NOT AUTHORISED
 
 Branch:
 feature/v1-platform-foundation-campaign-continuity
@@ -77,4 +77,4 @@ Founder Acceptance:
 FOUNDER ACCEPTED - KNOWN PLATFORM AND RUNTIME ITEMS DEFERRED TO H015. Development does not assert unqualified Founder manual acceptance of deferred items. PR #11 remains open for Founder merge decision.
 
 H015 Closure:
-RECTIFICATION COMPLETE / REPLACEMENT RETURN READY. The prior readiness claim at `1b919d614fdb7fe72e9f04d62653dd436ac4676f` remains rejected historical evidence. At `ded96d0d99c69bac43726068d166a4386fcd6385`, the locally generated exact-SHA artifact passed every required gate and the fail-closed two-phase closure audit; GitHub Actions run `33268555046` is SUCCESS at the same SHA. `FOUNDER_REVIEW_READY=YES`; Founder acceptance remains PENDING and PR #12 remains draft/open/unmerged. No merge is authorised.
+FINAL EVIDENCE ATTESTATION IN PROGRESS. The prior readiness claim at `1b919d614fdb7fe72e9f04d62653dd436ac4676f` remains rejected historical evidence. The current CI browser evidence artifact lacks a durable post-upload closure attestation, so `FOUNDER_REVIEW_READY=NO`; Founder testing, acceptance and merge are not authorised. PR #12 remains draft/open/unmerged. The next exact-SHA CI run must upload immutable evidence first, then separately upload a strict closure attestation bound to that evidence artifact ID and digest.
