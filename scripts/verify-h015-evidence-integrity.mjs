@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { existsSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
 export const REQUIRED_GATES = [
@@ -17,6 +17,18 @@ const NORMAL_GAMEPLAY_GATES = new Set(['runtime-hostile', 'campaign-progression'
 
 export function sha256(file) {
   return createHash('sha256').update(readFileSync(file)).digest('hex');
+}
+
+function evidenceDigest(gates) {
+  const canonical = gates
+    .filter((gate) => gate.id !== 'closure-audit')
+    .map((gate) => ({
+      id: gate.id,
+      result: gate.result,
+      tested_sha: gate.tested_sha,
+      evidence: (gate.evidence ?? []).map((item) => ({ path: item.path, sha256: item.sha256, mime_type: item.mime_type })),
+    }));
+  return createHash('sha256').update(JSON.stringify(canonical)).digest('hex');
 }
 
 export function auditManifest(manifest, { root, expectedSha }) {
@@ -40,6 +52,10 @@ export function auditManifest(manifest, { root, expectedSha }) {
     if (!Array.isArray(gate.assertions) || gate.assertions.length === 0) fail(`gate ${gate.id} has no assertions.`);
     if (GENERIC_OBSERVATIONS.has(gate.observed) || !gate.observed || /^rendered and interacted/i.test(gate.observed)) fail(`gate ${gate.id} has only generic observation text.`);
     if (NORMAL_GAMEPLAY_GATES.has(gate.id) && gate.normal_gameplay_interaction !== true) fail(`gate ${gate.id} does not prove normal gameplay interaction.`);
+    // The closure-audit gate is the command currently evaluating this generated
+    // artifact. It starts PENDING and is promoted to PASS only after the
+    // substantive evidence has passed this exact audit.
+    if (gate.id === 'closure-audit' && gate.result === 'PENDING') continue;
     if (gate.result !== 'PASS') fail(`gate ${gate.id} is not PASS.`);
     if ((gate.console_errors ?? []).length) fail(`gate ${gate.id} has console errors.`);
     if ((gate.network_failures ?? []).length) fail(`gate ${gate.id} has network failures.`);
@@ -66,12 +82,73 @@ export function auditManifest(manifest, { root, expectedSha }) {
   return failures;
 }
 
+function promoteClosureGate(manifestPath, manifest, expectedSha) {
+  const closureGate = manifest.gates.find((gate) => gate.id === 'closure-audit');
+  if (!closureGate || closureGate.result !== 'PENDING') return false;
+  const root = path.dirname(manifestPath);
+  const resultPath = path.join(root, 'closure_audit', 'closure-audit-result.json');
+  const digest = evidenceDigest(manifest.gates);
+  const result = {
+    tested_sha: expectedSha,
+    result: 'PASS',
+    generated_at: new Date().toISOString(),
+    audited_evidence_digest: digest,
+    audit_subject: 'generated H015 browser evidence artifact',
+  };
+  writeFileSync(resultPath, `${JSON.stringify(result, null, 2)}\n`);
+  closureGate.result = 'PASS';
+  closureGate.evidence = [{ path: 'closure_audit/closure-audit-result.json', sha256: sha256(resultPath), mime_type: 'application/json' }];
+  closureGate.observed = 'The generated exact-SHA artifact passed the fail-closed closure auditor after every substantive gate and evidence hash was verified.';
+  closureGate.audit_subject_digest = digest;
+  const indexPath = path.join(root, 'h015-evidence-index.json');
+  const collect = (directory) => readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const item = path.join(directory, entry.name);
+    return entry.isDirectory() ? collect(item) : [item];
+  });
+  const index = {
+    commit_sha: expectedSha,
+    generated_at: new Date().toISOString(),
+    files: collect(root)
+      .filter((file) => file !== manifestPath && file !== indexPath)
+      .map((file) => ({ path: path.relative(root, file).replaceAll('\\', '/'), sha256: sha256(file), bytes: statSync(file).size })),
+  };
+  writeFileSync(indexPath, `${JSON.stringify(index, null, 2)}\n`);
+  manifest.artifact.sha256 = sha256(indexPath);
+  writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+  return true;
+}
+
+function verifyClosureGate(manifest, root, expectedSha, fail) {
+  const gate = manifest.gates.find((entry) => entry.id === 'closure-audit');
+  if (!gate || gate.result === 'PENDING') return;
+  const evidence = gate.evidence?.find((entry) => entry.path === 'closure_audit/closure-audit-result.json');
+  if (!evidence) { fail('closure-audit has no generated audit result evidence.'); return; }
+  const resultPath = path.resolve(root, evidence.path);
+  try {
+    const result = JSON.parse(readFileSync(resultPath, 'utf8'));
+    if (result.result !== 'PASS' || result.tested_sha !== expectedSha) fail('closure-audit result does not prove the exact tested SHA passed.');
+    if (result.audited_evidence_digest !== evidenceDigest(manifest.gates) || gate.audit_subject_digest !== result.audited_evidence_digest) fail('closure-audit result does not match the generated artifact evidence.');
+  } catch {
+    fail('closure-audit result evidence is unreadable.');
+  }
+}
+
 if (import.meta.url === `file:///${process.argv[1].replaceAll('\\', '/')}`) {
   const manifestPath = process.env.GG_EVIDENCE_MANIFEST
     ?? path.resolve(process.env.GG_EVIDENCE_DIR ?? 'FOUNDER_REVIEW_EVIDENCE.local', 'h015-evidence-manifest.json');
   const expectedSha = process.env.GG_TESTED_SHA;
   if (!existsSync(manifestPath)) throw new Error(`H015 evidence manifest does not exist: ${manifestPath}`);
-  const failures = auditManifest(JSON.parse(readFileSync(manifestPath, 'utf8')), { root: path.dirname(manifestPath), expectedSha });
+  const root = path.dirname(manifestPath);
+  const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+  const failures = auditManifest(manifest, { root, expectedSha });
+  verifyClosureGate(manifest, root, expectedSha, (message) => failures.push(message));
   if (failures.length) throw new Error(`H015 closure audit failed:\n${failures.map((failure) => `- ${failure}`).join('\n')}`);
+  const promoted = promoteClosureGate(manifestPath, manifest, expectedSha);
+  if (promoted) {
+    const finalManifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+    const finalFailures = auditManifest(finalManifest, { root, expectedSha });
+    verifyClosureGate(finalManifest, root, expectedSha, (message) => finalFailures.push(message));
+    if (finalFailures.length) throw new Error(`H015 closure audit promotion failed:\n${finalFailures.map((failure) => `- ${failure}`).join('\n')}`);
+  }
   console.log(`H015_EVIDENCE_IDENTITY=PASS\nH015_EVIDENCE_UNIQUENESS=PASS\nH015_CLOSURE_AUDIT=PASS`);
 }

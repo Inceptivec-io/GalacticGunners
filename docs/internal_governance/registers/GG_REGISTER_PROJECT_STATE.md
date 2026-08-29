@@ -7,15 +7,15 @@
 | Commercial Repository | `Inceptivec-io/GalacticGunners` |
 | Historical Repository | `michael-leese/GallacticGunners` READ-ONLY |
 | Current Programme | H015 PLATFORM FOUNDATION AND CAMPAIGN CONTINUITY |
-| Current Stage | H015 FINAL RECTIFICATION COMPLETE / PENDING FOUNDER ACCEPTANCE |
+| Current Stage | H015 CLOSURE EVIDENCE RECTIFICATION IN PROGRESS / FOUNDER TESTING NOT AUTHORISED |
 | Active Handoff | GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015 |
 | Current Feature Branch | `feature/v1-platform-foundation-campaign-continuity` |
 | Base Branch | `dev` |
 | Entry/Base SHA | `3270be64c67863dc848ebad26e2a33daf8b70742` |
 | Branch Model | `feature/* -> dev -> stage -> prod` |
 | Default Branch Target | `prod` |
-| Current Feature HEAD | exact H015 review runtime `0032d36b5efc66f9213421ec261c01c45d62038e`; governance closeout SHA recorded externally after its exact-SHA audit to avoid a Git self-reference loop |
-| Closure State | IMPLEMENTATION COMPLETE / `FOUNDER_REVIEW_READY=YES` at `0032d36...`; FOUNDER ACCEPTANCE PENDING |
+| Current Feature HEAD | rejected prior readiness return `1b919d614fdb7fe72e9f04d62653dd436ac4676f`; authorised closure-evidence rectification is active on this branch |
+| Closure State | IN PROGRESS / `FOUNDER_REVIEW_READY=NO`; Founder testing and acceptance are not authorised until a new exact-SHA generated artifact passes the fail-closed closure audit |
 | Root Execution Contract | `AGENTS.md` |
 | External Boundary | `_EXTERNAL_GalacticGunners` |
 | Internal Governance Root | `docs/internal_governance` |

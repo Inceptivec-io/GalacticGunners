@@ -1,4 +1,5 @@
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright';
 
@@ -8,6 +9,7 @@ const outputDir = path.resolve(process.env.GG_EVIDENCE_DIR
   ?? 'docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/rectification/boarding_success');
 mkdirSync(outputDir, { recursive: true });
 function assert(value, message) { if (!value) throw new Error(message); }
+function fileHash(file) { return createHash('sha256').update(readFileSync(file)).digest('hex'); }
 async function state(page) { return page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__?.state()); }
 async function clickAction(page, action) {
   const snapshot = await state(page);
@@ -85,16 +87,19 @@ try {
   assert(boarding?.active, `Boarding ended before completion route: ${JSON.stringify(boarding)}`);
   assert(boarding.activeAliens === 0, `Live Boarding combat did not clear every alien: ${JSON.stringify(boarding)}`);
   assert(boarding.exitUnlocked && boarding.player.x >= 3968, `Exit was not physically reachable: ${JSON.stringify(boarding)}`);
-  await page.screenshot({ path: path.join(outputDir, '01-boarding-exit-unlocked.png'), fullPage: true });
+  const exitCapture = path.join(outputDir, '01-boarding-exit-unlocked.png');
+  await page.screenshot({ path: exitCapture, fullPage: true });
   await page.keyboard.down('e');
   await page.waitForTimeout(250);
   await page.keyboard.up('e');
   await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.scene === 'Level1Scene', undefined, { timeout: 15_000 });
   const returned = await state(page);
   assert(returned.campaign.sequence === 4 && returned.terminalState === null, 'Successful Boarding did not return to active Level 4 Shooter.');
-  await page.screenshot({ path: path.join(outputDir, '02-boarding-success-return.png'), fullPage: true });
+  const returnCapture = path.join(outputDir, '02-boarding-success-return.png');
+  await page.screenshot({ path: returnCapture, fullPage: true });
+  assert(fileHash(exitCapture) !== fileHash(returnCapture), 'Boarding exit-unlocked and Shooter-return captures are visually identical.');
   assert(consoleErrors.length === 0 && networkFailures.length === 0, `Console errors: ${consoleErrors.join(' | ')}; network failures: ${networkFailures.join(' | ')}`);
-  const result = { tested_sha: testedSha, generated_at: new Date().toISOString(), result: 'PASS', combat_cleared: true, physical_exit: true, server_return: true, consoleErrors, networkFailures };
+  const result = { tested_sha: testedSha, generated_at: new Date().toISOString(), result: 'PASS', combat_cleared: true, physical_exit: true, server_return: true, exit_unlocked_before_traversal: true, exit_unlocked_capture_sha256: fileHash(exitCapture), shooter_return_capture_sha256: fileHash(returnCapture), consoleErrors, networkFailures };
   writeFileSync(path.join(outputDir, 'boarding-success-browser-verification.json'), `${JSON.stringify(result, null, 2)}\n`);
   console.log(JSON.stringify(result, null, 2));
 } finally { await browser.close(); }

@@ -93,15 +93,28 @@ if ($logout.authenticated) { throw 'Same-origin logout failed.' }
 # verify the exact container build without dirtying the governed repository.
 $env:GG_RUNTIME_URL = 'http://localhost:3002'
 $env:GG_TESTED_SHA = $sourceSha
-$env:GG_EVIDENCE_DIR = Join-Path $env:TEMP "galactic-gunners-founder-review-$sourceSha"
+$evidenceRoot = Join-Path $env:TEMP "galactic-gunners-founder-review-$sourceSha"
+function Invoke-EvidenceRuntime([string]$relativeDirectory, [scriptblock]$command, [string]$description) {
+  $env:GG_EVIDENCE_DIR = Join-Path $evidenceRoot $relativeDirectory
+  Invoke-ReviewCommand $command $description
+}
 Invoke-ReviewCommand { npm run quality } 'repository quality verification'
-Invoke-ReviewCommand { npm run runtime:hostile } 'hostile runtime verification'
-Invoke-ReviewCommand { npm run runtime:campaign } 'campaign continuity verification'
-Invoke-ReviewCommand { npm run runtime:h015:level4-hazards } 'Level 4 hazard verification'
-Invoke-ReviewCommand { npm run runtime:h015:boarding } 'Boarding entry, pause, touch, and abort verification'
-Invoke-ReviewCommand { npm run runtime:h015:boarding-success } 'Boarding combat, physical exit, and server-return verification'
-Invoke-ReviewCommand { npm run runtime:h015:designer-roundtrip } 'Designer draft, exact-checksum preview, publication, and runtime verification'
-Invoke-ReviewCommand { npm run runtime:h015:review-matrix } 'browser review matrix verification'
+$env:GG_EVIDENCE_DIR = $evidenceRoot
+Invoke-EvidenceRuntime 'hostile' { npm run runtime:hostile } 'hostile runtime verification'
+Invoke-EvidenceRuntime 'rectification/stage-1' { npm run runtime:h015:stage1 } 'Stage 1 evidence verification'
+Invoke-EvidenceRuntime 'rectification/stage-2' { npm run runtime:h015:stage2 } 'splash and pause navigation verification'
+Invoke-EvidenceRuntime 'rectification/stage-3' { npm run runtime:h015:stage3 } 'Designer pointer verification'
+Invoke-EvidenceRuntime 'rectification/stage-4' { npm run runtime:h015:stage4 } 'Designer authoring verification'
+Invoke-EvidenceRuntime 'rectification/stage-9' { npm run runtime:h015:stage9 } 'same-origin authentication and logout verification'
+Invoke-EvidenceRuntime 'campaign_runtime' { npm run runtime:campaign } 'campaign continuity verification'
+Invoke-EvidenceRuntime 'rectification/level4_hazards' { npm run runtime:h015:level4-hazards } 'Level 4 hazard verification'
+Invoke-EvidenceRuntime 'rectification/boarding' { npm run runtime:h015:boarding } 'Boarding entry, pause, touch, and abort verification'
+Invoke-EvidenceRuntime 'rectification/boarding_success' { npm run runtime:h015:boarding-success } 'Boarding combat, physical exit, and server-return verification'
+Invoke-EvidenceRuntime 'rectification/designer_roundtrip' { npm run runtime:h015:designer-roundtrip } 'Designer draft, exact-checksum preview, publication, and runtime verification'
+Invoke-EvidenceRuntime 'review_matrix' { npm run runtime:h015:review-matrix } 'browser review matrix verification'
+$env:GG_EVIDENCE_DIR = $evidenceRoot
+Invoke-ReviewCommand { npm run h015:build-evidence-manifest } 'generated evidence manifest build'
+Invoke-ReviewCommand { npm run h015:closure-audit } 'generated evidence closure audit'
 @(
   "Source SHA: $sourceSha", 'Product/play: http://localhost:3002/play', 'Leaderboard: http://localhost:3002/leaderboard', 'Inceptivec admin: http://localhost:3002/inceptivec-gamification-admin', 'Command Post: http://localhost:3002/command-post',
   "Inceptivec administrator: $($values.FOUNDER_REVIEW_USERNAME) / $($values.FOUNDER_REVIEW_PASSWORD)", "Command Post customer: $($values.COMMAND_POST_REVIEW_USERNAME) / $($values.COMMAND_POST_REVIEW_PASSWORD)", "Player: $($values.PLAYER_REVIEW_USERNAME) / $($values.PLAYER_REVIEW_PASSWORD)",

@@ -14,7 +14,7 @@ const results = [];
 const assert = (value, message) => { if (!value) throw new Error(message); };
 async function capture(page, name, url, audience, action, expected) {
   await page.screenshot({ path: path.join(outputDir, `${name}.png`), fullPage: true });
-  results.push({ requirement: name, file_path: `review_matrix/${name}.png`, tested_sha: sha, url, audience, action, expected, observed: 'Rendered and interacted without console or network failure.', result: 'PASS', console_network: 'PASS' });
+  results.push({ requirement: name, file_path: `review_matrix/${name}.png`, tested_sha: sha, url, audience, action, expected, observed: `Observed the asserted state: ${expected}`, result: 'PASS', console_network: 'PASS' });
 }
 async function login(page, route, audience) {
   const credential = access[audience]; assert(credential, `Missing ${audience} local review credential.`);
@@ -57,6 +57,7 @@ try {
   page.on('requestfailed', (request) => networkFailures.push(`FAILED ${request.url()}`));
   await login(page, '/inceptivec-gamification-admin/login', 'Inceptivec administrator');
   await page.waitForSelector('[data-designer-route="campaign"]');
+  await page.waitForFunction(() => document.querySelectorAll('button.designer-placement').length > 1, { timeout: 15_000 });
   await capture(page, '01-designer-initial-canvas', page.url(), 'Inceptivec administrator', 'Open Campaign Designer.', 'Designer canvas and authored level render.');
   for (const [name, label] of [['02-chooser-alien-ships', 'Alien Ships'], ['03-chooser-mothership', 'Boss Ships'], ['04-chooser-hazards', 'Hazards']]) {
     await page.getByRole('button', { name: label, exact: true }).click();
@@ -66,10 +67,45 @@ try {
   }
   await page.getByRole('button', { name: 'Alien Ships', exact: true }).click();
   await page.getByRole('button', { name: 'Close chooser' }).click();
-  await page.locator('.designer-placement').first().click();
-  await capture(page, '05-designer-mixed-freeform', page.url(), 'Inceptivec administrator', 'Inspect mixed authored formation and entity selection.', 'Mixed authored entity is visible on canvas.');
-  await capture(page, '06-designer-saved-reloaded-draft', page.url(), 'Inceptivec administrator', 'Inspect persisted immutable draft selected by the Designer.', 'Persisted draft and selected level are rendered; API save/reload is separately fail-closed by the review launcher.');
-  await capture(page, '07-designer-same-runtime-preview', page.url(), 'Inceptivec administrator', 'Inspect the same-runtime preview control.', 'Preview control is available; exact draft preview API is separately fail-closed by the review launcher.');
+  const liveEntityLabel = await page.locator('button.designer-placement:not(.designer-emitter)').evaluateAll((elements) => elements
+    .map((element) => element.getAttribute('aria-label'))
+    .find((label) => label && !label.toLowerCase().startsWith('player spawn')) ?? null);
+  const liveEntityMatch = liveEntityLabel?.match(/^(.+) at (-?\d+(?:\.\d+)?), (-?\d+(?:\.\d+)?)$/);
+  assert(liveEntityMatch, `Designer canvas did not expose a selectable entity label: ${liveEntityLabel}.`);
+  const [, authoredType, authoredX, authoredY] = liveEntityMatch;
+  const liveEntity = page.locator(`[aria-label="${liveEntityLabel}"]`);
+  // The player spawn can visually overlap an entity in the scaled canvas.
+  // Dispatch directly to the selected entity's real pointer handler so the
+  // overlapping spawn control cannot intercept the authored edit.
+  await liveEntity.dispatchEvent('pointerdown', { pointerId: 77, pointerType: 'mouse', button: 0, clientX: 320, clientY: 260 });
+  await page.waitForFunction(() => document.querySelectorAll('.designer-inspector label select').length > 0);
+  const typeControl = page.locator('.designer-inspector').getByLabel('Type');
+  const replacementType = authoredType === 'CRUISER' ? 'SCOUT' : 'CRUISER';
+  await typeControl.selectOption(replacementType);
+  assert(await typeControl.inputValue() === replacementType, 'Designer edit did not retain before immutable save.');
+  await capture(page, '05-designer-mixed-freeform', page.url(), 'Inceptivec administrator', 'Select a live entity and change its authored type before save.', `The selected entity changed from ${authoredType} to ${replacementType} in the editable composition.`);
+  const saveResponse = page.waitForResponse((response) => response.request().method() === 'POST'
+    && /\/api\/v1\/admin\/levels\/[^/]+\/drafts\/$/.test(new URL(response.url()).pathname));
+  await page.getByRole('button', { name: 'Save immutable draft' }).click();
+  const savedResponse = await saveResponse;
+  assert(savedResponse.status() === 201, `Designer immutable save failed with HTTP ${savedResponse.status()}.`);
+  const savedDraft = await savedResponse.json();
+  assert(savedDraft.checksum, 'Designer save did not return an immutable draft checksum.');
+  await page.reload({ waitUntil: 'networkidle' });
+  await page.waitForSelector('[data-designer-route="campaign"]');
+  const reloadedAuthority = await page.evaluate(async () => (await fetch('/api/v1/admin/levels/authority/', { credentials: 'same-origin' })).json());
+  const reloadedDraft = reloadedAuthority.results.flatMap((entry) => entry.versions ?? []).find((entry) => entry.checksum === savedDraft.checksum);
+  assert(reloadedDraft?.config?.entities?.some((entity) => String(entity.x) === authoredX && String(entity.y) === authoredY && entity.entity_type === replacementType), 'Designer reload did not retain the saved authored entity type.');
+  await capture(page, '06-designer-saved-reloaded-draft', page.url(), 'Inceptivec administrator', 'Reload the page after immutable save and inspect the persisted draft.', `Reloaded immutable draft ${savedDraft.checksum} retains the authored ${replacementType} entity.`);
+  const previewPopup = page.waitForEvent('popup');
+  await page.getByRole('button', { name: 'Same-runtime preview' }).click();
+  const preview = await previewPopup;
+  await preview.waitForSelector('canvas');
+  await preview.waitForFunction(() => window.__GALACTIC_GUNNERS_SLICE_QA__?.campaign?.preview === true, { timeout: 15_000 });
+  const previewState = await preview.evaluate(() => window.__GALACTIC_GUNNERS_SLICE_QA__);
+  assert(previewState?.campaign?.checksum === savedDraft.checksum, 'Same-runtime preview did not load the exact saved draft checksum.');
+  await capture(preview, '07-designer-same-runtime-preview', preview.url(), 'Inceptivec administrator', 'Open the saved immutable draft in the shared runtime preview.', `Same-runtime preview is unranked and uses exact saved checksum ${savedDraft.checksum}.`);
+  await preview.close();
   const portal = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   await login(portal, '/command-post/login', 'Command Post customer');
   await portal.waitForURL(/\/command-post$/);

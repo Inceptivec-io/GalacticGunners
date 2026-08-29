@@ -5,7 +5,7 @@ Programme:
 PLATFORM FOUNDATION AND CAMPAIGN CONTINUITY
 
 Stage:
-H015 FINAL RECTIFICATION COMPLETE / PENDING FOUNDER ACCEPTANCE
+H015 CLOSURE EVIDENCE RECTIFICATION IN PROGRESS / FOUNDER TESTING NOT AUTHORISED
 
 Branch:
 feature/v1-platform-foundation-campaign-continuity
@@ -28,8 +28,8 @@ DEVTEAM_010_REV4 Entry SHA:
 Current Repository Head Authority:
 origin/feature/v1-platform-foundation-campaign-continuity
 
-Local/Remote Reconciliation At Return:
-PASS at validated implementation head `0032d36b5efc66f9213421ec261c01c45d62038e`.
+Local/Remote Reconciliation At Current Checkpoint:
+PASS at rejected readiness-return SHA `1b919d614fdb7fe72e9f04d62653dd436ac4676f`; closure evidence rectification is active on the same authorised branch.
 
 Worktree At Return:
 CLEAN before non-self-referential governance closeout commit.
@@ -77,4 +77,4 @@ Founder Acceptance:
 FOUNDER ACCEPTED - KNOWN PLATFORM AND RUNTIME ITEMS DEFERRED TO H015. Development does not assert unqualified Founder manual acceptance of deferred items. PR #11 remains open for Founder merge decision.
 
 H015 Closure:
-IMPLEMENTATION AND EXACT-SHA REVIEW GATES PASS at `0032d36b5efc66f9213421ec261c01c45d62038e`: local Founder-review launcher returned `FOUNDER_REVIEW_READY=YES`; GitHub Actions run `33260144571` is green. PR #12 remains draft/open/unmerged. Founder acceptance remains pending. This repository-side record is a closure candidate; the sealed return reports the final documentation SHA externally to avoid a Git self-reference loop.
+REJECTED / RECTIFICATION IN PROGRESS. The prior readiness claim at `1b919d614fdb7fe72e9f04d62653dd436ac4676f` is superseded because its generated artifact contained a failed `campaign-progression` gate and duplicate/nominal Designer and Boarding evidence while the closure audit still reported PASS. `FOUNDER_REVIEW_READY=NO`; Founder testing, acceptance and merge are not authorised. PR #12 remains draft/open/unmerged. The closure auditor, generated-artifact lifecycle, campaign gate record and browser evidence journeys must pass again at a new exact remote SHA before a replacement return is issued.

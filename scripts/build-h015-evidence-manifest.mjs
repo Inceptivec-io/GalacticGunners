@@ -1,4 +1,3 @@
-import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { REQUIRED_GATES, sha256 } from './verify-h015-evidence-integrity.mjs';
@@ -123,15 +122,6 @@ function verificationResult(definition) {
   }
 }
 
-const closureDirectory = path.join(root, gateDefinitions['closure-audit'].directory);
-mkdirSync(closureDirectory, { recursive: true });
-writeFileSync(path.join(closureDirectory, 'closure-audit-preflight.json'), `${JSON.stringify({
-  tested_sha: sha,
-  result: 'PASS',
-  generated_at: new Date().toISOString(),
-  command: 'GG_EVIDENCE_MANIFEST=<artifact>/h015-evidence-manifest.json npm run h015:closure-audit',
-}, null, 2)}\n`);
-
 const gates = REQUIRED_GATES.map((id) => {
   const definition = gateDefinitions[id];
   if (!definition) throw new Error(`Missing H015 evidence definition for required gate: ${id}`);
@@ -147,7 +137,7 @@ const gates = REQUIRED_GATES.map((id) => {
     tested_sha: sha,
     observed: definition.observed,
     normal_gameplay_interaction: definition.normal,
-    result: verificationResult(definition) && items.length > 0 ? 'PASS' : 'FAIL',
+    result: id === 'closure-audit' ? 'PENDING' : (verificationResult(definition) && items.length > 0 ? 'PASS' : 'FAIL'),
     evidence: items,
     console_errors: [],
     network_failures: [],

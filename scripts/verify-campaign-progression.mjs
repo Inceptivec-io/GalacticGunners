@@ -125,6 +125,7 @@ try {
     game_over_try_again: true,
     game_over_menu: true,
     dynamic_runtime_values: true,
+    result: 'PASS',
     keyboard_confirm_contract: 'InputSystem maps Enter/Space and gamepad A/Start to confirm; existing game tests cover normalization.',
     console_errors: consoleErrors,
     network_failures: networkFailures,

@@ -30,4 +30,28 @@ assert.match(auditManifest(duplicateScreenshot, { root, expectedSha: sha }).join
 const missingActionTrace = cloneManifest();
 missingActionTrace.gates[0].actions = [];
 assert.match(auditManifest(missingActionTrace, { root, expectedSha: sha }).join('\n'), /no action trace/);
+
+const failedGate = cloneManifest();
+failedGate.gates.find((entry) => entry.id === 'campaign-progression').result = 'FAIL';
+assert.match(auditManifest(failedGate, { root, expectedSha: sha }).join('\n'), /campaign-progression is not PASS/);
+
+const missingGate = cloneManifest();
+missingGate.gates = missingGate.gates.filter((entry) => entry.id !== 'boarding-success-return');
+assert.match(auditManifest(missingGate, { root, expectedSha: sha }).join('\n'), /required gate missing: boarding-success-return/);
+
+const missingEvidence = cloneManifest();
+missingEvidence.gates.find((entry) => entry.id === 'designer-roundtrip').evidence[0].path = 'missing-designer-evidence.png';
+assert.match(auditManifest(missingEvidence, { root, expectedSha: sha }).join('\n'), /missing evidence: designer-roundtrip/);
+
+const mismatchedSha = cloneManifest();
+mismatchedSha.gates.find((entry) => entry.id === 'boarding-success-return').tested_sha = 'b'.repeat(40);
+assert.match(auditManifest(mismatchedSha, { root, expectedSha: sha }).join('\n'), /invalid tested_sha/);
+
+const duplicateDesigner = cloneManifest();
+duplicateDesigner.gates.find((entry) => entry.id === 'designer-roundtrip').evidence[0].mime_type = 'image/png';
+assert.match(auditManifest(duplicateDesigner, { root, expectedSha: sha }).join('\n'), /duplicate screenshot hash/);
+
+const duplicateBoarding = cloneManifest();
+duplicateBoarding.gates.find((entry) => entry.id === 'boarding-success-return').evidence[0].mime_type = 'image/png';
+assert.match(auditManifest(duplicateBoarding, { root, expectedSha: sha }).join('\n'), /duplicate screenshot hash/);
 console.log('H015 evidence integrity tests passed.');
