@@ -14,8 +14,8 @@
 | Entry/Base SHA | `3270be64c67863dc848ebad26e2a33daf8b70742` |
 | Branch Model | `feature/* -> dev -> stage -> prod` |
 | Default Branch Target | `prod` |
-| Current Feature HEAD | exact H015 review runtime `d38504d230f588c71a77603c1561b9fce5b5c24a`; governance closeout SHA recorded externally after its exact-SHA audit to avoid a Git self-reference loop |
-| Closure State | IMPLEMENTATION COMPLETE / `FOUNDER_REVIEW_READY=YES` at `d38504d...`; FOUNDER ACCEPTANCE PENDING |
+| Current Feature HEAD | exact H015 review runtime `0032d36b5efc66f9213421ec261c01c45d62038e`; governance closeout SHA recorded externally after its exact-SHA audit to avoid a Git self-reference loop |
+| Closure State | IMPLEMENTATION COMPLETE / `FOUNDER_REVIEW_READY=YES` at `0032d36...`; FOUNDER ACCEPTANCE PENDING |
 | Root Execution Contract | `AGENTS.md` |
 | External Boundary | `_EXTERNAL_GalacticGunners` |
 | Internal Governance Root | `docs/internal_governance` |
