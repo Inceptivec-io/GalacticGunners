@@ -22,9 +22,15 @@ def publish_core_level(*, level, version: LevelVersion, actor):
         version.publish()
     project = level.game_project
     levels = list(project.levels.filter(archived=False).select_related('active_version').order_by('sequence'))
-    if len(levels) != 6 or any(item.active_version is None for item in levels):
+    sequences = [item.sequence for item in levels]
+    if (
+        len(levels) < 6
+        or any(item.active_version is None for item in levels)
+        or sequences != list(range(1, len(levels) + 1))
+    ):
         # Early authoring can legitimately publish a level before the complete
-        # CORE campaign exists; it cannot manufacture a partial campaign release.
+        # CORE campaign exists; it cannot manufacture a partial, duplicate, or
+        # gapped release. The six-level baseline is a minimum, not a ceiling.
         return None
     campaign, _ = Campaign.objects.get_or_create(
         game_project=project, slug='core-campaign',

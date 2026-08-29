@@ -28,15 +28,21 @@ try {
   const level = initial.results[0];
   const original = level.active_version;
   const saveChangedDraft = async () => {
-    // Use an individually selectable, non-overlapping scout and a visual
-    // runtime property that does not perturb the accepted formation topology.
     await page.locator('[aria-label="SCOUT at 50, 170"]').click();
-    const rotation = page.locator('.designer-inspector label').filter({ hasText: /^Rotation/ }).locator('input');
-    const currentRotation = Number(await rotation.inputValue());
-    const expectedRotation = (currentRotation + 16) % 360;
-    await rotation.fill(String(expectedRotation));
-    await rotation.blur();
-    assert(Number(await rotation.inputValue()) === expectedRotation, 'Designer rotation field did not retain the requested edit before save.');
+    const entityType = page.locator('.designer-inspector').getByLabel('Type');
+    await entityType.selectOption('CRUISER');
+    assert(await entityType.inputValue() === 'CRUISER', 'Designer entity composition edit did not retain before save.');
+    await page.locator('.designer-formation-box').first().click();
+    const layout = page.locator('.designer-inspector').getByLabel('Layout');
+    await layout.selectOption('WEDGE');
+    assert(await layout.inputValue() === 'WEDGE', 'Designer formation layout edit did not retain before save.');
+    await page.getByRole('button', { name: 'Hazards', exact: true }).click();
+    await page.getByRole('button', { name: 'Add recurring ASTEROID' }).click();
+    await page.locator('[aria-label^="ASTEROID emitter at"]').last().click();
+    const minimumSpeed = page.locator('.designer-inspector').getByLabel('Minimum speed');
+    await minimumSpeed.fill('173');
+    await minimumSpeed.blur();
+    assert(Number(await minimumSpeed.inputValue()) === 173, 'Designer hazard property edit did not retain before save.');
     const draftResponse = page.waitForResponse((response) =>
       response.request().method() === 'POST' && /\/api\/v1\/admin\/levels\/[^/]+\/drafts\/$/.test(new URL(response.url()).pathname),
     );
@@ -50,7 +56,7 @@ try {
       const current = authority.results.find((item) => item.id === level.id);
       console.error(JSON.stringify({ designer_conflict: { latest: current?.versions?.[0], editable: current?.editable_version, active: current?.active_version } }));
     }
-    if (!conflict) console.log(JSON.stringify({ designer_draft_response: { version: draftBody.version, checksum: draftBody.checksum, rotation: draftBody.config?.entities?.find((entity) => entity.id === 'level-01:formation-0:r0:c0')?.rotation } }));
+    if (!conflict) console.log(JSON.stringify({ designer_draft_response: { version: draftBody.version, checksum: draftBody.checksum, entity: draftBody.config?.entities?.find((entity) => entity.id === 'level-01:formation-0:r0:c0'), formation: draftBody.config?.formations?.[0], hazards: draftBody.config?.hazard_emitters } }));
     return conflict;
   };
   const conflicted = await saveChangedDraft();
@@ -68,6 +74,9 @@ try {
     latest: { version: saved?.version, checksum: saved?.checksum },
   } }));
   assert(saved && saved.checksum !== original.checksum, 'Designer save did not create a distinct immutable draft.');
+  assert(saved.config.entities.find((entity) => entity.id === 'level-01:formation-0:r0:c0')?.entity_type === 'CRUISER', 'Reloaded draft lost the authored mixed enemy composition.');
+  assert(saved.config.formations[0]?.layout === 'WEDGE', 'Reloaded draft lost the authored formation layout.');
+  assert(saved.config.hazard_emitters.some((emitter) => emitter.hazard_type === 'ASTEROID' && emitter.speed_min === 173), 'Reloaded draft lost the authored hazard property.');
   await page.screenshot({ path: path.join(outputDir, '01-designer-immutable-draft.png'), fullPage: true });
   const popup = page.waitForEvent('popup');
   await page.getByRole('button', { name: 'Same-runtime preview' }).click();

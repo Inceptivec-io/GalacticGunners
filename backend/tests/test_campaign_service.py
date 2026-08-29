@@ -1,8 +1,13 @@
 from django.core.management import call_command
+from django.contrib.auth import get_user_model
 from django.test import TestCase
+from copy import deepcopy
 from rest_framework.test import APIClient
 
+from campaigns.models import Campaign
+from campaigns.publication import publish_core_level
 from campaigns.services import CampaignService
+from levels.models import Level, LevelVersion
 from plans.models import ServicePlan
 
 
@@ -10,6 +15,7 @@ class CampaignServiceTests(TestCase):
     def setUp(self):
         call_command('seed_service_plans')
         call_command('seed_runtime_authority')
+        self.publisher = get_user_model().objects.create_user(username='campaign-publisher', password='test-only-password')
 
     def test_seeded_campaign_is_six_entries_but_not_schema_bounded(self):
         run, capability = CampaignService.start(user=None, seed_root=12001)
@@ -63,3 +69,22 @@ class CampaignServiceTests(TestCase):
         attempt = run.attempts.get(pk=response.data['id'])
         self.assertEqual((attempt.campaign_run_id, attempt.campaign_entry_id), (run.id, entry.id))
         self.assertEqual((attempt.lives_start, attempt.nukes_start), (run.lives, run.nukes))
+
+    def test_publication_accepts_a_seven_level_gap_free_core_campaign(self):
+        source = Level.objects.get(slug='level-06')
+        config = deepcopy(source.active_version.config)
+        config.update({'id': 'level-07', 'slug': 'level-07', 'name': 'Expansion Assault', 'sequence': 7, 'seed': 12007})
+        level = Level.objects.create(slug='level-07', name='Expansion Assault', sequence=7, game_project=source.game_project)
+        version = LevelVersion.objects.create(level=level, version=1, config=config, status=LevelVersion.Status.DRAFT, created_by=self.publisher)
+        release = publish_core_level(level=level, version=version, actor=self.publisher)
+        self.assertIsNotNone(release)
+        campaign = Campaign.objects.get(game_project=source.game_project, slug='core-campaign')
+        self.assertEqual(campaign.versions.order_by('-version').first().entries.count(), 7)
+
+    def test_publication_rejects_a_gapped_core_campaign(self):
+        source = Level.objects.get(slug='level-06')
+        config = deepcopy(source.active_version.config)
+        config.update({'id': 'level-08', 'slug': 'level-08', 'name': 'Gapped Assault', 'sequence': 8, 'seed': 12008})
+        level = Level.objects.create(slug='level-08', name='Gapped Assault', sequence=8, game_project=source.game_project)
+        version = LevelVersion.objects.create(level=level, version=1, config=config, status=LevelVersion.Status.DRAFT, created_by=self.publisher)
+        self.assertIsNone(publish_core_level(level=level, version=version, actor=self.publisher))
