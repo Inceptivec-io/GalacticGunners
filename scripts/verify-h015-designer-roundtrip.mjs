@@ -120,15 +120,19 @@ try {
   await page.screenshot({ path: path.join(outputDir, '03-core-published-gameplay.png'), fullPage: true });
   await page.goto(`${baseUrl}/inceptivec-gamification-admin`, { waitUntil: 'networkidle' });
   await page.waitForSelector('[data-designer-route="campaign"]');
+  const rollbackAuthority = await page.evaluate(async () => (await fetch('/api/v1/admin/levels/authority/', { credentials: 'same-origin' })).json());
+  const rollbackLevel = rollbackAuthority.results.find((item) => item.id === level.id);
+  const rollbackSource = rollbackLevel?.versions?.find((version) => ['PUBLISHED', 'SUPERSEDED'].includes(version.status));
+  assert(rollbackSource, 'Designer history has no published or superseded version available for rollback.');
   page.once('dialog', (dialog) => dialog.accept());
-  const historicalVersion = page.locator('.designer-version-history > div').filter({ hasText: new RegExp(`^v${original.version} SUPERSEDED`) });
+  const historicalVersion = page.locator('.designer-version-history > div').filter({ hasText: new RegExp(`^v${rollbackSource.version} ${rollbackSource.status}`) });
   await historicalVersion.getByRole('button', { name: 'Restore as new version' }).click();
   await page.getByText(/rollback completed through the authenticated version workflow/).waitFor();
   const afterRollback = await page.evaluate(async () => (await fetch('/api/v1/admin/levels/authority/', { credentials: 'same-origin' })).json());
   const restored = afterRollback.results.find((item) => item.id === level.id).versions[0];
-  assert(restored.checksum === original.checksum, 'Rollback did not restore the original immutable configuration.');
+  assert(restored.checksum === rollbackSource.checksum, 'Rollback did not restore the selected immutable configuration.');
   assert(consoleErrors.length === 0, `Console errors: ${consoleErrors.join('; ')}`);
-  const result = { tested_sha: testedSha, generated_at: new Date().toISOString(), result: 'PASS', draft_checksum: saved.checksum, gameplay_checksum: playState.campaign.checksum, rollback_source_version: original.version, console_errors: consoleErrors };
+  const result = { tested_sha: testedSha, generated_at: new Date().toISOString(), result: 'PASS', draft_checksum: saved.checksum, gameplay_checksum: playState.campaign.checksum, rollback_source_version: rollbackSource.version, console_errors: consoleErrors };
   writeFileSync(path.join(outputDir, 'designer-runtime-roundtrip.json'), `${JSON.stringify(result, null, 2)}\n`);
   console.log(JSON.stringify(result, null, 2));
 } finally { await browser.close(); }
