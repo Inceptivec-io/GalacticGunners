@@ -58,11 +58,22 @@ class Command(BaseCommand):
         if levels.status_code != 200 or len(levels.json()) < 6:
             raise CommandError('Published six-level campaign availability failed.')
         first_level = levels.json()[0]
-        draft = self.csrf_post(admin, f"/api/v1/admin/levels/{first_level['id']}/drafts/", {'expected_checksum': first_level['active_version']['checksum'], 'config': first_level['active_version']['config']})
-        if draft.status_code != 201:
-            raise CommandError(f'Designer draft save failed ({draft.status_code}).')
-        preview = admin.get(f"/api/v1/admin/levels/{first_level['id']}/preview/{draft.json()['checksum']}/")
-        if preview.status_code != 200 or preview.json().get('checksum') != draft.json()['checksum']:
+        authority = admin.get('/api/v1/admin/levels/authority/')
+        if authority.status_code != 200:
+            raise CommandError('Designer authority reload failed.')
+        reviewed_level = next((item for item in authority.json().get('results', []) if item['id'] == first_level['id']), None)
+        if not reviewed_level or not reviewed_level.get('versions'):
+            raise CommandError('Designer authority did not include the first published level.')
+        latest = reviewed_level['versions'][0]
+        if latest['status'] in {'DRAFT', 'VALIDATED'}:
+            draft_checksum = latest['checksum']
+        else:
+            draft = self.csrf_post(admin, f"/api/v1/admin/levels/{first_level['id']}/drafts/", {'expected_checksum': latest['checksum'], 'config': latest['config']})
+            if draft.status_code != 201:
+                raise CommandError(f'Designer draft save failed ({draft.status_code}).')
+            draft_checksum = draft.json()['checksum']
+        preview = admin.get(f"/api/v1/admin/levels/{first_level['id']}/preview/{draft_checksum}/")
+        if preview.status_code != 200 or preview.json().get('checksum') != draft_checksum:
             raise CommandError('Designer draft reload/preview failed.')
 
         campaign = self.csrf_post(player, '/api/v1/campaign-runs/start/', {'seed_root': 15015})
