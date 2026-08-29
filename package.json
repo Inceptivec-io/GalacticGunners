@@ -22,6 +22,7 @@
     "runtime:h015:stage1": "node scripts/verify-h015-stage1.mjs",
     "runtime:h015:stage2": "node scripts/verify-h015-stage2-navigation.mjs",
     "runtime:h015:stage3": "node scripts/verify-h015-designer-pointer.mjs",
+    "runtime:h015:stage4": "node scripts/verify-h015-stage4-authoring.mjs",
     "runtime:h015:boarding": "node scripts/verify-h015-boarding-journey.mjs",
     "runtime:h015:level4-hazards": "node scripts/verify-h015-level4-hazards.mjs",
     "runtime:h015:boarding-success": "node scripts/verify-h015-boarding-success.mjs",

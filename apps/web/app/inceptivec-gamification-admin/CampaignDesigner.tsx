@@ -97,9 +97,9 @@ type Anchor = {
   id: string;
   source_entity_id: string;
   source_ship_type: "ALIEN_FRIGATE";
-  interior: { slug: "alien-frigate"; version: 1; checksum: string };
-  entry_envelope: { width_px: 160; height_px: 128 };
-  offer_duration_ms: 8000;
+  interior: { slug: string; version: number; checksum: string };
+  entry_envelope: { width_px: number; height_px: number };
+  offer_duration_ms: number;
   interaction: "BOARD";
 };
 type AuthoringDocument = {
@@ -865,7 +865,7 @@ export function CampaignDesigner({
   }
   function updateSelected(
     field: keyof Entity,
-    value: string | number | boolean,
+    value: string | number | boolean | string[],
   ) {
     if (!selectedEntity) return;
     mutate((current) => ({
@@ -1657,12 +1657,46 @@ export function CampaignDesigner({
           max
         </p>
         <h2>Inspector</h2>
-        {selectedEntity ? (
+        {!selectedEntity && !selectedPlayerSpawn && !selectedShield && !selectedEmitter && !selectedFormation && document ? (
+          <div className="designer-fields" aria-label="Level configuration">
+            <label>Name<input value={document.name} onChange={(event) => mutate((current) => ({ ...current, name: event.target.value }))} /></label>
+            <label>Slug<input value={document.slug} onChange={(event) => mutate((current) => ({ ...current, slug: event.target.value }))} /></label>
+            <label>Sequence<input type="number" min="1" value={document.sequence} onChange={(event) => mutate((current) => ({ ...current, sequence: Number(event.target.value) }))} /></label>
+            <label>Deterministic seed<input type="number" value={document.seed} onChange={(event) => mutate((current) => ({ ...current, seed: Number(event.target.value) }))} /></label>
+            <label>Version<input value={`v${document.version} ${document.status}`} disabled /></label>
+            <label>Canvas width<input type="number" value={document.canvas.width} disabled /></label>
+            <label>Canvas height<input type="number" value={document.canvas.height} disabled /></label>
+            <label>Grid size<select value={document.canvas.grid_size} onChange={(event) => mutate((current) => ({ ...current, canvas: { ...current.canvas, grid_size: Number(event.target.value) as 8 | 16 | 24 | 32 } }))}>{[8, 16, 24, 32].map((grid) => <option key={grid} value={grid}>{grid}</option>)}</select></label>
+            <label>Background asset<select value={document.canvas.background_asset_id} onChange={(event) => mutate((current) => ({ ...current, canvas: { ...current.canvas, background_asset_id: event.target.value } }))}>{assets.filter((asset) => asset.key.startsWith("background.")).map((asset) => <option key={asset.key}>{asset.key}</option>)}</select></label>
+            <fieldset><legend>Gameplay settings</legend>
+              {([['player_lives_at_campaign_start', 'Starting lives'], ['nukes_at_campaign_start', 'Starting nukes'], ['nuke_rearm_max', 'Nuke rearm maximum']] as const).map(([field, label]) => <label key={field}>{label}<input type="number" min="0" value={Number(document.gameplay[field] ?? 0)} onChange={(event) => mutate((current) => ({ ...current, gameplay: { ...current.gameplay, [field]: Number(event.target.value) } }))} /></label>)}
+              {([['allow_pause', 'Pause'], ['allow_replay', 'Replay'], ['allow_main_menu_resume', 'Menu resume']] as const).map(([field, label]) => <label key={field}><input type="checkbox" checked={Boolean(document.gameplay[field])} onChange={(event) => mutate((current) => ({ ...current, gameplay: { ...current.gameplay, [field]: event.target.checked } }))} /> {label}</label>)}
+              <label>Completion reward profile<input value={String(document.gameplay.completion_bonus_profile ?? "")} onChange={(event) => mutate((current) => ({ ...current, gameplay: { ...current.gameplay, completion_bonus_profile: event.target.value } }))} /></label>
+              <label>Scoring profile<input value={String(document.gameplay.scoring_profile ?? "")} onChange={(event) => mutate((current) => ({ ...current, gameplay: { ...current.gameplay, scoring_profile: event.target.value } }))} /></label>
+            </fieldset>
+            <fieldset><legend>Performance budgets</legend>{Object.entries(document.performance_budget).map(([field, value]) => <label key={field}>{field}<input type="number" min="0" value={value} onChange={(event) => mutate((current) => ({ ...current, performance_budget: { ...current.performance_budget, [field]: Number(event.target.value) } }))} /></label>)}</fieldset>
+            <fieldset><legend>Drop rules</legend>
+              {document.drop_rules.map((rule, index) => <div key={rule.id}>
+                <label>Hosts<select multiple value={rule.host_entity_types} onChange={(event) => mutate((current) => ({ ...current, drop_rules: current.drop_rules.map((item, itemIndex) => itemIndex === index ? { ...item, host_entity_types: Array.from(event.target.selectedOptions).map((option) => option.value) as typeof item.host_entity_types } : item) }))}>{["SCOUT", "CRUISER", "DESTROYER"].map((type) => <option key={type}>{type}</option>)}</select></label>
+                <label>Pickup<select value={rule.pickup_type} onChange={(event) => mutate((current) => ({ ...current, drop_rules: current.drop_rules.map((item, itemIndex) => itemIndex === index ? { ...item, pickup_type: event.target.value as typeof item.pickup_type } : item) }))}><option>NUKE</option><option>LIFE</option></select></label>
+                {([['probability', 'Probability'], ['maximum_per_level', 'Maximum'], ['collection_window_ms', 'Collection window (ms)']] as const).map(([field, label]) => <label key={field}>{label}<input type="number" min="0" max={field === 'probability' ? 1 : undefined} step={field === 'probability' ? 0.01 : 1} value={rule[field]} onChange={(event) => mutate((current) => ({ ...current, drop_rules: current.drop_rules.map((item, itemIndex) => itemIndex === index ? { ...item, [field]: Number(event.target.value) } : item) }))} /></label>)}
+                <button type="button" onClick={() => mutate((current) => ({ ...current, drop_rules: current.drop_rules.filter((_, itemIndex) => itemIndex !== index) }))}>Delete drop rule</button>
+              </div>)}
+              <button type="button" onClick={() => mutate((current) => ({ ...current, drop_rules: [...current.drop_rules, { id: uid('drop'), host_entity_types: ['SCOUT'], pickup_type: 'NUKE', probability: 0.1, maximum_per_level: 1, collection_window_ms: 6000 }] }))}>Add drop rule</button>
+            </fieldset>
+            <fieldset><legend>Objectives</legend>{document.objectives.map((objective, index) => <div key={objective.id}><label>Type<select value={objective.type} onChange={(event) => mutate((current) => ({ ...current, objectives: current.objectives.map((item, itemIndex) => itemIndex === index ? { ...item, type: event.target.value as Objective['type'] } : item) }))}>{["DESTROY_ALL_HOSTILES", "DESTROY_MOTHERSHIP", "SURVIVE_DURATION", "BOARD_TARGET"].map((type) => <option key={type}>{type}</option>)}</select></label><label><input type="checkbox" checked={objective.required} onChange={(event) => mutate((current) => ({ ...current, objectives: current.objectives.map((item, itemIndex) => itemIndex === index ? { ...item, required: event.target.checked } : item) }))} /> Required</label><label>Target entities<select multiple value={objective.target_entity_ids} onChange={(event) => mutate((current) => ({ ...current, objectives: current.objectives.map((item, itemIndex) => itemIndex === index ? { ...item, target_entity_ids: Array.from(event.target.selectedOptions).map((option) => option.value) } : item) }))}>{document.entities.map((entity) => <option key={entity.id} value={entity.id}>{entity.entity_type} {entity.id.slice(-8)}</option>)}</select></label><label>Duration (ms)<input type="number" min="0" value={objective.duration_ms ?? ""} onChange={(event) => mutate((current) => ({ ...current, objectives: current.objectives.map((item, itemIndex) => itemIndex === index ? { ...item, duration_ms: event.target.value === "" ? null : Number(event.target.value) } : item) }))} /></label><button type="button" onClick={() => mutate((current) => ({ ...current, objectives: current.objectives.filter((_, itemIndex) => itemIndex !== index) }))}>Delete objective</button></div>)}<button type="button" onClick={addObjective}>Add objective</button></fieldset>
+            <fieldset><legend>Boarding anchors</legend>{document.boarding_anchors.map((anchor, index) => <div key={anchor.id}><label>Source entity<select value={anchor.source_entity_id} onChange={(event) => mutate((current) => ({ ...current, boarding_anchors: current.boarding_anchors.map((item, itemIndex) => itemIndex === index ? { ...item, source_entity_id: event.target.value } : item) }))}>{document.entities.filter((entity) => entity.entity_type === "CRUISER" || entity.entity_type === "DESTROYER").map((entity) => <option key={entity.id} value={entity.id}>{entity.entity_type} {entity.id.slice(-8)}</option>)}</select></label><label>Interior slug<input value={anchor.interior.slug} onChange={(event) => mutate((current) => ({ ...current, boarding_anchors: current.boarding_anchors.map((item, itemIndex) => itemIndex === index ? { ...item, interior: { ...item.interior, slug: event.target.value } } : item) }))} /></label><label>Interior version<input type="number" min="1" value={anchor.interior.version} onChange={(event) => mutate((current) => ({ ...current, boarding_anchors: current.boarding_anchors.map((item, itemIndex) => itemIndex === index ? { ...item, interior: { ...item.interior, version: Number(event.target.value) } } : item) }))} /></label><label>Checksum<input value={anchor.interior.checksum} onChange={(event) => mutate((current) => ({ ...current, boarding_anchors: current.boarding_anchors.map((item, itemIndex) => itemIndex === index ? { ...item, interior: { ...item.interior, checksum: event.target.value } } : item) }))} /></label><label>Entry width<input type="number" min="1" value={anchor.entry_envelope.width_px} onChange={(event) => mutate((current) => ({ ...current, boarding_anchors: current.boarding_anchors.map((item, itemIndex) => itemIndex === index ? { ...item, entry_envelope: { ...item.entry_envelope, width_px: Number(event.target.value) } } : item) }))} /></label><label>Entry height<input type="number" min="1" value={anchor.entry_envelope.height_px} onChange={(event) => mutate((current) => ({ ...current, boarding_anchors: current.boarding_anchors.map((item, itemIndex) => itemIndex === index ? { ...item, entry_envelope: { ...item.entry_envelope, height_px: Number(event.target.value) } } : item) }))} /></label><label>Offer duration<input type="number" min="0" value={anchor.offer_duration_ms} onChange={(event) => mutate((current) => ({ ...current, boarding_anchors: current.boarding_anchors.map((item, itemIndex) => itemIndex === index ? { ...item, offer_duration_ms: Number(event.target.value) } : item) }))} /></label><label>Interaction<select value={anchor.interaction} onChange={(event) => mutate((current) => ({ ...current, boarding_anchors: current.boarding_anchors.map((item, itemIndex) => itemIndex === index ? { ...item, interaction: event.target.value as Anchor['interaction'] } : item) }))}><option>BOARD</option></select></label><button type="button" onClick={() => mutate((current) => ({ ...current, boarding_anchors: current.boarding_anchors.filter((_, itemIndex) => itemIndex !== index) }))}>Delete anchor</button></div>)}<button type="button" onClick={addBoarding}>Add Boarding anchor</button></fieldset>
+          </div>
+        ) : selectedEntity ? (
           <div className="designer-fields">
             <label>
               Type
-              <input value={selectedEntity.entity_type} disabled />
+              <select value={selectedEntity.entity_type} onChange={(event) => {
+                const entity_type = event.target.value as EntityType;
+                mutate((current) => ({ ...current, entities: current.entities.map((entity) => entity.id === selectedEntity.id ? { ...entity, entity_type, asset_id: assetForType[entity_type], behaviour_profile: profileForType[entity_type], width: dimensions[entity_type][0], height: dimensions[entity_type][1] } : entity) }));
+              }}>{(Object.keys(assetForType) as EntityType[]).map((type) => <option key={type}>{type}</option>)}</select>
             </label>
+            <label>Asset<select value={selectedEntity.asset_id} onChange={(event) => updateSelected("asset_id", event.target.value)}>{assets.filter((asset) => asset.key === selectedEntity.asset_id).map((asset) => <option key={asset.key}>{asset.key}</option>)}</select></label>
             <label>
               X
               <input
@@ -1713,6 +1747,9 @@ export function CampaignDesigner({
                 }
               />
             </label>
+            <label>Z index<input type="number" value={selectedEntity.z_index} onChange={(event) => updateSelected("z_index", Number(event.target.value))} /></label>
+            <label>Tags (comma separated)<input value={selectedEntity.tags.join(", ")} onChange={(event) => updateSelected("tags", event.target.value.split(",").map((tag) => tag.trim()).filter(Boolean))} /></label>
+            <label>Formation<select value={document?.formations.find((formation) => formation.member_ids.includes(selectedEntity.id))?.id ?? ""} onChange={(event) => mutate((current) => ({ ...current, formations: current.formations.map((formation) => ({ ...formation, member_ids: event.target.value === formation.id ? [...new Set([...formation.member_ids, selectedEntity.id])] : formation.member_ids.filter((id) => id !== selectedEntity.id) })) }))}><option value="">Ungrouped</option>{document?.formations.map((formation) => <option key={formation.id} value={formation.id}>{formation.name}</option>)}</select></label>
             <label>
               Profile
               <input
@@ -1739,6 +1776,7 @@ export function CampaignDesigner({
               Type
               <input value="PLAYER SPAWN (SLOT 1)" disabled />
             </label>
+            <label>Asset<input value={selectedPlayerSpawn.asset_id} disabled /></label>
             <label>
               X
               <input
@@ -1767,7 +1805,7 @@ export function CampaignDesigner({
               <input
                 type="checkbox"
                 checked={selectedPlayerSpawn.enabled}
-                disabled
+                onChange={(event) => mutate((current) => ({ ...current, player_spawns: current.player_spawns.map((spawn) => spawn.id === selectedPlayerSpawn.id ? { ...spawn, enabled: event.target.checked } : spawn) }))}
               />{" "}
               Enabled required spawn
             </label>
@@ -1776,8 +1814,12 @@ export function CampaignDesigner({
           <div className="designer-fields">
             <label>
               Structure
-              <input value={selectedShield.name} disabled />
+              <input value={selectedShield.name} onChange={(event) => mutate((current) => ({ ...current, shield_structures: current.shield_structures.map((shield) => shield.id === selectedShield.id ? { ...shield, name: event.target.value } : shield) }))} />
             </label>
+            <label>Tile asset<input value={selectedShield.tile_asset_id} disabled /></label>
+            <label>Tile width<input type="number" min="1" value={selectedShield.tile_width} onChange={(event) => mutate((current) => ({ ...current, shield_structures: current.shield_structures.map((shield) => shield.id === selectedShield.id ? { ...shield, tile_width: Number(event.target.value) } : shield) }))} /></label>
+            <label>Tile height<input type="number" min="1" value={selectedShield.tile_height} onChange={(event) => mutate((current) => ({ ...current, shield_structures: current.shield_structures.map((shield) => shield.id === selectedShield.id ? { ...shield, tile_height: Number(event.target.value) } : shield) }))} /></label>
+            <label><input type="checkbox" checked={selectedShield.destructible} onChange={(event) => mutate((current) => ({ ...current, shield_structures: current.shield_structures.map((shield) => shield.id === selectedShield.id ? { ...shield, destructible: event.target.checked as true } : shield) }))} /> Destructible</label>
             <label>
               Origin X
               <input
@@ -1795,6 +1837,8 @@ export function CampaignDesigner({
               />
             </label>
             <p>Click any matrix cell to add or remove its real shield tile.</p>
+            <button type="button" onClick={() => mutate((current) => ({ ...current, shield_structures: [...current.shield_structures, { ...selectedShield, id: uid("shield"), name: `${selectedShield.name} copy`, origin: { x: snap(Math.min(1280, selectedShield.origin.x + 32)), y: snap(Math.min(720, selectedShield.origin.y + 32)) }, matrix: selectedShield.matrix.map((row) => [...row]) }] }))}>Clone structure</button>
+            <button type="button" onClick={() => { mutate((current) => ({ ...current, shield_structures: current.shield_structures.filter((shield) => shield.id !== selectedShield.id) })); setSelectedIds([]); }}>Delete structure</button>
           </div>
         ) : selectedEmitter ? (
           <div className="designer-fields">
@@ -1810,6 +1854,7 @@ export function CampaignDesigner({
                 <option value="COMET">COMET</option>
               </select>
             </label>
+            <label>Asset<input value={selectedEmitter.asset_id} disabled /></label>
             <label>
               Initial count
               <input type="number" min="0" value={selectedEmitter.initial_count} onChange={(event) => updateEmitter("initial_count", Number(event.target.value))} />
@@ -1822,6 +1867,7 @@ export function CampaignDesigner({
               Spawn interval (ms)
               <input type="number" min="0" value={selectedEmitter.spawn_interval_ms} onChange={(event) => updateEmitter("spawn_interval_ms", Number(event.target.value))} />
             </label>
+            <label>Spawn jitter (ms)<input type="number" min="0" value={selectedEmitter.spawn_jitter_ms} onChange={(event) => updateEmitter("spawn_jitter_ms", Number(event.target.value))} /></label>
             <label>
               Minimum speed
               <input type="number" min="0" value={selectedEmitter.speed_min} onChange={(event) => updateEmitter("speed_min", Number(event.target.value))} />
@@ -1830,12 +1876,20 @@ export function CampaignDesigner({
               Maximum speed
               <input type="number" min="0" value={selectedEmitter.speed_max} onChange={(event) => updateEmitter("speed_max", Number(event.target.value))} />
             </label>
+            <label>Minimum angular velocity<input type="number" value={selectedEmitter.angular_velocity_min} onChange={(event) => updateEmitter("angular_velocity_min", Number(event.target.value))} /></label>
+            <label>Maximum angular velocity<input type="number" value={selectedEmitter.angular_velocity_max} onChange={(event) => updateEmitter("angular_velocity_max", Number(event.target.value))} /></label>
+            <label>Entry edges<select multiple value={selectedEmitter.entry_edges} onChange={(event) => updateEmitter("entry_edges", Array.from(event.target.selectedOptions).map((option) => option.value) as Emitter["entry_edges"])}>{["TOP", "RIGHT", "BOTTOM", "LEFT"].map((edge) => <option key={edge}>{edge}</option>)}</select></label>
+            <label>Spawn pattern<select value={selectedEmitter.spawn_pattern} onChange={(event) => updateEmitter("spawn_pattern", event.target.value as Emitter["spawn_pattern"])}>{["RANDOM_EDGE", "ALTERNATING_EDGES", "LANE", "FIXED_POINTS"].map((pattern) => <option key={pattern}>{pattern}</option>)}</select></label>
+            <label>Fixed spawn points (x,y; x,y)<input value={selectedEmitter.spawn_points.map((point) => `${point.x},${point.y}`).join("; ")} onChange={(event) => updateEmitter("spawn_points", event.target.value.split(";").map((pair) => pair.trim().split(",").map(Number)).filter((pair) => pair.length === 2 && pair.every(Number.isFinite)).map(([x, y]) => ({ x, y })))} /></label>
+            <label>Despawn margin<input type="number" min="0" value={selectedEmitter.despawn_margin} onChange={(event) => updateEmitter("despawn_margin", Number(event.target.value))} /></label>
+            <label>Collision damage<input type="number" min="0" value={selectedEmitter.collision_damage} onChange={(event) => updateEmitter("collision_damage", Number(event.target.value))} /></label>
             <label>
               <input type="checkbox" checked={selectedEmitter.enabled} onChange={(event) => updateEmitter("enabled", event.target.checked)} /> Enabled
             </label>
           </div>
         ) : selectedFormation ? (
           <div className="designer-fields">
+            <label>Name<input value={selectedFormation.name} onChange={(event) => updateFormation(selectedFormation.id, { name: event.target.value })} /></label>
             <label>
               Layout
               <select
@@ -1858,6 +1912,8 @@ export function CampaignDesigner({
                 )}
               </select>
             </label>
+            <label>Origin X<input type="number" value={selectedFormation.bounds.x} onChange={(event) => updateFormation(selectedFormation.id, { bounds: { ...selectedFormation.bounds, x: Number(event.target.value) } })} /></label>
+            <label>Origin Y<input type="number" value={selectedFormation.bounds.y} onChange={(event) => updateFormation(selectedFormation.id, { bounds: { ...selectedFormation.bounds, y: Number(event.target.value) } })} /></label>
             <label>
               Width
               <input
@@ -1920,6 +1976,9 @@ export function CampaignDesigner({
                 }
               />
             </label>
+            <label>Entry delay (ms)<input type="number" min="0" value={selectedFormation.entry_delay_ms} onChange={(event) => updateFormation(selectedFormation.id, { entry_delay_ms: Number(event.target.value) })} /></label>
+            <label>Repeat<input type="number" min="0" value={selectedFormation.repeat} onChange={(event) => updateFormation(selectedFormation.id, { repeat: Number(event.target.value) })} /></label>
+            <label>Members<select multiple value={selectedFormation.member_ids} onChange={(event) => updateFormation(selectedFormation.id, { member_ids: Array.from(event.target.selectedOptions).map((option) => option.value) })}>{document?.entities.filter((entity) => ["SCOUT", "CRUISER", "DESTROYER", "MOTHERSHIP"].includes(entity.entity_type)).map((entity) => <option key={entity.id} value={entity.id}>{entity.entity_type} {entity.id.slice(-8)}</option>)}</select></label>
             <button onClick={() => reflowFormation(selectedFormation)}>
               Reflow members
             </button>
