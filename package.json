@@ -20,6 +20,7 @@
     "test:boarding": "npm --workspace game run test -- tests/boarding-simulation.test.ts",
     "runtime:boarding": "node scripts/verify-boarding-runtime.mjs",
     "runtime:h015:stage1": "node scripts/verify-h015-stage1.mjs",
+    "runtime:h015:stage2": "node scripts/verify-h015-stage2-navigation.mjs",
     "runtime:h015:boarding": "node scripts/verify-h015-boarding-journey.mjs",
     "runtime:h015:level4-hazards": "node scripts/verify-h015-level4-hazards.mjs",
     "runtime:h015:boarding-success": "node scripts/verify-h015-boarding-success.mjs",

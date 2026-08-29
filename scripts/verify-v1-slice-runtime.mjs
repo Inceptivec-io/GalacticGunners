@@ -613,8 +613,9 @@ async function runHostileCases(browser) {
   await page.keyboard.press('P');
   await page.waitForFunction(() => window.__GALACTIC_GUNNERS_PAUSE_QA__?.scene === 'PauseScene', null, { timeout: 3000 });
   const pauseQa = await page.evaluate(() => window.__GALACTIC_GUNNERS_PAUSE_QA__);
-  cases.pause_surface_visible = pauseQa?.backdrop?.texture === 'pause.screen'
-    && pauseQa.backdrop.alpha === 1
+  cases.pause_surface_visible = pauseQa?.backdrop?.texture === 'translucent-overlay'
+    && pauseQa.backdrop.alpha > 0
+    && pauseQa.backdrop.alpha < 1
     && pauseQa.backdrop.visible === true
     && pauseQa.visibleTexts.includes('PAUSED')
     && pauseQa.visibleTexts.includes('RESUME');

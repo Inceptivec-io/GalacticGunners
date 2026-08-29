@@ -16,10 +16,11 @@ export class PauseScene extends Phaser.Scene {
 
   create(): void {
     const { width, height } = this.scale;
-    const backdrop = this.add.image(width / 2, height / 2, RUNTIME_ASSETS.pause.screen.key)
-      .setDisplaySize(width, height)
-      .setDepth(30);
-    this.add.rectangle(width / 2, height / 2, width, height, 0x020712, 0.24).setDepth(31);
+    const backdrop = this.add.rectangle(width / 2, height / 2, width, height, 0x020712, 0.44).setDepth(30);
+    this.add.image(width / 2, height / 2, RUNTIME_ASSETS.pause.screen.key)
+      .setDisplaySize(Math.min(width * 0.66, 760), Math.min(height * 0.56, 470))
+      .setAlpha(0.58)
+      .setDepth(31);
     this.add.image(width / 2, height / 2 - 56, RUNTIME_ASSETS.ui.pauseIcon.key)
       .setDisplaySize(96, 64)
       .setDepth(32);
@@ -45,8 +46,14 @@ export class PauseScene extends Phaser.Scene {
     if (typeof window !== 'undefined') {
       window.__GALACTIC_GUNNERS_PAUSE_QA__ = {
         scene: 'PauseScene',
+        viewport: { width, height },
         visibleTexts: ['PAUSED', 'RESUME', 'RESTART', 'MAIN MENU'],
-        backdrop: { texture: backdrop.texture.key, alpha: backdrop.alpha, visible: backdrop.visible },
+        backdrop: { texture: 'translucent-overlay', alpha: backdrop.fillAlpha, visible: backdrop.visible },
+        actions: [
+          { action: 'resume', x: resume.x, y: resume.y, width: resume.displayWidth, height: resume.displayHeight },
+          { action: 'restart', x: restart.x, y: restart.y, width: restart.displayWidth, height: restart.displayHeight },
+          { action: 'menu', x: menu.x, y: menu.y, width: menu.displayWidth, height: menu.displayHeight },
+        ],
       };
     }
 

@@ -1425,7 +1425,7 @@ export class Level1Scene extends CombatLevelScene {
     const panelAspect = isComplete ? 1448 / 1086 : 1672 / 941;
     const panelWidth = Math.min(this.scale.width * 0.8, 920);
     const panelHeight = panelWidth / panelAspect;
-    const panel = this.add.image(centreX, centreY - 16, panelAsset.key)
+    const panel = this.add.image(centreX, centreY + panelHeight * 0.12, panelAsset.key)
       .setDisplaySize(panelWidth, panelHeight)
       .setDepth(20);
     const bonus = isComplete ? this.#lives.value * 100 : 0;
@@ -1437,13 +1437,13 @@ export class Level1Scene extends CombatLevelScene {
     const values = isComplete
       ? `${heading}\nLEVEL ${this.#campaignSequence}: ${this.#definition.name.toUpperCase()}\nLEVEL SCORE ${levelScoreDelta}\nCAMPAIGN SCORE ${this.#score.value}\nLIVES ${this.#lives.value}  NUKES ${this.#currentNukes}\nBONUS ${bonus}  ${rankedState}`
       : `${heading}\nLEVEL ${this.#campaignSequence}: ${this.#definition.name.toUpperCase()}\nCAMPAIGN SCORE ${this.#score.value}\nLIVES ${this.#lives.value}  NUKES ${this.#currentNukes}\n${rankedState}`;
-    const text = this.add.text(centreX, centreY - panelHeight * 0.12, values, {
+    const text = this.add.text(centreX, Math.max(96, centreY - panelHeight * 0.68), values, {
       color: isComplete ? '#f7d56a' : '#ff8b6e',
       fontFamily: isComplete ? 'GalacticGunnersGoldDisplay, Arial, sans-serif' : 'GalacticGunnersSilverDisplay, Arial, sans-serif',
       fontSize: `${Math.max(20, Math.min(34, panelWidth * 0.042))}px`,
       align: 'center',
     }).setOrigin(0.5).setDepth(21);
-    const actionY = centreY + panelHeight * 0.24;
+    const actionY = centreY + panelHeight * 0.35;
     if (isComplete && !isFinalLevel) {
       this.createContinueControl(centreX, actionY - 8);
       this.createProductionTerminalButton(centreX - panelWidth * 0.18, actionY + 74, 'replay');

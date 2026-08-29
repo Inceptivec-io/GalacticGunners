@@ -13,12 +13,17 @@ export class MainMenuScene extends Phaser.Scene {
   #inputSystem!: InputSystem;
   #started = false;
   #resumeSequence: number | null = null;
+  #createdAt = 0;
 
   constructor() {
     super('MainMenuScene');
   }
 
   create(): void {
+    // Splash completion returns control to the primary interactive surface.
+    this.game.canvas.tabIndex = 0;
+    this.game.canvas.focus();
+    this.#createdAt = performance.now();
     this.#inputSystem = new InputSystem(this);
     const checkpoint = this.registry.get('campaignState') as { sequence?: number } | undefined;
     this.#resumeSequence = checkpoint?.sequence && checkpoint.sequence > 1 ? checkpoint.sequence : null;
@@ -101,6 +106,7 @@ export class MainMenuScene extends Phaser.Scene {
     }
     window.__GALACTIC_GUNNERS_MENU_QA__ = {
       scene: 'MainMenuScene',
+      createdAt: this.#createdAt,
       viewport: { width: this.scale.width, height: this.scale.height },
       visibleTexts: this.children.list
         .filter((child): child is Phaser.GameObjects.Text => child instanceof Phaser.GameObjects.Text)
