@@ -75,13 +75,38 @@ try {
   await portal.waitForURL(/\/command-post$/);
   await portal.getByRole('link', { name: /Founder Demo Organisation/i }).click();
   await portal.waitForSelector('.command-post-shell');
+  const organizationSlug = new URL(portal.url()).pathname.split('/').filter(Boolean).at(-1);
+  assert(organizationSlug, 'Command Post did not resolve an organisation-scoped route.');
   await capture(portal, '08-command-post-organisation-isolation', portal.url(), 'Command Post customer', 'Open authorised organisation workspace.', 'Organisation-scoped workspace loaded.');
   await portal.getByRole('button', { name: 'Maps', exact: true }).click();
   await portal.waitForSelector('[data-designer-route="campaign"]');
   await capture(portal, '09-command-post-map-designer', portal.url(), 'Command Post customer', 'Open tenant Map Designer.', 'Tenant-scoped map authoring surface rendered.');
+  const mapCreation = portal.waitForResponse((response) =>
+    response.request().method() === 'POST' &&
+    /\/api\/v1\/portal\/organizations\/[^/]+\/maps\/$/.test(new URL(response.url()).pathname),
+  );
   await portal.getByRole('button', { name: 'Create blank map', exact: true }).click();
-  await portal.getByText('Blank organisation map created.').waitFor();
+  const mapCreationResponse = await mapCreation;
+  const createdMap = await mapCreationResponse.json();
+  assert(mapCreationResponse.status() === 201, `Tenant map creation failed with HTTP ${mapCreationResponse.status()}: ${JSON.stringify(createdMap)}`);
+  await portal.waitForFunction(async ({ mapId, slug }) => {
+    const response = await fetch(`/api/v1/portal/organizations/${encodeURIComponent(slug)}/`, { credentials: 'same-origin' });
+    const authority = await response.json();
+    return response.ok && authority.maps?.some((entry) => entry.id === mapId && !entry.archived);
+  }, { mapId: createdMap.id, slug: organizationSlug });
   await capture(portal, '23-command-post-map-create-isolation', portal.url(), 'Command Post customer', 'Create a tenant-owned blank map through the Command Post UI.', 'The owner-scoped map is created without cross-tenant access.');
+  const mapArchive = portal.waitForResponse((response) =>
+    response.request().method() === 'DELETE' &&
+    /\/api\/v1\/portal\/organizations\/[^/]+\/maps\/[^/]+\/$/.test(new URL(response.url()).pathname),
+  );
+  await portal.getByRole('button', { name: 'Archive selected map', exact: true }).click();
+  const mapArchiveResponse = await mapArchive;
+  assert(mapArchiveResponse.status() === 204, `Tenant map archive failed with HTTP ${mapArchiveResponse.status()}.`);
+  await portal.waitForFunction(async ({ mapId, slug }) => {
+    const response = await fetch(`/api/v1/portal/organizations/${encodeURIComponent(slug)}/`, { credentials: 'same-origin' });
+    const authority = await response.json();
+    return response.ok && !authority.maps?.some((entry) => entry.id === mapId);
+  }, { mapId: createdMap.id, slug: organizationSlug });
 
   await startCampaign(page);
   const levelOne = await campaignState(page);

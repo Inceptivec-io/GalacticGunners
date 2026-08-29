@@ -3,8 +3,12 @@ from django.test import TestCase
 from rest_framework.test import APIClient
 
 from assets.models import AssetCategory, AssetRecord
-from games.models import OwnerScope, Visibility
+from django.utils import timezone
+
+from games.models import GameProject, OwnerScope, Visibility
 from organizations.models import Organization, OrganizationMembership
+from plans.models import OrganizationPlanAssignment, ServicePlan
+from plans.services import MapQuotaService
 
 
 class PortalOrganizationScopeTests(TestCase):
@@ -26,6 +30,22 @@ class PortalOrganizationScopeTests(TestCase):
         OrganizationMembership.objects.create(
             organization=self.other_organization, user=self.other_owner,
             role=OrganizationMembership.Role.BUSINESS_ADMIN,
+        )
+        self.project = GameProject.objects.create(
+            slug='owned-project', name='Owned Project', owner_scope=OwnerScope.ORGANIZATION,
+            organization=self.organization, created_by=self.owner,
+        )
+        plan = ServicePlan.objects.create(
+            code='PORTAL_TEST', display_name='Portal test plan', status='ACTIVE',
+            limits={'active_map_limit': 5}, capabilities={},
+        )
+        OrganizationPlanAssignment.objects.create(
+            organization=self.organization, plan=plan, assigned_by=self.owner,
+            reason='Portal archive test fixture', starts_at=timezone.now(),
+        )
+        self.map = MapQuotaService.create_map(
+            organization=self.organization, game_project=self.project, actor=self.owner,
+            slug='owned-map', name='Owned Map',
         )
         self.client = APIClient()
 
@@ -56,3 +76,14 @@ class PortalOrganizationScopeTests(TestCase):
         response = self.client.get('/api/v1/assets/catalogue/?organization=owned-org/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual([item['key'] for item in response.data['results']], ['shared-scout'])
+
+    def test_business_admin_archives_only_own_organization_map(self):
+        self.client.force_authenticate(self.owner)
+        response = self.client.delete(f'/api/v1/portal/organizations/owned-org/maps/{self.map.id}/')
+        self.assertEqual(response.status_code, 204)
+        self.map.refresh_from_db()
+        self.assertTrue(self.map.archived)
+
+        self.client.force_authenticate(self.other_owner)
+        response = self.client.delete(f'/api/v1/portal/organizations/other-org/maps/{self.map.id}/')
+        self.assertEqual(response.status_code, 404)

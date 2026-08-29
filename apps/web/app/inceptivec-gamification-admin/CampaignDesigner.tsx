@@ -477,6 +477,7 @@ export function CampaignDesigner({
   const [message, setMessage] = useState(
     "Loading governed campaign authority...",
   );
+  const [operationMessage, setOperationMessage] = useState<string | null>(null);
   const [zoom, setZoom] = useState(1);
   const [portalProjectId, setPortalProjectId] = useState<string | null>(null);
   const [activeCampaignRelease, setActiveCampaignRelease] = useState<{
@@ -1263,18 +1264,18 @@ export function CampaignDesigner({
       });
       setHistory([]);
       await load();
-      setMessage(
+      setOperationMessage(
         `Draft v${draft.version} saved with immutable checksum ${draft.checksum.slice(0, 12)}.`,
       );
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Draft save failed.");
+      setOperationMessage(error instanceof Error ? error.message : "Draft save failed.");
     }
   }
   async function createTenantMap() {
     if (!context.organizationSlug || !portalProjectId) return;
     try {
       const nextSequence = levels.length + 1;
-      await call(`/portal/organizations/${context.organizationSlug}/maps/`, {
+      const created = await call(`/portal/organizations/${context.organizationSlug}/maps/`, {
         method: "POST",
         body: JSON.stringify({
           project_id: portalProjectId,
@@ -1282,14 +1283,27 @@ export function CampaignDesigner({
           name: `Custom Map ${nextSequence}`,
           sequence: nextSequence,
         }),
+      }) as { id: string };
+      await load();
+      setSelectedLevelId(created.id);
+      setOperationMessage("Blank organisation map created.");
+    } catch (error) {
+      setOperationMessage(
+        error instanceof Error ? error.message : "Map creation failed.",
+      );
+    }
+  }
+  async function archiveTenantMap() {
+    if (!context.organizationSlug || !selectedLevel || context.surface !== "COMMAND_POST") return;
+    try {
+      await call(`/portal/organizations/${context.organizationSlug}/maps/${selectedLevel.id}/`, {
+        method: "DELETE",
       });
       setSelectedLevelId(null);
       await load();
-      setMessage("Blank organisation map created.");
+      setOperationMessage("Selected organisation map archived. Revision history is retained.");
     } catch (error) {
-      setMessage(
-        error instanceof Error ? error.message : "Map creation failed.",
-      );
+      setOperationMessage(error instanceof Error ? error.message : "Map archive failed.");
     }
   }
   async function lifecycle(action: "validate" | "publish" | "rollback", version?: number) {
@@ -1302,9 +1316,9 @@ export function CampaignDesigner({
         body: JSON.stringify({ version: version ?? (selectedLevel.editable_version ?? selectedLevel.active_version)?.version }),
       });
       await load();
-      setMessage(`${action} completed through the authenticated version workflow.`);
+      setOperationMessage(`${action} completed through the authenticated version workflow.`);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : `${action} failed.`);
+      setOperationMessage(error instanceof Error ? error.message : `${action} failed.`);
     }
   }
   const draftChecksum =
@@ -1323,14 +1337,22 @@ export function CampaignDesigner({
             ? "Map Designer"
             : "Campaign Designer"}
         </h1>
-        <button onClick={load}>Refresh authority</button>
+        <button onClick={() => { setOperationMessage(null); void load(); }}>Refresh authority</button>
         {context.surface === "COMMAND_POST" ? (
-          <button
-            onClick={createTenantMap}
-            disabled={!portalProjectId || !editable}
-          >
-            Create blank map
-          </button>
+          <>
+            <button
+              onClick={createTenantMap}
+              disabled={!portalProjectId || !editable}
+            >
+              Create blank map
+            </button>
+            <button
+              onClick={archiveTenantMap}
+              disabled={!selectedLevel || !editable}
+            >
+              Archive selected map
+            </button>
+          </>
         ) : null}
         <button onClick={saveDraft} disabled={!selectedLevel || !editable}>
           Save immutable draft
@@ -1369,7 +1391,7 @@ export function CampaignDesigner({
       <section className="designer-workspace">
         <header>
           <strong>{selectedLevel?.name ?? "No level selected"}</strong>
-          <span role="status">{message}</span>
+          <span role="status">{operationMessage ?? message}</span>
           <label>
             Zoom{" "}
             <input

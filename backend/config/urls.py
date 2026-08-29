@@ -11,7 +11,7 @@ from levels.views import AdminCoreLevelAuthorityView, AdminLevelActionView, Admi
 from accounts.api import CsrfView, LoginView, LogoutView, RegisterView, SessionView
 from accounts.admin_api import AdminOperationsView
 from campaigns.views import CampaignRunCompleteEntryView, CampaignRunStartView
-from organizations.api import PortalMapCreateView, PortalMapDraftView, PortalMapPreviewView, PortalOrganizationView, PortalOrganizationsView
+from organizations.api import PortalMapArchiveView, PortalMapCreateView, PortalMapDraftView, PortalMapPreviewView, PortalOrganizationView, PortalOrganizationsView
 from assets.api import AssetCatalogueView
 
 from .views import build_provenance, health
@@ -30,6 +30,7 @@ urlpatterns = [
     path('api/v1/portal/organizations/', PortalOrganizationsView.as_view(), name='portal-organizations'),
     path('api/v1/portal/organizations/<slug:slug>/', PortalOrganizationView.as_view(), name='portal-organization'),
     path('api/v1/portal/organizations/<slug:slug>/maps/', PortalMapCreateView.as_view(), name='portal-map-create'),
+    path('api/v1/portal/organizations/<slug:slug>/maps/<uuid:level_id>/', PortalMapArchiveView.as_view(), name='portal-map-archive'),
     path('api/v1/portal/organizations/<slug:slug>/maps/<uuid:level_id>/drafts/', PortalMapDraftView.as_view(), name='portal-map-draft-save'),
     path('api/v1/portal/organizations/<slug:slug>/maps/<uuid:level_id>/preview/<str:checksum_value>/', PortalMapPreviewView.as_view(), name='portal-map-preview'),
     path('api/v1/assets/catalogue/', AssetCatalogueView.as_view(), name='asset-catalogue'),

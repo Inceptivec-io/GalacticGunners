@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 
 from games.models import GameProject, OwnerScope
 from game_runs.models import GameRun
+from audit.models import PlatformAuditEvent
 from levels.models import Level, LevelVersion
 from levels.serializers import LevelVersionSerializer
 from levels.validation import validate_definition
@@ -109,6 +110,38 @@ class PortalMapCreateView(APIView):
         except PermissionError as error:
             raise PermissionDenied(str(error)) from error
         return Response({'id': str(level.id), 'slug': level.slug, 'name': level.name, 'sequence': level.sequence}, status=201)
+
+
+class PortalMapArchiveView(APIView):
+    """Archive an organisation-owned map without destroying its version history."""
+
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, slug, level_id):
+        organization = organization_for(request, slug)
+        membership = AuthorizationPolicy.membership(request.user, organization)
+        if not AuthorizationPolicy.is_platform_owner(request.user) and (membership is None or membership.role not in {'BUSINESS_ADMIN', 'EDITOR'}):
+            raise PermissionDenied('PORTAL_ACCESS_DENIED')
+        level = Level.objects.filter(
+            pk=level_id,
+            game_project__organization=organization,
+            game_project__owner_scope=OwnerScope.ORGANIZATION,
+            archived=False,
+        ).first()
+        if level is None:
+            raise NotFound('Map not found.')
+        level.archived = True
+        level.save(update_fields=['archived', 'updated_at'])
+        PlatformAuditEvent.objects.create(
+            actor=request.user,
+            actor_kind=PlatformAuditEvent.ActorKind.USER,
+            organization=organization,
+            action='map.archive',
+            target_type='Level',
+            target_id=str(level.id),
+            result=PlatformAuditEvent.Result.SUCCESS,
+        )
+        return Response(status=204)
 
 
 class PortalMapDraftView(APIView):
