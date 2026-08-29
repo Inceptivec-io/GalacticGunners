@@ -12,6 +12,25 @@ function assert(value, message) { if (!value) throw new Error(message); }
 
 async function state(page) { return page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__?.state()); }
 
+async function startFromMenu(page) {
+  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_MENU_QA__?.scene === 'MainMenuScene', null, { timeout: 30_000 });
+  // Keep the input active through Phaser's next update. A press/release in one
+  // browser tick can otherwise be missed on a loaded container runner.
+  await page.keyboard.down('Enter');
+  try {
+    await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.scene === 'Level1Scene', null, { timeout: 30_000 });
+  } catch (error) {
+    const diagnostic = await page.evaluate(() => ({
+      menuScene: window.__GALACTIC_GUNNERS_MENU_QA__?.scene ?? null,
+      hostileScene: window.__GALACTIC_GUNNERS_HOSTILE__?.state?.()?.scene ?? null,
+      canvasCount: document.querySelectorAll('canvas').length,
+    }));
+    throw new Error(`Level 4 runtime bootstrap failed: ${JSON.stringify(diagnostic)}. ${error.message}`);
+  } finally {
+    await page.keyboard.up('Enter');
+  }
+}
+
 async function clickAction(page, action) {
   const snapshot = await state(page);
   const target = snapshot.terminalActions.find((entry) => entry.action === action);
@@ -31,9 +50,7 @@ page.on('requestfailed', (request) => networkFailures.push(`FAILED ${request.url
 
 try {
   await page.goto(`${baseUrl}/play?qa=hostile`, { waitUntil: 'networkidle', timeout: 20_000 });
-  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_MENU_QA__?.scene === 'MainMenuScene');
-  await page.keyboard.press('Enter');
-  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.scene === 'Level1Scene');
+  await startFromMenu(page);
   for (let sequence = 1; sequence < 4; sequence += 1) {
     await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__?.forceComplete());
     await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.terminalState === 'complete');
