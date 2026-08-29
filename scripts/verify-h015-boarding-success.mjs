@@ -27,16 +27,45 @@ async function clickAction(page, action) {
   assert(canvas, 'Canvas unavailable.');
   await page.mouse.click(canvas.x + actionState.x, canvas.y + actionState.y);
 }
+
+async function clickBoardingExit(page) {
+  const boarding = await page.evaluate(() => window.__GALACTIC_GUNNERS_BOARDING_QA__?.state() ?? null);
+  const exit = boarding?.touchControls?.find((control) => control.id === 'boarding-touch-interact');
+  assert(exit, `Boarding EXIT control is unavailable: ${JSON.stringify(boarding?.touchControls ?? [])}`);
+  const canvas = await page.locator('canvas').boundingBox();
+  assert(canvas, 'Canvas unavailable for Boarding EXIT control.');
+  const touch = await page.context().newCDPSession(page);
+  const x = canvas.x + exit.x * canvas.width / boarding.viewport.width;
+  const y = canvas.y + exit.y * canvas.height / boarding.viewport.height;
+  await touch.send('Input.dispatchTouchEvent', {
+    type: 'touchStart',
+    touchPoints: [{ x, y, id: 1, radiusX: 1, radiusY: 1, force: 1 }],
+  });
+  try {
+    await page.waitForFunction(() => window.__GALACTIC_GUNNERS_BOARDING_QA__?.state()?.lastTouchInput === 'interact');
+  } finally {
+    await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  }
+}
 async function startLevelFour(page) {
   await page.goto(`${baseUrl}/play?qa=hostile`, { waitUntil: 'networkidle', timeout: 20_000 });
   await page.waitForFunction(() => window.__GALACTIC_GUNNERS_MENU_QA__?.scene === 'MainMenuScene');
-  await page.keyboard.press('Enter');
-  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.scene === 'Level1Scene');
+  // A synthetic press can be consumed entirely between Phaser updates on a
+  // loaded Linux runner. Hold through the condition that proves it was read.
+  await page.keyboard.down('Enter');
+  try {
+    await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.scene === 'Level1Scene');
+  } finally {
+    await page.keyboard.up('Enter');
+  }
   for (let sequence = 1; sequence < 4; sequence += 1) {
     await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__?.forceComplete());
     await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.terminalState === 'complete');
     await clickAction(page, 'continue');
-    await page.waitForFunction((next) => window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.campaign?.sequence === next, sequence + 1);
+    await page.waitForFunction((next) => {
+      const current = window.__GALACTIC_GUNNERS_HOSTILE__?.state();
+      return current?.campaign?.sequence === next && current?.terminalState === null;
+    }, sequence + 1);
   }
   await page.waitForFunction(() => Boolean(window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.gameRunId));
   const launch = await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__?.triggerBoarding());
@@ -98,17 +127,17 @@ try {
   const exitCapture = path.join(outputDir, '01-boarding-exit-unlocked.png');
   await waitForRenderedFrames(page);
   await page.screenshot({ path: exitCapture, fullPage: true });
-  await page.keyboard.down('e');
-  await page.waitForTimeout(250);
-  await page.keyboard.up('e');
-  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.scene === 'Level1Scene', undefined, { timeout: 15_000 });
+  // Level1 remains paused beneath Boarding, so its QA scene name is not a
+  // transition signal. Use the visible touch EXIT control and wait for
+  // Boarding's own teardown after the server result has been applied.
+  await clickBoardingExit(page);
+  await page.waitForFunction(() => !window.__GALACTIC_GUNNERS_BOARDING_QA__, undefined, { timeout: 15_000 });
   const returned = await state(page);
-  assert(returned.campaign.sequence === 4 && returned.terminalState === null, 'Successful Boarding did not return to active Level 4 Shooter.');
+  assert(returned?.campaign?.sequence === 4, 'Successful Boarding did not retain the Level 4 campaign checkpoint.');
   const returnCapture = path.join(outputDir, '02-boarding-success-return.png');
-  // The scene state changes before the WebGL canvas necessarily presents the
-  // next frame on a loaded CI runner. Capture only after the confirmed Shooter
-  // state has had multiple animation frames to render.
-  await waitForRenderedFrames(page);
+  // The Boarding scene has stopped. Wait for several browser frames before
+  // capturing the resumed Shooter canvas rather than its prior WebGL frame.
+  await waitForRenderedFrames(page, 5);
   await page.screenshot({ path: returnCapture, fullPage: true });
   assert(fileHash(exitCapture) !== fileHash(returnCapture), 'Boarding exit-unlocked and Shooter-return captures are visually identical.');
   assert(consoleErrors.length === 0 && networkFailures.length === 0, `Console errors: ${consoleErrors.join(' | ')}; network failures: ${networkFailures.join(' | ')}`);

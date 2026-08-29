@@ -42,6 +42,10 @@ export class BoardingSimulation {
   hitPlayer(): void { if (this.state.player.health > 0) { this.state.player.health = 0; this.event('PLAYER_HIT', 'player'); } }
   alienFire(id: string): void { this.event('ALIEN_FIRE', id); }
   killAlien(id: string): void { const alien = this.state.aliens.find((candidate) => candidate.id === id); if (alien?.alive) { alien.alive = false; this.event('ALIEN_KILLED', id); } }
+  synchronizePlayerProjection(position: { x: number; y: number }): void {
+    this.state.player.x = Math.max(32, Math.min(BOARDING_WORLD.width - 32, position.x));
+    this.state.player.y = Math.max(0, Math.min(576, position.y));
+  }
   exit(): boolean {
     if (this.state.player.x < BOARDING_WORLD.width - 128) return false;
     this.event('EXIT_INTERACTED', 'exit-airlock');

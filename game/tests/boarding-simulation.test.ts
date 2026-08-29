@@ -20,6 +20,13 @@ test('boarding simulation has no implicit score award', () => {
   assert.equal(simulation.snapshot().events[0].type, 'ALIEN_KILLED');
 });
 
+test('boarding exit accepts the validated physical projection at the airlock', () => {
+  const simulation = new BoardingSimulation(7, { lives: 2, nukes: 1 });
+  simulation.synchronizePlayerProjection({ x: BOARDING_WORLD.width - 64, y: 530 });
+  assert.equal(simulation.exit(), true);
+  assert.equal(simulation.snapshot().events.at(-1)?.type, 'EXIT_INTERACTED');
+});
+
 test('boarding snapshot canonicalization sorts nested objects and rejects non-finite values', () => {
   assert.equal(canonicalBoardingJson({ z: { b: 2, a: 1 }, a: [{ d: 4, c: 3 }] }), '{"a":[{"c":3,"d":4}],"z":{"a":1,"b":2}}');
   assert.throws(() => canonicalBoardingJson({ nan: Number.NaN }), /non-finite/);
