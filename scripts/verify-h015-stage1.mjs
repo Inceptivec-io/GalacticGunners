@@ -20,9 +20,14 @@ page.on('console', (message) => {
 
 try {
   await page.goto(`${baseUrl}/play?qa=hostile`, { waitUntil: 'domcontentloaded', timeout: 15_000 });
-  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_MENU_QA__?.scene === 'MainMenuScene', { timeout: 10_000 });
-  await page.keyboard.press('Enter');
-  await page.waitForFunction(() => Boolean(window.__GALACTIC_GUNNERS_HOSTILE__), { timeout: 5_000 });
+  await page.waitForFunction(() => window.__GALACTIC_GUNNERS_MENU_QA__?.scene === 'MainMenuScene', null, { timeout: 30_000 });
+  // Retain input until Phaser consumes it on an update, including under CI load.
+  await page.keyboard.down('Enter');
+  try {
+    await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__?.state()?.scene === 'Level1Scene', null, { timeout: 30_000 });
+  } finally {
+    await page.keyboard.up('Enter');
+  }
   const initial = await page.evaluate(() => window.__GALACTIC_GUNNERS_HOSTILE__.state());
   assert(initial.scene === 'Level1Scene', `Expected Level1Scene, received ${initial.scene}`);
   await page.screenshot({ path: path.join(outputDir, '01-shooter-active.png') });
