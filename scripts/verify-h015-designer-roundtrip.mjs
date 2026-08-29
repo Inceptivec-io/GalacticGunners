@@ -32,6 +32,7 @@ try {
     const entityType = page.locator('.designer-inspector').getByLabel('Type');
     await entityType.selectOption('CRUISER');
     assert(await entityType.inputValue() === 'CRUISER', 'Designer entity composition edit did not retain before save.');
+    await page.locator('[aria-label="CRUISER at 50, 120"]').waitFor();
     await page.locator('.designer-formation-box').first().click();
     const layout = page.locator('.designer-inspector').getByLabel('Layout');
     await layout.selectOption('WEDGE');
@@ -50,7 +51,7 @@ try {
     const response = await draftResponse;
     const draftBody = await response.json();
     const conflict = response.status() === 409;
-    assert(conflict || response.status() === 201, `Unexpected immutable draft status: ${response.status()}.`);
+    assert(conflict || response.status() === 201, `Unexpected immutable draft status: ${response.status()} ${JSON.stringify(draftBody)}.`);
     if (conflict) {
       const authority = await page.evaluate(async () => (await fetch('/api/v1/admin/levels/authority/', { credentials: 'same-origin' })).json());
       const current = authority.results.find((item) => item.id === level.id);

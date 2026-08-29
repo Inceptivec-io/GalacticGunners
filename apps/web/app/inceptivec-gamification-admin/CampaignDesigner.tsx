@@ -1054,7 +1054,16 @@ export function CampaignDesigner({
     mutate((current) => ({
       ...current,
       hazard_emitters: current.hazard_emitters.map((emitter) =>
-        emitter.id === selectedEmitter.id ? { ...emitter, [field]: value } : emitter,
+        emitter.id === selectedEmitter.id
+          ? (() => {
+              const next = { ...emitter, [field]: value } as Emitter;
+              if (field === "initial_count" && typeof value === "number") next.maximum_active = Math.max(emitter.maximum_active, value);
+              if (field === "maximum_active" && typeof value === "number") next.initial_count = Math.min(emitter.initial_count, value);
+              if (field === "speed_min" && typeof value === "number") next.speed_max = Math.max(emitter.speed_max, value);
+              if (field === "speed_max" && typeof value === "number") next.speed_min = Math.min(emitter.speed_min, value);
+              return next;
+            })()
+          : emitter,
       ),
     }));
   }
