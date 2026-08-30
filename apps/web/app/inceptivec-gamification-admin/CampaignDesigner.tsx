@@ -588,8 +588,9 @@ export function CampaignDesigner({
     });
     if (!response.ok) {
       const body = await response.json().catch(() => ({}));
+      const validation = body.config ?? body.errors ?? body;
       throw new Error(
-        body.detail ?? body.code ?? `Request failed (${response.status})`,
+        validation.detail ?? validation.code ?? body.detail ?? body.code ?? `Request failed (${response.status})`,
       );
     }
     return response.json();

@@ -128,3 +128,47 @@ test("H015-DES-THUMB-001__e2e_ordinary_user__palette_uses_loaded_canonical_singl
   await page.getByRole("button", { name: "Close chooser" }).click();
   expect(strictRuntime.unexpectedFailures).toEqual([]);
 });
+
+test("H015-DES-META-001__e2e_ordinary_user__valid_seed_save_reloads_from_immutable_draft", async ({
+  page,
+  strictRuntime,
+}) => {
+  await loginAsAdministrator(page);
+  const configuration = page.getByLabel("Level configuration");
+  const seed = configuration.getByLabel("Deterministic seed");
+  const nextSeed = Number(await seed.inputValue()) + 1;
+  await seed.fill(String(nextSeed));
+  const saved = page.waitForResponse(
+    (response) => response.request().method() === "POST" && /\/api\/v1\/admin\/levels\/[^/]+\/drafts\/$/.test(new URL(response.url()).pathname),
+  );
+  await page.getByRole("button", { name: "Save immutable draft" }).click();
+  expect((await saved).status()).toBe(201);
+  await page.reload();
+  await expect(page.locator('[data-designer-route="campaign"]')).toBeVisible();
+  await expect(page.getByLabel("Level configuration").getByLabel("Deterministic seed")).toHaveValue(String(nextSeed));
+  expect(strictRuntime.unexpectedFailures).toEqual([]);
+});
+
+test("H015-DES-META-001__e2e_ordinary_user_negative__invalid_seed_is_rejected_by_the_server", async ({
+  page,
+  strictRuntime,
+}) => {
+  await loginAsAdministrator(page);
+  await page.getByLabel("Level configuration").getByLabel("Deterministic seed").fill("-1");
+  strictRuntime.allowHttpFailure(/\/api\/v1\/admin\/levels\/[^/]+\/drafts\/$/, 400);
+  strictRuntime.allowConsoleError(/Failed to load resource: the server responded with a status of 400/);
+  const rejected = page.waitForResponse(
+    (response) => response.request().method() === "POST" && /\/api\/v1\/admin\/levels\/[^/]+\/drafts\/$/.test(new URL(response.url()).pathname),
+  );
+  await page.getByRole("button", { name: "Save immutable draft" }).click();
+  const response = await rejected;
+  expect(response.status()).toBe(400);
+  expect(await response.json()).toMatchObject({
+    errors: {
+      code: "LEVEL_DEFINITION_INVALID",
+      detail: "Level definition failed validation.",
+    },
+  });
+  await expect(page.getByText(/level definition failed validation/i)).toBeVisible();
+  expect(strictRuntime.unexpectedFailures).toEqual([]);
+});

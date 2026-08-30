@@ -1,7 +1,7 @@
 """Schema 1.1 authoring validation and deterministic runtime compilation."""
 
+import re
 from copy import deepcopy
-
 
 ENTITY_TYPES = {'SCOUT', 'CRUISER', 'DESTROYER', 'MOTHERSHIP', 'ASTEROID', 'COMET', 'SHIELD_TILE', 'NUKE_PICKUP', 'LIFE_PICKUP'}
 SHIP_TYPES = {'SCOUT', 'CRUISER', 'DESTROYER', 'MOTHERSHIP'}
@@ -100,6 +100,18 @@ def validate_authoring_document(value):
     errors = []
     def issue(path, code): errors.append({'path': path, 'code': code, 'message': code.replace('_', ' ').lower()})
     if value.get('schema_version') != '1.1': issue('/schema_version', 'UNSUPPORTED_SCHEMA')
+    if (
+        not isinstance(value.get('slug'), str)
+        or not re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*', value['slug'])
+        or not isinstance(value.get('name'), str)
+        or not value['name'].strip()
+        or len(value['name']) > 128
+        or not isinstance(value.get('sequence'), int)
+        or not 1 <= value['sequence'] <= 10_000
+        or not isinstance(value.get('seed'), int)
+        or not 0 <= value['seed'] <= 2_147_483_647
+    ):
+        issue('/metadata', 'INVALID_LEVEL_METADATA')
     canvas = value.get('canvas', {})
     if canvas.get('width') != 1280 or canvas.get('height') != 720 or canvas.get('grid_size') not in {8, 16, 24, 32}: issue('/canvas', 'INVALID_CANVAS')
     entities = value.get('entities', [])

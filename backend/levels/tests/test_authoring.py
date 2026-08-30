@@ -1,7 +1,11 @@
 import json
 from pathlib import Path
 
-from levels.authoring import blank_authoring_document, migrate_v1_to_v11, validate_authoring_document
+from levels.authoring import (
+    blank_authoring_document,
+    migrate_v1_to_v11,
+    validate_authoring_document,
+)
 from levels.validation import checksum
 
 
@@ -27,6 +31,20 @@ def test_blank_document_is_playable_authoring_surface_without_placeholder_hostil
     assert document['formations'] == []
     assert len(document['player_spawns']) == 2
     assert validate_authoring_document(document) == []
+
+
+def test_authoring_document_requires_valid_level_metadata():
+    document = blank_authoring_document(identifier='map-01', slug='map-01', name='Blank Map', sequence=1, seed=77)
+    assert validate_authoring_document(document) == []
+
+    document['slug'] = 'Invalid slug!'
+    document['name'] = ''
+    document['sequence'] = 0
+    document['seed'] = -1
+
+    assert 'INVALID_LEVEL_METADATA' in {
+        error['code'] for error in validate_authoring_document(document)
+    }
 
 
 def test_authoring_document_rejects_duplicate_entity_ids_and_unknown_formation_members():
