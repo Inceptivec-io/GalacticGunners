@@ -334,23 +334,21 @@ rows:
     negative_or_hostile_proof: Background simulation or input mutation during pause fails
     test_cases:
       - id: H015-GAME-001 positive
-        classification: UNIT
+        classification: E2E_ORDINARY_USER
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-GAME-001 positive test"
+        command: npx playwright test tests/e2e/pause-controls.spec.ts --project=chromium-desktop --grep H015-GAME-001 --workers=1
         assertion:
-          Entity positions, timers, hazards and score remain unchanged while
-          paused
+          Paused canvas remains pixel-stable across elapsed time following ordinary keyboard pause input.
       - id: H015-GAME-001 negative
-        classification: UNIT
+        classification: E2E_ORDINARY_USER
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-GAME-001 negative or hostile test"
-        assertion: Background simulation or input mutation during pause fails
+        command: npx playwright test tests/e2e/pause-controls.spec.ts --project=chromium-desktop --grep H015-GAME-001 --workers=1
+        assertion: Resumed ordinary held movement changes the canvas, preventing a false static-runtime pass.
     evidence_gate: ordinary-gameplay
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Ordinary input proof now demonstrates paused visual stability and resumed movement divergence locally. This row remains FAIL until the required unit-layer state contract and exact-SHA CI evidence are admitted.
   - requirement_id: H015-GAME-002
     area: Gameplay
     requirement:
