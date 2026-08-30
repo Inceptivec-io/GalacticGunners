@@ -11,7 +11,7 @@ requirements:
       positive_tests: [tests/e2e/public-entry.spec.ts],
       negative_tests: [tests/e2e/public-entry.spec.ts],
       test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [e2e-ordinary],
+      ci_jobs: [runtime-browser],
       evidence: [playwright-trace],
       status: PENDING,
     }
@@ -22,7 +22,7 @@ requirements:
       positive_tests: [tests/e2e/splash-menu.spec.ts],
       negative_tests: [tests/e2e/splash-menu.spec.ts],
       test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [e2e-ordinary],
+      ci_jobs: [runtime-browser],
       evidence: [playwright-trace, video],
       status: PENDING,
     }
@@ -32,7 +32,7 @@ requirements:
       positive_tests: [tests/e2e/splash-menu.spec.ts],
       negative_tests: [tests/e2e/splash-menu.spec.ts],
       test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [e2e-ordinary],
+      ci_jobs: [runtime-browser],
       evidence: [playwright-trace],
       status: PENDING,
     }
@@ -42,7 +42,7 @@ requirements:
       positive_tests: [tests/e2e/campaign-real-play.spec.ts],
       negative_tests: [tests/e2e/campaign-real-play.spec.ts],
       test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [e2e-real-play],
+      ci_jobs: [runtime-browser],
       evidence: [runtime-event-ledger],
       status: PENDING,
     }
@@ -52,7 +52,7 @@ requirements:
       positive_tests: [tests/e2e/campaign-real-play.spec.ts],
       negative_tests: [tests/e2e/campaign-real-play.spec.ts],
       test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [e2e-real-play],
+      ci_jobs: [runtime-browser],
       evidence: [playwright-trace],
       status: PENDING,
     }
@@ -82,7 +82,7 @@ requirements:
       positive_tests: [backend/tests/test_auth_surfaces.py],
       negative_tests: [backend/tests/test_auth_surfaces.py],
       test_layer: API,
-      ci_jobs: [backend-api],
+      ci_jobs: [auth-hostile, runtime-browser],
       evidence: [junit],
       status: PENDING,
     }
@@ -92,7 +92,7 @@ requirements:
       positive_tests: [tests/e2e/auth-session.spec.ts],
       negative_tests: [tests/e2e/auth-session.spec.ts],
       test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [e2e-ordinary],
+      ci_jobs: [runtime-browser],
       evidence: [playwright-trace],
       status: PENDING,
     }
@@ -129,7 +129,7 @@ requirements:
       positive_tests: [tests/e2e/designer-pointer.spec.ts],
       negative_tests: [tests/e2e/designer-pointer.spec.ts],
       test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [e2e-ordinary],
+      ci_jobs: [runtime-browser],
       evidence: [playwright-trace],
       status: PENDING,
     }
@@ -140,7 +140,7 @@ requirements:
       positive_tests: [tests/e2e/designer-pointer.spec.ts],
       negative_tests: [tests/e2e/designer-pointer.spec.ts],
       test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [e2e-mobile],
+      ci_jobs: [runtime-browser],
       evidence: [playwright-trace],
       status: PENDING,
     }
@@ -151,7 +151,7 @@ requirements:
       positive_tests: [tests/e2e/designer-pointer.spec.ts],
       negative_tests: [tests/e2e/designer-pointer.spec.ts],
       test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [e2e-ordinary],
+      ci_jobs: [runtime-browser],
       evidence: [playwright-trace],
       status: PENDING,
     }
@@ -162,7 +162,7 @@ requirements:
       positive_tests: [tests/e2e/designer-pointer.spec.ts],
       negative_tests: [tests/e2e/designer-pointer.spec.ts],
       test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [e2e-ordinary],
+      ci_jobs: [runtime-browser],
       evidence: [playwright-trace],
       status: PENDING,
     }
@@ -172,7 +172,7 @@ requirements:
       positive_tests: [tests/e2e/designer-pointer.spec.ts],
       negative_tests: [tests/e2e/designer-pointer.spec.ts],
       test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [e2e-ordinary],
+      ci_jobs: [runtime-browser],
       evidence: [playwright-trace],
       status: PENDING,
     }
@@ -182,7 +182,7 @@ requirements:
       positive_tests: [tests/e2e/designer-pointer.spec.ts],
       negative_tests: [backend/levels/tests/test_authoring.py],
       test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [e2e-ordinary, backend-api],
+      ci_jobs: [runtime-browser, campaign-hostile],
       evidence: [playwright-trace, junit],
       status: PENDING,
     }
@@ -295,10 +295,16 @@ requirements:
       id: H015-DES-ROUND-001,
       implementation:
         [apps/web/app/inceptivec-gamification-admin/CampaignDesigner.tsx],
-      positive_tests: [tests/e2e/designer-roundtrip.spec.ts],
-      negative_tests: [tests/e2e/designer-roundtrip.spec.ts],
+      positive_tests:
+        [
+          tests/e2e/designer-pointer.spec.ts::H015-DES-META-001__e2e_ordinary_user__valid_seed_save_reloads_from_immutable_draft,
+        ],
+      negative_tests:
+        [
+          tests/e2e/designer-pointer.spec.ts::H015-DES-META-001__e2e_ordinary_user_negative__invalid_seed_is_rejected_by_the_server,
+        ],
       test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [e2e-ordinary],
+      ci_jobs: [runtime-browser],
       evidence: [playwright-trace, video],
       status: PENDING,
     }

@@ -335,7 +335,11 @@ jobs:
           docker compose exec -T backend python manage.py seed_service_plans
           docker compose exec -T backend python manage.py seed_runtime_authority
           docker compose exec -T backend python manage.py bootstrap_founder_review
-          GG_RUNTIME_URL=http://localhost:3002 npx playwright test tests/e2e/tenant-isolation.spec.ts --project=chromium-desktop
+          mkdir -p "$GG_EVIDENCE_DIR/ordinary-browser"
+          GG_RUNTIME_URL=http://localhost:3002 npx playwright test tests/e2e/public-entry.spec.ts tests/e2e/splash-menu.spec.ts tests/e2e/main-menu.spec.ts tests/e2e/pause-controls.spec.ts tests/e2e/auth-session.spec.ts tests/e2e/designer-pointer.spec.ts tests/e2e/tenant-isolation.spec.ts --project=chromium-desktop
+          cp test-results/playwright-junit.xml "$GG_EVIDENCE_DIR/ordinary-browser/chromium-desktop-junit.xml"
+          GG_RUNTIME_URL=http://localhost:3002 npx playwright test tests/e2e/main-menu.spec.ts tests/e2e/designer-pointer.spec.ts --project=chromium-mobile-touch
+          cp test-results/playwright-junit.xml "$GG_EVIDENCE_DIR/ordinary-browser/chromium-mobile-touch-junit.xml"
           printf 'Inceptivec administrator: %s / %s\nCommand Post customer: %s / %s\nPlayer: %s / %s\n' "$FOUNDER_REVIEW_USERNAME" "$FOUNDER_REVIEW_PASSWORD" "$COMMAND_POST_REVIEW_USERNAME" "$COMMAND_POST_REVIEW_PASSWORD" "$PLAYER_REVIEW_USERNAME" "$PLAYER_REVIEW_PASSWORD" > FOUNDER_REVIEW_ACCESS.local.txt
           mkdir -p "$GG_EVIDENCE_DIR"
           GG_RUNTIME_URL=http://localhost:3002 GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/hostile" npm run runtime:hostile
