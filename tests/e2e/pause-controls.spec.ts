@@ -91,6 +91,38 @@ test("H015-GAME-001__e2e_ordinary_user__pause_freezes_the_visible_simulation", a
   });
 });
 
+test("H015-GAME-002__e2e_ordinary_user__keyboard_restart_and_main_menu_actions_are_deliberate", async ({
+  page,
+  strictRuntime,
+}) => {
+  await startGameplay(page);
+  await holdKeyUntilStatus(page, "KeyP", /Galactic Gunners paused/);
+  await holdKeyUntilStatus(page, "KeyR", "Galactic Gunners gameplay started.");
+
+  await holdKeyUntilStatus(page, "KeyP", /Galactic Gunners paused/);
+  await holdKeyUntilStatus(page, "KeyM", "Galactic Gunners main menu ready.");
+  await page.waitForTimeout(300);
+  await expect(page.locator("[data-game-status]")).toHaveText(
+    "Galactic Gunners main menu ready.",
+  );
+
+  expect(strictRuntime.unexpectedFailures).toEqual([]);
+  await captureOrdinaryJourney({
+    page,
+    testInfo: test.info(),
+    gate: "splash-navigation",
+    route: "/play",
+    actions: [
+      "Paused gameplay with P.",
+      "Selected Restart with R.",
+      "Paused again and selected Main Menu with M.",
+    ],
+    assertions: [
+      "Restart returned exactly once to gameplay and Main Menu returned exactly once to the menu state.",
+    ],
+  });
+});
+
 test("H015-PAUSE-002__e2e_ordinary_user_negative__repeated_pause_resume_does_not_leave_a_black_or_lost_runtime", async ({
   page,
   strictRuntime,
