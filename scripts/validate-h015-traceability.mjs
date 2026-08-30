@@ -13,7 +13,8 @@ const CATALOGUE_IDS = [
   'H015-PERF-001', 'H015-PROD-001', 'H015-EVID-001', 'H015-CODE-001', 'H015-TEST-001',
 ];
 const ALLOWED_LAYERS = new Set(['UNIT', 'COMPONENT', 'API', 'INTEGRATION', 'E2E_ORDINARY_USER', 'QA_DIAGNOSTIC']);
-const ALLOWED_STATUS = new Set(['PENDING', 'PASS', 'FAIL', 'EXEMPT']);
+const ALLOWED_STATUS = new Set(['PENDING', 'PASS', 'FAIL', 'EXEMPT', 'BLOCKED_FOUNDER_AUTHORITY']);
+const FULL_SHA = /^[a-f0-9]{40}$/i;
 
 export function validateTraceability(register) {
   const failures = [];
@@ -29,6 +30,20 @@ export function validateTraceability(register) {
     }
     if (!ALLOWED_LAYERS.has(row.test_layer)) failures.push(`${row.id} has invalid test_layer.`);
     if (!ALLOWED_STATUS.has(row.status)) failures.push(`${row.id} has invalid status.`);
+    if (row.status === 'PASS') {
+      if (!Array.isArray(row.evidence_receipts) || row.evidence_receipts.length === 0) {
+        failures.push(`${row.id} PASS has no executable evidence_receipts.`);
+      } else {
+        for (const receipt of row.evidence_receipts) {
+          if (typeof receipt.command !== 'string' || !receipt.command.trim()) failures.push(`${row.id} receipt has no command.`);
+          if (!FULL_SHA.test(receipt.tested_sha ?? '')) failures.push(`${row.id} receipt has invalid tested_sha.`);
+          if (receipt.result !== 'PASS') failures.push(`${row.id} receipt is not PASS.`);
+        }
+      }
+    }
+    if (row.status === 'BLOCKED_FOUNDER_AUTHORITY' && typeof row.blocker !== 'string') {
+      failures.push(`${row.id} Founder block has no precise blocker.`);
+    }
     if (row.test_layer === 'E2E_ORDINARY_USER' && row.qa_hooks?.length) failures.push(`${row.id} ordinary proof declares QA hooks.`);
     if (row.status === 'EXEMPT' && !row.exception_approval) failures.push(`${row.id} exemption has no Founder approval.`);
   }

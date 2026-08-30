@@ -9,4 +9,11 @@ const rows = [
 assert.equal(validateTraceability({ requirements: rows }).length, 0);
 rows[0].test_layer = 'E2E_ORDINARY_USER'; rows[0].qa_hooks = ['__GALACTIC_GUNNERS_HOSTILE__'];
 assert.ok(validateTraceability({ requirements: rows }).some((failure) => failure.includes('ordinary proof')));
+rows[0].qa_hooks = [];
+rows[0].status = 'PASS';
+assert.ok(validateTraceability({ requirements: rows }).some((failure) => failure.includes('PASS has no executable evidence_receipts')));
+rows[0].evidence_receipts = [{ command: 'npm run test', tested_sha: 'a'.repeat(40), result: 'PASS' }];
+assert.equal(validateTraceability({ requirements: rows }).length, 0);
+rows[0].status = 'BLOCKED_FOUNDER_AUTHORITY'; delete rows[0].evidence_receipts;
+assert.ok(validateTraceability({ requirements: rows }).some((failure) => failure.includes('Founder block has no precise blocker')));
 console.log('H015 traceability validator negative tests PASS');

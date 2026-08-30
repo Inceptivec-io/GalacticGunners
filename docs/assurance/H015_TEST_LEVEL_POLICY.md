@@ -14,3 +14,5 @@ H015 recovery distinguishes test levels by the proof they can provide.
 `QA_DIAGNOSTIC` output can diagnose a fault or prepare deterministic test data. It cannot satisfy an ordinary-user, real-play, touch, pointer, accessibility, campaign-completion or closure gate.
 
 Every H015 requirement needs a positive and negative test. A temporary `PENDING` row is an honest incomplete state, not a pass.
+
+A `PASS` traceability row must include one or more machine-readable evidence receipts. Every receipt records the exact tested commit SHA, the executable command and a `PASS` result. `BLOCKED_FOUNDER_AUTHORITY` requires the precise missing Founder decision; it is not a synonym for ordinary implementation work.
