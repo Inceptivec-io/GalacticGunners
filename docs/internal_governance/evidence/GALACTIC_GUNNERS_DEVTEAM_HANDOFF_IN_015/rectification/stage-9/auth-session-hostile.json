@@ -1,0 +1,15 @@
+{
+  "tested_sha": "UNSPECIFIED",
+  "result": "PASS",
+  "valid_redirect": "/play?qa=hostile",
+  "rejected_redirects": [
+    "//example.invalid",
+    "https://example.invalid/path",
+    "javascript:alert(1)",
+    "/%2f%2fexample.invalid",
+    "/%5cexample.invalid",
+    "relative-path"
+  ],
+  "logout": "PASS",
+  "console_errors": []
+}
