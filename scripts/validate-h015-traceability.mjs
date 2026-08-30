@@ -1,68 +1,122 @@
-import { readFileSync } from 'node:fs';
-import path from 'node:path';
-import YAML from 'yaml';
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import YAML from "yaml";
 
-const CATALOGUE_IDS = [
-  'H015-ENTRY-001', 'H015-LAUNCH-001', 'H015-MENU-001', 'H015-PAUSE-001', 'H015-PAUSE-002', 'H015-RESULT-001', 'H015-RESULT-002',
-  'H015-AUTH-001', 'H015-AUTH-002', 'H015-PERM-001', 'H015-PERM-002', 'H015-DES-POINTER-001', 'H015-DES-POINTER-002', 'H015-DES-UNDO-001',
-  'H015-DES-THUMB-001', 'H015-DES-META-001', 'H015-DES-CANVAS-001', 'H015-DES-SPAWN-001', 'H015-DES-ENTITY-001', 'H015-DES-FORM-001',
-  'H015-DES-HAZARD-001', 'H015-DES-SHIELD-001', 'H015-DES-DROP-001', 'H015-DES-OBJ-001', 'H015-DES-BOARD-001', 'H015-DES-GAME-001',
-  'H015-DES-BUDGET-001', 'H015-DES-ROUND-001', 'H015-DES-PIN-001', 'H015-DES-ROLL-001', 'H015-DES-AUDIT-001', 'H015-LEVELS-001',
-  'H015-CAMP-001', 'H015-CAMP-002', 'H015-CAMP-003', 'H015-HAZ-001', 'H015-HAZ-002', 'H015-BOARD-ENTRY-001', 'H015-BOARD-COMBAT-001',
-  'H015-BOARD-ANIM-001', 'H015-BOARD-PAUSE-001', 'H015-BOARD-RETURN-001', 'H015-BOARD-FAIL-001', 'H015-UI-ASSET-001', 'H015-A11Y-001',
-  'H015-PERF-001', 'H015-PROD-001', 'H015-EVID-001', 'H015-CODE-001', 'H015-TEST-001',
-];
-const ALLOWED_LAYERS = new Set(['UNIT', 'COMPONENT', 'API', 'INTEGRATION', 'E2E_ORDINARY_USER', 'QA_DIAGNOSTIC']);
-const ALLOWED_STATUS = new Set(['PENDING', 'PASS', 'FAIL', 'EXEMPT', 'BLOCKED_FOUNDER_AUTHORITY']);
+const ALLOWED_STATUS = new Set(["PASS", "FAIL", "BLOCKED_FOUNDER_AUTHORITY"]);
 const FULL_SHA = /^[a-f0-9]{40}$/i;
 
-export function validateTraceability(register) {
+function catalogueIds(file) {
+  const lines = readFileSync(file, "utf8").trim().split(/\r?\n/);
+  return lines.slice(1).map((line) => line.split(",", 1)[0]);
+}
+
+export function validateTraceability(register, expectedIds) {
   const failures = [];
-  const rows = register?.requirements;
-  if (!Array.isArray(rows)) return ['requirements must be an array.'];
+  const rows = register?.rows;
+  if (register?.expected_requirement_count !== 50)
+    failures.push("expected_requirement_count must be 50.");
+  if (!Array.isArray(rows)) return ["rows must be an array."];
+
   const indexed = new Map();
   for (const row of rows) {
-    if (!CATALOGUE_IDS.includes(row.id)) failures.push(`unknown requirement: ${row.id}`);
-    if (indexed.has(row.id)) failures.push(`duplicate requirement: ${row.id}`);
-    indexed.set(row.id, row);
-    for (const field of ['implementation', 'positive_tests', 'negative_tests', 'ci_jobs', 'evidence']) {
-      if (!Array.isArray(row[field]) || row[field].length === 0) failures.push(`${row.id} has no ${field}.`);
+    if (!expectedIds.includes(row.requirement_id))
+      failures.push(`unknown requirement: ${row.requirement_id}`);
+    if (indexed.has(row.requirement_id))
+      failures.push(`duplicate requirement: ${row.requirement_id}`);
+    indexed.set(row.requirement_id, row);
+    for (const field of [
+      "implementation_paths",
+      "required_layers",
+      "positive_proof",
+      "negative_or_hostile_proof",
+      "evidence_gate",
+      "reason",
+    ]) {
+      const value = row[field];
+      if ((Array.isArray(value) && value.length === 0) || !value)
+        failures.push(`${row.requirement_id} has no ${field}.`);
     }
-    if (!ALLOWED_LAYERS.has(row.test_layer)) failures.push(`${row.id} has invalid test_layer.`);
-    if (!ALLOWED_STATUS.has(row.status)) failures.push(`${row.id} has invalid status.`);
-    if (row.status === 'PASS') {
-      if (!Array.isArray(row.evidence_receipts) || row.evidence_receipts.length === 0) {
-        failures.push(`${row.id} PASS has no executable evidence_receipts.`);
-      } else {
-        for (const receipt of row.evidence_receipts) {
-          if (typeof receipt.command !== 'string' || !receipt.command.trim()) failures.push(`${row.id} receipt has no command.`);
-          if (!FULL_SHA.test(receipt.tested_sha ?? '')) failures.push(`${row.id} receipt has invalid tested_sha.`);
-          if (receipt.result !== 'PASS') failures.push(`${row.id} receipt is not PASS.`);
-        }
+    if (!ALLOWED_STATUS.has(row.status))
+      failures.push(`${row.requirement_id} has invalid status.`);
+    if (!Array.isArray(row.test_cases) || row.test_cases.length < 2) {
+      failures.push(
+        `${row.requirement_id} must map positive and negative tests.`,
+      );
+      continue;
+    }
+    const polarities = new Set(row.test_cases.map((entry) => entry.polarity));
+    if (!polarities.has("POSITIVE") || !polarities.has("NEGATIVE"))
+      failures.push(
+        `${row.requirement_id} is missing a positive or negative test mapping.`,
+      );
+    for (const testCase of row.test_cases) {
+      for (const field of [
+        "id",
+        "classification",
+        "polarity",
+        "command",
+        "assertion",
+      ]) {
+        if (!testCase[field])
+          failures.push(`${row.requirement_id} test mapping has no ${field}.`);
       }
     }
-    if (row.status === 'BLOCKED_FOUNDER_AUTHORITY' && typeof row.blocker !== 'string') {
-      failures.push(`${row.id} Founder block has no precise blocker.`);
+    if (row.status === "PASS") {
+      if (!Array.isArray(row.evidence_paths) || row.evidence_paths.length === 0)
+        failures.push(`${row.requirement_id} PASS has no evidence paths.`);
+      for (const testCase of row.test_cases) {
+        if (/^UNPROVEN:/i.test(testCase.command ?? ""))
+          failures.push(
+            `${row.requirement_id} PASS depends on an unproven test mapping.`,
+          );
+      }
+      if (row.tested_sha && !FULL_SHA.test(row.tested_sha))
+        failures.push(`${row.requirement_id} has an invalid tested_sha.`);
     }
-    if (row.test_layer === 'E2E_ORDINARY_USER' && row.qa_hooks?.length) failures.push(`${row.id} ordinary proof declares QA hooks.`);
-    if (row.status === 'EXEMPT' && !row.exception_approval) failures.push(`${row.id} exemption has no Founder approval.`);
+    if (row.status === "BLOCKED_FOUNDER_AUTHORITY" && !row.blocker)
+      failures.push(
+        `${row.requirement_id} Founder block has no precise blocker.`,
+      );
   }
-  for (const id of CATALOGUE_IDS) if (!indexed.has(id)) failures.push(`catalogue requirement missing: ${id}`);
+  for (const id of expectedIds)
+    if (!indexed.has(id)) failures.push(`catalogue requirement missing: ${id}`);
   return failures;
 }
 
 function main() {
-  const file = path.resolve(process.argv[2] ?? 'docs/assurance/H015_REQUIREMENTS_TRACEABILITY.yaml');
-  const register = YAML.parse(readFileSync(file, 'utf8'));
-  const failures = validateTraceability(register);
-  const totals = (register.requirements ?? []).reduce((accumulator, row) => {
-    accumulator[row.status] = (accumulator[row.status] ?? 0) + 1;
-    accumulator.layers[row.test_layer] = (accumulator.layers[row.test_layer] ?? 0) + 1;
-    return accumulator;
-  }, { layers: {} });
-  const report = { result: failures.length ? 'FAIL' : 'PASS', catalogue_total: CATALOGUE_IDS.length, mapped_total: register.requirements?.length ?? 0, failures, totals };
-  console.log(JSON.stringify(report, null, 2));
+  const registerFile = path.resolve(
+    process.argv[2] ?? "docs/assurance/H015_REQUIREMENTS_TRACEABILITY.yaml",
+  );
+  const catalogueFile = path.resolve(
+    "docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/10_ASSURANCE_RECOVERY_TRANSPORT_MEMBERS/GALACTIC_GUNNERS_H015_COMPLETE_RECOVERY_PACK_v1.0(1)/REQUIREMENT_CATALOGUE.csv",
+  );
+  const register = YAML.parse(readFileSync(registerFile, "utf8"));
+  const expectedIds = catalogueIds(catalogueFile);
+  const failures = validateTraceability(register, expectedIds);
+  const totals = (register.rows ?? []).reduce(
+    (summary, row) => {
+      summary.statuses[row.status] = (summary.statuses[row.status] ?? 0) + 1;
+      for (const layer of row.required_layers ?? [])
+        summary.layers[layer] = (summary.layers[layer] ?? 0) + 1;
+      return summary;
+    },
+    { statuses: {}, layers: {} },
+  );
+  console.log(
+    JSON.stringify(
+      {
+        result: failures.length ? "FAIL" : "PASS",
+        catalogue_total: expectedIds.length,
+        mapped_total: register.rows?.length ?? 0,
+        failures,
+        totals,
+      },
+      null,
+      2,
+    ),
+  );
   if (failures.length) process.exitCode = 1;
 }
 
-if (import.meta.url === `file:///${process.argv[1].replaceAll('\\', '/')}`) main();
+if (import.meta.url === `file:///${process.argv[1].replaceAll("\\", "/")}`)
+  main();

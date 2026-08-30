@@ -1,544 +1,1429 @@
 schema_version: "1.0"
-handoff: GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015
-rules:
-  require_positive: true
-  require_negative: true
-  ordinary_claim_prohibits_qa_hooks: true
-requirements:
-  - {
-      id: H015-ENTRY-001,
-      implementation: [apps/web/app/page.tsx, apps/web/app/play/page.tsx],
-      positive_tests: [tests/e2e/public-entry.spec.ts],
-      negative_tests: [tests/e2e/public-entry.spec.ts],
-      test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [runtime-browser],
-      evidence: [playwright-trace],
-      status: PENDING,
-    }
-  - {
-      id: H015-LAUNCH-001,
-      implementation:
-        [game/src/scenes/BootScene.ts, game/src/scenes/SplashScene.ts],
-      positive_tests: [tests/e2e/splash-menu.spec.ts],
-      negative_tests: [tests/e2e/splash-menu.spec.ts],
-      test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [runtime-browser],
-      evidence: [playwright-trace, video],
-      status: PENDING,
-    }
-  - {
-      id: H015-MENU-001,
-      implementation: [game/src/scenes/MainMenuScene.ts],
-      positive_tests: [tests/e2e/splash-menu.spec.ts],
-      negative_tests: [tests/e2e/splash-menu.spec.ts],
-      test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [runtime-browser],
-      evidence: [playwright-trace],
-      status: PENDING,
-    }
-  - {
-      id: H015-PAUSE-001,
-      implementation: [game/src/scenes/PauseScene.ts],
-      positive_tests: [tests/e2e/campaign-real-play.spec.ts],
-      negative_tests: [tests/e2e/campaign-real-play.spec.ts],
-      test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [runtime-browser],
-      evidence: [runtime-event-ledger],
-      status: PENDING,
-    }
-  - {
-      id: H015-PAUSE-002,
-      implementation: [game/src/scenes/PauseScene.ts],
-      positive_tests: [tests/e2e/campaign-real-play.spec.ts],
-      negative_tests: [tests/e2e/campaign-real-play.spec.ts],
-      test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [runtime-browser],
-      evidence: [playwright-trace],
-      status: PENDING,
-    }
-  - {
-      id: H015-RESULT-001,
-      implementation: [game/src/scenes/Level1Scene.ts],
-      positive_tests: [tests/e2e/campaign-real-play.spec.ts],
-      negative_tests: [tests/e2e/campaign-real-play.spec.ts],
-      test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [e2e-real-play],
-      evidence: [screenshot, trace],
-      status: PENDING,
-    }
-  - {
-      id: H015-RESULT-002,
-      implementation: [game/src/systems/CampaignSession.ts],
-      positive_tests: [game/tests/terminal-actions.test.ts],
-      negative_tests: [game/tests/terminal-actions.test.ts],
-      test_layer: UNIT,
-      ci_jobs: [game-unit],
-      evidence: [junit],
-      status: PENDING,
-    }
-  - {
-      id: H015-AUTH-001,
-      implementation: [backend/accounts],
-      positive_tests: [backend/tests/test_auth_surfaces.py],
-      negative_tests: [backend/tests/test_auth_surfaces.py],
-      test_layer: API,
-      ci_jobs: [auth-hostile, runtime-browser],
-      evidence: [junit],
-      status: PENDING,
-    }
-  - {
-      id: H015-AUTH-002,
-      implementation: [apps/web/app/account, backend/accounts],
-      positive_tests: [tests/e2e/auth-session.spec.ts],
-      negative_tests: [tests/e2e/auth-session.spec.ts],
-      test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [runtime-browser],
-      evidence: [playwright-trace],
-      status: PENDING,
-    }
-  - {
-      id: H015-PERM-001,
-      implementation: [backend/levels/permissions.py],
-      positive_tests: [backend/levels/tests/test_authoring.py],
-      negative_tests: [backend/levels/tests/test_authoring.py],
-      test_layer: API,
-      ci_jobs: [backend-api],
-      evidence: [junit],
-      status: PENDING,
-    }
-  - {
-      id: H015-PERM-002,
-      implementation: [backend/organizations/policy.py],
-      positive_tests:
-        [
-          tests/e2e/tenant-isolation.spec.ts::H015-PERM-002__e2e_ordinary_user__command_post_member_reads_only_its_authorised_workspace,
-        ],
-      negative_tests:
-        [
-          tests/e2e/tenant-isolation.spec.ts::H015-PERM-002__e2e_ordinary_user_negative__command_post_member_cannot_open_an_unrelated_workspace,
-        ],
-      test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [runtime-browser],
-      evidence: [playwright-trace],
-      status: PENDING,
-    }
-  - {
-      id: H015-DES-POINTER-001,
-      implementation:
-        [apps/web/app/inceptivec-gamification-admin/CampaignDesigner.tsx],
-      positive_tests: [tests/e2e/designer-pointer.spec.ts],
-      negative_tests: [tests/e2e/designer-pointer.spec.ts],
-      test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [runtime-browser],
-      evidence: [playwright-trace],
-      status: PENDING,
-    }
-  - {
-      id: H015-DES-POINTER-002,
-      implementation:
-        [apps/web/app/inceptivec-gamification-admin/CampaignDesigner.tsx],
-      positive_tests: [tests/e2e/designer-pointer.spec.ts],
-      negative_tests: [tests/e2e/designer-pointer.spec.ts],
-      test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [runtime-browser],
-      evidence: [playwright-trace],
-      status: PENDING,
-    }
-  - {
-      id: H015-DES-UNDO-001,
-      implementation:
-        [apps/web/app/inceptivec-gamification-admin/CampaignDesigner.tsx],
-      positive_tests: [tests/e2e/designer-pointer.spec.ts],
-      negative_tests: [tests/e2e/designer-pointer.spec.ts],
-      test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [runtime-browser],
-      evidence: [playwright-trace],
-      status: PENDING,
-    }
-  - {
-      id: H015-DES-THUMB-001,
-      implementation:
-        [apps/web/app/inceptivec-gamification-admin/CampaignDesigner.tsx],
-      positive_tests: [tests/e2e/designer-pointer.spec.ts],
-      negative_tests: [tests/e2e/designer-pointer.spec.ts],
-      test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [runtime-browser],
-      evidence: [playwright-trace],
-      status: PENDING,
-    }
-  - {
-      id: H015-DES-META-001,
-      implementation: [backend/levels/validation.py],
-      positive_tests: [tests/e2e/designer-pointer.spec.ts],
-      negative_tests: [tests/e2e/designer-pointer.spec.ts],
-      test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [runtime-browser],
-      evidence: [playwright-trace],
-      status: PENDING,
-    }
-  - {
-      id: H015-DES-CANVAS-001,
-      implementation: [backend/levels/validation.py],
-      positive_tests: [tests/e2e/designer-pointer.spec.ts],
-      negative_tests: [backend/levels/tests/test_authoring.py],
-      test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [runtime-browser, campaign-hostile],
-      evidence: [playwright-trace, junit],
-      status: PENDING,
-    }
-  - {
-      id: H015-DES-SPAWN-001,
-      implementation: [backend/levels/validation.py],
-      positive_tests: [backend/levels/tests/test_authoring.py],
-      negative_tests: [backend/levels/tests/test_authoring.py],
-      test_layer: API,
-      ci_jobs: [backend-api],
-      evidence: [junit],
-      status: PENDING,
-    }
-  - {
-      id: H015-DES-ENTITY-001,
-      implementation: [backend/levels/validation.py],
-      positive_tests: [backend/levels/tests/test_authoring.py],
-      negative_tests: [backend/levels/tests/test_authoring.py],
-      test_layer: API,
-      ci_jobs: [backend-api],
-      evidence: [junit],
-      status: PENDING,
-    }
-  - {
-      id: H015-DES-FORM-001,
-      implementation: [backend/levels/validation.py],
-      positive_tests: [backend/levels/tests/test_authoring.py],
-      negative_tests: [backend/levels/tests/test_authoring.py],
-      test_layer: API,
-      ci_jobs: [backend-api],
-      evidence: [junit],
-      status: PENDING,
-    }
-  - {
-      id: H015-DES-HAZARD-001,
-      implementation: [backend/levels/validation.py],
-      positive_tests: [backend/levels/tests/test_authoring.py],
-      negative_tests: [backend/levels/tests/test_authoring.py],
-      test_layer: API,
-      ci_jobs: [backend-api],
-      evidence: [junit],
-      status: PENDING,
-    }
-  - {
-      id: H015-DES-SHIELD-001,
-      implementation: [backend/levels/validation.py],
-      positive_tests: [backend/levels/tests/test_authoring.py],
-      negative_tests: [backend/levels/tests/test_authoring.py],
-      test_layer: API,
-      ci_jobs: [backend-api],
-      evidence: [junit],
-      status: PENDING,
-    }
-  - {
-      id: H015-DES-DROP-001,
-      implementation: [backend/levels/validation.py],
-      positive_tests: [backend/levels/tests/test_authoring.py],
-      negative_tests: [backend/levels/tests/test_authoring.py],
-      test_layer: API,
-      ci_jobs: [backend-api],
-      evidence: [junit],
-      status: PENDING,
-    }
-  - {
-      id: H015-DES-OBJ-001,
-      implementation: [backend/levels/validation.py],
-      positive_tests: [backend/levels/tests/test_authoring.py],
-      negative_tests: [backend/levels/tests/test_authoring.py],
-      test_layer: API,
-      ci_jobs: [backend-api],
-      evidence: [junit],
-      status: PENDING,
-    }
-  - {
-      id: H015-DES-BOARD-001,
-      implementation: [backend/levels/validation.py, backend/boarding],
-      positive_tests: [backend/levels/tests/test_authoring.py],
-      negative_tests: [backend/levels/tests/test_authoring.py],
-      test_layer: API,
-      ci_jobs: [backend-api],
-      evidence: [junit],
-      status: PENDING,
-    }
-  - {
-      id: H015-DES-GAME-001,
-      implementation:
-        [backend/levels/validation.py, game/src/systems/CampaignSession.ts],
-      positive_tests:
-        [
-          game/tests/level-authoring.test.ts,
-          game/tests/terminal-actions.test.ts,
-        ],
-      negative_tests: [game/tests/terminal-actions.test.ts],
-      test_layer: UNIT,
-      ci_jobs: [game-unit],
-      evidence: [junit],
-      status: PENDING,
-    }
-  - {
-      id: H015-DES-BUDGET-001,
-      implementation: [backend/levels/validation.py],
-      positive_tests: [backend/levels/tests/test_authoring.py],
-      negative_tests: [backend/levels/tests/test_authoring.py],
-      test_layer: API,
-      ci_jobs: [backend-api],
-      evidence: [junit],
-      status: PENDING,
-    }
-  - {
-      id: H015-DES-ROUND-001,
-      implementation:
-        [apps/web/app/inceptivec-gamification-admin/CampaignDesigner.tsx],
-      positive_tests:
-        [
-          tests/e2e/designer-pointer.spec.ts::H015-DES-META-001__e2e_ordinary_user__valid_seed_save_reloads_from_immutable_draft,
-        ],
-      negative_tests:
-        [
-          tests/e2e/designer-pointer.spec.ts::H015-DES-META-001__e2e_ordinary_user_negative__invalid_seed_is_rejected_by_the_server,
-        ],
-      test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [runtime-browser],
-      evidence: [playwright-trace, video],
-      status: PENDING,
-    }
-  - {
-      id: H015-DES-PIN-001,
-      implementation: [backend/campaigns/publication.py],
-      positive_tests: [backend/tests/test_campaign_service.py],
-      negative_tests: [backend/tests/test_campaign_service.py],
-      test_layer: API,
-      ci_jobs: [backend-api],
-      evidence: [junit],
-      status: PENDING,
-    }
-  - {
-      id: H015-DES-ROLL-001,
-      implementation: [backend/levels/authoring.py],
-      positive_tests:
-        [
-          backend/levels/tests/test_authoring.py::test_v10_to_v11_migration_is_deterministic_and_materialises_level_one,
-        ],
-      negative_tests:
-        [
-          backend/levels/tests/test_authoring.py::test_migration_does_not_silently_rewrite_invalid_current_documents,
-        ],
-      test_layer: API,
-      ci_jobs: [campaign-hostile],
-      evidence: [junit],
-      status: PENDING,
-    }
-  - {
-      id: H015-DES-AUDIT-001,
-      implementation: [backend/levels/models.py, backend/levels/views.py],
-      positive_tests:
-        [
-          backend/levels/tests/test_levels_api.py::test_privileged_level_actions_create_attributable_append_only_audit_records,
-        ],
-      negative_tests:
-        [
-          backend/levels/tests/test_levels_api.py::test_privileged_level_actions_create_attributable_append_only_audit_records,
-        ],
-      test_layer: API,
-      ci_jobs: [campaign-hostile],
-      evidence: [junit],
-      status: PENDING,
-    }
-  - {
-      id: H015-LEVELS-001,
-      implementation: [game/src/levels/campaignDefinitions.ts],
-      positive_tests: [tests/e2e/campaign-real-play.spec.ts],
-      negative_tests: [tests/e2e/campaign-real-play.spec.ts],
-      test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [e2e-real-play],
-      evidence: [playwright-trace],
-      status: PENDING,
-    }
-  - {
-      id: H015-CAMP-001,
-      implementation: [backend/campaigns/publication.py],
-      positive_tests: [backend/tests/test_campaign_service.py],
-      negative_tests: [backend/tests/test_campaign_service.py],
-      test_layer: API,
-      ci_jobs: [backend-api],
-      evidence: [junit],
-      status: PENDING,
-    }
-  - {
-      id: H015-CAMP-002,
-      implementation: [backend/campaigns/publication.py],
-      positive_tests: [backend/tests/test_campaign_service.py],
-      negative_tests: [backend/tests/test_campaign_service.py],
-      test_layer: API,
-      ci_jobs: [backend-api],
-      evidence: [junit],
-      status: PENDING,
-    }
-  - {
-      id: H015-CAMP-003,
-      implementation: [game/src/scenes/Level1Scene.ts],
-      positive_tests: [tests/e2e/campaign-real-play.spec.ts],
-      negative_tests: [tests/e2e/campaign-real-play.spec.ts],
-      test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [e2e-real-play],
-      evidence: [playwright-trace, video],
-      status: PENDING,
-    }
-  - {
-      id: H015-HAZ-001,
-      implementation: [game/src/scenes/Level1Scene.ts],
-      positive_tests: [game/tests/level-authoring.test.ts],
-      negative_tests: [game/tests/level-authoring.test.ts],
-      test_layer: UNIT,
-      ci_jobs: [game-unit],
-      evidence: [junit],
-      status: PENDING,
-    }
-  - {
-      id: H015-HAZ-002,
-      implementation: [game/src/scenes/Level1Scene.ts],
-      positive_tests: [game/tests/level-loader.test.ts],
-      negative_tests: [game/tests/level-loader.test.ts],
-      test_layer: UNIT,
-      ci_jobs: [game-unit],
-      evidence: [junit],
-      status: PENDING,
-    }
-  - {
-      id: H015-BOARD-ENTRY-001,
-      implementation: [game/src/scenes/BoardingScene.ts],
-      positive_tests: [tests/e2e/boarding-real-play.spec.ts],
-      negative_tests: [tests/e2e/boarding-real-play.spec.ts],
-      test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [e2e-real-play],
-      evidence: [playwright-trace, video],
-      status: PENDING,
-    }
-  - {
-      id: H015-BOARD-COMBAT-001,
-      implementation: [game/src/boarding/BoardingSimulation.ts],
-      positive_tests: [game/tests/boarding-simulation.test.ts],
-      negative_tests: [game/tests/boarding-simulation.test.ts],
-      test_layer: UNIT,
-      ci_jobs: [game-unit],
-      evidence: [junit],
-      status: PENDING,
-    }
-  - {
-      id: H015-BOARD-ANIM-001,
-      implementation: [game/src/scenes/BoardingScene.ts],
-      positive_tests: [game/tests/boarding-simulation.test.ts],
-      negative_tests: [game/tests/boarding-simulation.test.ts],
-      test_layer: UNIT,
-      ci_jobs: [game-unit],
-      evidence: [junit],
-      status: PENDING,
-    }
-  - {
-      id: H015-BOARD-PAUSE-001,
-      implementation: [game/src/scenes/PauseScene.ts],
-      positive_tests: [tests/e2e/boarding-real-play.spec.ts],
-      negative_tests: [tests/e2e/boarding-real-play.spec.ts],
-      test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [e2e-real-play],
-      evidence: [playwright-trace],
-      status: PENDING,
-    }
-  - {
-      id: H015-BOARD-RETURN-001,
-      implementation: [game/src/boarding/BoardingCoordinator.ts],
-      positive_tests: [tests/e2e/boarding-real-play.spec.ts],
-      negative_tests: [tests/e2e/boarding-real-play.spec.ts],
-      test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [e2e-real-play],
-      evidence: [playwright-trace],
-      status: PENDING,
-    }
-  - {
-      id: H015-BOARD-FAIL-001,
-      implementation: [game/src/boarding/BoardingStateMachine.ts],
-      positive_tests: [game/tests/boarding-simulation.test.ts],
-      negative_tests: [game/tests/boarding-simulation.test.ts],
-      test_layer: UNIT,
-      ci_jobs: [game-unit],
-      evidence: [junit],
-      status: PENDING,
-    }
-  - {
-      id: H015-UI-ASSET-001,
-      implementation:
-        [docs/internal_governance/registers/GG_REGISTER_ASSET_IP_PROVENANCE.md],
-      positive_tests: [scripts/validate-h015-traceability.mjs],
-      negative_tests: [scripts/validate-h015-traceability.mjs],
-      test_layer: INTEGRATION,
-      ci_jobs: [assurance],
-      evidence: [validator-report],
-      status: PENDING,
-    }
-  - {
-      id: H015-A11Y-001,
-      implementation: [apps/web/app],
-      positive_tests: [tests/accessibility/web-surfaces.spec.ts],
-      negative_tests: [tests/accessibility/web-surfaces.spec.ts],
-      test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [e2e-a11y],
-      evidence: [axe-report],
-      status: PENDING,
-    }
-  - {
-      id: H015-PERF-001,
-      implementation: [game/src/scenes/Level1Scene.ts],
-      positive_tests: [tests/e2e/campaign-real-play.spec.ts],
-      negative_tests: [tests/e2e/campaign-real-play.spec.ts],
-      test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [e2e-real-play],
-      evidence: [runtime-event-ledger],
-      status: PENDING,
-    }
-  - {
-      id: H015-PROD-001,
-      implementation:
-        [game/src/scenes/Level1Scene.ts, apps/web/game/GameHost.tsx],
-      positive_tests: [tests/e2e/production-mode-negative.spec.ts],
-      negative_tests: [tests/e2e/production-mode-negative.spec.ts],
-      test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [e2e-production-negative],
-      evidence: [playwright-trace],
-      status: PENDING,
-    }
-  - {
-      id: H015-EVID-001,
-      implementation: [scripts/verify-h015-evidence-integrity.mjs],
-      positive_tests: [scripts/test-h015-evidence-integrity.mjs],
-      negative_tests: [scripts/test-h015-evidence-integrity.mjs],
-      test_layer: UNIT,
-      ci_jobs: [assurance],
-      evidence: [closure-attestation],
-      status: PENDING,
-    }
-  - {
-      id: H015-CODE-001,
-      implementation: [package.json, backend/pyproject.toml],
-      positive_tests: [scripts/validate-h015-traceability.mjs],
-      negative_tests: [scripts/validate-h015-traceability.mjs],
-      test_layer: INTEGRATION,
-      ci_jobs: [quality],
-      evidence: [tool-reports],
-      status: PENDING,
-    }
-  - {
-      id: H015-TEST-001,
-      implementation: [docs/assurance/H015_REQUIREMENTS_TRACEABILITY.yaml],
-      positive_tests: [scripts/validate-h015-traceability.mjs],
-      negative_tests: [scripts/validate-h015-traceability.mjs],
-      test_layer: INTEGRATION,
-      ci_jobs: [assurance],
-      evidence: [validator-report],
-      status: PENDING,
-    }
+handoff: GALACTIC_GUNNERS_DEVTEAM_HANDOFF_OUT_015
+authority_source: docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/10_ASSURANCE_RECOVERY_TRANSPORT_MEMBERS/GALACTIC_GUNNERS_H015_COMPLETE_RECOVERY_PACK_v1.0(1)/REQUIREMENT_CATALOGUE.csv
+expected_requirement_count: 50
+tested_sha: null
+derivation_rule: PASS requires executable positive and negative evidence. All
+  other rows remain FAIL until independently proven; no manual PASS is allowed.
+rows:
+  - requirement_id: H015-EVID-001
+    area: Evidence
+    requirement:
+      All four recovery transports are received, hash-verified and read
+      before mutation
+    implementation_paths: &a1
+      - docs/internal_governance/evidence/
+      - scripts/verify-h015-evidence-integrity.mjs
+      - .github/workflows/quality.yml
+    required_layers:
+      - PROCESS
+    positive_proof: Exact filenames and SHA-256 values match the delivery register
+    negative_or_hostile_proof: Missing or altered transport fails intake closed
+    test_cases:
+      - id: H015-EVID-001 positive
+        classification: PROCESS
+        polarity: POSITIVE
+        command: npm run test:h015:intake
+        assertion:
+          The receipt records all four required hashes and all 26 admitted
+          source members match their supplied SHA-256 values.
+      - id: H015-EVID-001 negative
+        classification: PROCESS
+        polarity: NEGATIVE
+        command: node --test tests/unit/h015-assurance-intake.test.mjs
+        assertion: An altered required transport hash causes the intake verifier to fail.
+    evidence_gate: h015-closure-audit
+    evidence_paths:
+      - docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/assurance_recovery_intake/RECEIVING_RECORD.md
+      - docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/10_ASSURANCE_RECOVERY_TRANSPORT_MEMBERS/
+    status: PASS
+    derived: true
+    reason: Derived from the runner-native intake tests and hash-bound receiving
+      record; no runtime or closure claim is implied.
+  - requirement_id: H015-EVID-002
+    area: Evidence
+    requirement: Every closure claim identifies one full exact tested SHA
+    implementation_paths: *a1
+    required_layers:
+      - CI
+      - E2E
+    positive_proof: Manifest, runtime, CI and evidence record the same 40-character SHA
+    negative_or_hostile_proof: Missing, shortened, alias or different SHA fails closure
+    test_cases:
+      - id: H015-EVID-002 positive
+        classification: CI
+        polarity: POSITIVE
+        command: node --test tests/unit/h015-evidence-identity.test.mjs
+        assertion: Manifest, runtime, CI and evidence record the same 40-character SHA
+      - id: H015-EVID-002 negative
+        classification: CI
+        polarity: NEGATIVE
+        command: node --test tests/unit/h015-evidence-identity.test.mjs
+        assertion: Missing, shortened, alias or different SHA fails closure
+    evidence_gate: h015-closure-audit
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason:
+      Unit characterization proves exact-SHA rejection behaviour, but no new
+      exact-SHA CI artifact has yet independently reconciled runtime, manifest and
+      attestation identity.
+  - requirement_id: H015-EVID-003
+    area: Evidence
+    requirement: Every catalogue row maps to implementation, tests and evidence
+    implementation_paths: *a1
+    required_layers:
+      - CI
+    positive_proof: Machine-readable traceability validates all 50 unique IDs
+    negative_or_hostile_proof: Missing, duplicate or manually overridden row fails audit
+    test_cases:
+      - id: H015-EVID-003 positive
+        classification: CI
+        polarity: POSITIVE
+        command: npm run test:h015:traceability
+        assertion: Machine-readable traceability validates all 50 unique IDs
+      - id: H015-EVID-003 negative
+        classification: CI
+        polarity: NEGATIVE
+        command: node scripts/test-h015-traceability.mjs
+        assertion: Missing, duplicate or manually overridden row fails audit
+    evidence_gate: h015-closure-audit
+    evidence_paths:
+      - docs/assurance/H015_REQUIREMENTS_TRACEABILITY.yaml
+      - scripts/validate-h015-traceability.mjs
+      - scripts/test-h015-traceability.mjs
+    status: PASS
+    derived: true
+    reason:
+      Derived from a source-catalogue validator that enforces all 50 supplied
+      IDs, unique mapping, both polarities, and rejects manual PASS using unproven
+      command mappings.
+  - requirement_id: H015-EVID-004
+    area: Evidence
+    requirement: Distinct journeys have distinct action traces and evidence
+    implementation_paths: *a1
+    required_layers:
+      - E2E
+      - CI
+    positive_proof: Required captures and traces exist with purpose-specific hashes
+    negative_or_hostile_proof: Duplicate screenshots or generic observations fail
+    test_cases:
+      - id: H015-EVID-004 positive
+        classification: E2E_ORDINARY_USER
+        polarity: POSITIVE
+        command: npm run test:h015:evidence-integrity
+        assertion: Required captures and traces exist with purpose-specific hashes
+      - id: H015-EVID-004 negative
+        classification: E2E_ORDINARY_USER
+        polarity: NEGATIVE
+        command: npm run test:h015:evidence-integrity
+        assertion: Duplicate screenshots or generic observations fail
+    evidence_gate: h015-closure-audit
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason:
+      The auditor has executable duplicate-image and generic-observation fault
+      injection tests, but a new exact-SHA CI artifact with real ordinary journey
+      captures and action traces is still required.
+  - requirement_id: H015-EVID-005
+    area: Evidence
+    requirement: CI retains exact-SHA browser evidence and closure attestation
+    implementation_paths: *a1
+    required_layers:
+      - CI
+    positive_proof: Downloadable artifacts contain manifest, traces, logs and checksums
+    negative_or_hostile_proof: Absent or unverifiable artifacts fail closure
+    test_cases:
+      - id: H015-EVID-005 positive
+        classification: CI
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-EVID-005 positive test"
+        assertion: Downloadable artifacts contain manifest, traces, logs and checksums
+      - id: H015-EVID-005 negative
+        classification: CI
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-EVID-005 negative or hostile test"
+        assertion: Absent or unverifiable artifacts fail closure
+    evidence_gate: h015-closure-audit
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-EVID-006
+    area: Evidence
+    requirement: Ordinary acceptance is separated from QA diagnostics
+    implementation_paths: *a1
+    required_layers:
+      - CI
+      - E2E
+    positive_proof: Every test is classified and ordinary gates use ordinary interaction
+    negative_or_hostile_proof: Force hooks or direct state mutation cannot satisfy ordinary gates
+    test_cases:
+      - id: H015-EVID-006 positive
+        classification: CI
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-EVID-006 positive test"
+        assertion: Every test is classified and ordinary gates use ordinary interaction
+      - id: H015-EVID-006 negative
+        classification: CI
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-EVID-006 negative or hostile test"
+        assertion: Force hooks or direct state mutation cannot satisfy ordinary gates
+    evidence_gate: h015-closure-audit
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-ENTRY-001
+    area: Entry
+    requirement: Customer journey starts at root and Play enters the game
+    implementation_paths: &a2
+      - apps/web/app/page.tsx
+      - apps/web/game/GameHost.tsx
+      - game/src/scenes/SplashScene.ts
+      - game/src/scenes/MainMenuScene.ts
+    required_layers:
+      - COMPONENT
+      - E2E
+    positive_proof: Real browser follows / to Play to splash to Phaser Main Menu
+    negative_or_hostile_proof: Direct /play navigation alone cannot pass
+    test_cases:
+      - id: H015-ENTRY-001 positive
+        classification: E2E_ORDINARY_USER
+        polarity: POSITIVE
+        command: npx playwright test tests/e2e/public-entry.spec.ts --project=chromium-desktop --workers=1
+        assertion: Real browser follows / to Play to splash to Phaser Main Menu
+      - id: H015-ENTRY-001 negative
+        classification: E2E_ORDINARY_USER
+        polarity: NEGATIVE
+        command: npx playwright test tests/e2e/public-entry.spec.ts --project=chromium-desktop --workers=1
+        assertion: Direct /play navigation alone cannot pass
+    evidence_gate: ordinary-entry
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason:
+      The root-to-Play browser journey and a boot-service failure are green;
+      a direct deep-link exclusion proof still needs to be added before this row can pass.
+  - requirement_id: H015-ENTRY-002
+    area: Entry
+    requirement: Approved splash image is visible for two seconds
+    implementation_paths: *a2
+    required_layers:
+      - UNIT
+      - COMPONENT
+      - E2E
+    positive_proof: Clock-bounded assertion proves image and duration
+    negative_or_hostile_proof: Missing image, premature dismissal and excessive duration fail
+    test_cases:
+      - id: H015-ENTRY-002 positive
+        classification: E2E_ORDINARY_USER
+        polarity: POSITIVE
+        command: npx playwright test tests/e2e/splash-menu.spec.ts --project=chromium-desktop --workers=1
+        assertion: Clock-bounded assertion proves image and duration
+      - id: H015-ENTRY-002 negative
+        classification: E2E_ORDINARY_USER
+        polarity: NEGATIVE
+        command: npx playwright test tests/e2e/splash-menu.spec.ts --project=chromium-desktop --workers=1
+        assertion: Missing image, premature dismissal and excessive duration fail
+    evidence_gate: ordinary-entry
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason:
+      Browser evidence proves the governed splash remains visible after 1.85
+      seconds and does not replay on internal navigation; explicit missing-image and
+      excessive-duration fault paths remain unproven.
+  - requirement_id: H015-ENTRY-003
+    area: Entry
+    requirement: Splash displays exact approved copyright and collaborator copy
+    implementation_paths: *a2
+    required_layers:
+      - COMPONENT
+      - E2E
+    positive_proof: Rendered text matches the governed string exactly
+    negative_or_hostile_proof: Misspelling, omission or unapproved substitution fails
+    test_cases:
+      - id: H015-ENTRY-003 positive
+        classification: COMPONENT
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-ENTRY-003 positive test"
+        assertion: Rendered text matches the governed string exactly
+      - id: H015-ENTRY-003 negative
+        classification: COMPONENT
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-ENTRY-003 negative or hostile test"
+        assertion: Misspelling, omission or unapproved substitution fails
+    evidence_gate: ordinary-entry
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-ENTRY-004
+    area: Entry
+    requirement: Keyboard focus returns to a usable Main Menu action
+    implementation_paths: *a2
+    required_layers:
+      - COMPONENT
+      - E2E
+    positive_proof: Focused element is visible and operable after splash
+    negative_or_hostile_proof: Lost, hidden or body-only focus fails
+    test_cases:
+      - id: H015-ENTRY-004 positive
+        classification: COMPONENT
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-ENTRY-004 positive test"
+        assertion: Focused element is visible and operable after splash
+      - id: H015-ENTRY-004 negative
+        classification: COMPONENT
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-ENTRY-004 negative or hostile test"
+        assertion: Lost, hidden or body-only focus fails
+    evidence_gate: ordinary-entry
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-ENTRY-005
+    area: Entry
+    requirement: Splash does not replay during ordinary internal navigation
+    implementation_paths: *a2
+    required_layers:
+      - E2E
+    positive_proof: Navigate away and back without another splash
+    negative_or_hostile_proof: New independent game entry remains capable of showing splash
+    test_cases:
+      - id: H015-ENTRY-005 positive
+        classification: E2E_ORDINARY_USER
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-ENTRY-005 positive test"
+        assertion: Navigate away and back without another splash
+      - id: H015-ENTRY-005 negative
+        classification: E2E_ORDINARY_USER
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-ENTRY-005 negative or hostile test"
+        assertion: New independent game entry remains capable of showing splash
+    evidence_gate: ordinary-entry
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-GAME-001
+    area: Gameplay
+    requirement: Pause freezes the complete simulation
+    implementation_paths: &a3
+      - game/src/scenes/Level1Scene.ts
+      - game/src/systems/CampaignSession.ts
+      - backend/campaigns/
+    required_layers:
+      - UNIT
+      - E2E
+    positive_proof: Entity positions, timers, hazards and score remain unchanged while paused
+    negative_or_hostile_proof: Background simulation or input mutation during pause fails
+    test_cases:
+      - id: H015-GAME-001 positive
+        classification: UNIT
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-GAME-001 positive test"
+        assertion:
+          Entity positions, timers, hazards and score remain unchanged while
+          paused
+      - id: H015-GAME-001 negative
+        classification: UNIT
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-GAME-001 negative or hostile test"
+        assertion: Background simulation or input mutation during pause fails
+    evidence_gate: ordinary-gameplay
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-GAME-002
+    area: Gameplay
+    requirement:
+      Pause provides Resume, Restart and Main Menu for keyboard, touch
+      and controller
+    implementation_paths: *a3
+    required_layers:
+      - COMPONENT
+      - E2E
+    positive_proof: Each input route performs the selected action exactly once
+    negative_or_hostile_proof: Hidden, duplicate or unintended action fails
+    test_cases:
+      - id: H015-GAME-002 positive
+        classification: COMPONENT
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-GAME-002 positive test"
+        assertion: Each input route performs the selected action exactly once
+      - id: H015-GAME-002 negative
+        classification: COMPONENT
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-GAME-002 negative or hostile test"
+        assertion: Hidden, duplicate or unintended action fails
+    evidence_gate: ordinary-gameplay
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-GAME-003
+    area: Gameplay
+    requirement: Results information is readable above and unobscured by the panel
+    implementation_paths: *a3
+    required_layers:
+      - COMPONENT
+      - E2E
+    positive_proof: Visual and DOM/canvas assertions prove all governed result values
+    negative_or_hostile_proof: Overlap, clipping or absent values fail
+    test_cases:
+      - id: H015-GAME-003 positive
+        classification: COMPONENT
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-GAME-003 positive test"
+        assertion: Visual and DOM/canvas assertions prove all governed result values
+      - id: H015-GAME-003 negative
+        classification: COMPONENT
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-GAME-003 negative or hostile test"
+        assertion: Overlap, clipping or absent values fail
+    evidence_gate: ordinary-gameplay
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-GAME-004
+    area: Gameplay
+    requirement: Continue exists only when the pinned release has a next entry
+    implementation_paths: *a3
+    required_layers:
+      - API
+      - UNIT
+      - E2E
+    positive_proof: Six- and seven-level releases resolve ordered next entries
+    negative_or_hostile_proof: No-next, gap or duplicate sequence must not offer Continue
+    test_cases:
+      - id: H015-GAME-004 positive
+        classification: E2E_ORDINARY_USER
+        polarity: POSITIVE
+        command: npx playwright test tests/e2e/campaign-real-play.spec.ts --project=chromium-desktop --workers=1
+        assertion: Six- and seven-level releases resolve ordered next entries
+      - id: H015-GAME-004 negative
+        classification: E2E_ORDINARY_USER
+        polarity: NEGATIVE
+        command: npx playwright test tests/e2e/campaign-real-play.spec.ts --project=chromium-desktop --workers=1
+        assertion: No-next, gap or duplicate sequence must not offer Continue
+    evidence_gate: ordinary-gameplay
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason:
+      Ordinary browser coverage proves a six-entry release shows Continue and
+      does not advance without an explicit action. Seven-entry, gap, duplicate and
+      no-next release cases remain unproven, so this row remains FAIL.
+  - requirement_id: H015-GAME-005
+    area: Gameplay
+    requirement: Scores, lives and nukes persist correctly through campaign transitions
+    implementation_paths: *a3
+    required_layers:
+      - UNIT
+      - API
+      - E2E
+    positive_proof: Ordinary play transition retains governed cumulative state
+    negative_or_hostile_proof: Restart, abort or new campaign cannot leak invalid state
+    test_cases:
+      - id: H015-GAME-005 positive
+        classification: UNIT
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-GAME-005 positive test"
+        assertion: Ordinary play transition retains governed cumulative state
+      - id: H015-GAME-005 negative
+        classification: UNIT
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-GAME-005 negative or hostile test"
+        assertion: Restart, abort or new campaign cannot leak invalid state
+    evidence_gate: ordinary-gameplay
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-GAME-006
+    area: Gameplay
+    requirement: Recurring asteroids and comets are visible and governed in ordinary play
+    implementation_paths: *a3
+    required_layers:
+      - UNIT
+      - E2E
+    positive_proof: Normal play proves varied direction, speed, collision,
+      destruction and despawn
+    negative_or_hostile_proof: Invisible bodies, max-active breach or QA-only targeting fails
+    test_cases:
+      - id: H015-GAME-006 positive
+        classification: UNIT
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-GAME-006 positive test"
+        assertion:
+          Normal play proves varied direction, speed, collision, destruction
+          and despawn
+      - id: H015-GAME-006 negative
+        classification: UNIT
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-GAME-006 negative or hostile test"
+        assertion: Invisible bodies, max-active breach or QA-only targeting fails
+    evidence_gate: ordinary-gameplay
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-GAME-007
+    area: Gameplay
+    requirement: Levels 1 through 6 are independently configured and playable
+    implementation_paths: *a3
+    required_layers:
+      - API
+      - E2E
+    positive_proof: Each level loads its pinned checksum and completes by ordinary input
+    negative_or_hostile_proof: Missing, duplicated fallback or hard-coded seed use fails
+    test_cases:
+      - id: H015-GAME-007 positive
+        classification: API
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-GAME-007 positive test"
+        assertion: Each level loads its pinned checksum and completes by ordinary input
+      - id: H015-GAME-007 negative
+        classification: API
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-GAME-007 negative or hostile test"
+        assertion: Missing, duplicated fallback or hard-coded seed use fails
+    evidence_gate: ordinary-gameplay
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-GAME-008
+    area: Gameplay
+    requirement: Final campaign victory occurs only after the last pinned release entry
+    implementation_paths: *a3
+    required_layers:
+      - UNIT
+      - E2E
+    positive_proof: Ordinary completion of final entry renders victory without Continue
+    negative_or_hostile_proof: Premature victory or post-final Continue fails
+    test_cases:
+      - id: H015-GAME-008 positive
+        classification: UNIT
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-GAME-008 positive test"
+        assertion: Ordinary completion of final entry renders victory without Continue
+      - id: H015-GAME-008 negative
+        classification: UNIT
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-GAME-008 negative or hostile test"
+        assertion: Premature victory or post-final Continue fails
+    evidence_gate: ordinary-gameplay
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-DES-001
+    area: Designer
+    requirement: All existing CORE Levels 1 through 6 open directly in the product Designer
+    implementation_paths: &a4
+      - apps/web/app/inceptivec-gamification-admin/CampaignDesigner.tsx
+      - backend/levels/
+    required_layers:
+      - API
+      - E2E
+    positive_proof: Authorised admin can inspect complete draft, published and release identity
+    negative_or_hostile_proof: Customer, anonymous or cross-owner access fails server-side
+    test_cases:
+      - id: H015-DES-001 positive
+        classification: API
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-DES-001 positive test"
+        assertion:
+          Authorised admin can inspect complete draft, published and release
+          identity
+      - id: H015-DES-001 negative
+        classification: API
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-DES-001 negative or hostile test"
+        assertion: Customer, anonymous or cross-owner access fails server-side
+    evidence_gate: ordinary-designer
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-DES-002
+    area: Designer
+    requirement: Pointer mapping is accurate at 50, 75, 100, 125 and 150 percent zoom
+    implementation_paths: *a4
+    required_layers:
+      - UNIT
+      - COMPONENT
+      - E2E
+    positive_proof:
+      Real pointer drag from centre and edges saves expected canonical
+      coordinates
+    negative_or_hostile_proof: Wrapper coordinates, pointer loss and out-of-bounds values fail
+    test_cases:
+      - id: H015-DES-002 positive
+        classification: UNIT
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-DES-002 positive test"
+        assertion:
+          Real pointer drag from centre and edges saves expected canonical
+          coordinates
+      - id: H015-DES-002 negative
+        classification: UNIT
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-DES-002 negative or hostile test"
+        assertion: Wrapper coordinates, pointer loss and out-of-bounds values fail
+    evidence_gate: ordinary-designer
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-DES-003
+    area: Designer
+    requirement:
+      Mouse, pen and touch dragging uses pointer capture and preserves
+      grab offset
+    implementation_paths: *a4
+    required_layers:
+      - COMPONENT
+      - E2E
+    positive_proof: Real browser input leaves/re-enters playfield and completes one transaction
+    negative_or_hostile_proof: Mouse-only handlers, centre jump or multiple undo entries fail
+    test_cases:
+      - id: H015-DES-003 positive
+        classification: COMPONENT
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-DES-003 positive test"
+        assertion:
+          Real browser input leaves/re-enters playfield and completes one
+          transaction
+      - id: H015-DES-003 negative
+        classification: COMPONENT
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-DES-003 negative or hostile test"
+        assertion: Mouse-only handlers, centre jump or multiple undo entries fail
+    evidence_gate: ordinary-designer
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-DES-004
+    area: Designer
+    requirement: Animated assets use one canonical representative preview frame
+    implementation_paths: *a4
+    required_layers:
+      - UNIT
+      - COMPONENT
+      - E2E
+    positive_proof: Palette, layers and inspector show governed frame and aspect ratio
+    negative_or_hostile_proof: Full sprite-sheet thumbnails or unexplained UI crop constants fail
+    test_cases:
+      - id: H015-DES-004 positive
+        classification: UNIT
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-DES-004 positive test"
+        assertion: Palette, layers and inspector show governed frame and aspect ratio
+      - id: H015-DES-004 negative
+        classification: UNIT
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-DES-004 negative or hostile test"
+        assertion: Full sprite-sheet thumbnails or unexplained UI crop constants fail
+    evidence_gate: ordinary-designer
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-DES-005
+    area: Designer
+    requirement:
+      Level metadata, canvas, grid, background, seed and player spawn are
+      editable
+    implementation_paths: *a4
+    required_layers:
+      - API
+      - COMPONENT
+      - E2E
+    positive_proof: Save, reload and preview prove typed values persist and execute
+    negative_or_hostile_proof: Invalid bounds, duplicate enabled spawn and immutable-field edits fail
+    test_cases:
+      - id: H015-DES-005 positive
+        classification: API
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-DES-005 positive test"
+        assertion: Save, reload and preview prove typed values persist and execute
+      - id: H015-DES-005 negative
+        classification: API
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-DES-005 negative or hostile test"
+        assertion: Invalid bounds, duplicate enabled spawn and immutable-field edits fail
+    evidence_gate: ordinary-designer
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-DES-006
+    area: Designer
+    requirement: Entities and mixed formations expose complete governed configuration
+    implementation_paths: *a4
+    required_layers:
+      - API
+      - COMPONENT
+      - E2E
+    positive_proof: Membership, layout, bounds, spacing, motion, timing and repeat round-trip
+    negative_or_hostile_proof: Invalid member, unsafe profile, overlap rule or
+      missing field fails validation
+    test_cases:
+      - id: H015-DES-006 positive
+        classification: API
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-DES-006 positive test"
+        assertion:
+          Membership, layout, bounds, spacing, motion, timing and repeat
+          round-trip
+      - id: H015-DES-006 negative
+        classification: API
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-DES-006 negative or hostile test"
+        assertion:
+          Invalid member, unsafe profile, overlap rule or missing field fails
+          validation
+    evidence_gate: ordinary-designer
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-DES-007
+    area: Designer
+    requirement: Hazards, placed hazards, shields and destructible matrices are
+      fully editable
+    implementation_paths: *a4
+    required_layers:
+      - API
+      - COMPONENT
+      - E2E
+    positive_proof: Every runtime field round-trips and changes exact-checksum preview
+    negative_or_hostile_proof: Invalid ranges, missing assets or budget overflow fail
+    test_cases:
+      - id: H015-DES-007 positive
+        classification: API
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-DES-007 positive test"
+        assertion: Every runtime field round-trips and changes exact-checksum preview
+      - id: H015-DES-007 negative
+        classification: API
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-DES-007 negative or hostile test"
+        assertion: Invalid ranges, missing assets or budget overflow fail
+    evidence_gate: ordinary-designer
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-DES-008
+    area: Designer
+    requirement:
+      Drops, objectives, Boarding anchors, gameplay, scoring and budgets
+      are editable
+    implementation_paths: *a4
+    required_layers:
+      - API
+      - COMPONENT
+      - E2E
+    positive_proof:
+      Every Level 1-6 differing value has a usable typed control or
+      governed exception
+    negative_or_hostile_proof: Source-only, seed-only or UI-shadow configuration fails
+    test_cases:
+      - id: H015-DES-008 positive
+        classification: API
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-DES-008 positive test"
+        assertion: Every Level 1-6 differing value has a usable typed control or
+          governed exception
+      - id: H015-DES-008 negative
+        classification: API
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-DES-008 negative or hostile test"
+        assertion: Source-only, seed-only or UI-shadow configuration fails
+    evidence_gate: ordinary-designer
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-DES-009
+    area: Designer
+    requirement: Draft save is immutable, refresh-safe and checksum-addressable
+    implementation_paths: *a4
+    required_layers:
+      - API
+      - E2E
+    positive_proof: Material edits save a new version and survive full refresh/relogin
+    negative_or_hostile_proof: In-place historical mutation, stale checksum or lost edit fails
+    test_cases:
+      - id: H015-DES-009 positive
+        classification: API
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-DES-009 positive test"
+        assertion: Material edits save a new version and survive full refresh/relogin
+      - id: H015-DES-009 negative
+        classification: API
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-DES-009 negative or hostile test"
+        assertion: In-place historical mutation, stale checksum or lost edit fails
+    evidence_gate: ordinary-designer
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-DES-010
+    area: Designer
+    requirement: Exact-checksum preview uses the same configuration authority as runtime
+    implementation_paths: *a4
+    required_layers:
+      - API
+      - E2E
+    positive_proof: Moved object, formation, composition and hazard changes appear in preview
+    negative_or_hostile_proof: Seed fallback, source constant or checksum mismatch fails
+    test_cases:
+      - id: H015-DES-010 positive
+        classification: API
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-DES-010 positive test"
+        assertion:
+          Moved object, formation, composition and hazard changes appear in
+          preview
+      - id: H015-DES-010 negative
+        classification: API
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-DES-010 negative or hostile test"
+        assertion: Seed fallback, source constant or checksum mismatch fails
+    evidence_gate: ordinary-designer
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-PUB-001
+    area: Publication
+    requirement: Only authorised internal administrators publish CORE content
+    implementation_paths: &a5
+      - backend/campaigns/
+      - backend/levels/
+      - game/src/scenes/Level1Scene.ts
+    required_layers:
+      - API
+      - E2E
+    positive_proof: Authorised publication creates immutable version and audit record
+    negative_or_hostile_proof: Anonymous, customer and organisation attempts fail server-side
+    test_cases:
+      - id: H015-PUB-001 positive
+        classification: API
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-PUB-001 positive test"
+        assertion: Authorised publication creates immutable version and audit record
+      - id: H015-PUB-001 negative
+        classification: API
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-PUB-001 negative or hostile test"
+        assertion: Anonymous, customer and organisation attempts fail server-side
+    evidence_gate: publication-runtime
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-PUB-002
+    area: Publication
+    requirement: Published Designer changes appear in a newly started ordinary campaign
+    implementation_paths: *a5
+    required_layers:
+      - API
+      - E2E
+    positive_proof: New campaign resolves new release and visibly plays all material changes
+    negative_or_hostile_proof: Old seed, cached release or hard-coded runtime fallback fails
+    test_cases:
+      - id: H015-PUB-002 positive
+        classification: API
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-PUB-002 positive test"
+        assertion:
+          New campaign resolves new release and visibly plays all material
+          changes
+      - id: H015-PUB-002 negative
+        classification: API
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-PUB-002 negative or hostile test"
+        assertion: Old seed, cached release or hard-coded runtime fallback fails
+    evidence_gate: publication-runtime
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-PUB-003
+    area: Publication
+    requirement: Existing active campaigns remain pinned to their original release
+    implementation_paths: *a5
+    required_layers:
+      - API
+      - E2E
+    positive_proof: Campaign created before publication continues on old checksums
+    negative_or_hostile_proof: Silent mutation to the new release fails
+    test_cases:
+      - id: H015-PUB-003 positive
+        classification: API
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-PUB-003 positive test"
+        assertion: Campaign created before publication continues on old checksums
+      - id: H015-PUB-003 negative
+        classification: API
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-PUB-003 negative or hostile test"
+        assertion: Silent mutation to the new release fails
+    evidence_gate: publication-runtime
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-PUB-004
+    area: Publication
+    requirement: Rollback publishes a new version derived from selected history
+    implementation_paths: *a5
+    required_layers:
+      - API
+      - E2E
+    positive_proof: Restored baseline appears in a new campaign with complete audit lineage
+    negative_or_hostile_proof: Destructive rewrite or deletion of history fails
+    test_cases:
+      - id: H015-PUB-004 positive
+        classification: API
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-PUB-004 positive test"
+        assertion: Restored baseline appears in a new campaign with complete audit lineage
+      - id: H015-PUB-004 negative
+        classification: API
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-PUB-004 negative or hostile test"
+        assertion: Destructive rewrite or deletion of history fails
+    evidence_gate: publication-runtime
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-PUB-005
+    area: Publication
+    requirement:
+      Campaign publication accepts ordered gap-free campaigns of six or
+      more entries
+    implementation_paths: *a5
+    required_layers:
+      - UNIT
+      - API
+      - E2E
+    positive_proof: Six- and seven-level publications succeed and Continue follows pinned order
+    negative_or_hostile_proof: Gaps, duplicate/non-positive sequence or unpublished entry fails
+    test_cases:
+      - id: H015-PUB-005 positive
+        classification: UNIT
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-PUB-005 positive test"
+        assertion:
+          Six- and seven-level publications succeed and Continue follows pinned
+          order
+      - id: H015-PUB-005 negative
+        classification: UNIT
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-PUB-005 negative or hostile test"
+        assertion: Gaps, duplicate/non-positive sequence or unpublished entry fails
+    evidence_gate: publication-runtime
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-PUB-006
+    area: Publication
+    requirement: Administration identifies current draft, published version and
+      containing release
+    implementation_paths: *a5
+    required_layers:
+      - API
+      - E2E
+    positive_proof: Every Level 1-6 view exposes unambiguous identities and preview status
+    negative_or_hostile_proof: Ambiguous, stale or ranked-preview labelling fails
+    test_cases:
+      - id: H015-PUB-006 positive
+        classification: API
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-PUB-006 positive test"
+        assertion: Every Level 1-6 view exposes unambiguous identities and preview status
+      - id: H015-PUB-006 negative
+        classification: API
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-PUB-006 negative or hostile test"
+        assertion: Ambiguous, stale or ranked-preview labelling fails
+    evidence_gate: publication-runtime
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-BOARD-001
+    area: Boarding
+    requirement: Board and Continue are distinct governed actions
+    implementation_paths: &a6
+      - game/src/scenes/BoardingScene.ts
+      - backend/campaigns/
+    required_layers:
+      - UNIT
+      - E2E
+    positive_proof: Board enters interior; Continue resumes Shooter/campaign according to state
+    negative_or_hostile_proof: Either action entering the wrong scene or loop fails
+    test_cases:
+      - id: H015-BOARD-001 positive
+        classification: UNIT
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-BOARD-001 positive test"
+        assertion:
+          Board enters interior; Continue resumes Shooter/campaign according to
+          state
+      - id: H015-BOARD-001 negative
+        classification: UNIT
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-BOARD-001 negative or hostile test"
+        assertion: Either action entering the wrong scene or loop fails
+    evidence_gate: ordinary-boarding
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-BOARD-002
+    area: Boarding
+    requirement: A visible entry airlock begins a physical interior journey
+    implementation_paths: *a6
+    required_layers:
+      - UNIT
+      - E2E
+    positive_proof: Ordinary input enters at the governed entry and traverses away from it
+    negative_or_hostile_proof: Teleport-only entry, missing airlock or incorrect anchor fails
+    test_cases:
+      - id: H015-BOARD-002 positive
+        classification: UNIT
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-BOARD-002 positive test"
+        assertion: Ordinary input enters at the governed entry and traverses away from it
+      - id: H015-BOARD-002 negative
+        classification: UNIT
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-BOARD-002 negative or hostile test"
+        assertion: Teleport-only entry, missing airlock or incorrect anchor fails
+    evidence_gate: ordinary-boarding
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-BOARD-003
+    area: Boarding
+    requirement:
+      Platform combat includes movement, jump, fire, enemies, health and
+      collisions
+    implementation_paths: *a6
+    required_layers:
+      - UNIT
+      - E2E
+    positive_proof:
+      Ordinary input demonstrates patrol/engage, projectiles, hits and
+      elimination
+    negative_or_hostile_proof: Static enemies, non-colliding shots or invulnerable states fail
+    test_cases:
+      - id: H015-BOARD-003 positive
+        classification: UNIT
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-BOARD-003 positive test"
+        assertion:
+          Ordinary input demonstrates patrol/engage, projectiles, hits and
+          elimination
+      - id: H015-BOARD-003 negative
+        classification: UNIT
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-BOARD-003 negative or hostile test"
+        assertion: Static enemies, non-colliding shots or invulnerable states fail
+    evidence_gate: ordinary-boarding
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-BOARD-004
+    area: Boarding
+    requirement: Player and alien governed animation states are visible
+    implementation_paths: *a6
+    required_layers:
+      - UNIT
+      - E2E
+    positive_proof: Idle, move, jump/fall, fire, hit and death states use admitted metadata
+    negative_or_hostile_proof: Static crop, unexplained frame constants or missing required state fails
+    test_cases:
+      - id: H015-BOARD-004 positive
+        classification: UNIT
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-BOARD-004 positive test"
+        assertion: Idle, move, jump/fall, fire, hit and death states use admitted metadata
+      - id: H015-BOARD-004 negative
+        classification: UNIT
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-BOARD-004 negative or hostile test"
+        assertion:
+          Static crop, unexplained frame constants or missing required state
+          fails
+    evidence_gate: ordinary-boarding
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-BOARD-005
+    area: Boarding
+    requirement: Visible far exit succeeds only after the interior objective
+    implementation_paths: *a6
+    required_layers:
+      - UNIT
+      - API
+      - E2E
+    positive_proof: Physical arrival after completion synchronises position then
+      completes server-side
+    negative_or_hostile_proof: Early exit, stale-position rejection or hidden completion fails
+    test_cases:
+      - id: H015-BOARD-005 positive
+        classification: UNIT
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-BOARD-005 positive test"
+        assertion: Physical arrival after completion synchronises position then
+          completes server-side
+      - id: H015-BOARD-005 negative
+        classification: UNIT
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-BOARD-005 negative or hostile test"
+        assertion: Early exit, stale-position rejection or hidden completion fails
+    evidence_gate: ordinary-boarding
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-BOARD-006
+    area: Boarding
+    requirement: Pause and ESC present Resume, confirmed Abort and authorised Main Menu
+    implementation_paths: *a6
+    required_layers:
+      - UNIT
+      - E2E
+    positive_proof: Resume continues; confirmed abort returns to exact Shooter checkpoint
+    negative_or_hostile_proof: Immediate abort, loop, duplicate offer or state loss fails
+    test_cases:
+      - id: H015-BOARD-006 positive
+        classification: UNIT
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-BOARD-006 positive test"
+        assertion: Resume continues; confirmed abort returns to exact Shooter checkpoint
+      - id: H015-BOARD-006 negative
+        classification: UNIT
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-BOARD-006 negative or hostile test"
+        assertion: Immediate abort, loop, duplicate offer or state loss fails
+    evidence_gate: ordinary-boarding
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-BOARD-007
+    area: Boarding
+    requirement: Success, death and API failure have safe deterministic outcomes
+    implementation_paths: *a6
+    required_layers:
+      - UNIT
+      - API
+      - E2E
+    positive_proof: Each path preserves or changes campaign resources according to contract
+    negative_or_hostile_proof: Double completion, stuck session or ungoverned fallback fails
+    test_cases:
+      - id: H015-BOARD-007 positive
+        classification: UNIT
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-BOARD-007 positive test"
+        assertion: Each path preserves or changes campaign resources according to contract
+      - id: H015-BOARD-007 negative
+        classification: UNIT
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-BOARD-007 negative or hostile test"
+        assertion: Double completion, stuck session or ungoverned fallback fails
+    evidence_gate: ordinary-boarding
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-AUTH-001
+    area: Security
+    requirement:
+      Admin, Command Post and player surfaces enforce server-side roles
+      and ownership
+    implementation_paths: &a7
+      - backend/accounts/
+      - backend/organizations/
+      - apps/web/app/account/
+    required_layers:
+      - UNIT
+      - API
+      - E2E
+    positive_proof: Authorised role succeeds only for owned scope
+    negative_or_hostile_proof: Anonymous, wrong-role and cross-organisation access fails
+    test_cases:
+      - id: H015-AUTH-001 positive
+        classification: UNIT
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-AUTH-001 positive test"
+        assertion: Authorised role succeeds only for owned scope
+      - id: H015-AUTH-001 negative
+        classification: UNIT
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-AUTH-001 negative or hostile test"
+        assertion: Anonymous, wrong-role and cross-organisation access fails
+    evidence_gate: ordinary-security
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-AUTH-002
+    area: Security
+    requirement: Login redirects use one same-origin internal-path validator
+    implementation_paths: *a7
+    required_layers:
+      - UNIT
+      - COMPONENT
+      - E2E
+    positive_proof: Valid internal next succeeds
+    negative_or_hostile_proof:
+      External, protocol-relative, backslash, encoded and
+      active-protocol forms fail
+    test_cases:
+      - id: H015-AUTH-002 positive
+        classification: UNIT
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-AUTH-002 positive test"
+        assertion: Valid internal next succeeds
+      - id: H015-AUTH-002 negative
+        classification: UNIT
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-AUTH-002 negative or hostile test"
+        assertion:
+          External, protocol-relative, backslash, encoded and active-protocol
+          forms fail
+    evidence_gate: ordinary-security
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-AUTH-003
+    area: Security
+    requirement: Player account provides visible CSRF-protected logout
+    implementation_paths: *a7
+    required_layers:
+      - API
+      - COMPONENT
+      - E2E
+    positive_proof: Logout clears session and returns to public route
+    negative_or_hostile_proof: Missing/invalid CSRF and post-logout API access fail
+    test_cases:
+      - id: H015-AUTH-003 positive
+        classification: API
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-AUTH-003 positive test"
+        assertion: Logout clears session and returns to public route
+      - id: H015-AUTH-003 negative
+        classification: API
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-AUTH-003 negative or hostile test"
+        assertion: Missing/invalid CSRF and post-logout API access fail
+    evidence_gate: ordinary-security
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-AUTH-004
+    area: Security
+    requirement: Django Admin remains diagnostic and is not the product authoring authority
+    implementation_paths: *a7
+    required_layers:
+      - API
+      - E2E
+    positive_proof: Product administration performs all governed CORE workflows
+    negative_or_hostile_proof: Production/public Django Admin and product-control substitution fail
+    test_cases:
+      - id: H015-AUTH-004 positive
+        classification: API
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-AUTH-004 positive test"
+        assertion: Product administration performs all governed CORE workflows
+      - id: H015-AUTH-004 negative
+        classification: API
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-AUTH-004 negative or hostile test"
+        assertion: Production/public Django Admin and product-control substitution fail
+    evidence_gate: ordinary-security
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-QUAL-001
+    area: Quality
+    requirement:
+      Formatting, lint, type checking and test commands are deterministic
+      and enforced
+    implementation_paths: &a8
+      - package.json
+      - .github/workflows/quality.yml
+      - scripts/
+    required_layers:
+      - CI
+    positive_proof: Clean checkout executes documented commands successfully
+    negative_or_hostile_proof: Introduced violation fails CI
+    test_cases:
+      - id: H015-QUAL-001 positive
+        classification: CI
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-QUAL-001 positive test"
+        assertion: Clean checkout executes documented commands successfully
+      - id: H015-QUAL-001 negative
+        classification: CI
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-QUAL-001 negative or hostile test"
+        assertion: Introduced violation fails CI
+    evidence_gate: quality-gates
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-QUAL-002
+    area: Quality
+    requirement: Changed high-risk code has maintainable test seams and
+      human-readable structure
+    implementation_paths: *a8
+    required_layers:
+      - UNIT
+      - REVIEW
+    positive_proof: Review confirms cohesive modules, typed contracts and decision comments
+    negative_or_hostile_proof: God-file growth, duplicate logic or unexplained constants fails review
+    test_cases:
+      - id: H015-QUAL-002 positive
+        classification: UNIT
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-QUAL-002 positive test"
+        assertion: Review confirms cohesive modules, typed contracts and decision comments
+      - id: H015-QUAL-002 negative
+        classification: UNIT
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-QUAL-002 negative or hostile test"
+        assertion: God-file growth, duplicate logic or unexplained constants fails review
+    evidence_gate: quality-gates
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-QUAL-003
+    area: Quality
+    requirement: Coverage and test-effectiveness gates prevent assertion-free success
+    implementation_paths: *a8
+    required_layers:
+      - CI
+    positive_proof: Thresholds pass and a controlled fault is detected by relevant tests
+    negative_or_hostile_proof: Empty test, removed assertion or deliberate mutation surviving fails
+    test_cases:
+      - id: H015-QUAL-003 positive
+        classification: CI
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-QUAL-003 positive test"
+        assertion: Thresholds pass and a controlled fault is detected by relevant tests
+      - id: H015-QUAL-003 negative
+        classification: CI
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-QUAL-003 negative or hostile test"
+        assertion: Empty test, removed assertion or deliberate mutation surviving fails
+    evidence_gate: quality-gates
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: H015-QUAL-004
+    area: Quality
+    requirement: Final exact-SHA closure is independently reproducible and fail-closed
+    implementation_paths: *a8
+    required_layers:
+      - CI
+      - E2E
+      - REVIEW
+    positive_proof:
+      Clean launcher, CI artifacts and closure audit agree with zero
+      failed/pending rows
+    negative_or_hostile_proof:
+      Dirty tree, provenance mismatch, manual PASS, missing
+      artifact or injected defect fails
+    test_cases:
+      - id: H015-QUAL-004 positive
+        classification: CI
+        polarity: POSITIVE
+        command: "UNPROVEN: implement H015-QUAL-004 positive test"
+        assertion:
+          Clean launcher, CI artifacts and closure audit agree with zero
+          failed/pending rows
+      - id: H015-QUAL-004 negative
+        classification: CI
+        polarity: NEGATIVE
+        command: "UNPROVEN: implement H015-QUAL-004 negative or hostile test"
+        assertion:
+          Dirty tree, provenance mismatch, manual PASS, missing artifact or
+          injected defect fails
+    evidence_gate: quality-gates
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.

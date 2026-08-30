@@ -12,6 +12,9 @@ export function GameHost() {
   const [status, setStatus] = useState<
     "loading" | "splash" | "main-menu" | "gameplay" | "paused" | "error"
   >("loading");
+  const [gameplayAnnouncement, setGameplayAnnouncement] = useState(
+    "Preparing Galactic Gunners gameplay.",
+  );
 
   useEffect(() => {
     let active = true;
@@ -82,6 +85,9 @@ export function GameHost() {
           onLaunchStateChange: (nextState) => {
             if (active) flushSync(() => setStatus(nextState));
           },
+          onGameplayAnnouncement: (announcement) => {
+            if (active) flushSync(() => setGameplayAnnouncement(announcement));
+          },
           onRuntimeError: () => {
             if (active) flushSync(() => setStatus("error"));
           },
@@ -131,6 +137,13 @@ export function GameHost() {
                 : status === "paused"
                   ? "Galactic Gunners paused. Resume, restart, or return to the main menu."
                   : "Loading Galactic Gunners..."}
+      </p>
+      <p
+        className="game-status game-status--visually-hidden"
+        data-game-announcement
+        aria-live="polite"
+      >
+        {gameplayAnnouncement}
       </p>
     </section>
   );

@@ -32,8 +32,9 @@
     "h015:closure-audit": "node scripts/verify-h015-evidence-integrity.mjs",
     "h015:closure-attest": "node scripts/generate-h015-closure-attestation.mjs",
     "h015:build-evidence-manifest": "node scripts/build-h015-evidence-manifest.mjs",
-    "test:h015:evidence-integrity": "node scripts/test-h015-evidence-integrity.mjs",
-    "test:h015:traceability": "node scripts/test-h015-traceability.mjs && node scripts/validate-h015-traceability.mjs && node scripts/validate-qa-hook-boundaries.mjs",
+    "test:h015:intake": "node --test tests/unit/h015-assurance-intake.test.mjs && node scripts/verify-h015-assurance-intake.mjs",
+    "test:h015:evidence-integrity": "node --test tests/unit/h015-evidence-identity.test.mjs && node scripts/test-h015-evidence-integrity.mjs",
+    "test:h015:traceability": "node scripts/test-h015-traceability.mjs && node --test tests/unit/h015-qa-boundaries.test.mjs && node scripts/validate-h015-traceability.mjs && node scripts/validate-qa-hook-boundaries.mjs",
     "lint": "eslint apps/web game scripts tests --max-warnings=0",
     "format:check": "prettier --check apps/web/game/GameHost.tsx apps/web/app/globals.css game/src/config/gameConfig.ts game/src/scenes/BootScene.ts game/src/scenes/SplashScene.ts game/src/scenes/MainMenuScene.ts game/src/scenes/Level1Scene.ts tests/e2e docs/assurance eslint.config.mjs playwright.config.ts package.json",
     "test:unit": "npm --workspace game run test",
@@ -43,7 +44,7 @@
     "test:coverage": "vitest run --coverage",
     "runtime:boarding:hostile": "npm run test:boarding && node scripts/verify-boarding-runtime.mjs",
     "contracts:validate": "node scripts/validate-contracts.mjs",
-    "quality": "npm run assets:sync && npm run contracts:validate && npm run game:typecheck && npm run game:test && npm run web:typecheck && npm run web:build && npm run lint && npm run format:check && npm run test:h015:traceability"
+    "quality": "npm run assets:sync && npm run contracts:validate && npm run game:typecheck && npm run game:test && npm run web:typecheck && npm run web:build && npm run lint && npm run format:check && npm run test:h015:intake && npm run test:h015:traceability"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",

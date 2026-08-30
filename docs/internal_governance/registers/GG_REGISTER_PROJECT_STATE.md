@@ -7,15 +7,15 @@
 | Commercial Repository | `Inceptivec-io/GalacticGunners` |
 | Historical Repository | `michael-leese/GallacticGunners` READ-ONLY |
 | Current Programme | H015 PLATFORM FOUNDATION AND CAMPAIGN CONTINUITY |
-| Current Stage | H015 FINAL EVIDENCE ATTESTATION COMPLETE / FOUNDER REVIEW READY / FOUNDER ACCEPTANCE PENDING |
+| Current Stage | H015 ASSURANCE RECOVERY IN PROGRESS / FOUNDER REVIEW NOT AUTHORISED |
 | Active Handoff | GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015 |
 | Current Feature Branch | `feature/v1-platform-foundation-campaign-continuity` |
 | Base Branch | `dev` |
 | Entry/Base SHA | `3270be64c67863dc848ebad26e2a33daf8b70742` |
 | Branch Model | `feature/* -> dev -> stage -> prod` |
 | Default Branch Target | `prod` |
-| Current Feature HEAD | final evidence-attestation SHA `b7e98a1c39fda3ae7fe7bea1b9f06dbf97f20dac`; PR #12 remains draft/open/unmerged |
-| Closure State | FINAL EVIDENCE ATTESTATION COMPLETE / `FOUNDER_REVIEW_READY=YES`; evidence artifact `9720659158` and closure attestation `9720659385` from run `33272670524` are durable and bound by digest; Founder acceptance and merge remain pending |
+| Current Feature HEAD | contained pre-intake SHA `4d74d9664a4cbf119ecebf30377e8e6468bf27cf`; authorised H015 worktree mutation remains uncommitted pending row-by-row authority review |
+| Closure State | FAIL-CLOSED / `FOUNDER_REVIEW_READY=NO`; prior artifact `9720659158`, attestation `9720659385`, and run `33272670524` are historical rejected evidence, not a closure claim |
 | Root Execution Contract | `AGENTS.md` |
 | External Boundary | `_EXTERNAL_GalacticGunners` |
 | Internal Governance Root | `docs/internal_governance` |

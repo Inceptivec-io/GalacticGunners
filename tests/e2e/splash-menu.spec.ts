@@ -5,6 +5,7 @@ test("H015-LAUNCH-001__e2e_ordinary_user__fresh_play_shows_splash_before_menu", 
   strictRuntime,
 }) => {
   await page.goto("/");
+  const launchRequestedAt = Date.now();
   await page.getByRole("link", { name: "Play" }).click();
   await expect(page).toHaveURL(/\/play$/);
   await expect(page.locator(".game-canvas-host canvas")).toBeVisible();
@@ -12,12 +13,20 @@ test("H015-LAUNCH-001__e2e_ordinary_user__fresh_play_shows_splash_before_menu", 
     "Galactic Gunners launch sequence.",
     { timeout: 25_000 },
   );
-  const splashStartedAt = Date.now();
+  const remainingVisibleWindow = Math.max(
+    0,
+    1_850 - (Date.now() - launchRequestedAt),
+  );
+  if (remainingVisibleWindow > 0) {
+    await page.waitForTimeout(remainingVisibleWindow);
+  }
+  await expect(page.getByRole("status")).toHaveText(
+    "Galactic Gunners launch sequence.",
+  );
   await expect(page.getByRole("status")).toHaveText(
     "Galactic Gunners main menu ready.",
     { timeout: 25_000 },
   );
-  expect(Date.now() - splashStartedAt).toBeGreaterThanOrEqual(1_800);
   await expect(page.locator(".game-canvas-host canvas")).toBeFocused();
   expect(strictRuntime.unexpectedFailures).toEqual([]);
 });

@@ -77,7 +77,7 @@ Founder Acceptance:
 FOUNDER ACCEPTED - KNOWN PLATFORM AND RUNTIME ITEMS DEFERRED TO H015. Development does not assert unqualified Founder manual acceptance of deferred items. PR #11 remains open for Founder merge decision.
 
 H015 Assurance Recovery:
-The Founder-issued H015 Assurance Recovery Delivery and Continuation Authority was received on 2026-08-30. Its four transport hashes matched and its unpacked members are preserved under `docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015_REV1/08_ASSURANCE_RECOVERY/`; POST_BOX is boundary-controls-only. The prior closure-attestation artifacts at `b7e98a1c39fda3ae7fe7bea1b9f06dbf97f20dac` remain historical evidence only. The recovery authority rejects their readiness claim because QA-hook, forced-completion and synthetic-event diagnostics were represented as ordinary-user proof.
+The Founder-issued replacement assurance transports were received and hash-verified on 2026-08-30. The admitted unpacked source members are under `docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/10_ASSURANCE_RECOVERY_TRANSPORT_MEMBERS/`; receiving evidence is `docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/assurance_recovery_intake/`. The prior closure-attestation artifacts at `b7e98a1c39fda3ae7fe7bea1b9f06dbf97f20dac` remain historical rejected evidence only. The recovery authority rejects their readiness claim because QA-hook, forced-completion and synthetic-event diagnostics were represented as ordinary-user proof.
 
 `H015_STATUS=IN_PROGRESS`
 `FOUNDER_REVIEW_READY=NO`

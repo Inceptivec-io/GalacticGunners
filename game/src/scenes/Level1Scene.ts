@@ -227,6 +227,9 @@ export class Level1Scene extends CombatLevelScene {
         : null);
     this.#definition = this.levelRuntime?.definition ?? packagedDefinition!;
     validateLevelDefinition(this.#definition);
+    this.#runtimeConfig.onGameplayAnnouncement?.(
+      `Level ${this.#campaignSequence}: ${this.#definition.name} started.`,
+    );
     this.#layout = createPlayfieldLayout(this.scale.width, this.scale.height);
     this.#terminalState = null;
     this.#playerState = "active";
@@ -2183,6 +2186,13 @@ export class Level1Scene extends CombatLevelScene {
         ? "CAMPAIGN VICTORY"
         : "MISSION CLEARED"
       : "GAME OVER";
+    this.#runtimeConfig.onGameplayAnnouncement?.(
+      isComplete
+        ? isFinalLevel
+          ? `Campaign victory. Level ${this.#campaignSequence} complete.`
+          : `Level ${this.#campaignSequence} complete. Continue available.`
+        : `Game over on Level ${this.#campaignSequence}. Try Again and Main Menu available.`,
+    );
     const values = isComplete
       ? `${heading}\nLEVEL ${this.#campaignSequence}: ${this.#definition.name.toUpperCase()}\nLEVEL SCORE ${levelScoreDelta}\nCAMPAIGN SCORE ${this.#score.value}\nLIVES ${this.#lives.value}  NUKES ${this.#currentNukes}\nBONUS ${bonus}  ${rankedState}`
       : `${heading}\nLEVEL ${this.#campaignSequence}: ${this.#definition.name.toUpperCase()}\nCAMPAIGN SCORE ${this.#score.value}\nLIVES ${this.#lives.value}  NUKES ${this.#currentNukes}\n${rankedState}`;

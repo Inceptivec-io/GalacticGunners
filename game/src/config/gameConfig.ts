@@ -20,6 +20,8 @@ export interface GameRuntimeConfig {
   onLaunchStateChange?: (
     state: "splash" | "main-menu" | "gameplay" | "paused",
   ) => void;
+  /** Announces real gameplay lifecycle events outside the canvas for assistive technology. */
+  onGameplayAnnouncement?: (announcement: string) => void;
   /** Surfaces an unrecoverable boot failure through the browser error boundary. */
   onRuntimeError?: (error: Error) => void;
   onExit?: () => void;
