@@ -21,6 +21,7 @@ export class MainMenuScene extends Phaser.Scene {
 
   create(): void {
     // Splash completion returns control to the primary interactive surface.
+    this.registry.get('runtimeConfig')?.onLaunchStateChange?.('main-menu');
     this.game.canvas.tabIndex = 0;
     this.game.canvas.focus();
     this.#createdAt = performance.now();

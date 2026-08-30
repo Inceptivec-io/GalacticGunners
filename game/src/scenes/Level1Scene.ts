@@ -152,6 +152,7 @@ export class Level1Scene extends CombatLevelScene {
 
   create(): void {
     this.#runtimeConfig = this.registry.get('runtimeConfig') as GameRuntimeConfig | undefined ?? {};
+    this.#runtimeConfig.onLaunchStateChange?.('gameplay');
     this.#levelStartedAtMs = this.time.now;
     this.#campaignSession = this.registry.get('campaignSession') as CampaignSession | undefined ?? null;
     const campaignRuntime = this.registry.get('campaignRuntime') as LevelRuntimeConfig[] | undefined ?? [];

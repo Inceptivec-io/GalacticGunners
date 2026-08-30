@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import type { LevelRuntimeConfig } from '@galactic-gunners/game';
 
 import { publicConfig } from '../lib/config/publicConfig';
@@ -8,7 +9,7 @@ import { publicConfig } from '../lib/config/publicConfig';
 export function GameHost() {
   const hostRef = useRef<HTMLDivElement | null>(null);
   const gameRef = useRef<unknown>(null);
-  const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
+  const [status, setStatus] = useState<'loading' | 'splash' | 'main-menu' | 'gameplay' | 'error'>('loading');
 
   useEffect(() => {
     let active = true;
@@ -53,7 +54,12 @@ export function GameHost() {
           hostileQa,
           allowOfflinePackage: params.get('api') === 'offline',
           previewRuntime,
-          onReady: () => setStatus('ready'),
+          onLaunchStateChange: (nextState) => {
+            if (active) flushSync(() => setStatus(nextState));
+          },
+          onRuntimeError: () => {
+            if (active) flushSync(() => setStatus('error'));
+          },
         });
       } catch (error) {
         console.error('Failed to mount Galactic Gunners runtime', error);
@@ -79,11 +85,22 @@ export function GameHost() {
   return (
     <section aria-label="Galactic Gunners game runtime" data-game-host className="game-host">
       <div ref={hostRef} className="game-canvas-host" />
-      {status !== 'ready' ? (
-        <p className="game-status" role={status === 'error' ? 'alert' : 'status'}>
-          {status === 'error' ? 'Unable to start Galactic Gunners runtime.' : 'Loading Galactic Gunners...'}
-        </p>
-      ) : null}
+      <p
+        className={`game-status${status === 'main-menu' || status === 'gameplay' ? ' game-status--visually-hidden' : ''}`}
+        data-game-status
+        role={status === 'error' ? 'alert' : 'status'}
+        aria-live="polite"
+      >
+        {status === 'error'
+          ? 'Unable to start Galactic Gunners runtime. Please return to the home screen and try again.'
+          : status === 'splash'
+            ? 'Galactic Gunners launch sequence.'
+            : status === 'main-menu'
+              ? 'Galactic Gunners main menu ready.'
+              : status === 'gameplay'
+                ? 'Galactic Gunners gameplay started.'
+                : 'Loading Galactic Gunners...'}
+      </p>
     </section>
   );
 }

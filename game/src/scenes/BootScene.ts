@@ -49,6 +49,7 @@ export class BootScene extends Phaser.Scene {
   }
 
   async create(): Promise<void> {
+    try {
     const missing = REQUIRED_RUNTIME_ASSETS.filter((asset) => {
       if (asset.key.startsWith('audio.')) {
         return !this.cache.audio.exists(asset.key);
@@ -114,6 +115,15 @@ export class BootScene extends Phaser.Scene {
     // launch presentation. Skipping the two-second splash here prevents
     // background-tab timer throttling from turning a condition wait into noise.
     this.scene.start(this.runtimeConfig.hostileQa ? 'MainMenuScene' : 'SplashScene');
+    } catch (error) {
+      const runtimeError = error instanceof Error ? error : new Error(String(error));
+      this.runtimeConfig.onRuntimeError?.(runtimeError);
+      this.add.text(40, 40, 'Galactic Gunners could not start. Please return to the home screen and try again.', {
+        color: '#ff3b30',
+        fontFamily: 'monospace',
+        fontSize: '24px',
+      });
+    }
   }
 
   private createRuntimeAnimations(): void {

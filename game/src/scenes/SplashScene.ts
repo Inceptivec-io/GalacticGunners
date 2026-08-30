@@ -7,6 +7,7 @@ export class SplashScene extends Phaser.Scene {
   constructor() { super('SplashScene'); }
 
   create(): void {
+    this.registry.get('runtimeConfig')?.onLaunchStateChange?.('splash');
     const { width, height } = this.scale;
     const startedAt = performance.now();
     this.add.rectangle(width / 2, height / 2, width, height, 0x02050d, 1);
