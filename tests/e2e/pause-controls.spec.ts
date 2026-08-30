@@ -51,6 +51,46 @@ test("H015-PAUSE-001__e2e_ordinary_user__keyboard_pause_and_resume_preserve_play
   });
 });
 
+test("H015-GAME-001__e2e_ordinary_user__pause_freezes_the_visible_simulation", async ({
+  page,
+  strictRuntime,
+}) => {
+  await startGameplay(page);
+  const canvas = page.locator(".game-canvas-host canvas");
+
+  await holdKeyUntilStatus(page, "KeyP", /Galactic Gunners paused/);
+  const pausedFirst = await canvas.screenshot();
+  await page.waitForTimeout(600);
+  const pausedSecond = await canvas.screenshot();
+  expect(pausedSecond.equals(pausedFirst)).toBe(true);
+
+  await holdKeyUntilStatus(page, "KeyP", "Galactic Gunners gameplay started.");
+  await canvas.focus();
+  await page.keyboard.down("ArrowLeft");
+  await page.waitForTimeout(450);
+  const movingFirst = await canvas.screenshot();
+  await page.waitForTimeout(450);
+  const movingSecond = await canvas.screenshot();
+  await page.keyboard.up("ArrowLeft");
+  expect(movingSecond.equals(movingFirst)).toBe(false);
+
+  expect(strictRuntime.unexpectedFailures).toEqual([]);
+  await captureOrdinaryJourney({
+    page,
+    testInfo: test.info(),
+    gate: "splash-navigation",
+    route: "/play",
+    actions: [
+      "Started gameplay with visible keyboard input.",
+      "Paused with P and observed the rendered canvas over time.",
+      "Resumed with P and held Left movement input.",
+    ],
+    assertions: [
+      "The paused canvas was pixel-stable, while resumed movement visibly changed the gameplay canvas.",
+    ],
+  });
+});
+
 test("H015-PAUSE-002__e2e_ordinary_user_negative__repeated_pause_resume_does_not_leave_a_black_or_lost_runtime", async ({
   page,
   strictRuntime,
