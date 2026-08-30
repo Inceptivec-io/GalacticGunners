@@ -34,7 +34,7 @@
     "h015:build-evidence-manifest": "node scripts/build-h015-evidence-manifest.mjs",
     "test:h015:evidence-integrity": "node scripts/test-h015-evidence-integrity.mjs",
     "test:h015:traceability": "node scripts/test-h015-traceability.mjs && node scripts/validate-h015-traceability.mjs && node scripts/validate-qa-hook-boundaries.mjs",
-    "lint": "eslint . --max-warnings=0",
+    "lint": "eslint apps/web game scripts tests --max-warnings=0",
     "format:check": "prettier --check .",
     "test:unit": "npm --workspace game run test",
     "test:component": "vitest run --project component",
