@@ -131,3 +131,41 @@ test("H015-BOARD-001__e2e_ordinary_user_negative__boarding_does_not_open_without
     ],
   });
 });
+
+test("H015-BOARD-001__e2e_ordinary_user__continue_declines_the_offer_without_entering_boarding", async ({
+  page,
+  strictRuntime,
+}) => {
+  test.setTimeout(60_000);
+  await startLevelFour(page);
+  await fireAtBoardingTarget(page);
+
+  const canvas = page.locator(".game-canvas-host canvas");
+  const box = await canvas.boundingBox();
+  if (!box) throw new Error("Gameplay canvas is unavailable.");
+  await canvas.click({
+    position: { x: box.width * 0.6, y: box.height * 0.57 },
+  });
+  await expect(page.locator("[data-game-announcement]")).toHaveText(
+    "Boarding offer declined. Shooter assault resumed.",
+    { timeout: 12_000 },
+  );
+  await page.waitForTimeout(300);
+  await expect(page.locator("[data-game-status]")).toHaveText(
+    "Galactic Gunners gameplay started.",
+  );
+  expect(strictRuntime.unexpectedFailures).toEqual([]);
+  await captureOrdinaryJourney({
+    page,
+    testInfo: test.info(),
+    gate: "boarding-entry-abort",
+    route: "/ -> Play -> /play",
+    actions: [
+      "Reached the authored Level 4 offer through normal player-laser input.",
+      "Selected the rendered Continue action rather than Board.",
+    ],
+    assertions: [
+      "Continue dismissed the offer and resumed Shooter gameplay without entering the Boarding scene.",
+    ],
+  });
+});

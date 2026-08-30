@@ -80,7 +80,9 @@ class Command(BaseCommand):
                     "type": "SURVIVE_DURATION",
                     "required": True,
                     "target_entity_ids": [],
-                    "duration_ms": duration_ms,
+                    "duration_ms": max(duration_ms, 1_500)
+                    if scenario == "boarding" and level.sequence < 4
+                    else duration_ms,
                 }
             ]
             if scenario == "boarding" and level.sequence == 4:

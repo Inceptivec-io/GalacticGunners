@@ -1012,9 +1012,7 @@ rows:
         classification: E2E_ORDINARY_USER
         polarity: POSITIVE
         command: npx playwright test tests/e2e/boarding-ordinary.spec.ts --project=chromium-desktop --grep laser_hit_opens_visible_boarding_offer --workers=1
-        assertion:
-          A real player-laser hit opens the visible Board action, which enters
-          the interior and returns to Shooter only through an explicit abort.
+        assertion: Real player-laser input opens the visible offer; Board enters the interior and Continue resumes Shooter without entering it.
       - id: H015-BOARD-001 negative
         classification: E2E_ORDINARY_USER
         polarity: NEGATIVE
@@ -1024,7 +1022,7 @@ rows:
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: Ordinary browser evidence proves the Board action is gated by an actual projectile hit and that Escape returns to Shooter. The visible Continue action and remaining required unit coverage are still unproven, so this row remains FAIL.
+    reason: Ordinary browser evidence now proves separate Board, Continue and abort paths. Required unit coverage and exact-SHA CI evidence are still pending, so this row remains FAIL.
   - requirement_id: H015-BOARD-002
     area: Boarding
     requirement: A visible entry airlock begins a physical interior journey

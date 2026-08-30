@@ -26,7 +26,8 @@ class BrowserAssuranceCampaignTests(TestCase):
         call_command("seed_browser_assurance_campaign", duration_ms=250, scenario="boarding")
 
         run, _ = CampaignService.start(user=None, seed_root=15150)
-        level_four = list(run.campaign_version.entries.order_by("position"))[3].level_version.config
+        entries = list(run.campaign_version.entries.order_by("position"))
+        level_four = entries[3].level_version.config
         self.assertEqual(len(level_four["entities"]), 1)
         self.assertEqual(level_four["entities"][0]["x"], 640)
         self.assertEqual(level_four["entities"][0]["y"], 220)
@@ -34,3 +35,4 @@ class BrowserAssuranceCampaignTests(TestCase):
         self.assertEqual(level_four["shield_structures"], [])
         self.assertEqual(level_four["hazard_emitters"], [])
         self.assertGreaterEqual(level_four["objectives"][0]["duration_ms"], 30000)
+        self.assertEqual(entries[0].level_version.config["objectives"][0]["duration_ms"], 1500)

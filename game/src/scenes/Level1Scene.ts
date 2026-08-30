@@ -180,6 +180,8 @@ export class Level1Scene extends CombatLevelScene {
     expiresAtMs: number;
     controls: Phaser.GameObjects.GameObject[];
   } | null = null;
+  #boardingConfirmKey: Phaser.Input.Keyboard.Key | undefined;
+  #boardingGamepadConfirmPressed = false;
   #campaignSession: CampaignSession | null = null;
   #hazardEmitterState = new Map<
     string,
@@ -333,6 +335,9 @@ export class Level1Scene extends CombatLevelScene {
     this.#pauseKey = this.input.keyboard?.addKey(
       Phaser.Input.Keyboard.KeyCodes.P,
     );
+    this.#boardingConfirmKey = this.input.keyboard?.addKey(
+      Phaser.Input.Keyboard.KeyCodes.ENTER,
+    );
     this.#pauseKey?.on("down", this.handlePauseKeyDown, this);
     if (typeof window !== "undefined") {
       this.#windowPauseHandler = (event) => {
@@ -355,6 +360,7 @@ export class Level1Scene extends CombatLevelScene {
       this.scale.off("resize", this.handleResize, this);
       this.#pauseKey?.off("down", this.handlePauseKeyDown, this);
       this.#pauseKey = undefined;
+      this.#boardingConfirmKey = undefined;
       if (this.#windowPauseHandler) {
         window.removeEventListener("keydown", this.#windowPauseHandler, true);
         this.#windowPauseHandler = undefined;
@@ -1669,8 +1675,7 @@ export class Level1Scene extends CombatLevelScene {
         fontSize: "30px",
       })
       .setOrigin(0.5)
-      .setDepth(31)
-      .setInteractive({ useHandCursor: true });
+      .setDepth(32);
     const continueShooter = this.add
       .text(centreX + 130, centreY + 50, "CONTINUE", {
         color: "#7ee8ff",
@@ -1678,18 +1683,42 @@ export class Level1Scene extends CombatLevelScene {
         fontSize: "26px",
       })
       .setOrigin(0.5)
+      .setDepth(32);
+    // Phaser Text input bounds depend on font measurement, which made the two
+    // offer actions overlap on some browser rasterizers. Fixed logical hit
+    // zones retain the approved visual treatment while keeping actions distinct.
+    const boardHitArea = this.add
+      .rectangle(centreX - 130, centreY + 50, 180, 64, 0x000000, 0.001)
       .setDepth(31)
       .setInteractive({ useHandCursor: true });
-    board.on("pointerup", () => this.acceptBoardingOffer());
-    continueShooter.on("pointerup", () => this.dismissBoardingOffer());
-    [backdrop, heading, detail, board, continueShooter].forEach((control) =>
-      control.setData("qa", "boarding-offer"),
-    );
+    const continueHitArea = this.add
+      .rectangle(centreX + 130, centreY + 50, 220, 64, 0x000000, 0.001)
+      .setDepth(31)
+      .setInteractive({ useHandCursor: true });
+    boardHitArea.on("pointerup", () => this.acceptBoardingOffer());
+    continueHitArea.on("pointerup", () => this.dismissBoardingOffer());
+    [
+      backdrop,
+      heading,
+      detail,
+      board,
+      continueShooter,
+      boardHitArea,
+      continueHitArea,
+    ].forEach((control) => control.setData("qa", "boarding-offer"));
     this.#boardingOffer = {
       scout,
       anchor,
       expiresAtMs,
-      controls: [backdrop, heading, detail, board, continueShooter],
+      controls: [
+        backdrop,
+        heading,
+        detail,
+        board,
+        continueShooter,
+        boardHitArea,
+        continueHitArea,
+      ],
     };
     this.#boardingTransition = "BOARDING_OFFER";
     this.#runtimeConfig.onGameplayAnnouncement?.(
@@ -1706,7 +1735,20 @@ export class Level1Scene extends CombatLevelScene {
       this.dismissBoardingOffer();
       return;
     }
-    if (this.#inputSystem.actions.confirm) this.acceptBoardingOffer();
+    const gamepadConfirm = Boolean(
+      this.input.gamepad?.getPad(0)?.buttons[0]?.pressed,
+    );
+    const keyboardConfirm = Boolean(
+      this.#boardingConfirmKey &&
+      Phaser.Input.Keyboard.JustDown(this.#boardingConfirmKey),
+    );
+    if (
+      keyboardConfirm ||
+      (gamepadConfirm && !this.#boardingGamepadConfirmPressed)
+    ) {
+      this.acceptBoardingOffer();
+    }
+    this.#boardingGamepadConfirmPressed = gamepadConfirm;
   }
 
   private dismissBoardingOffer(): void {
@@ -1716,6 +1758,7 @@ export class Level1Scene extends CombatLevelScene {
     offer.scout.setData("boarding-offer-resolved", true);
     this.#boardingOffer = null;
     this.#boardingTransition = "SHOOTER_ACTIVE";
+    this.#boardingGamepadConfirmPressed = false;
     this.physics.world.resume();
     this.#inputSystem.syncOneShotState();
     this.#runtimeConfig.onGameplayAnnouncement?.(
@@ -1730,6 +1773,7 @@ export class Level1Scene extends CombatLevelScene {
     this.#boardingOffer = null;
     this.#boardingActive = true;
     this.#boardingTransition = "BOARDING_ACTIVE";
+    this.#boardingGamepadConfirmPressed = false;
     const { scout, anchor } = offer;
     scout.setData("boarding-anchor", true);
     this.physics.world.resume();
