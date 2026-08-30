@@ -1,15 +1,21 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { SPLASH_COPY, SPLASH_DURATION_MS } from "../src/config/splashCopy";
+import {
+  isGovernedSplashCopy,
+  isGovernedSplashDuration,
+  SPLASH_COPY,
+  SPLASH_DURATION_MS,
+} from "../src/config/splashCopy";
 
 test("H015-ENTRY-002 positive: holds the approved splash for exactly two seconds", () => {
   assert.equal(SPLASH_DURATION_MS, 2_000);
+  assert.equal(isGovernedSplashDuration(SPLASH_DURATION_MS), true);
 });
 
 test("H015-ENTRY-002 negative: rejects a premature or excessive splash duration", () => {
-  assert.ok(SPLASH_DURATION_MS >= 2_000);
-  assert.ok(SPLASH_DURATION_MS <= 2_000);
+  assert.equal(isGovernedSplashDuration(1_999), false);
+  assert.equal(isGovernedSplashDuration(2_001), false);
 });
 
 test("H015-ENTRY-003 positive: uses the governed copyright and collaborator copy", () => {
@@ -17,8 +23,14 @@ test("H015-ENTRY-003 positive: uses the governed copyright and collaborator copy
     SPLASH_COPY,
     "Copyright © 2026. Powered by Inceptivec. All rights reserved.\nCollaborators: Aurora Leonardi",
   );
+  assert.equal(isGovernedSplashCopy(SPLASH_COPY), true);
 });
 
 test("H015-ENTRY-003 negative: does not retain the misspelled collaborator copy", () => {
-  assert.doesNotMatch(SPLASH_COPY, /Aroura/);
+  assert.equal(
+    isGovernedSplashCopy(
+      "Copyright © 2026. Powered by Inceptivec. All rights reserved.\nCollaborators: Aroura Leonardi",
+    ),
+    false,
+  );
 });

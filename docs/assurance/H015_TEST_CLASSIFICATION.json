@@ -3,6 +3,14 @@
   "purpose": "Exhaustive classification of executable test sources under H015-EVID-006.",
   "entries": [
     {
+      "file": "tests/component/landing-entry.test.tsx",
+      "classification": "COMPONENT"
+    },
+    {
+      "file": "tests/component/game-host-launch.test.tsx",
+      "classification": "COMPONENT"
+    },
+    {
       "file": "tests/accessibility/web-surfaces.spec.ts",
       "classification": "E2E_ORDINARY_USER"
     },

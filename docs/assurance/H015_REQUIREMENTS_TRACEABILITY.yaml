@@ -257,12 +257,12 @@ rows:
       - id: H015-ENTRY-003 positive
         classification: COMPONENT
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-ENTRY-003 positive test"
+        command: npm run test:component
         assertion: Rendered text matches the governed string exactly
       - id: H015-ENTRY-003 negative
         classification: COMPONENT
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-ENTRY-003 negative or hostile test"
+        command: npm run test:component
         assertion: Misspelling, omission or unapproved substitution fails
     evidence_gate: ordinary-entry
     evidence_paths: []
@@ -283,12 +283,12 @@ rows:
       - id: H015-ENTRY-004 positive
         classification: COMPONENT
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-ENTRY-004 positive test"
+        command: npm run test:component
         assertion: Focused element is visible and operable after splash
       - id: H015-ENTRY-004 negative
         classification: COMPONENT
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-ENTRY-004 negative or hostile test"
+        command: npm run test:component
         assertion: Lost, hidden or body-only focus fails
     evidence_gate: ordinary-entry
     evidence_paths: []

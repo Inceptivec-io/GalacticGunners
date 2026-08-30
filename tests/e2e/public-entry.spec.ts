@@ -16,7 +16,7 @@ test("H015-ENTRY-001__e2e_ordinary_user__root_play_enters_governed_launch", asyn
   await captureOrdinaryJourney({
     page,
     testInfo: test.info(),
-    gate: "splash-navigation",
+    gate: "ordinary-entry",
     route: "/ -> Play -> /play",
     actions: [
       "Opened the public root route.",
@@ -56,7 +56,7 @@ test("H015-ENTRY-001__e2e_ordinary_user_negative__boot_request_failure_surfaces_
   await captureOrdinaryJourney({
     page,
     testInfo: test.info(),
-    gate: "splash-navigation",
+    gate: "entry-service-failure",
     route: "/ -> Play -> /play",
     actions: [
       "Opened the public root route.",

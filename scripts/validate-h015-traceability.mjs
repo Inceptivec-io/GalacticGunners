@@ -88,7 +88,7 @@ function main() {
     process.argv[2] ?? "docs/assurance/H015_REQUIREMENTS_TRACEABILITY.yaml",
   );
   const catalogueFile = path.resolve(
-    "docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/10_ASSURANCE_RECOVERY_TRANSPORT_MEMBERS/GALACTIC_GUNNERS_H015_COMPLETE_RECOVERY_PACK_v1.0(1)/REQUIREMENT_CATALOGUE.csv",
+    "docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/11_ASSURANCE_RECOVERY_REPLACEMENT_TRANSPORT_MEMBERS/unpacked/GALACTIC_GUNNERS_H015_COMPLETE_RECOVERY_PACK_v1.0/REQUIREMENT_CATALOGUE.csv",
   );
   const register = YAML.parse(readFileSync(registerFile, "utf8"));
   const expectedIds = catalogueIds(catalogueFile);

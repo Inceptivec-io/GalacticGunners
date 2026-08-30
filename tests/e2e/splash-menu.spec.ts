@@ -15,7 +15,7 @@ test("H015-LAUNCH-001__e2e_ordinary_user__fresh_play_shows_splash_before_menu", 
     { timeout: 25_000 },
   );
   await expect(page.locator("[data-game-splash-copy]")).toHaveText(
-    "Copyright © 2026. Powered by Inceptivec. All rights reserved.\nCollaborators: Aurora Leonardi",
+    "Copyright \u00a9 2026. Powered by Inceptivec. All rights reserved.\nCollaborators: Aurora Leonardi",
   );
   const remainingVisibleWindow = Math.max(
     0,
@@ -81,14 +81,27 @@ test("H015-LAUNCH-001__e2e_ordinary_user_negative__internal_navigation_does_not_
   await expect(page.locator("[data-game-status]")).toHaveText(
     "Galactic Gunners gameplay started.",
   );
-  await canvas.press("KeyP");
-  await expect(page.locator("[data-game-status]")).toHaveText(
-    "Galactic Gunners paused. Resume, restart, or return to the main menu.",
+  await expect(page.locator("[data-game-announcement]")).toHaveText(
+    /^Level 1: .+ started\.$/,
+    { timeout: 5_000 },
   );
-  await canvas.press("KeyM");
-  await expect(page.locator("[data-game-status]")).toHaveText(
-    "Galactic Gunners main menu ready.",
-  );
+  await canvas.focus();
+  await page.keyboard.down("KeyP");
+  try {
+    await expect(page.locator("[data-game-status]")).toHaveText(
+      "Galactic Gunners paused. Resume, restart, or return to the main menu.",
+    );
+  } finally {
+    await page.keyboard.up("KeyP");
+  }
+  await page.keyboard.down("KeyM");
+  try {
+    await expect(page.locator("[data-game-status]")).toHaveText(
+      "Galactic Gunners main menu ready.",
+    );
+  } finally {
+    await page.keyboard.up("KeyM");
+  }
   await expect(page.locator("[data-game-status]")).not.toHaveText(
     "Galactic Gunners launch sequence.",
   );
@@ -96,7 +109,7 @@ test("H015-LAUNCH-001__e2e_ordinary_user_negative__internal_navigation_does_not_
   await captureOrdinaryJourney({
     page,
     testInfo: test.info(),
-    gate: "splash-navigation",
+    gate: "direct-deep-link",
     route: "/play",
     actions: [
       "Opened a new independent game entry and observed its launch splash.",
