@@ -1429,6 +1429,7 @@ export function CampaignDesigner({
                     key={spawn.id}
                     type="button"
                     className={`designer-placement ${selectedIds.includes(`player:${spawn.id}`) ? "selected" : ""}`}
+                    data-designer-placement-id={`player:${spawn.id}`}
                     aria-label={`Player spawn at ${spawn.x}, ${spawn.y}`}
                     style={{
                       left: `${spawn.x / 12.8}%`,
@@ -1437,7 +1438,6 @@ export function CampaignDesigner({
                       height: "48px",
                       transform: `translate(-50%, -50%) rotate(${spawn.rotation}deg)`,
                     }}
-                    onMouseDown={(event) => event.preventDefault()}
                     onClick={(event) => {
                       event.stopPropagation();
                       setSelectedIds([`player:${spawn.id}`]);
@@ -1540,6 +1540,7 @@ export function CampaignDesigner({
                   key={entity.id}
                   type="button"
                   className={`designer-placement ${selectedIds.includes(entity.id) ? "selected" : ""}`}
+                  data-designer-placement-id={entity.id}
                   aria-label={`${entity.entity_type} at ${entity.x}, ${entity.y}`}
                   style={{
                     left: `${entity.x / 12.8}%`,
@@ -1548,7 +1549,6 @@ export function CampaignDesigner({
                     height: `${Math.max(22, entity.height * 0.55)}px`,
                     transform: `translate(-50%, -50%) rotate(${entity.rotation}deg)`,
                   }}
-                  onMouseDown={(event) => event.preventDefault()}
                   onPointerDown={(event) => beginDrag(event, entity.id)}
                   onClick={(event) => {
                     event.stopPropagation();
