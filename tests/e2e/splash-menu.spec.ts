@@ -1,12 +1,15 @@
 import { expect, test } from './fixtures/strictRuntime';
 
 test('H015-LAUNCH-001__e2e_ordinary_user__fresh_play_shows_splash_before_menu', async ({ page, strictRuntime }) => {
-  await page.goto('/play');
+  await page.goto('/');
+  await page.getByRole('link', { name: 'Play' }).click();
+  await expect(page).toHaveURL(/\/play$/);
   await expect(page.locator('.game-canvas-host canvas')).toBeVisible();
   await expect(page.getByRole('status')).toHaveText('Galactic Gunners launch sequence.', { timeout: 25_000 });
   const splashStartedAt = Date.now();
   await expect(page.getByRole('status')).toHaveText('Galactic Gunners main menu ready.', { timeout: 25_000 });
   expect(Date.now() - splashStartedAt).toBeGreaterThanOrEqual(1_800);
+  await expect(page.locator('.game-canvas-host canvas')).toBeFocused();
   expect(strictRuntime.unexpectedFailures).toEqual([]);
 });
 
