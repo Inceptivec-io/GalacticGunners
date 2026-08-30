@@ -1,8 +1,8 @@
 # H015 Assurance Recovery Receiving Record
 
-**Parent handoff:** `GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015_REV1`  
-**Authority:** H015 Assurance Recovery Delivery and Continuation Authority  
-**Received:** 2026-08-30  
+**Parent handoff:** `GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015_REV1`
+**Authority:** H015 Assurance Recovery Delivery and Continuation Authority
+**Received:** 2026-08-30
 **Entry branch / SHA:** `feature/v1-platform-foundation-campaign-continuity` / `37f35ddddc56d98c59c1448177d3b8137e8084ed`
 
 ## Transport Receipt
@@ -26,8 +26,8 @@ The four supplied ZIPs were transport only. Their unpacked, inspectable members 
 
 ## Current Authority State
 
-`H015_STATUS=IN_PROGRESS`  
-`FOUNDER_REVIEW_READY=NO`  
-`FOUNDER_ACCEPTANCE=REJECTED`  
-`MERGE_AUTHORISED=NO`  
+`H015_STATUS=IN_PROGRESS`
+`FOUNDER_REVIEW_READY=NO`
+`FOUNDER_ACCEPTANCE=REJECTED`
+`MERGE_AUTHORISED=NO`
 `CONTINUATION_AUTHORISED=YES`
