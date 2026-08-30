@@ -361,21 +361,20 @@ rows:
     negative_or_hostile_proof: Hidden, duplicate or unintended action fails
     test_cases:
       - id: H015-GAME-002 positive
-        classification: COMPONENT
+        classification: E2E_ORDINARY_USER
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-GAME-002 positive test"
-        assertion: Each input route performs the selected action exactly once
+        command: npx playwright test tests/e2e/pause-controls.spec.ts --project=chromium-desktop --grep H015-GAME-002 --workers=1
+        assertion: Visible keyboard Restart and Main Menu actions each transition exactly once.
       - id: H015-GAME-002 negative
-        classification: COMPONENT
+        classification: E2E_ORDINARY_USER
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-GAME-002 negative or hostile test"
-        assertion: Hidden, duplicate or unintended action fails
+        command: npx playwright test tests/e2e/pause-controls.spec.ts --project=chromium-desktop --grep H015-GAME-002 --workers=1
+        assertion: A delayed post-action assertion rejects duplicate or unintended state transitions.
     evidence_gate: ordinary-gameplay
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Ordinary keyboard Restart and Main Menu coverage now exists locally. This row remains FAIL until touch and controller action routes, component semantics, and exact-SHA CI evidence are admitted.
   - requirement_id: H015-GAME-003
     area: Gameplay
     requirement: Results information is readable above and unobscured by the panel
