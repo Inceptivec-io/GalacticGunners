@@ -1,0 +1,100 @@
+{
+  "schema_version": "1.0",
+  "purpose": "Exhaustive classification of executable test sources under H015-EVID-006.",
+  "entries": [
+    {
+      "file": "tests/accessibility/web-surfaces.spec.ts",
+      "classification": "E2E_ORDINARY_USER"
+    },
+    {
+      "file": "tests/e2e/auth-session.spec.ts",
+      "classification": "E2E_ORDINARY_USER"
+    },
+    {
+      "file": "tests/e2e/campaign-real-play.spec.ts",
+      "classification": "E2E_ORDINARY_USER"
+    },
+    {
+      "file": "tests/e2e/designer-pointer.spec.ts",
+      "classification": "E2E_ORDINARY_USER"
+    },
+    {
+      "file": "tests/e2e/main-menu.spec.ts",
+      "classification": "E2E_ORDINARY_USER"
+    },
+    {
+      "file": "tests/e2e/pause-controls.spec.ts",
+      "classification": "E2E_ORDINARY_USER"
+    },
+    {
+      "file": "tests/e2e/production-mode-negative.spec.ts",
+      "classification": "QA_DIAGNOSTIC"
+    },
+    {
+      "file": "tests/e2e/public-entry.spec.ts",
+      "classification": "E2E_ORDINARY_USER"
+    },
+    {
+      "file": "tests/e2e/splash-menu.spec.ts",
+      "classification": "E2E_ORDINARY_USER"
+    },
+    {
+      "file": "tests/e2e/tenant-isolation.spec.ts",
+      "classification": "E2E_ORDINARY_USER"
+    },
+    {
+      "file": "tests/unit/h015-assurance-intake.test.mjs",
+      "classification": "UNIT"
+    },
+    {
+      "file": "tests/unit/h015-evidence-identity.test.mjs",
+      "classification": "UNIT"
+    },
+    {
+      "file": "tests/unit/h015-qa-boundaries.test.mjs",
+      "classification": "UNIT"
+    },
+    {
+      "file": "game/tests/boarding-simulation.test.ts",
+      "classification": "UNIT"
+    },
+    { "file": "game/tests/level-authoring.test.ts", "classification": "UNIT" },
+    { "file": "game/tests/level-loader.test.ts", "classification": "UNIT" },
+    { "file": "game/tests/pickup-system.test.ts", "classification": "UNIT" },
+    { "file": "game/tests/scoring.test.ts", "classification": "UNIT" },
+    { "file": "game/tests/terminal-actions.test.ts", "classification": "UNIT" },
+    {
+      "file": "backend/boarding/tests/test_boarding_api.py",
+      "classification": "API"
+    },
+    {
+      "file": "backend/levels/tests/test_authoring.py",
+      "classification": "API"
+    },
+    {
+      "file": "backend/levels/tests/test_browser_assurance_campaign.py",
+      "classification": "INTEGRATION"
+    },
+    {
+      "file": "backend/levels/tests/test_levels_api.py",
+      "classification": "API"
+    },
+    {
+      "file": "backend/organizations/tests/test_portal_api.py",
+      "classification": "API"
+    },
+    { "file": "backend/tests/test_auth_surfaces.py", "classification": "API" },
+    {
+      "file": "backend/tests/test_campaign_service.py",
+      "classification": "INTEGRATION"
+    },
+    { "file": "backend/tests/test_game_runs_api.py", "classification": "API" },
+    { "file": "backend/tests/test_health.py", "classification": "API" },
+    {
+      "file": "backend/tests/test_leaderboard_moderation.py",
+      "classification": "API"
+    },
+    { "file": "backend/tests/test_plan_quota.py", "classification": "API" },
+    { "file": "backend/tests/test_player_profile.py", "classification": "API" }
+  ]
+}

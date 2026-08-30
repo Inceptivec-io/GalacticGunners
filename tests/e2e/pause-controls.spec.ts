@@ -6,10 +6,21 @@ async function startGameplay(page: import("@playwright/test").Page) {
     "Galactic Gunners main menu ready.",
     { timeout: 25_000 },
   );
-  await page.locator(".game-canvas-host canvas").press("Space");
-  await expect(page.locator("[data-game-status]")).toHaveText(
-    "Galactic Gunners gameplay started.",
-  );
+  await holdKeyUntilStatus(page, "Space", "Galactic Gunners gameplay started.");
+}
+
+async function holdKeyUntilStatus(
+  page: import("@playwright/test").Page,
+  key: string,
+  expected: string | RegExp,
+) {
+  await page.locator(".game-canvas-host canvas").focus();
+  await page.keyboard.down(key);
+  try {
+    await expect(page.locator("[data-game-status]")).toHaveText(expected);
+  } finally {
+    await page.keyboard.up(key);
+  }
 }
 
 test("H015-PAUSE-001__e2e_ordinary_user__keyboard_pause_and_resume_preserve_playable_runtime", async ({
@@ -17,11 +28,12 @@ test("H015-PAUSE-001__e2e_ordinary_user__keyboard_pause_and_resume_preserve_play
   strictRuntime,
 }) => {
   await startGameplay(page);
-  await page.locator(".game-canvas-host canvas").press("P");
-  await expect(page.locator("[data-game-status]")).toHaveText(
-    /Galactic Gunners paused/,
+  await holdKeyUntilStatus(page, "KeyP", /Galactic Gunners paused/);
+  await holdKeyUntilStatus(
+    page,
+    "Escape",
+    "Galactic Gunners gameplay started.",
   );
-  await page.locator(".game-canvas-host canvas").press("Escape");
   await expect(page.locator("[data-game-status]")).toHaveText(
     "Galactic Gunners gameplay started.",
   );
@@ -33,17 +45,14 @@ test("H015-PAUSE-002__e2e_ordinary_user_negative__repeated_pause_resume_does_not
   strictRuntime,
 }) => {
   await startGameplay(page);
-  const canvas = page.locator(".game-canvas-host canvas");
   for (let cycle = 0; cycle < 3; cycle += 1) {
-    await canvas.press("P");
-    await expect(page.locator("[data-game-status]")).toHaveText(
-      /Galactic Gunners paused/,
-    );
-    await canvas.press("Escape");
-    await expect(page.locator("[data-game-status]")).toHaveText(
+    await holdKeyUntilStatus(page, "KeyP", /Galactic Gunners paused/);
+    await holdKeyUntilStatus(
+      page,
+      "Escape",
       "Galactic Gunners gameplay started.",
     );
   }
-  await expect(canvas).toBeVisible();
+  await expect(page.locator(".game-canvas-host canvas")).toBeVisible();
   expect(strictRuntime.unexpectedFailures).toEqual([]);
 });

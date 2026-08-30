@@ -164,19 +164,23 @@ rows:
       - id: H015-EVID-006 positive
         classification: CI
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-EVID-006 positive test"
+        command: node scripts/validate-qa-hook-boundaries.mjs
         assertion: Every test is classified and ordinary gates use ordinary interaction
       - id: H015-EVID-006 negative
         classification: CI
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-EVID-006 negative or hostile test"
+        command: node --test tests/unit/h015-qa-boundaries.test.mjs
         assertion: Force hooks or direct state mutation cannot satisfy ordinary gates
     evidence_gate: h015-closure-audit
-    evidence_paths: []
-    status: FAIL
+    evidence_paths:
+      - docs/assurance/H015_TEST_CLASSIFICATION.json
+      - scripts/validate-qa-hook-boundaries.mjs
+      - tests/unit/h015-qa-boundaries.test.mjs
+    status: PASS
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: The inventory fails closed for an unclassified source, an invalid
+      classification, or an ordinary-user source that uses a force hook or direct
+      runtime diagnostic; runner-native unit tests prove both positive and negative paths.
   - requirement_id: H015-ENTRY-001
     area: Entry
     requirement: Customer journey starts at root and Play enters the game

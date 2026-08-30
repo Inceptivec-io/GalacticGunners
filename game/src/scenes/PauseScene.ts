@@ -15,6 +15,9 @@ export class PauseScene extends Phaser.Scene {
   }
 
   create(): void {
+    // Launch first, then pause the target. Pausing it before this scene is
+    // created can leave the queued overlay unable to render or receive input.
+    this.scene.pause(this.#targetScene);
     this.registry.get('runtimeConfig')?.onLaunchStateChange?.('paused');
     const { width, height } = this.scale;
     const backdrop = this.add.rectangle(width / 2, height / 2, width, height, 0x020712, 0.44).setDepth(30);

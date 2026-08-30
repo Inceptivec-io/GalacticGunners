@@ -151,6 +151,8 @@ export class Level1Scene extends CombatLevelScene {
   #nukesFired = 0;
   #lastUpdateAtMs = 0;
   #pauseInputBlockedUntilMs = 0;
+  #pauseKey?: Phaser.Input.Keyboard.Key;
+  #windowPauseHandler?: (event: KeyboardEvent) => void;
   #terminalState: TerminalState | null = null;
   #playerState: PlayerState = "active";
   #invulnerableUntilMs = Number.NEGATIVE_INFINITY;
@@ -227,9 +229,6 @@ export class Level1Scene extends CombatLevelScene {
         : null);
     this.#definition = this.levelRuntime?.definition ?? packagedDefinition!;
     validateLevelDefinition(this.#definition);
-    this.#runtimeConfig.onGameplayAnnouncement?.(
-      `Level ${this.#campaignSequence}: ${this.#definition.name} started.`,
-    );
     this.#layout = createPlayfieldLayout(this.scale.width, this.scale.height);
     this.#terminalState = null;
     this.#playerState = "active";
@@ -331,16 +330,37 @@ export class Level1Scene extends CombatLevelScene {
     });
 
     this.scale.on("resize", this.handleResize, this);
-    this.input.keyboard?.on("keydown-P", this.handlePauseKeyDown, this);
+    this.#pauseKey = this.input.keyboard?.addKey(
+      Phaser.Input.Keyboard.KeyCodes.P,
+    );
+    this.#pauseKey?.on("down", this.handlePauseKeyDown, this);
+    if (typeof window !== "undefined") {
+      this.#windowPauseHandler = (event) => {
+        if (event.code !== "KeyP" || event.repeat) return;
+        event.preventDefault();
+        this.handlePauseKeyDown();
+      };
+      window.addEventListener("keydown", this.#windowPauseHandler, true);
+    }
     this.events.on("resume", this.handleResume, this);
     this.events.once("shutdown", () => {
       this.scale.off("resize", this.handleResize, this);
-      this.input.keyboard?.off("keydown-P", this.handlePauseKeyDown, this);
+      this.#pauseKey?.off("down", this.handlePauseKeyDown, this);
+      this.#pauseKey = undefined;
+      if (this.#windowPauseHandler) {
+        window.removeEventListener("keydown", this.#windowPauseHandler, true);
+        this.#windowPauseHandler = undefined;
+      }
       this.events.off("resume", this.handleResume, this);
       if (typeof window !== "undefined") {
         delete window.__GALACTIC_GUNNERS_HOSTILE__;
       }
     });
+    // The host's gameplay-ready announcement is the browser input contract:
+    // emit it only after every keyboard handler is registered.
+    this.#runtimeConfig.onGameplayAnnouncement?.(
+      `Level ${this.#campaignSequence}: ${this.#definition.name} started.`,
+    );
   }
 
   update(time: number): void {
@@ -1980,7 +2000,6 @@ export class Level1Scene extends CombatLevelScene {
     this.#player.stop();
     this.physics.world.pause();
     this.scene.launch("PauseScene", { sequence: this.#campaignSequence });
-    this.scene.sleep();
   }
 
   private handlePauseKeyDown(): void {
@@ -1996,7 +2015,10 @@ export class Level1Scene extends CombatLevelScene {
     this.input.keyboard?.resetKeys();
     this.#inputSystem.syncOneShotState();
     this.#lastUpdateAtMs = 0;
-    this.#pauseInputBlockedUntilMs = this.time.now + 250;
+    // PauseScene resets the held keys before resuming us, so a new deliberate
+    // pause input must be accepted immediately rather than dropped in a blind
+    // debounce window.
+    this.#pauseInputBlockedUntilMs = 0;
   }
 
   private damagePlayer(force = false): void {
