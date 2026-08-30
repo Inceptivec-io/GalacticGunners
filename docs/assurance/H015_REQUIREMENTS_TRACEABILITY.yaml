@@ -138,19 +138,21 @@ rows:
       - id: H015-EVID-005 positive
         classification: CI
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-EVID-005 positive test"
+        command: npm run test:h015:evidence-integrity
         assertion: Downloadable artifacts contain manifest, traces, logs and checksums
       - id: H015-EVID-005 negative
         classification: CI
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-EVID-005 negative or hostile test"
+        command: npm run test:h015:evidence-integrity
         assertion: Absent or unverifiable artifacts fail closure
     evidence_gate: h015-closure-audit
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: The workflow contract now proves the required ordered upload and
+      artifact-ID/digest binding and proves omission/reordering fails. This row
+      remains FAIL until a new exact-SHA CI run produces downloadable evidence
+      and closure-attestation artifacts that independently reconcile those values.
   - requirement_id: H015-EVID-006
     area: Evidence
     requirement: Ordinary acceptance is separated from QA diagnostics

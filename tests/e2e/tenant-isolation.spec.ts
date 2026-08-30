@@ -27,11 +27,13 @@ test("H015-PERM-002__e2e_ordinary_user__command_post_member_reads_only_its_autho
   page,
   strictRuntime,
 }) => {
-  await loginToCommandPost(page);
+  // Next.js cancels the previous RSC request when the login redirect commits.
+  // It is a scoped browser-navigation abort, not a failed product request.
   strictRuntime.allowRequestFailure(
     /\/command-post\/[a-z0-9-]+\?_rsc=/,
     /net::ERR_ABORTED/,
   );
+  await loginToCommandPost(page);
 
   const organization = page.locator("main ul a").first();
   await expect(organization).toBeVisible();
@@ -50,11 +52,11 @@ test("H015-PERM-002__e2e_ordinary_user_negative__command_post_member_cannot_open
   page,
   strictRuntime,
 }) => {
-  await loginToCommandPost(page);
   strictRuntime.allowRequestFailure(
     /\/command-post\/[a-z0-9-]+\?_rsc=/,
     /net::ERR_ABORTED/,
   );
+  await loginToCommandPost(page);
   strictRuntime.allowHttpFailure(
     /\/api\/v1\/portal\/organizations\/unrelated-tenant\/$/,
     404,

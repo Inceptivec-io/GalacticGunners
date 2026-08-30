@@ -337,6 +337,14 @@ export class Level1Scene extends CombatLevelScene {
     if (typeof window !== "undefined") {
       this.#windowPauseHandler = (event) => {
         if (event.code !== "KeyP" || event.repeat) return;
+        // The capture fallback is only for entering pause. Once the overlay is
+        // active, it owns P so the same physical key can resume the game.
+        if (
+          this.scene.isPaused("Level1Scene") ||
+          this.scene.isActive("PauseScene")
+        ) {
+          return;
+        }
         event.preventDefault();
         this.handlePauseKeyDown();
       };

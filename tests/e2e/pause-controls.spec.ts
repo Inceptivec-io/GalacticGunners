@@ -29,11 +29,7 @@ test("H015-PAUSE-001__e2e_ordinary_user__keyboard_pause_and_resume_preserve_play
 }) => {
   await startGameplay(page);
   await holdKeyUntilStatus(page, "KeyP", /Galactic Gunners paused/);
-  await holdKeyUntilStatus(
-    page,
-    "Escape",
-    "Galactic Gunners gameplay started.",
-  );
+  await holdKeyUntilStatus(page, "KeyP", "Galactic Gunners gameplay started.");
   await expect(page.locator("[data-game-status]")).toHaveText(
     "Galactic Gunners gameplay started.",
   );
