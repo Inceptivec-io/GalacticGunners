@@ -4,6 +4,7 @@ const config = [
   {
     ignores: [
       '.next/**',
+      'apps/web/.next/**',
       'node_modules/**',
       'coverage/**',
       'test-results/**',

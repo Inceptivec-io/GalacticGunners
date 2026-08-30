@@ -70,6 +70,8 @@ jobs:
 
   runtime-hostile:
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_GG_QA_MODE: 'true'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -238,6 +240,7 @@ jobs:
   runtime-browser:
     runs-on: ubuntu-latest
     env:
+      NEXT_PUBLIC_GG_QA_MODE: 'true'
       GG_EVIDENCE_DIR: /tmp/h015-browser-evidence
       FOUNDER_REVIEW_MODE: 'true'
       FOUNDER_REVIEW_USERNAME: ci-founder-review
