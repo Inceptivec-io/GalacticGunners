@@ -15,6 +15,7 @@ import { PickupSystem, type PickupType } from '../systems/PickupSystem';
 import { SeededRng } from '../systems/SeededRng';
 import { createPlayfieldLayout, type PlayfieldLayout } from '../systems/PlayfieldLayout';
 import { ScoreSystem } from '../systems/ScoreSystem';
+import { primaryTerminalAction } from '../systems/TerminalActions';
 import { CombatLevelScene } from './CombatLevelScene';
 import type { LevelDefinition } from '../levels/LevelDefinition';
 import type { LevelAuthoringDocument } from '../levels/LevelAuthoringDocument';
@@ -1485,10 +1486,13 @@ export class Level1Scene extends CombatLevelScene {
   }
 
   private primaryTerminalAction(): TerminalAction {
-    if (this.#terminalState === 'failed') {
-      return 'try-again';
-    }
-    return this.#campaignSession?.run?.has_next_entry || this.#campaignSession?.offline && this.#campaignSequence < this.campaignLength() ? 'continue' : 'replay';
+    return primaryTerminalAction({
+      terminalState: this.#terminalState ?? 'failed',
+      hasNextEntry: Boolean(this.#campaignSession?.run?.has_next_entry),
+      offline: Boolean(this.#campaignSession?.offline),
+      sequence: this.#campaignSequence,
+      campaignLength: this.campaignLength(),
+    });
   }
 
   private createContinueControl(x: number, y: number): void {
