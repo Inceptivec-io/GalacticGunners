@@ -123,6 +123,20 @@ def test_authoring_document_requires_destructible_shield_tile_matrices():
     }
 
 
+def test_authoring_document_requires_bounded_supported_pickup_drop_rules():
+    document = blank_authoring_document(identifier='map-01', slug='map-01', name='Blank Map', sequence=1, seed=77)
+    document['drop_rules'] = [{
+        'id': 'nuke-drop', 'host_entity_types': ['SCOUT', 'CRUISER'],
+        'pickup_type': 'NUKE', 'probability': 0.25, 'maximum_per_level': 2,
+    }]
+    assert validate_authoring_document(document) == []
+
+    document['drop_rules'][0].update({'host_entity_types': ['MOTHERSHIP'], 'probability': 1.1, 'maximum_per_level': -1})
+    assert 'INVALID_DROP_RULE' in {
+        error['code'] for error in validate_authoring_document(document)
+    }
+
+
 def test_authoring_document_rejects_duplicate_entity_ids_and_unknown_formation_members():
     document = blank_authoring_document(identifier='map-01', slug='map-01', name='Blank Map', sequence=1, seed=77)
     entity = {'id': 'scout-1', 'entity_type': 'SCOUT', 'asset_id': 'enemy.scout', 'x': 640, 'y': 100, 'width': 44, 'height': 58, 'rotation': 0, 'z_index': 4, 'behaviour_profile': 'enemy.scout.standard', 'enabled': True, 'tags': []}
