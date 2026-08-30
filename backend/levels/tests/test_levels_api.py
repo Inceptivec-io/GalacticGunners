@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 import pytest
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 
 from levels.models import Level, LevelVersion
@@ -33,6 +34,9 @@ def core_project(level_admin):
 
 @pytest.mark.django_db
 def test_level_one_admission_publish_and_public_resolution(client, level_admin, core_project):
+    assert client.post('/api/v1/admin/levels/', {'slug': 'level-01', 'name': 'Level 1', 'sequence': 1, 'config': golden_level()}, content_type='application/json').status_code == 403
+    player = get_user_model().objects.create_user(username='ordinary-player', password='safe-password')
+    client.force_login(player)
     assert client.post('/api/v1/admin/levels/', {'slug': 'level-01', 'name': 'Level 1', 'sequence': 1, 'config': golden_level()}, content_type='application/json').status_code == 403
     client.force_login(level_admin)
     created = client.post('/api/v1/admin/levels/', {'slug': 'level-01', 'name': 'Level 1', 'sequence': 1, 'config': golden_level()}, content_type='application/json')
