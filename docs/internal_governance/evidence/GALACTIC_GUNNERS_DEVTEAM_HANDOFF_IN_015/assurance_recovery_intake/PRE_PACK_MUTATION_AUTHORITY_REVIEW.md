@@ -1,7 +1,8 @@
 # Pre-Pack Mutation Authority Review
 
-**Contained base SHA:** `4d74d9664a4cbf119ecebf30377e8e6468bf27cf`  
-**Contained diff SHA-256:** `5698958c2c41132f9ab4ad337950679d1dcad2a86e68c6cad2b87799c2a16af8`  
+**Contained base SHA:** `4d74d9664a4cbf119ecebf30377e8e6468bf27cf`
+
+**Contained diff SHA-256:** `5698958c2c41132f9ab4ad337950679d1dcad2a86e68c6cad2b87799c2a16af8`
 **Review authority:** `EXECUTION_AUTHORITY.md`, `ASSURANCE_STANDARD.md`, and the 50-row `REQUIREMENT_CATALOGUE.csv` admitted on 2026-08-30.
 
 No contained hunk is accepted as a closed requirement or committed by this review. The mappings below identify possible retained work only. Every retained change requires the prescribed positive and negative proof, a derived traceability row, and adjacent regression evidence.

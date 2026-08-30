@@ -1,8 +1,10 @@
 # H015 Assurance Recovery Intake Record
 
-**Handoff:** `GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015`  
-**Authority:** H015 Assurance Recovery Replacement Transport Delivery and Execution Resumption  
-**Receipt date:** 2026-08-30  
+**Handoff:** `GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015`
+
+**Authority:** H015 Assurance Recovery Replacement Transport Delivery and Execution Resumption
+
+**Receipt date:** 2026-08-30
 **Pre-intake repository SHA:** `4d74d9664a4cbf119ecebf30377e8e6468bf27cf`
 
 ## Transport Inventory
