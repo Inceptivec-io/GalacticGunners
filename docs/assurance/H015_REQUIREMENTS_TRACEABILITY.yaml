@@ -337,8 +337,7 @@ rows:
         classification: E2E_ORDINARY_USER
         polarity: POSITIVE
         command: npx playwright test tests/e2e/pause-controls.spec.ts --project=chromium-desktop --grep H015-GAME-001 --workers=1
-        assertion:
-          Paused canvas remains pixel-stable across elapsed time following ordinary keyboard pause input.
+        assertion: Paused canvas remains pixel-stable across elapsed time following ordinary keyboard pause input.
       - id: H015-GAME-001 negative
         classification: E2E_ORDINARY_USER
         polarity: NEGATIVE
