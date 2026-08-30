@@ -1721,6 +1721,10 @@ export class Level1Scene extends CombatLevelScene {
       ],
     };
     this.#boardingTransition = "BOARDING_OFFER";
+    // A held gamepad fire action must not become an implicit offer selection.
+    this.#boardingGamepadConfirmPressed = Boolean(
+      this.input.gamepad?.getPad(0)?.buttons[0]?.pressed,
+    );
     this.#runtimeConfig.onGameplayAnnouncement?.(
       "Boarding offer available. Board or Continue the Shooter assault.",
     );
