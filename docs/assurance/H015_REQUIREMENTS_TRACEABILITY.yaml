@@ -1009,23 +1009,22 @@ rows:
     negative_or_hostile_proof: Either action entering the wrong scene or loop fails
     test_cases:
       - id: H015-BOARD-001 positive
-        classification: UNIT
+        classification: E2E_ORDINARY_USER
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-BOARD-001 positive test"
+        command: npx playwright test tests/e2e/boarding-ordinary.spec.ts --project=chromium-desktop --grep laser_hit_opens_visible_boarding_offer --workers=1
         assertion:
-          Board enters interior; Continue resumes Shooter/campaign according to
-          state
+          A real player-laser hit opens the visible Board action, which enters
+          the interior and returns to Shooter only through an explicit abort.
       - id: H015-BOARD-001 negative
-        classification: UNIT
+        classification: E2E_ORDINARY_USER
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-BOARD-001 negative or hostile test"
-        assertion: Either action entering the wrong scene or loop fails
+        command: npx playwright test tests/e2e/boarding-ordinary.spec.ts --project=chromium-desktop --grep boarding_does_not_open_without_hitting_the_anchor --workers=1
+        assertion: Boarding does not open without the physical laser hit on its authored anchor.
     evidence_gate: ordinary-boarding
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Ordinary browser evidence proves the Board action is gated by an actual projectile hit and that Escape returns to Shooter. The visible Continue action and remaining required unit coverage are still unproven, so this row remains FAIL.
   - requirement_id: H015-BOARD-002
     area: Boarding
     requirement: A visible entry airlock begins a physical interior journey

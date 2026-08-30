@@ -15,6 +15,10 @@
       "classification": "E2E_ORDINARY_USER"
     },
     {
+      "file": "tests/e2e/boarding-ordinary.spec.ts",
+      "classification": "E2E_ORDINARY_USER"
+    },
+    {
       "file": "tests/e2e/designer-pointer.spec.ts",
       "classification": "E2E_ORDINARY_USER"
     },
@@ -62,6 +66,10 @@
     { "file": "game/tests/level-loader.test.ts", "classification": "UNIT" },
     { "file": "game/tests/pickup-system.test.ts", "classification": "UNIT" },
     { "file": "game/tests/scoring.test.ts", "classification": "UNIT" },
+    {
+      "file": "game/tests/shield-configuration.test.ts",
+      "classification": "UNIT"
+    },
     { "file": "game/tests/campaign-session.test.ts", "classification": "UNIT" },
     { "file": "game/tests/splash-copy.test.ts", "classification": "UNIT" },
     { "file": "game/tests/terminal-actions.test.ts", "classification": "UNIT" },

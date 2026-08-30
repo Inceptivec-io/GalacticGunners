@@ -354,6 +354,9 @@ jobs:
           docker compose exec -T backend python manage.py seed_browser_assurance_campaign --duration-ms 2500
           GG_RUNTIME_URL=http://localhost:3002 npx playwright test tests/e2e/campaign-real-play.spec.ts --project=chromium-desktop --workers=1
           cp test-results/playwright-junit.xml "$GG_EVIDENCE_DIR/ordinary-browser/campaign-progression-junit.xml"
+          docker compose exec -T backend python manage.py seed_browser_assurance_campaign --duration-ms 450 --scenario boarding
+          GG_RUNTIME_URL=http://localhost:3002 npx playwright test tests/e2e/boarding-ordinary.spec.ts --project=chromium-desktop --workers=1
+          cp test-results/playwright-junit.xml "$GG_EVIDENCE_DIR/ordinary-browser/boarding-entry-abort-junit.xml"
            GG_RUNTIME_URL=http://localhost:3002 npx playwright test tests/e2e/main-menu.spec.ts tests/e2e/designer-pointer.spec.ts --project=chromium-mobile-touch --grep "__touch" --workers=1
            cp test-results/playwright-junit.xml "$GG_EVIDENCE_DIR/ordinary-browser/chromium-mobile-touch-junit.xml"
            printf 'Inceptivec administrator: %s / %s\nCommand Post customer: %s / %s\nPlayer: %s / %s\n' "$FOUNDER_REVIEW_USERNAME" "$FOUNDER_REVIEW_PASSWORD" "$COMMAND_POST_REVIEW_USERNAME" "$COMMAND_POST_REVIEW_PASSWORD" "$PLAYER_REVIEW_USERNAME" "$PLAYER_REVIEW_PASSWORD" > FOUNDER_REVIEW_ACCESS.local.txt

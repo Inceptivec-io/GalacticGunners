@@ -20,9 +20,42 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("--duration-ms", type=int, default=900)
+        parser.add_argument(
+            "--scenario",
+            choices=("campaign", "boarding"),
+            default="campaign",
+            help="Ephemeral browser fixture; never used by normal product runtime.",
+        )
+
+    @staticmethod
+    def _boarding_fixture(config, duration_ms):
+        """Keep normal input while making the Level 4 offer physically reachable."""
+        anchor = config["boarding_anchors"][0]
+        source_id = anchor["source_entity_id"]
+        source = next(entity for entity in config["entities"] if entity["id"] == source_id)
+        source.update({"x": 640, "y": 220, "behaviour_profile": "enemy.cruiser.standard"})
+        config["entities"] = [source]
+        formation = next(item for item in config["formations"] if source_id in item["member_ids"])
+        formation.update({
+            "member_ids": [source_id],
+            "bounds": {"x": 640, "y": 220, "width": 0, "height": 0},
+            "motion_profile": "formation.standard",
+        })
+        config["formations"] = [formation]
+        config["shield_structures"] = []
+        config["hazard_emitters"] = []
+        config["objectives"] = [{
+            "id": "browser-assurance-level-04-open",
+            "type": "SURVIVE_DURATION",
+            "required": True,
+            "target_entity_ids": [],
+            "duration_ms": max(duration_ms, 30_000),
+        }]
+        return config
 
     def handle(self, *args, **options):
         duration_ms = options["duration_ms"]
+        scenario = options["scenario"]
         if duration_ms < 250:
             raise ValueError("--duration-ms must allow a real browser frame sequence.")
 
@@ -50,6 +83,8 @@ class Command(BaseCommand):
                     "duration_ms": duration_ms,
                 }
             ]
+            if scenario == "boarding" and level.sequence == 4:
+                config = self._boarding_fixture(config, duration_ms)
             version = LevelVersion.objects.create(
                 level=level,
                 version=level.versions.order_by("-version").first().version + 1,
@@ -62,6 +97,6 @@ class Command(BaseCommand):
         publish_core_level(level=levels[-1], version=levels[-1].active_version, actor=actor)
         self.stdout.write(
             self.style.SUCCESS(
-                f"Published browser-assurance campaign with {duration_ms}ms objectives."
+                f"Published browser-assurance {scenario} campaign with {duration_ms}ms objectives."
             )
         )

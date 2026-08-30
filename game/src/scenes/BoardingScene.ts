@@ -84,11 +84,12 @@ export class BoardingScene extends Phaser.Scene {
   private playerShotPoolUnavailable = 0;
   private playerHitEnabledAt = Number.POSITIVE_INFINITY;
   private updateTicks = 0;
+  private onGameplayAnnouncement: ((announcement: string) => void) | undefined;
   private launch: BoardingLaunch = { anchorId: 'level-04-alien-frigate-01', sourceEntityId: 'level-04:formation-0:r0:c14', sourceEntityType: 'scout', interior: { slug: 'alien-frigate', version: 1, checksum: 'e9b1af65f0daef6725a7ddf4683b5f6d503e25dabc97aef1212102e6b1e994f3' }, levelVersion: 1, levelChecksum: '' };
 
   constructor() { super('BoardingScene'); }
 
-  init(data: { seed?: number; lives?: number; nukes?: number; anchorId?: string; sourceEntityId?: string; sourceEntityType?: 'scout' | 'cruiser' | 'destroyer'; interior?: { slug: 'alien-frigate'; version: 1; checksum: string }; apiBaseUrl?: string; gameRunId?: string; levelVersion?: number; levelChecksum?: string } = {}): void {
+  init(data: { seed?: number; lives?: number; nukes?: number; anchorId?: string; sourceEntityId?: string; sourceEntityType?: 'scout' | 'cruiser' | 'destroyer'; interior?: { slug: 'alien-frigate'; version: 1; checksum: string }; apiBaseUrl?: string; gameRunId?: string; levelVersion?: number; levelChecksum?: string; onGameplayAnnouncement?: (announcement: string) => void } = {}): void {
     this.simulation = new BoardingSimulation(data.seed ?? 1, { lives: data.lives ?? 3, nukes: data.nukes ?? 2 });
     this.coordinator = new BoardingCoordinator();
     this.elapsed = 0;
@@ -102,6 +103,7 @@ export class BoardingScene extends Phaser.Scene {
     this.playerHitEnabledAt = Number.POSITIVE_INFINITY;
     this.serverRun = null;
     this.serverError = null;
+    this.onGameplayAnnouncement = data.onGameplayAnnouncement;
     this.api = data.apiBaseUrl ? new GameApiClient(data.apiBaseUrl) : null;
     this.gameRunId = data.gameRunId ?? null;
     this.launch = {
@@ -456,6 +458,13 @@ export class BoardingScene extends Phaser.Scene {
     this.scene.stop();
     if (typeof window !== 'undefined') delete window.__GALACTIC_GUNNERS_BOARDING_QA__;
     this.scene.resume('Level1Scene', { boardingOutcome: outcome, boardingSnapshot: this.simulation.snapshot(), boardingReturnState: returnState, boardingValidated: Boolean(returnState) });
+    this.onGameplayAnnouncement?.(
+      outcome === 'ABORTED'
+        ? 'Boarding aborted. Shooter assault resumed.'
+        : outcome === 'SUCCESS'
+          ? 'Boarding complete. Shooter assault resumed.'
+          : 'Boarding ended. Shooter assault resumed.',
+    );
   }
 
   private startActive(): void {
@@ -469,6 +478,9 @@ export class BoardingScene extends Phaser.Scene {
     this.active = true;
     this.starting = false;
     this.statusText.destroy();
+    this.onGameplayAnnouncement?.(
+      'Boarding active. Clear the frigate and reach the airlock.',
+    );
   }
 
   private async openServerRun(): Promise<void> {

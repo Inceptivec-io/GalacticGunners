@@ -151,19 +151,19 @@ const gateDefinitions = {
     }),
   },
   "boarding-entry-abort": {
-    directory: "rectification/boarding",
-    verification: "boarding-browser-verification.json",
-    route: "/play?qa=hostile",
-    setup: ["Launch the governed Level 4 Boarding offer from the Shooter."],
-    actions: [
-      "Accept Boarding, exercise touch fire, open ESC pause, and confirm abort.",
-    ],
-    assertions: [
-      "Boarding is active, controls work, and abort returns to the exact Shooter checkpoint.",
-    ],
-    observed:
-      "QA diagnostic: deterministic Boarding probes recorded entry, touch-combat, pause, and abort return behaviour.",
-    normal: false,
+    ...ordinaryDefinition({
+      id: "boarding-entry-abort",
+      route: "/ -> Play -> /play",
+      setup: ["Enter Level 4 through the public route and visible Continue controls."],
+      actions: [
+        "Hit the authored boarding target with the normal player laser, select the rendered Board control, and press Escape.",
+      ],
+      assertions: [
+        "Boarding opens only after the player hit and Escape returns to the active Shooter checkpoint.",
+      ],
+      observed:
+        "Ordinary browser journeys use public entry, normal projectile input, the visible Board control, and keyboard abort without a runtime diagnostic hook.",
+    }),
   },
   "boarding-success-return": {
     directory: "rectification/boarding_success",

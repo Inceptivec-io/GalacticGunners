@@ -716,6 +716,9 @@ export class Level1Scene extends CombatLevelScene {
   }
 
   private createShieldZone(): void {
+    if (this.#definition.shields.length === 0) {
+      return;
+    }
     if (this.#definition.shields.some((shield) => shield.origin)) {
       this.createAuthoredShieldStructures();
       return;
@@ -792,6 +795,9 @@ export class Level1Scene extends CombatLevelScene {
   }
 
   private reflowShieldZone(): void {
+    if (this.#definition.shields.length === 0) {
+      return;
+    }
     if (this.#definition.shields.some((shield) => shield.origin)) {
       for (const tile of this.#shieldTiles.getChildren() as Phaser.Physics.Arcade.Image[]) {
         if (!tile.active) continue;
@@ -1686,6 +1692,9 @@ export class Level1Scene extends CombatLevelScene {
       controls: [backdrop, heading, detail, board, continueShooter],
     };
     this.#boardingTransition = "BOARDING_OFFER";
+    this.#runtimeConfig.onGameplayAnnouncement?.(
+      "Boarding offer available. Board or Continue the Shooter assault.",
+    );
   }
 
   private updateBoardingOffer(time: number): void {
@@ -1709,6 +1718,9 @@ export class Level1Scene extends CombatLevelScene {
     this.#boardingTransition = "SHOOTER_ACTIVE";
     this.physics.world.resume();
     this.#inputSystem.syncOneShotState();
+    this.#runtimeConfig.onGameplayAnnouncement?.(
+      "Boarding offer declined. Shooter assault resumed.",
+    );
   }
 
   private acceptBoardingOffer(): void {
@@ -1734,6 +1746,7 @@ export class Level1Scene extends CombatLevelScene {
       gameRunId: this.#session.runId ?? undefined,
       levelVersion: this.levelRuntime?.version ?? this.#definition.version,
       levelChecksum: this.levelRuntime?.checksum ?? "",
+      onGameplayAnnouncement: this.#runtimeConfig.onGameplayAnnouncement,
     });
   }
 
