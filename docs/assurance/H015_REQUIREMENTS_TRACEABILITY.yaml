@@ -1064,23 +1064,23 @@ rows:
     negative_or_hostile_proof: Static enemies, non-colliding shots or invulnerable states fail
     test_cases:
       - id: H015-BOARD-003 positive
-        classification: UNIT
+        classification: E2E_ORDINARY_USER
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-BOARD-003 positive test"
+        command: npx playwright test tests/e2e/boarding-ordinary.spec.ts --project=chromium-desktop --grep boarding_player_fire_collides --workers=1
         assertion:
           Ordinary input demonstrates patrol/engage, projectiles, hits and
           elimination
       - id: H015-BOARD-003 negative
-        classification: UNIT
+        classification: E2E_ORDINARY_USER
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-BOARD-003 negative or hostile test"
+        command: npx playwright test tests/e2e/boarding-ordinary.spec.ts --project=chromium-desktop --grep alien_is_not_eliminated_without_player_fire --workers=1
         assertion: Static enemies, non-colliding shots or invulnerable states fail
     evidence_gate: ordinary-boarding
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Ordinary browser combat journeys now assert real projectile-driven
+      elimination and its no-fire negative. Unit and exact-SHA CI layers remain required.
   - requirement_id: H015-BOARD-004
     area: Boarding
     requirement: Player and alien governed animation states are visible

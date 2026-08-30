@@ -320,3 +320,78 @@ test("H015-BOARD-006__e2e_ordinary_user__escape_pauses_resumes_and_requires_conf
     ],
   });
 });
+
+test("H015-BOARD-003__e2e_ordinary_user__boarding_player_fire_collides_with_and_eliminates_a_live_alien", async ({
+  page,
+  strictRuntime,
+}) => {
+  test.setTimeout(60_000);
+  await startLevelFour(page);
+  await fireAtBoardingTarget(page);
+  const canvas = page.locator(".game-canvas-host canvas");
+  const box = await canvas.boundingBox();
+  if (!box) throw new Error("Gameplay canvas is unavailable.");
+  await canvas.click({
+    position: { x: box.width * 0.4, y: box.height * 0.57 },
+  });
+  await expect(page.locator("[data-game-announcement]")).toHaveText(
+    "Boarding active. Clear the frigate and reach the airlock.",
+    { timeout: 12_000 },
+  );
+
+  await holdKeyUntilAnnouncement(
+    page,
+    "Space",
+    /Boarding target alien-01 eliminated\./,
+  );
+  expect(strictRuntime.unexpectedFailures).toEqual([]);
+  await captureOrdinaryJourney({
+    page,
+    testInfo: test.info(),
+    gate: "boarding-entry-abort",
+    route: "/ -> Play -> /play",
+    actions: [
+      "Entered Boarding through public gameplay and held the normal fire key against the first live patrol alien.",
+    ],
+    assertions: [
+      "A live player projectile collision eliminated the authored alien and emitted the gameplay result only after that collision.",
+    ],
+  });
+});
+
+test("H015-BOARD-003__e2e_ordinary_user_negative__boarding_alien_is_not_eliminated_without_player_fire", async ({
+  page,
+  strictRuntime,
+}) => {
+  test.setTimeout(60_000);
+  await startLevelFour(page);
+  await fireAtBoardingTarget(page);
+  const canvas = page.locator(".game-canvas-host canvas");
+  const box = await canvas.boundingBox();
+  if (!box) throw new Error("Gameplay canvas is unavailable.");
+  await canvas.click({
+    position: { x: box.width * 0.4, y: box.height * 0.57 },
+  });
+  await expect(page.locator("[data-game-announcement]")).toHaveText(
+    "Boarding active. Clear the frigate and reach the airlock.",
+    { timeout: 12_000 },
+  );
+
+  await page.waitForTimeout(1_500);
+  await expect(page.locator("[data-game-announcement]")).toHaveText(
+    "Boarding active. Clear the frigate and reach the airlock.",
+  );
+  expect(strictRuntime.unexpectedFailures).toEqual([]);
+  await captureOrdinaryJourney({
+    page,
+    testInfo: test.info(),
+    gate: "boarding-entry-abort",
+    route: "/ -> Play -> /play",
+    actions: [
+      "Entered the live Boarding interior and deliberately supplied no movement or fire input.",
+    ],
+    assertions: [
+      "No alien-elimination result occurred without a real player projectile collision.",
+    ],
+  });
+});

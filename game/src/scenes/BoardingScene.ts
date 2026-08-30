@@ -411,7 +411,9 @@ export class BoardingScene extends Phaser.Scene {
   private hitAlien(shot: Phaser.Physics.Arcade.Sprite, alien: Phaser.Physics.Arcade.Sprite): void {
     if (!shot.active || !alien.active) return;
     this.destroyShot(shot); alien.disableBody(true, true);
-    this.simulation.killAlien(String(alien.getData('alienId')));
+    const alienId = String(alien.getData('alienId'));
+    this.simulation.killAlien(alienId);
+    this.onGameplayAnnouncement?.(`Boarding target ${alienId} eliminated.`);
     const effect = this.add.image(alien.x, alien.y, 'boarding.explosion').setDisplaySize(72, 72).setDepth(6);
     this.tweens.add({ targets: effect, alpha: 0, scale: 1.4, duration: 280, onComplete: () => effect.destroy() });
   }
