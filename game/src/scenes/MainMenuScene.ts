@@ -101,7 +101,7 @@ export class MainMenuScene extends Phaser.Scene {
   }
 
   private publishQaState(): void {
-    if (typeof window === 'undefined') {
+    if (!this.registry.get('runtimeConfig')?.hostileQa || typeof window === 'undefined') {
       return;
     }
     window.__GALACTIC_GUNNERS_MENU_QA__ = {

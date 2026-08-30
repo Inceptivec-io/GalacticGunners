@@ -43,7 +43,7 @@ export class PauseScene extends Phaser.Scene {
       if (button.index === 9) this.resumeLevel();
     });
 
-    if (typeof window !== 'undefined') {
+    if (this.registry.get('runtimeConfig')?.hostileQa && typeof window !== 'undefined') {
       window.__GALACTIC_GUNNERS_PAUSE_QA__ = {
         scene: 'PauseScene',
         viewport: { width, height },

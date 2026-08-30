@@ -170,7 +170,7 @@ export class BoardingScene extends Phaser.Scene {
     this.statusText = this.add.text(this.scale.width / 2, this.scale.height * 0.18, 'ALIEN FRIGATE BREACH\nESTABLISHING SECURE BOARDING LINK...', { align: 'center', fontFamily: 'GalacticGunnersGoldDisplay, monospace', fontSize: '30px', color: '#f5d15f' }).setOrigin(0.5).setScrollFactor(0).setDepth(20);
     this.cameras.main.startFollow(this.player, true, 0.12, 0.12);
     void this.openServerRun();
-    if (typeof window !== 'undefined') {
+    if (this.registry.get('runtimeConfig')?.hostileQa && typeof window !== 'undefined') {
       window.__GALACTIC_GUNNERS_BOARDING_QA__ = {
         state: () => ({
           active: this.active,

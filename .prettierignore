@@ -1,0 +1,5 @@
+.next
+node_modules
+coverage
+test-results
+docs/internal_governance/handoff_in/_archive

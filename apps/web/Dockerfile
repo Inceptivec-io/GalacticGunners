@@ -8,6 +8,8 @@ RUN npm ci
 
 FROM node:22-alpine AS builder
 WORKDIR /workspace
+ARG NEXT_PUBLIC_GG_QA_MODE=false
+ENV NEXT_PUBLIC_GG_QA_MODE=$NEXT_PUBLIC_GG_QA_MODE
 COPY --from=deps /workspace/node_modules ./node_modules
 COPY package.json ./package.json
 COPY package-lock.json ./package-lock.json

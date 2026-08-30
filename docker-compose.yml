@@ -55,6 +55,8 @@ services:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
+      args:
+        NEXT_PUBLIC_GG_QA_MODE: ${NEXT_PUBLIC_GG_QA_MODE:-false}
     environment:
       NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-/api/v1}
       INTERNAL_API_ORIGIN: ${INTERNAL_API_ORIGIN:-http://backend:8000}

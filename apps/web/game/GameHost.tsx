@@ -28,6 +28,9 @@ export function GameHost() {
           return;
         }
         const params = new URLSearchParams(window.location.search);
+        // Diagnostic controls are an explicit build capability. A query string
+        // alone must never enable them in a normal Founder or production build.
+        const hostileQa = process.env.NEXT_PUBLIC_GG_QA_MODE === 'true' && params.get('qa') === 'hostile';
         const apiBaseUrl = params.get('api') === 'offline'
           ? 'http://127.0.0.1:8999/api/v1'
           : publicConfig.apiBaseUrl;
@@ -47,7 +50,7 @@ export function GameHost() {
         gameRef.current = await gameModule.createGalacticGunnersGame({
           parent: hostRef.current,
           apiBaseUrl,
-          hostileQa: params.get('qa') === 'hostile',
+          hostileQa,
           allowOfflinePackage: params.get('api') === 'offline',
           previewRuntime,
           onReady: () => setStatus('ready'),

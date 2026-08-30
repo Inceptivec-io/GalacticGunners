@@ -45,6 +45,12 @@ const pendingClosureGate = cloneManifest();
 pendingClosureGate.gates.find((entry) => entry.id === 'closure-audit').result = 'PENDING';
 assert.match(auditManifest(pendingClosureGate, { root, expectedSha: sha }).join('\n'), /closure-audit is not PASS/);
 
+const qaOverclaim = cloneManifest();
+qaOverclaim.gates.find((entry) => entry.id === 'campaign-progression').classification = 'QA_DIAGNOSTIC';
+qaOverclaim.gates.find((entry) => entry.id === 'campaign-progression').route = '/play?qa=hostile';
+qaOverclaim.gates.find((entry) => entry.id === 'campaign-progression').actions = ['forceComplete Level 1'];
+assert.match(auditManifest(qaOverclaim, { root, expectedSha: sha }).join('\n'), /claims normal gameplay/);
+
 const missingClosureEvidence = cloneManifest();
 missingClosureEvidence.gates.find((entry) => entry.id === 'closure-audit').evidence = [];
 assert.match(auditManifest(missingClosureEvidence, { root, expectedSha: sha }).join('\n'), /closure-audit has no closure evidence/);

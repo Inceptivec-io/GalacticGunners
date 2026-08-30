@@ -5,7 +5,7 @@ Programme:
 PLATFORM FOUNDATION AND CAMPAIGN CONTINUITY
 
 Stage:
-H015 FINAL EVIDENCE ATTESTATION COMPLETE / FOUNDER REVIEW READY / FOUNDER ACCEPTANCE PENDING
+H015 ASSURANCE RECOVERY IN PROGRESS / FOUNDER REVIEW NOT AUTHORISED
 
 Branch:
 feature/v1-platform-foundation-campaign-continuity
@@ -76,5 +76,12 @@ H014 CLOSED UNDER FOUNDER ROUTING. Known platform and runtime completion items, 
 Founder Acceptance:
 FOUNDER ACCEPTED - KNOWN PLATFORM AND RUNTIME ITEMS DEFERRED TO H015. Development does not assert unqualified Founder manual acceptance of deferred items. PR #11 remains open for Founder merge decision.
 
-H015 Closure:
-FINAL EVIDENCE ATTESTATION COMPLETE. At `b7e98a1c39fda3ae7fe7bea1b9f06dbf97f20dac`, GitHub Actions run `33272670524` uploaded immutable evidence artifact `9720659158` and separate closure-attestation artifact `9720659385`. The attestation binds the evidence SHA-256 digest `d319163863e46a5e2c6372f85f669ae0890a1a09536188a38bfc3d43f2654877`, reports every required gate PASS, `CLOSURE_AUDIT=PASS`, `FAILED_GATES=0`, and `PENDING_GATES=0`. `FOUNDER_REVIEW_READY=YES`; Founder acceptance remains PENDING and PR #12 remains draft/open/unmerged. No merge is authorised.
+H015 Assurance Recovery:
+The Founder-issued H015 Assurance Recovery Delivery and Continuation Authority was received on 2026-08-30. Its four transport hashes matched and its unpacked members are preserved under `docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015_REV1/08_ASSURANCE_RECOVERY/`; POST_BOX is boundary-controls-only. The prior closure-attestation artifacts at `b7e98a1c39fda3ae7fe7bea1b9f06dbf97f20dac` remain historical evidence only. The recovery authority rejects their readiness claim because QA-hook, forced-completion and synthetic-event diagnostics were represented as ordinary-user proof.
+
+`H015_STATUS=IN_PROGRESS`
+`FOUNDER_REVIEW_READY=NO`
+`FOUNDER_TESTING_AUTHORISED=NO`
+`FOUNDER_ACCEPTANCE=REJECTED`
+`MERGE_AUTHORISED=NO`
+`CONTINUATION_AUTHORISED=YES`

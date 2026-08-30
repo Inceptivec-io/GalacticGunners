@@ -12,7 +12,7 @@ export const REQUIRED_GATES = [
 const GENERIC_OBSERVATIONS = new Set(['Rendered and interacted without console or network failure.']);
 const FULL_SHA = /^[a-f0-9]{40}$/i;
 const SHA256 = /^[a-f0-9]{64}$/i;
-const GATE_CLASSIFICATIONS = new Set(['AUTOMATED_BROWSER', 'MANUAL_FOUNDER', 'API', 'UNIT']);
+const GATE_CLASSIFICATIONS = new Set(['AUTOMATED_BROWSER', 'MANUAL_FOUNDER', 'API', 'UNIT', 'QA_DIAGNOSTIC']);
 const NORMAL_GAMEPLAY_GATES = new Set(['runtime-hostile', 'campaign-progression', 'boarding-entry-abort', 'boarding-success-return', 'level4-hazards']);
 
 export function sha256(file) {
@@ -52,6 +52,11 @@ export function auditManifest(manifest, { root, expectedSha, allowPendingClosure
     if (!Array.isArray(gate.assertions) || gate.assertions.length === 0) fail(`gate ${gate.id} has no assertions.`);
     if (GENERIC_OBSERVATIONS.has(gate.observed) || !gate.observed || /^rendered and interacted/i.test(gate.observed)) fail(`gate ${gate.id} has only generic observation text.`);
     if (NORMAL_GAMEPLAY_GATES.has(gate.id) && gate.normal_gameplay_interaction !== true) fail(`gate ${gate.id} does not prove normal gameplay interaction.`);
+    const qaRoute = /(?:[?&]qa=|[?&]preview_|[?&]api=offline)/i.test(gate.route);
+    const qaAction = (gate.actions ?? []).some((action) => /force(?:complete|fail)|qa hook|direct state|synthetic/i.test(action));
+    if (gate.normal_gameplay_interaction === true && (gate.classification === 'QA_DIAGNOSTIC' || qaRoute || qaAction)) {
+      fail(`gate ${gate.id} claims normal gameplay while its route or actions use QA diagnostics.`);
+    }
     // A published closure result is never allowed to remain pending. The
     // narrowly scoped attestation command may inspect the immutable pre-audit
     // evidence manifest, but every other caller is fail-closed.

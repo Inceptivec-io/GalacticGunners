@@ -18,7 +18,7 @@ export class SplashScene extends Phaser.Scene {
       color: '#f7d56a', fontFamily: 'GalacticGunnersGoldDisplay, Arial, sans-serif', fontSize: `${Math.max(14, Math.min(24, width * 0.018))}px`, align: 'center',
       stroke: '#02050d', strokeThickness: 5,
     }).setOrigin(0.5).setDepth(2);
-    if (typeof window !== 'undefined') {
+    if (this.registry.get('runtimeConfig')?.hostileQa && typeof window !== 'undefined') {
       window.__GALACTIC_GUNNERS_SPLASH_QA__ = { scene: 'SplashScene', startedAt, durationMs: 2000 };
     }
     const timer = window.setTimeout(() => {
