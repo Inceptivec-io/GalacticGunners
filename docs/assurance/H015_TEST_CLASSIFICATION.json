@@ -62,6 +62,7 @@
     { "file": "game/tests/level-loader.test.ts", "classification": "UNIT" },
     { "file": "game/tests/pickup-system.test.ts", "classification": "UNIT" },
     { "file": "game/tests/scoring.test.ts", "classification": "UNIT" },
+    { "file": "game/tests/campaign-session.test.ts", "classification": "UNIT" },
     { "file": "game/tests/splash-copy.test.ts", "classification": "UNIT" },
     { "file": "game/tests/terminal-actions.test.ts", "classification": "UNIT" },
     {

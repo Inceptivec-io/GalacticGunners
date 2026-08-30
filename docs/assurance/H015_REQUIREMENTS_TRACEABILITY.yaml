@@ -443,19 +443,18 @@ rows:
       - id: H015-GAME-005 positive
         classification: UNIT
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-GAME-005 positive test"
-        assertion: Ordinary play transition retains governed cumulative state
+        command: npm run game:test -- tests/campaign-session.test.ts
+        assertion: Server-pinned completion returns the next entry with its authoritative score, lives and nukes.
       - id: H015-GAME-005 negative
         classification: UNIT
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-GAME-005 negative or hostile test"
-        assertion: Restart, abort or new campaign cannot leak invalid state
+        command: npm run game:test -- tests/campaign-session.test.ts
+        assertion: A rejected completion cannot replace the active campaign checkpoint or leak invalid score, lives or nukes.
     evidence_gate: ordinary-gameplay
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Unit-level server-return and rejection-preservation contracts are executable. API and ordinary browser continuity proof remain required, so this row remains FAIL.
   - requirement_id: H015-GAME-006
     area: Gameplay
     requirement: Recurring asteroids and comets are visible and governed in ordinary play
