@@ -106,3 +106,25 @@ test("H015-DES-POINTER-001__e2e_ordinary_user_negative__outside_drag_is_clamped_
   await expect(entity).toHaveAttribute("aria-label", beforeLabel);
   expect(strictRuntime.unexpectedFailures).toEqual([]);
 });
+
+test("H015-DES-THUMB-001__e2e_ordinary_user__palette_uses_loaded_canonical_single-frame_previews", async ({
+  page,
+  strictRuntime,
+}) => {
+  await loginAsAdministrator(page);
+  await page.getByRole("button", { name: "Alien Ships", exact: true }).click();
+  const previewImages = page.locator(".designer-chooser .tool-button img");
+  await expect(previewImages).toHaveCount(3);
+  const previews = await previewImages.evaluateAll((images) =>
+    images.map((image) => ({
+      src: image.getAttribute("src"),
+      complete: image.complete,
+      naturalWidth: image.naturalWidth,
+    })),
+  );
+  expect(previews.every((preview) => preview.src?.includes("/designer-previews/"))).toBe(true);
+  expect(previews.every((preview) => preview.complete && preview.naturalWidth > 0)).toBe(true);
+  expect(previews.some((preview) => /sprite|sheet/i.test(preview.src ?? ""))).toBe(false);
+  await page.getByRole("button", { name: "Close chooser" }).click();
+  expect(strictRuntime.unexpectedFailures).toEqual([]);
+});
