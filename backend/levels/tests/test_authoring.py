@@ -73,6 +73,26 @@ def test_authoring_document_requires_one_enabled_slot_one_player_spawn_in_bounds
     }
 
 
+def test_authoring_document_requires_typed_entity_asset_geometry_and_profile():
+    document = blank_authoring_document(identifier='map-01', slug='map-01', name='Blank Map', sequence=1, seed=77)
+    scout = {
+        'id': 'scout-1', 'entity_type': 'SCOUT', 'asset_id': 'enemy.scout',
+        'x': 640, 'y': 128, 'width': 44, 'height': 58, 'rotation': 0,
+        'z_index': 4, 'behaviour_profile': 'enemy.scout.standard', 'enabled': True,
+        'tags': [],
+    }
+    document['entities'] = [scout]
+    assert validate_authoring_document(document) == []
+
+    document['entities'][0].update({
+        'asset_id': 'enemy.mothership', 'x': -1, 'width': 0,
+        'behaviour_profile': 'enemy.mothership.boss',
+    })
+    assert 'INVALID_ENTITY' in {
+        error['code'] for error in validate_authoring_document(document)
+    }
+
+
 def test_authoring_document_rejects_duplicate_entity_ids_and_unknown_formation_members():
     document = blank_authoring_document(identifier='map-01', slug='map-01', name='Blank Map', sequence=1, seed=77)
     entity = {'id': 'scout-1', 'entity_type': 'SCOUT', 'asset_id': 'enemy.scout', 'x': 640, 'y': 100, 'width': 44, 'height': 58, 'rotation': 0, 'z_index': 4, 'behaviour_profile': 'enemy.scout.standard', 'enabled': True, 'tags': []}
