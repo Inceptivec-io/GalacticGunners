@@ -9,7 +9,7 @@ import { publicConfig } from '../lib/config/publicConfig';
 export function GameHost() {
   const hostRef = useRef<HTMLDivElement | null>(null);
   const gameRef = useRef<unknown>(null);
-  const [status, setStatus] = useState<'loading' | 'splash' | 'main-menu' | 'gameplay' | 'error'>('loading');
+  const [status, setStatus] = useState<'loading' | 'splash' | 'main-menu' | 'gameplay' | 'paused' | 'error'>('loading');
 
   useEffect(() => {
     let active = true;
@@ -86,7 +86,7 @@ export function GameHost() {
     <section aria-label="Galactic Gunners game runtime" data-game-host className="game-host">
       <div ref={hostRef} className="game-canvas-host" />
       <p
-        className={`game-status${status === 'main-menu' || status === 'gameplay' ? ' game-status--visually-hidden' : ''}`}
+        className={`game-status${status === 'main-menu' || status === 'gameplay' || status === 'paused' ? ' game-status--visually-hidden' : ''}`}
         data-game-status
         role={status === 'error' ? 'alert' : 'status'}
         aria-live="polite"
@@ -99,6 +99,8 @@ export function GameHost() {
               ? 'Galactic Gunners main menu ready.'
               : status === 'gameplay'
                 ? 'Galactic Gunners gameplay started.'
+                : status === 'paused'
+                  ? 'Galactic Gunners paused. Resume, restart, or return to the main menu.'
                 : 'Loading Galactic Gunners...'}
       </p>
     </section>

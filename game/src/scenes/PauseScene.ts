@@ -15,6 +15,7 @@ export class PauseScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.registry.get('runtimeConfig')?.onLaunchStateChange?.('paused');
     const { width, height } = this.scale;
     const backdrop = this.add.rectangle(width / 2, height / 2, width, height, 0x020712, 0.44).setDepth(30);
     this.add.image(width / 2, height / 2, RUNTIME_ASSETS.pause.screen.key)
@@ -82,6 +83,7 @@ export class PauseScene extends Phaser.Scene {
     this.input.keyboard?.resetKeys();
     this.scene.stop();
     this.scene.resume(this.#targetScene);
+    this.registry.get('runtimeConfig')?.onLaunchStateChange?.('gameplay');
   }
 
   private restartLevel(): void {

@@ -15,7 +15,7 @@ export interface GameRuntimeConfig {
   previewRuntime?: LevelRuntimeConfig;
   onReady?: () => void;
   /** Announces the customer-visible launch state to the browser host. */
-  onLaunchStateChange?: (state: 'splash' | 'main-menu' | 'gameplay') => void;
+  onLaunchStateChange?: (state: 'splash' | 'main-menu' | 'gameplay' | 'paused') => void;
   /** Surfaces an unrecoverable boot failure through the browser error boundary. */
   onRuntimeError?: (error: Error) => void;
   onExit?: () => void;
