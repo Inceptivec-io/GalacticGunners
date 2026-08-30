@@ -7,37 +7,50 @@ const administrator = {
 
 function coordinates(label: string | null) {
   const match = label?.match(/ at (\d+), (\d+)$/);
-  if (!match) throw new Error(`Expected an authored placement label, received ${label ?? "none"}.`);
+  if (!match)
+    throw new Error(
+      `Expected an authored placement label, received ${label ?? "none"}.`,
+    );
   return { x: Number(match[1]), y: Number(match[2]) };
 }
 
 async function loginAsAdministrator(page: import("@playwright/test").Page) {
   if (!administrator.username || !administrator.password) {
-    throw new Error("FOUNDER_REVIEW_USERNAME and FOUNDER_REVIEW_PASSWORD are required for the Designer journey.");
+    throw new Error(
+      "FOUNDER_REVIEW_USERNAME and FOUNDER_REVIEW_PASSWORD are required for the Designer journey.",
+    );
   }
   await page.goto("/inceptivec-gamification-admin/login");
   await page.getByLabel("Username").fill(administrator.username);
   await page.getByLabel("Password").fill(administrator.password);
   await page.getByRole("button", { name: "Log in" }).click();
   await expect(page.locator('[data-designer-route="campaign"]')).toBeVisible();
-  await expect(page.locator('button[aria-label^="SCOUT at"]').first()).toBeVisible();
+  await expect(
+    page.locator('button[aria-label^="SCOUT at"]').first(),
+  ).toBeVisible();
 }
 
 async function reachableScout(page: import("@playwright/test").Page) {
-  const placement = await page.locator('button[aria-label^="SCOUT at"]').evaluateAll((buttons) => {
-    const placement = [...buttons].reverse().find((button) => {
-      const bounds = button.getBoundingClientRect();
-      const target = document.elementFromPoint(
-        bounds.x + bounds.width / 2,
-        bounds.y + bounds.height / 2,
-      );
-      return target === button || button.contains(target);
+  const placement = await page
+    .locator('button[aria-label^="SCOUT at"]')
+    .evaluateAll((buttons) => {
+      const placement = [...buttons].reverse().find((button) => {
+        const bounds = button.getBoundingClientRect();
+        const target = document.elementFromPoint(
+          bounds.x + bounds.width / 2,
+          bounds.y + bounds.height / 2,
+        );
+        return target === button || button.contains(target);
+      });
+      return placement
+        ? {
+            id: placement.getAttribute("data-designer-placement-id"),
+            label: placement.getAttribute("aria-label"),
+          }
+        : null;
     });
-    return placement
-      ? { id: placement.getAttribute("data-designer-placement-id"), label: placement.getAttribute("aria-label") }
-      : null;
-  });
-  if (!placement?.id) throw new Error("The Designer has no reachable scout placement.");
+  if (!placement?.id)
+    throw new Error("The Designer has no reachable scout placement.");
   return page.locator(`[data-designer-placement-id="${placement.id}"]`);
 }
 
@@ -57,7 +70,8 @@ test("H015-DES-POINTER-001__e2e_ordinary_user__native_mouse_drag_undo_redo_is_ex
     const beforeLabel = await entity.getAttribute("aria-label");
     const before = coordinates(beforeLabel);
     const fieldBox = await playfield.boundingBox();
-    if (!fieldBox) throw new Error(`Designer geometry was unavailable at ${value} zoom.`);
+    if (!fieldBox)
+      throw new Error(`Designer geometry was unavailable at ${value} zoom.`);
     await entity.dragTo(playfield, {
       targetPosition: { x: fieldBox.width * 0.16, y: fieldBox.height * 0.2 },
     });
@@ -76,7 +90,9 @@ test("H015-DES-POINTER-001__e2e_ordinary_user__native_mouse_drag_undo_redo_is_ex
     await page.getByRole("button", { name: "Redo" }).click();
     await expect(entity).toHaveAttribute("aria-label", afterLabel);
     await page.reload();
-    await expect(page.locator('[data-designer-route="campaign"]')).toBeVisible();
+    await expect(
+      page.locator('[data-designer-route="campaign"]'),
+    ).toBeVisible();
     await expect(entity).toBeVisible();
   }
 
@@ -91,7 +107,8 @@ test("H015-DES-POINTER-001__e2e_ordinary_user_negative__outside_drag_is_clamped_
   const entity = await reachableScout(page);
   const beforeLabel = await entity.getAttribute("aria-label");
   const fieldBox = await page.locator(".designer-playfield").boundingBox();
-  if (!fieldBox) throw new Error("Designer geometry was unavailable for the boundary drag.");
+  if (!fieldBox)
+    throw new Error("Designer geometry was unavailable for the boundary drag.");
 
   await entity.dragTo(page.locator(".designer-playfield"), {
     targetPosition: { x: 0, y: 0 },
@@ -122,9 +139,15 @@ test("H015-DES-THUMB-001__e2e_ordinary_user__palette_uses_loaded_canonical_singl
       naturalWidth: image.naturalWidth,
     })),
   );
-  expect(previews.every((preview) => preview.src?.includes("/designer-previews/"))).toBe(true);
-  expect(previews.every((preview) => preview.complete && preview.naturalWidth > 0)).toBe(true);
-  expect(previews.some((preview) => /sprite|sheet/i.test(preview.src ?? ""))).toBe(false);
+  expect(
+    previews.every((preview) => preview.src?.includes("/designer-previews/")),
+  ).toBe(true);
+  expect(
+    previews.every((preview) => preview.complete && preview.naturalWidth > 0),
+  ).toBe(true);
+  expect(
+    previews.some((preview) => /sprite|sheet/i.test(preview.src ?? "")),
+  ).toBe(false);
   await page.getByRole("button", { name: "Close chooser" }).click();
   expect(strictRuntime.unexpectedFailures).toEqual([]);
 });
@@ -139,13 +162,19 @@ test("H015-DES-META-001__e2e_ordinary_user__valid_seed_save_reloads_from_immutab
   const nextSeed = Number(await seed.inputValue()) + 1;
   await seed.fill(String(nextSeed));
   const saved = page.waitForResponse(
-    (response) => response.request().method() === "POST" && /\/api\/v1\/admin\/levels\/[^/]+\/drafts\/$/.test(new URL(response.url()).pathname),
+    (response) =>
+      response.request().method() === "POST" &&
+      /\/api\/v1\/admin\/levels\/[^/]+\/drafts\/$/.test(
+        new URL(response.url()).pathname,
+      ),
   );
   await page.getByRole("button", { name: "Save immutable draft" }).click();
   expect((await saved).status()).toBe(201);
   await page.reload();
   await expect(page.locator('[data-designer-route="campaign"]')).toBeVisible();
-  await expect(page.getByLabel("Level configuration").getByLabel("Deterministic seed")).toHaveValue(String(nextSeed));
+  await expect(
+    page.getByLabel("Level configuration").getByLabel("Deterministic seed"),
+  ).toHaveValue(String(nextSeed));
   expect(strictRuntime.unexpectedFailures).toEqual([]);
 });
 
@@ -154,11 +183,23 @@ test("H015-DES-META-001__e2e_ordinary_user_negative__invalid_seed_is_rejected_by
   strictRuntime,
 }) => {
   await loginAsAdministrator(page);
-  await page.getByLabel("Level configuration").getByLabel("Deterministic seed").fill("-1");
-  strictRuntime.allowHttpFailure(/\/api\/v1\/admin\/levels\/[^/]+\/drafts\/$/, 400);
-  strictRuntime.allowConsoleError(/Failed to load resource: the server responded with a status of 400/);
+  await page
+    .getByLabel("Level configuration")
+    .getByLabel("Deterministic seed")
+    .fill("-1");
+  strictRuntime.allowHttpFailure(
+    /\/api\/v1\/admin\/levels\/[^/]+\/drafts\/$/,
+    400,
+  );
+  strictRuntime.allowConsoleError(
+    /Failed to load resource: the server responded with a status of 400/,
+  );
   const rejected = page.waitForResponse(
-    (response) => response.request().method() === "POST" && /\/api\/v1\/admin\/levels\/[^/]+\/drafts\/$/.test(new URL(response.url()).pathname),
+    (response) =>
+      response.request().method() === "POST" &&
+      /\/api\/v1\/admin\/levels\/[^/]+\/drafts\/$/.test(
+        new URL(response.url()).pathname,
+      ),
   );
   await page.getByRole("button", { name: "Save immutable draft" }).click();
   const response = await rejected;
@@ -169,7 +210,9 @@ test("H015-DES-META-001__e2e_ordinary_user_negative__invalid_seed_is_rejected_by
       detail: "Level definition failed validation.",
     },
   });
-  await expect(page.getByText(/level definition failed validation/i)).toBeVisible();
+  await expect(
+    page.getByText(/level definition failed validation/i),
+  ).toBeVisible();
   expect(strictRuntime.unexpectedFailures).toEqual([]);
 });
 
@@ -186,12 +229,18 @@ test("H015-DES-CANVAS-001__e2e_ordinary_user__governed_canvas_and_grid_save_relo
   const grid = configuration.getByLabel("Grid size");
   await grid.selectOption("8");
   const saved = page.waitForResponse(
-    (response) => response.request().method() === "POST" && /\/api\/v1\/admin\/levels\/[^/]+\/drafts\/$/.test(new URL(response.url()).pathname),
+    (response) =>
+      response.request().method() === "POST" &&
+      /\/api\/v1\/admin\/levels\/[^/]+\/drafts\/$/.test(
+        new URL(response.url()).pathname,
+      ),
   );
   await page.getByRole("button", { name: "Save immutable draft" }).click();
   expect((await saved).status()).toBe(201);
   await page.reload();
-  await expect(page.getByLabel("Level configuration").getByLabel("Grid size")).toHaveValue("8");
+  await expect(
+    page.getByLabel("Level configuration").getByLabel("Grid size"),
+  ).toHaveValue("8");
   expect(strictRuntime.unexpectedFailures).toEqual([]);
 });
 
@@ -202,16 +251,27 @@ test("H015-DES-POINTER-002__e2e_ordinary_user__touch_chooser_places_a_canonical_
   await loginAsAdministrator(page);
   const scouts = page.locator('button[aria-label^="SCOUT at"]');
   const before = await scouts.count();
-  const category = page.getByRole("button", { name: "Alien Ships", exact: true });
+  const category = page.getByRole("button", {
+    name: "Alien Ships",
+    exact: true,
+  });
   const categoryBox = await category.boundingBox();
-  if (!categoryBox) throw new Error("The Alien Ships palette control is not touch reachable.");
-  await page.touchscreen.tap(categoryBox.x + categoryBox.width / 2, categoryBox.y + categoryBox.height / 2);
+  if (!categoryBox)
+    throw new Error("The Alien Ships palette control is not touch reachable.");
+  await page.touchscreen.tap(
+    categoryBox.x + categoryBox.width / 2,
+    categoryBox.y + categoryBox.height / 2,
+  );
   const chooser = page.getByRole("dialog", { name: "Alien Ships chooser" });
   await expect(chooser).toBeVisible();
   const scoutOption = chooser.getByRole("button", { name: /^SCOUT/ });
   const scoutBox = await scoutOption.boundingBox();
-  if (!scoutBox) throw new Error("The Scout asset control is not touch reachable.");
-  await page.touchscreen.tap(scoutBox.x + scoutBox.width / 2, scoutBox.y + scoutBox.height / 2);
+  if (!scoutBox)
+    throw new Error("The Scout asset control is not touch reachable.");
+  await page.touchscreen.tap(
+    scoutBox.x + scoutBox.width / 2,
+    scoutBox.y + scoutBox.height / 2,
+  );
   await expect(chooser).toBeHidden();
   await expect(scouts).toHaveCount(before + 1);
   await expect(scouts.last()).toBeVisible();
@@ -225,15 +285,26 @@ test("H015-DES-POINTER-002__e2e_ordinary_user_negative__touch_cancel_leaves_the_
   await loginAsAdministrator(page);
   const scouts = page.locator('button[aria-label^="SCOUT at"]');
   const before = await scouts.count();
-  const category = page.getByRole("button", { name: "Alien Ships", exact: true });
+  const category = page.getByRole("button", {
+    name: "Alien Ships",
+    exact: true,
+  });
   const categoryBox = await category.boundingBox();
-  if (!categoryBox) throw new Error("The Alien Ships palette control is not touch reachable.");
-  await page.touchscreen.tap(categoryBox.x + categoryBox.width / 2, categoryBox.y + categoryBox.height / 2);
+  if (!categoryBox)
+    throw new Error("The Alien Ships palette control is not touch reachable.");
+  await page.touchscreen.tap(
+    categoryBox.x + categoryBox.width / 2,
+    categoryBox.y + categoryBox.height / 2,
+  );
   const chooser = page.getByRole("dialog", { name: "Alien Ships chooser" });
   const cancel = chooser.getByRole("button", { name: "Close chooser" });
   const cancelBox = await cancel.boundingBox();
-  if (!cancelBox) throw new Error("The chooser cancel control is not touch reachable.");
-  await page.touchscreen.tap(cancelBox.x + cancelBox.width / 2, cancelBox.y + cancelBox.height / 2);
+  if (!cancelBox)
+    throw new Error("The chooser cancel control is not touch reachable.");
+  await page.touchscreen.tap(
+    cancelBox.x + cancelBox.width / 2,
+    cancelBox.y + cancelBox.height / 2,
+  );
   await expect(chooser).toBeHidden();
   await expect(scouts).toHaveCount(before);
   expect(strictRuntime.unexpectedFailures).toEqual([]);

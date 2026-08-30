@@ -1,31 +1,37 @@
-import * as Phaser from 'phaser';
+import * as Phaser from "phaser";
 
-import { FRAME_RECTS, REQUIRED_RUNTIME_ASSETS, RUNTIME_ASSETS } from '../config/assets';
-import type { GameRuntimeConfig } from '../config/gameConfig';
-import { levelChecksum } from '../levels/LevelChecksum';
-import { compileLevelDocument } from '../levels/LevelCompiler';
-import type { LevelDefinition } from '../levels/LevelDefinition';
-import type { LevelRuntimeConfig } from '../levels/LevelRuntimeConfig';
-import { CAMPAIGN_DEFINITIONS } from '../levels/campaignDefinitions';
-import { LEVEL_ONE_DEFINITION } from '../levels/levelOneDefinition';
-import { validateLevelDefinition } from '../levels/LevelValidator';
-import { GameApiClient } from '../services/GameApiClient';
-import { CampaignSession } from '../systems/CampaignSession';
+import {
+  FRAME_RECTS,
+  REQUIRED_RUNTIME_ASSETS,
+  RUNTIME_ASSETS,
+} from "../config/assets";
+import type { GameRuntimeConfig } from "../config/gameConfig";
+import { levelChecksum } from "../levels/LevelChecksum";
+import { compileLevelDocument } from "../levels/LevelCompiler";
+import type { LevelDefinition } from "../levels/LevelDefinition";
+import type { LevelRuntimeConfig } from "../levels/LevelRuntimeConfig";
+import { CAMPAIGN_DEFINITIONS } from "../levels/campaignDefinitions";
+import { LEVEL_ONE_DEFINITION } from "../levels/levelOneDefinition";
+import { validateLevelDefinition } from "../levels/LevelValidator";
+import { GameApiClient } from "../services/GameApiClient";
+import { CampaignSession } from "../systems/CampaignSession";
 
 export class BootScene extends Phaser.Scene {
   constructor(private readonly runtimeConfig: GameRuntimeConfig = {}) {
-    super('BootScene');
+    super("BootScene");
   }
 
   preload(): void {
-    this.registry.set('runtimeConfig', this.runtimeConfig);
+    this.registry.set("runtimeConfig", this.runtimeConfig);
     for (const asset of REQUIRED_RUNTIME_ASSETS) {
-      if (asset.key === RUNTIME_ASSETS.fx.explosionSmall.key
-        || asset.key === RUNTIME_ASSETS.projectile.nuke.key
-        || asset.key === RUNTIME_ASSETS.fx.nukeBurst.key) {
+      if (
+        asset.key === RUNTIME_ASSETS.fx.explosionSmall.key ||
+        asset.key === RUNTIME_ASSETS.projectile.nuke.key ||
+        asset.key === RUNTIME_ASSETS.fx.nukeBurst.key
+      ) {
         continue;
       }
-      if (asset.key.startsWith('audio.')) {
+      if (asset.key.startsWith("audio.")) {
         this.load.audio(asset.key, asset.runtimePath);
       } else {
         this.load.image(asset.key, asset.runtimePath);
@@ -34,134 +40,200 @@ export class BootScene extends Phaser.Scene {
     this.load.spritesheet(
       RUNTIME_ASSETS.fx.explosionSmall.key,
       RUNTIME_ASSETS.fx.explosionSmall.runtimePath,
-      { frameWidth: FRAME_RECTS.explosionSmall.frameWidth, frameHeight: FRAME_RECTS.explosionSmall.frameHeight },
+      {
+        frameWidth: FRAME_RECTS.explosionSmall.frameWidth,
+        frameHeight: FRAME_RECTS.explosionSmall.frameHeight,
+      },
     );
     this.load.spritesheet(
       RUNTIME_ASSETS.projectile.nuke.key,
       RUNTIME_ASSETS.projectile.nuke.runtimePath,
-      { frameWidth: FRAME_RECTS.nukeProjectile.frameWidth, frameHeight: FRAME_RECTS.nukeProjectile.frameHeight },
+      {
+        frameWidth: FRAME_RECTS.nukeProjectile.frameWidth,
+        frameHeight: FRAME_RECTS.nukeProjectile.frameHeight,
+      },
     );
     this.load.spritesheet(
       RUNTIME_ASSETS.fx.nukeBurst.key,
       RUNTIME_ASSETS.fx.nukeBurst.runtimePath,
-      { frameWidth: FRAME_RECTS.nukeBurst.frameWidth, frameHeight: FRAME_RECTS.nukeBurst.frameHeight },
+      {
+        frameWidth: FRAME_RECTS.nukeBurst.frameWidth,
+        frameHeight: FRAME_RECTS.nukeBurst.frameHeight,
+      },
     );
   }
 
   async create(): Promise<void> {
     try {
-    const missing = REQUIRED_RUNTIME_ASSETS.filter((asset) => {
-      if (asset.key.startsWith('audio.')) {
-        return !this.cache.audio.exists(asset.key);
+      const missing = REQUIRED_RUNTIME_ASSETS.filter((asset) => {
+        if (asset.key.startsWith("audio.")) {
+          return !this.cache.audio.exists(asset.key);
+        }
+        return !this.textures.exists(asset.key);
+      });
+      if (missing.length > 0) {
+        this.add.text(
+          40,
+          40,
+          `Missing required assets:\n${missing.map((asset) => asset.key).join("\n")}`,
+          {
+            color: "#ff3b30",
+            fontFamily: "monospace",
+            fontSize: "24px",
+          },
+        );
+        return;
       }
-      return !this.textures.exists(asset.key);
-    });
-    if (missing.length > 0) {
-      this.add.text(40, 40, `Missing required assets:\n${missing.map((asset) => asset.key).join('\n')}`, {
-        color: '#ff3b30',
-        fontFamily: 'monospace',
-        fontSize: '24px',
-      });
-      return;
-    }
 
-    this.registerTextureFrames();
-    this.createShipAnimations();
-    validateLevelDefinition(LEVEL_ONE_DEFINITION);
-    // Golden Level 1 must start without an API request. Remote resolution is an
-    // explicit campaign-loader capability, never an implicit gameplay dependency.
-    const previewRuntime = this.runtimeConfig.previewRuntime;
-    if (previewRuntime) {
-      validateLevelDefinition(previewRuntime.definition);
-      this.registry.set('campaignRuntime', [previewRuntime]);
-      this.registry.set('levelRuntime', previewRuntime);
-      this.registry.set('campaignPreview', true);
-      this.registry.set('campaignSession', new CampaignSession(null, previewRuntime.definition.seed));
-      this.createRuntimeAnimations();
-      this.scene.start('Level1Scene', { sequence: previewRuntime.definition.sequence });
-      return;
-    }
-    const campaignSession = new CampaignSession(this.runtimeConfig.apiBaseUrl ? new GameApiClient(this.runtimeConfig.apiBaseUrl) : null, LEVEL_ONE_DEFINITION.seed);
-    const campaign = await campaignSession.start();
-    let campaignRuntime: LevelRuntimeConfig[];
-    if (campaign?.entry?.level.definition && typeof campaign.entry.level.definition === 'object') {
-      const definition = compileLevelDocument(campaign.entry.level.definition as LevelDefinition);
-      validateLevelDefinition(definition);
-      campaignRuntime = [{
-        definition,
-        version: campaign.entry.level.version,
-        checksum: campaign.entry.level.checksum,
-        source: 'remote',
-      }];
-    } else if (this.runtimeConfig.apiBaseUrl && !this.runtimeConfig.allowOfflinePackage) {
-      // Browser campaign play is server-release governed. A healthy same-origin
-      // API must never silently fall back to packaged content.
-      throw new Error('Campaign release authority is unavailable.');
-    } else {
+      this.registerTextureFrames();
+      this.createShipAnimations();
       validateLevelDefinition(LEVEL_ONE_DEFINITION);
-      campaignRuntime = [{
-        definition: LEVEL_ONE_DEFINITION,
-        version: LEVEL_ONE_DEFINITION.version,
-        checksum: await levelChecksum(LEVEL_ONE_DEFINITION),
-        source: 'package',
-      }];
-    }
-    this.registry.set('campaignRuntime', campaignRuntime);
-    this.registry.set('levelRuntime', campaignRuntime[0]);
-    this.registry.set('campaignSession', campaignSession);
+      // Golden Level 1 must start without an API request. Remote resolution is an
+      // explicit campaign-loader capability, never an implicit gameplay dependency.
+      const previewRuntime = this.runtimeConfig.previewRuntime;
+      if (previewRuntime) {
+        validateLevelDefinition(previewRuntime.definition);
+        this.registry.set("campaignRuntime", [previewRuntime]);
+        this.registry.set("levelRuntime", previewRuntime);
+        this.registry.set("campaignPreview", true);
+        this.registry.set(
+          "campaignSession",
+          new CampaignSession(null, previewRuntime.definition.seed),
+        );
+        this.createRuntimeAnimations();
+        this.scene.start("Level1Scene", {
+          sequence: previewRuntime.definition.sequence,
+        });
+        return;
+      }
+      const campaignSession = new CampaignSession(
+        this.runtimeConfig.apiBaseUrl
+          ? new GameApiClient(this.runtimeConfig.apiBaseUrl)
+          : null,
+        LEVEL_ONE_DEFINITION.seed,
+      );
+      const campaign = await campaignSession.start();
+      let campaignRuntime: LevelRuntimeConfig[];
+      if (
+        campaign?.entry?.level.definition &&
+        typeof campaign.entry.level.definition === "object"
+      ) {
+        const definition = compileLevelDocument(
+          campaign.entry.level.definition as LevelDefinition,
+        );
+        validateLevelDefinition(definition);
+        campaignRuntime = [
+          {
+            definition,
+            version: campaign.entry.level.version,
+            checksum: campaign.entry.level.checksum,
+            source: "remote",
+          },
+        ];
+      } else if (
+        this.runtimeConfig.apiBaseUrl &&
+        !this.runtimeConfig.allowOfflinePackage
+      ) {
+        // Browser campaign play is server-release governed. A healthy same-origin
+        // API must never silently fall back to packaged content.
+        throw new Error("Campaign release authority is unavailable.");
+      } else {
+        validateLevelDefinition(LEVEL_ONE_DEFINITION);
+        campaignRuntime = [
+          {
+            definition: LEVEL_ONE_DEFINITION,
+            version: LEVEL_ONE_DEFINITION.version,
+            checksum: await levelChecksum(LEVEL_ONE_DEFINITION),
+            source: "package",
+          },
+        ];
+      }
+      this.registry.set("campaignRuntime", campaignRuntime);
+      this.registry.set("levelRuntime", campaignRuntime[0]);
+      this.registry.set("campaignSession", campaignSession);
 
-    this.createRuntimeAnimations();
-    // Hostile verification exercises gameplay state, not the separately tested
-    // launch presentation. Skipping the two-second splash here prevents
-    // background-tab timer throttling from turning a condition wait into noise.
-    this.scene.start(this.runtimeConfig.hostileQa ? 'MainMenuScene' : 'SplashScene');
+      this.createRuntimeAnimations();
+      // Hostile verification exercises gameplay state, not the separately tested
+      // launch presentation. Skipping the two-second splash here prevents
+      // background-tab timer throttling from turning a condition wait into noise.
+      this.scene.start(
+        this.runtimeConfig.hostileQa ? "MainMenuScene" : "SplashScene",
+      );
     } catch (error) {
-      const runtimeError = error instanceof Error ? error : new Error(String(error));
+      const runtimeError =
+        error instanceof Error ? error : new Error(String(error));
       this.runtimeConfig.onRuntimeError?.(runtimeError);
-      this.add.text(40, 40, 'Galactic Gunners could not start. Please return to the home screen and try again.', {
-        color: '#ff3b30',
-        fontFamily: 'monospace',
-        fontSize: '24px',
-      });
+      this.add.text(
+        40,
+        40,
+        "Galactic Gunners could not start. Please return to the home screen and try again.",
+        {
+          color: "#ff3b30",
+          fontFamily: "monospace",
+          fontSize: "24px",
+        },
+      );
     }
   }
 
   private createRuntimeAnimations(): void {
     this.anims.create({
-      key: 'fx.explosionSmall.play',
-      frames: this.anims.generateFrameNumbers(RUNTIME_ASSETS.fx.explosionSmall.key, { start: 0, end: FRAME_RECTS.explosionSmall.endFrame }),
+      key: "fx.explosionSmall.play",
+      frames: this.anims.generateFrameNumbers(
+        RUNTIME_ASSETS.fx.explosionSmall.key,
+        { start: 0, end: FRAME_RECTS.explosionSmall.endFrame },
+      ),
       frameRate: 14,
       repeat: 0,
       hideOnComplete: true,
     });
     this.anims.create({
-      key: 'projectile.nuke.fly',
-      frames: this.anims.generateFrameNumbers(RUNTIME_ASSETS.projectile.nuke.key, { start: 0, end: FRAME_RECTS.nukeProjectile.endFrame }),
+      key: "projectile.nuke.fly",
+      frames: this.anims.generateFrameNumbers(
+        RUNTIME_ASSETS.projectile.nuke.key,
+        { start: 0, end: FRAME_RECTS.nukeProjectile.endFrame },
+      ),
       frameRate: 10,
       repeat: -1,
     });
     this.anims.create({
-      key: 'fx.nukeBurst.play',
-      frames: this.anims.generateFrameNumbers(RUNTIME_ASSETS.fx.nukeBurst.key, { start: 0, end: FRAME_RECTS.nukeBurst.endFrame }),
+      key: "fx.nukeBurst.play",
+      frames: this.anims.generateFrameNumbers(RUNTIME_ASSETS.fx.nukeBurst.key, {
+        start: 0,
+        end: FRAME_RECTS.nukeBurst.endFrame,
+      }),
       frameRate: 14,
       repeat: 0,
       hideOnComplete: true,
     });
-
   }
 
   private registerTextureFrames(): void {
     const playerTexture = this.textures.get(RUNTIME_ASSETS.player.ship.key);
     for (const frame of FRAME_RECTS.player) {
       if (!playerTexture.has(frame.name)) {
-        playerTexture.add(frame.name, 0, frame.x, frame.y, frame.width, frame.height);
+        playerTexture.add(
+          frame.name,
+          0,
+          frame.x,
+          frame.y,
+          frame.width,
+          frame.height,
+        );
       }
     }
 
     const scoutTexture = this.textures.get(RUNTIME_ASSETS.enemy.scout.key);
     for (const frame of FRAME_RECTS.scout) {
       if (!scoutTexture.has(frame.name)) {
-        scoutTexture.add(frame.name, 0, frame.x, frame.y, frame.width, frame.height);
+        scoutTexture.add(
+          frame.name,
+          0,
+          frame.x,
+          frame.y,
+          frame.width,
+          frame.height,
+        );
       }
     }
     const fixedFrames = [
@@ -175,25 +247,48 @@ export class BootScene extends Phaser.Scene {
     for (const [key, frames] of fixedFrames) {
       const texture = this.textures.get(key);
       for (const frame of frames) {
-        if (!texture.has(frame.name)) texture.add(frame.name, 0, frame.x, frame.y, frame.width, frame.height);
+        if (!texture.has(frame.name))
+          texture.add(
+            frame.name,
+            0,
+            frame.x,
+            frame.y,
+            frame.width,
+            frame.height,
+          );
       }
     }
   }
 
   private createShipAnimations(): void {
     this.anims.create({
-      key: 'player.ship.idle',
-      frames: FRAME_RECTS.player.map((frame) => ({ key: RUNTIME_ASSETS.player.ship.key, frame: frame.name })),
+      key: "player.ship.idle",
+      frames: FRAME_RECTS.player.map((frame) => ({
+        key: RUNTIME_ASSETS.player.ship.key,
+        frame: frame.name,
+      })),
       frameRate: 8,
       repeat: -1,
     });
-    for (const [key, asset] of [['enemy.cruiser.idle', RUNTIME_ASSETS.enemy.cruiser], ['enemy.destroyer.idle', RUNTIME_ASSETS.enemy.destroyer], ['enemy.mothership.idle', RUNTIME_ASSETS.enemy.mothership]] as const) {
-      this.anims.create({ key, frames: [{ key: asset.key, frame: 'stable-0' }], frameRate: 1, repeat: -1 });
+    for (const [key, asset] of [
+      ["enemy.cruiser.idle", RUNTIME_ASSETS.enemy.cruiser],
+      ["enemy.destroyer.idle", RUNTIME_ASSETS.enemy.destroyer],
+      ["enemy.mothership.idle", RUNTIME_ASSETS.enemy.mothership],
+    ] as const) {
+      this.anims.create({
+        key,
+        frames: [{ key: asset.key, frame: "stable-0" }],
+        frameRate: 1,
+        repeat: -1,
+      });
     }
 
     this.anims.create({
-      key: 'enemy.scout.idle',
-      frames: FRAME_RECTS.scout.map((frame) => ({ key: RUNTIME_ASSETS.enemy.scout.key, frame: frame.name })),
+      key: "enemy.scout.idle",
+      frames: FRAME_RECTS.scout.map((frame) => ({
+        key: RUNTIME_ASSETS.enemy.scout.key,
+        frame: frame.name,
+      })),
       frameRate: 6,
       repeat: -1,
     });
