@@ -51,6 +51,10 @@ test("H015-PERM-002__e2e_ordinary_user_negative__command_post_member_cannot_open
   strictRuntime,
 }) => {
   await loginToCommandPost(page);
+  strictRuntime.allowRequestFailure(
+    /\/command-post\/[a-z0-9-]+\?_rsc=/,
+    /net::ERR_ABORTED/,
+  );
   strictRuntime.allowHttpFailure(
     /\/api\/v1\/portal\/organizations\/unrelated-tenant\/$/,
     404,

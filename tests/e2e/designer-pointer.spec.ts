@@ -58,8 +58,20 @@ test("H015-DES-POINTER-001__e2e_ordinary_user__native_mouse_drag_undo_redo_is_ex
   page,
   strictRuntime,
 }) => {
+  test.skip(
+    "hasTouch" in test.info().project.use &&
+      Boolean(test.info().project.use.hasTouch),
+    "Native mouse drag is exercised by the desktop project.",
+  );
   await loginAsAdministrator(page);
   const zoom = page.getByLabel("Canvas zoom");
+  const gridSize = Number(
+    await page
+      .getByLabel("Level configuration")
+      .getByLabel("Grid size")
+      .inputValue(),
+  );
+  expect([8, 16, 24, 32]).toContain(gridSize);
   const playfield = page.locator(".designer-playfield");
 
   for (const value of ["0.5", "0.75", "1", "1.25", "1.5"]) {
@@ -83,8 +95,8 @@ test("H015-DES-POINTER-001__e2e_ordinary_user__native_mouse_drag_undo_redo_is_ex
     expect(after.x).toBeLessThanOrEqual(1280);
     expect(after.y).toBeGreaterThanOrEqual(0);
     expect(after.y).toBeLessThanOrEqual(720);
-    expect(after.x % 16).toBe(0);
-    expect(after.y % 16).toBe(0);
+    expect(after.x % gridSize).toBe(0);
+    expect(after.y % gridSize).toBe(0);
     await page.getByRole("button", { name: "Undo" }).click();
     await expect(entity).toHaveAttribute("aria-label", beforeLabel);
     await page.getByRole("button", { name: "Redo" }).click();
@@ -103,6 +115,11 @@ test("H015-DES-POINTER-001__e2e_ordinary_user_negative__outside_drag_is_clamped_
   page,
   strictRuntime,
 }) => {
+  test.skip(
+    "hasTouch" in test.info().project.use &&
+      Boolean(test.info().project.use.hasTouch),
+    "Native mouse drag is exercised by the desktop project.",
+  );
   await loginAsAdministrator(page);
   const entity = await reachableScout(page);
   const beforeLabel = await entity.getAttribute("aria-label");
@@ -248,6 +265,11 @@ test("H015-DES-POINTER-002__e2e_ordinary_user__touch_chooser_places_a_canonical_
   page,
   strictRuntime,
 }) => {
+  test.skip(
+    !("hasTouch" in test.info().project.use) ||
+      !test.info().project.use.hasTouch,
+    "Touch interaction is exercised by the mobile and tablet projects.",
+  );
   await loginAsAdministrator(page);
   const scouts = page.locator('button[aria-label^="SCOUT at"]');
   const before = await scouts.count();
@@ -282,6 +304,11 @@ test("H015-DES-POINTER-002__e2e_ordinary_user_negative__touch_cancel_leaves_the_
   page,
   strictRuntime,
 }) => {
+  test.skip(
+    !("hasTouch" in test.info().project.use) ||
+      !test.info().project.use.hasTouch,
+    "Touch interaction is exercised by the mobile and tablet projects.",
+  );
   await loginAsAdministrator(page);
   const scouts = page.locator('button[aria-label^="SCOUT at"]');
   const before = await scouts.count();

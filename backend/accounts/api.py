@@ -42,6 +42,12 @@ def session_payload(request):
 class AuthenticationThrottle(AnonRateThrottle):
     scope = 'authentication'
 
+    def get_cache_key(self, request, view):
+        """Keep credential attempts isolated per account without sharing one NAT bucket."""
+        username = str(request.data.get('username', '')).strip().casefold() or '<anonymous>'
+        ident = f'{self.get_ident(request)}:{username}'
+        return self.cache_format % {'scope': self.scope, 'ident': ident}
+
 
 @method_decorator(ensure_csrf_cookie, name='dispatch')
 class CsrfView(APIView):

@@ -1,7 +1,9 @@
 from django.contrib.auth.models import Permission
 from django.test import TestCase
-from rest_framework.test import APIClient
+from rest_framework.test import APIClient, APIRequestFactory
+from rest_framework.views import APIView
 
+from accounts.api import AuthenticationThrottle
 from accounts.models import User
 from players.models import PlayerProfile
 
@@ -38,6 +40,26 @@ class AuthenticationSurfaceTests(TestCase):
         )
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['code'], 'INVALID_REQUEST')
+
+    def test_login_throttle_scopes_attempts_to_the_normalized_account_and_client(self):
+        factory = APIRequestFactory()
+        view = APIView()
+
+        def cache_key(username, remote_addr='203.0.113.11'):
+            request = factory.post(
+                '/api/v1/auth/login/',
+                {'username': username},
+                format='json',
+                REMOTE_ADDR=remote_addr,
+            )
+            return AuthenticationThrottle().get_cache_key(view.initialize_request(request), None)
+
+        self.assertEqual(cache_key('  PLATFORM-ADMIN  '), cache_key('platform-admin'))
+        self.assertNotEqual(cache_key('platform-admin'), cache_key('command-post-review'))
+        self.assertNotEqual(
+            cache_key('platform-admin'),
+            cache_key('platform-admin', '203.0.113.12'),
+        )
 
     def test_logout_requires_csrf_and_clears_the_authenticated_session(self):
         client = APIClient(enforce_csrf_checks=True)

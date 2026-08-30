@@ -131,7 +131,12 @@ try {
   // transition signal. Use the visible touch EXIT control and wait for
   // Boarding's own teardown after the server result has been applied.
   await clickBoardingExit(page);
-  await page.waitForFunction(() => !window.__GALACTIC_GUNNERS_BOARDING_QA__, undefined, { timeout: 15_000 });
+  try {
+    await page.waitForFunction(() => !window.__GALACTIC_GUNNERS_BOARDING_QA__, undefined, { timeout: 15_000 });
+  } catch (error) {
+    const completionDiagnostic = await page.evaluate(() => window.__GALACTIC_GUNNERS_BOARDING_QA__?.state() ?? null);
+    throw new Error(`Boarding exit did not complete its server-validated return: ${JSON.stringify(completionDiagnostic)}; ${error instanceof Error ? error.message : String(error)}`);
+  }
   const returned = await state(page);
   assert(returned?.campaign?.sequence === 4, 'Successful Boarding did not retain the Level 4 campaign checkpoint.');
   const returnCapture = path.join(outputDir, '02-boarding-success-return.png');
