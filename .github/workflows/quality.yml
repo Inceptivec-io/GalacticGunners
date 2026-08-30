@@ -341,7 +341,7 @@ jobs:
           docker compose exec -T backend python manage.py seed_runtime_authority
           docker compose exec -T backend python manage.py bootstrap_founder_review
           mkdir -p "$GG_EVIDENCE_DIR/ordinary-browser"
-          GG_RUNTIME_URL=http://localhost:3002 npx playwright test tests/e2e/public-entry.spec.ts tests/e2e/splash-menu.spec.ts tests/e2e/main-menu.spec.ts tests/e2e/pause-controls.spec.ts tests/e2e/auth-session.spec.ts tests/e2e/designer-pointer.spec.ts tests/e2e/tenant-isolation.spec.ts --project=chromium-desktop --workers=1
+          GG_RUNTIME_URL=http://localhost:3002 npx playwright test tests/e2e/public-entry.spec.ts tests/e2e/splash-menu.spec.ts tests/e2e/main-menu.spec.ts tests/e2e/pause-controls.spec.ts tests/e2e/auth-session.spec.ts tests/e2e/designer-pointer.spec.ts tests/e2e/tenant-isolation.spec.ts tests/accessibility/web-surfaces.spec.ts --project=chromium-desktop --workers=1
           cp test-results/playwright-junit.xml "$GG_EVIDENCE_DIR/ordinary-browser/chromium-desktop-junit.xml"
           GG_RUNTIME_URL=http://localhost:3002 npx playwright test tests/e2e/main-menu.spec.ts tests/e2e/designer-pointer.spec.ts --project=chromium-mobile-touch --grep "__touch" --workers=1
           cp test-results/playwright-junit.xml "$GG_EVIDENCE_DIR/ordinary-browser/chromium-mobile-touch-junit.xml"
