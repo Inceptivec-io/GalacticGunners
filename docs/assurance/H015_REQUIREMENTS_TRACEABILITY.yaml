@@ -1122,22 +1122,22 @@ rows:
     negative_or_hostile_proof: Early exit, stale-position rejection or hidden completion fails
     test_cases:
       - id: H015-BOARD-005 positive
-        classification: UNIT
+        classification: E2E_ORDINARY_USER
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-BOARD-005 positive test"
+        command: npx playwright test tests/e2e/boarding-ordinary.spec.ts --project=chromium-desktop --grep physical_boarding_combat_and_exit --workers=1
         assertion: Physical arrival after completion synchronises position then
           completes server-side
       - id: H015-BOARD-005 negative
-        classification: UNIT
+        classification: E2E_ORDINARY_USER
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-BOARD-005 negative or hostile test"
+        command: npx playwright test tests/e2e/boarding-ordinary.spec.ts --project=chromium-desktop --grep entry_airlock_cannot_complete --workers=1
         assertion: Early exit, stale-position rejection or hidden completion fails
     evidence_gate: ordinary-boarding
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Ordinary positive and negative browser journeys are implemented.
+      They require stable local and exact-SHA CI execution before this row can pass.
   - requirement_id: H015-BOARD-006
     area: Boarding
     requirement: Pause and ESC present Resume, confirmed Abort and authorised Main Menu

@@ -169,3 +169,97 @@ test("H015-BOARD-001__e2e_ordinary_user__continue_declines_the_offer_without_ent
     ],
   });
 });
+
+test("H015-BOARD-005__e2e_ordinary_user__physical_boarding_combat_and_exit_return_to_the_shooter", async ({
+  page,
+  strictRuntime,
+}) => {
+  test.setTimeout(90_000);
+  await startLevelFour(page);
+  await fireAtBoardingTarget(page);
+
+  const canvas = page.locator(".game-canvas-host canvas");
+  const box = await canvas.boundingBox();
+  if (!box) throw new Error("Gameplay canvas is unavailable.");
+  await canvas.click({
+    position: { x: box.width * 0.4, y: box.height * 0.57 },
+  });
+  await expect(page.locator("[data-game-announcement]")).toHaveText(
+    "Boarding active. Clear the frigate and reach the airlock.",
+    { timeout: 12_000 },
+  );
+
+  await canvas.focus();
+  await page.keyboard.down("d");
+  await page.keyboard.down("Space");
+  try {
+    // The rendered interior is 4096px wide. Normal keyboard movement and fire
+    // clear the authored patrol while physically traversing to the far airlock.
+    await page.waitForTimeout(18_000);
+  } finally {
+    await page.keyboard.up("Space");
+    await page.keyboard.up("d");
+  }
+  await page.keyboard.press("e");
+  await expect(page.locator("[data-game-announcement]")).toHaveText(
+    "Boarding complete. Shooter assault resumed.",
+    { timeout: 15_000 },
+  );
+  await expect(page.locator("[data-game-status]")).toHaveText(
+    "Galactic Gunners gameplay started.",
+  );
+  expect(strictRuntime.unexpectedFailures).toEqual([]);
+  await captureOrdinaryJourney({
+    page,
+    testInfo: test.info(),
+    gate: "boarding-success-return",
+    route: "/ -> Play -> /play",
+    actions: [
+      "Reached Level 4 through public entry and rendered Continue controls.",
+      "Opened Boarding with a normal player-laser hit and the rendered Board control.",
+      "Held normal movement and fire controls through the interior, then pressed E at the visible far airlock.",
+    ],
+    assertions: [
+      "Live boarding combat cleared, the physical far exit accepted E only after the objective, and the Shooter checkpoint resumed.",
+    ],
+  });
+});
+
+test("H015-BOARD-005__e2e_ordinary_user_negative__entry_airlock_cannot_complete_boarding_before_the_far_exit", async ({
+  page,
+  strictRuntime,
+}) => {
+  test.setTimeout(60_000);
+  await startLevelFour(page);
+  await fireAtBoardingTarget(page);
+
+  const canvas = page.locator(".game-canvas-host canvas");
+  const box = await canvas.boundingBox();
+  if (!box) throw new Error("Gameplay canvas is unavailable.");
+  await canvas.click({
+    position: { x: box.width * 0.4, y: box.height * 0.57 },
+  });
+  await expect(page.locator("[data-game-announcement]")).toHaveText(
+    "Boarding active. Clear the frigate and reach the airlock.",
+    { timeout: 12_000 },
+  );
+
+  await page.keyboard.press("e");
+  await page.waitForTimeout(500);
+  await expect(page.locator("[data-game-announcement]")).toHaveText(
+    "Boarding active. Clear the frigate and reach the airlock.",
+  );
+  expect(strictRuntime.unexpectedFailures).toEqual([]);
+  await captureOrdinaryJourney({
+    page,
+    testInfo: test.info(),
+    gate: "boarding-success-return",
+    route: "/ -> Play -> /play",
+    actions: [
+      "Entered the real Boarding interior and pressed E at its entry point without clearing or traversing it.",
+    ],
+    assertions: [
+      "The entry cannot complete Boarding; the live interior remains active until its far-exit objective is met.",
+    ],
+  });
+});
