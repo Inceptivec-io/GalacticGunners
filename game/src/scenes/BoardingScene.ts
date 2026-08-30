@@ -293,17 +293,17 @@ export class BoardingScene extends Phaser.Scene {
     if (jump && (this.player.body as Phaser.Physics.Arcade.Body).blocked.down) this.player.setVelocityY(-440);
     if (fire && this.time.now - this.lastFireAt >= 180) this.firePlayerShot();
     this.simulation.step({ horizontal, jump, fire, interact });
+    // Arcade Physics is the runtime movement authority. Keep the deterministic
+    // campaign projection aligned each frame so a valid visible airlock arrival
+    // cannot be rejected because a browser frame advanced farther than the
+    // simulation's fixed-step approximation.
+    this.simulation.synchronizePlayerProjection({ x: this.player.x, y: this.player.y });
     if (this.time.now - this.lastAlienFireAt >= 1250) this.fireAlienShot();
     const remaining = Math.max(0, Math.ceil((BOARDING_WORLD.durationMs - this.simulation.elapsedMs()) / 1000));
     this.timer.setText(`BOARDING ${remaining}`);
     const atExit = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.exitAirlock.x, this.exitAirlock.y) < 110;
     if (!this.exitUnlocked && !this.aliens.getChildren().some((alien) => (alien as Phaser.Physics.Arcade.Sprite).active)) this.unlockExit();
     if (interact && this.exitUnlocked && atExit) {
-      // Arcade Physics owns the visible player envelope. Synchronize that
-      // validated physical position at the exit boundary before recording the
-      // deterministic server event; fixed-step timing must not reject a player
-      // who has visibly reached the airlock.
-      this.simulation.synchronizePlayerProjection({ x: this.player.x, y: this.player.y });
       if (this.simulation.exit()) this.finish('SUCCESS');
     }
     else if (this.simulation.elapsedMs() >= BOARDING_WORLD.durationMs) {
