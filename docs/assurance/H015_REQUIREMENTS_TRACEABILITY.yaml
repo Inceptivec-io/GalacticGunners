@@ -1036,19 +1036,19 @@ rows:
       - id: H015-BOARD-002 positive
         classification: UNIT
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-BOARD-002 positive test"
+        command: npm run game:test -- tests/boarding-simulation.test.ts
         assertion: Ordinary input enters at the governed entry and traverses away from it
       - id: H015-BOARD-002 negative
         classification: UNIT
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-BOARD-002 negative or hostile test"
+        command: npm run game:test -- tests/boarding-simulation.test.ts
         assertion: Teleport-only entry, missing airlock or incorrect anchor fails
     evidence_gate: ordinary-boarding
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Deterministic entry and world-boundary contracts are now executable.
+      Ordinary browser traversal and exact-SHA CI evidence remain required.
   - requirement_id: H015-BOARD-003
     area: Boarding
     requirement:

@@ -14,6 +14,34 @@ test('boarding simulation is deterministic at 60Hz and bounds the player', () =>
   assert.ok(first.snapshot().player.x <= BOARDING_WORLD.width - 32);
 });
 
+test('H015-BOARD-002 positive ordinary horizontal input traverses away from the governed entry airlock', () => {
+  const simulation = new BoardingSimulation(42, { lives: 3, nukes: 2 });
+  const entryX = simulation.snapshot().player.x;
+
+  for (let tick = 0; tick < 180; tick += 1) {
+    simulation.step({ horizontal: 1, jump: false, fire: false, interact: false });
+  }
+
+  const snapshot = simulation.snapshot();
+  assert.equal(entryX, 128);
+  assert.ok(snapshot.player.x > entryX + 700);
+  assert.ok(snapshot.player.x < BOARDING_WORLD.width - 32);
+});
+
+test('H015-BOARD-002 negative projection cannot teleport outside the physical Boarding world or exit from entry', () => {
+  const simulation = new BoardingSimulation(42, { lives: 3, nukes: 2 });
+  simulation.synchronizePlayerProjection({ x: -500, y: 10_000 });
+  let snapshot = simulation.snapshot();
+  assert.equal(snapshot.player.x, 32);
+  assert.equal(snapshot.player.y, 576);
+  assert.equal(simulation.exit(), false);
+
+  simulation.synchronizePlayerProjection({ x: BOARDING_WORLD.width + 500, y: 530 });
+  snapshot = simulation.snapshot();
+  assert.equal(snapshot.player.x, BOARDING_WORLD.width - 32);
+  assert.equal(simulation.exit(), true);
+});
+
 test('boarding simulation has no implicit score award', () => {
   const simulation = new BoardingSimulation(7, { lives: 2, nukes: 1 });
   simulation.killAlien('alien-01');
