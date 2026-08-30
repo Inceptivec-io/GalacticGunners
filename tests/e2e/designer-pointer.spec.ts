@@ -172,3 +172,25 @@ test("H015-DES-META-001__e2e_ordinary_user_negative__invalid_seed_is_rejected_by
   await expect(page.getByText(/level definition failed validation/i)).toBeVisible();
   expect(strictRuntime.unexpectedFailures).toEqual([]);
 });
+
+test("H015-DES-CANVAS-001__e2e_ordinary_user__governed_canvas_and_grid_save_reload", async ({
+  page,
+  strictRuntime,
+}) => {
+  await loginAsAdministrator(page);
+  const configuration = page.getByLabel("Level configuration");
+  await expect(configuration.getByLabel("Canvas width")).toHaveValue("1280");
+  await expect(configuration.getByLabel("Canvas width")).toBeDisabled();
+  await expect(configuration.getByLabel("Canvas height")).toHaveValue("720");
+  await expect(configuration.getByLabel("Canvas height")).toBeDisabled();
+  const grid = configuration.getByLabel("Grid size");
+  await grid.selectOption("8");
+  const saved = page.waitForResponse(
+    (response) => response.request().method() === "POST" && /\/api\/v1\/admin\/levels\/[^/]+\/drafts\/$/.test(new URL(response.url()).pathname),
+  );
+  await page.getByRole("button", { name: "Save immutable draft" }).click();
+  expect((await saved).status()).toBe(201);
+  await page.reload();
+  await expect(page.getByLabel("Level configuration").getByLabel("Grid size")).toHaveValue("8");
+  expect(strictRuntime.unexpectedFailures).toEqual([]);
+});

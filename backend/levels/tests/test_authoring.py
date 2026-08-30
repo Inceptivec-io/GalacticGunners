@@ -47,6 +47,17 @@ def test_authoring_document_requires_valid_level_metadata():
     }
 
 
+def test_authoring_document_requires_governed_canvas_geometry_and_background():
+    document = blank_authoring_document(identifier='map-01', slug='map-01', name='Blank Map', sequence=1, seed=77)
+    assert validate_authoring_document(document) == []
+
+    document['canvas'].update({'width': 1279, 'height': 719, 'grid_size': 12, 'background_asset_id': 'background.unknown'})
+
+    assert {'INVALID_CANVAS', 'UNKNOWN_BACKGROUND_ASSET'} <= {
+        error['code'] for error in validate_authoring_document(document)
+    }
+
+
 def test_authoring_document_rejects_duplicate_entity_ids_and_unknown_formation_members():
     document = blank_authoring_document(identifier='map-01', slug='map-01', name='Blank Map', sequence=1, seed=77)
     entity = {'id': 'scout-1', 'entity_type': 'SCOUT', 'asset_id': 'enemy.scout', 'x': 640, 'y': 100, 'width': 44, 'height': 58, 'rotation': 0, 'z_index': 4, 'behaviour_profile': 'enemy.scout.standard', 'enabled': True, 'tags': []}
