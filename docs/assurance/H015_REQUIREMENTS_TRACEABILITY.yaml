@@ -386,21 +386,20 @@ rows:
     negative_or_hostile_proof: Overlap, clipping or absent values fail
     test_cases:
       - id: H015-GAME-003 positive
-        classification: COMPONENT
+        classification: E2E_ORDINARY_USER
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-GAME-003 positive test"
-        assertion: Visual and DOM/canvas assertions prove all governed result values
+        command: npx playwright test tests/e2e/campaign-real-play.spec.ts --project=chromium-desktop --grep published_release_continue --workers=1
+        assertion: Ordinary level completion announces an available Continue state before the visible result action is selected.
       - id: H015-GAME-003 negative
-        classification: COMPONENT
+        classification: E2E_ORDINARY_USER
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-GAME-003 negative or hostile test"
-        assertion: Overlap, clipping or absent values fail
+        command: npx playwright test tests/e2e/campaign-real-play.spec.ts --project=chromium-desktop --grep result_does_not_advance --workers=1
+        assertion: Result state remains visible and does not advance without the discrete Continue action.
     evidence_gate: ordinary-gameplay
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Ordinary result-state browser coverage now proves the available Continue state and rejects automatic progression. This row remains FAIL until visual value/layout assertions and exact-SHA evidence are added.
   - requirement_id: H015-GAME-004
     area: Gameplay
     requirement: Continue exists only when the pinned release has a next entry
