@@ -137,6 +137,18 @@ def test_authoring_document_requires_bounded_supported_pickup_drop_rules():
     }
 
 
+def test_authoring_document_requires_valid_objectives_and_target_references():
+    document = blank_authoring_document(identifier='map-01', slug='map-01', name='Blank Map', sequence=1, seed=77)
+    document['entities'] = [{'id': 'scout-1', 'entity_type': 'SCOUT', 'asset_id': 'enemy.scout', 'x': 640, 'y': 128, 'width': 44, 'height': 58, 'rotation': 0, 'z_index': 4, 'behaviour_profile': 'enemy.scout.standard', 'enabled': True, 'tags': []}]
+    document['objectives'] = [{'id': 'clear-scout', 'type': 'DESTROY_ALL_HOSTILES', 'required': True, 'target_entity_ids': ['scout-1'], 'duration_ms': None}]
+    assert validate_authoring_document(document) == []
+
+    document['objectives'][0].update({'type': 'SURVIVE_DURATION', 'target_entity_ids': ['missing'], 'duration_ms': 0})
+    assert 'INVALID_OBJECTIVE' in {
+        error['code'] for error in validate_authoring_document(document)
+    }
+
+
 def test_authoring_document_rejects_duplicate_entity_ids_and_unknown_formation_members():
     document = blank_authoring_document(identifier='map-01', slug='map-01', name='Blank Map', sequence=1, seed=77)
     entity = {'id': 'scout-1', 'entity_type': 'SCOUT', 'asset_id': 'enemy.scout', 'x': 640, 'y': 100, 'width': 44, 'height': 58, 'rotation': 0, 'z_index': 4, 'behaviour_profile': 'enemy.scout.standard', 'enabled': True, 'tags': []}
