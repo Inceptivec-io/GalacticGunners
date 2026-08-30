@@ -1,0 +1,9 @@
+H015 REPLACEMENT ASSURANCE TRANSPORT DELIVERY
+
+Copy the four ZIP files in this bundle, unchanged and without extracting their internal contents, into the GalacticGunners governed POST_BOX that already contains BOUNDARY.md and README.md.
+
+Do not copy this outer ZIP into the POST_BOX as a substitute. Extract the outer ZIP first, then place the four inner ZIP transports into POST_BOX.
+
+Expected inner transports and SHA-256 values are recorded in SHA256SUMS.txt.
+
+After copying, instruct Development to inventory and verify the four inner ZIPs and continue under the accompanying Founder message.

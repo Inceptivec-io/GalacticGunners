@@ -3,8 +3,11 @@ import test from "node:test";
 
 import { validateAssuranceRecoveryIntake } from "../../scripts/verify-h015-assurance-intake.mjs";
 
-test("H015-EVID-001 positive: the admitted recovery sources and receipt reconcile", () => {
-  assert.deepEqual(validateAssuranceRecoveryIntake(), []);
+const replacementAdmissionRoot =
+  "docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/11_ASSURANCE_RECOVERY_REPLACEMENT_TRANSPORT_MEMBERS/unpacked";
+
+test("H015-EVID-001 positive: the delivered replacement sources and receipt reconcile", () => {
+  assert.deepEqual(validateAssuranceRecoveryIntake({ root: replacementAdmissionRoot }), []);
 });
 
 test("H015-EVID-001 negative: a changed required transport hash fails closed", () => {
