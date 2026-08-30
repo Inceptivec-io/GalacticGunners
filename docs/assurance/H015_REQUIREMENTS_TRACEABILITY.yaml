@@ -1176,21 +1176,21 @@ rows:
     negative_or_hostile_proof: Double completion, stuck session or ungoverned fallback fails
     test_cases:
       - id: H015-BOARD-007 positive
-        classification: UNIT
+        classification: API
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-BOARD-007 positive test"
+        command: cd backend && python manage.py test boarding.tests.test_boarding_api.BoardingApiTests.test_timeout_loses_one_life_and_applies_parent_return_once boarding.tests.test_boarding_api.BoardingApiTests.test_player_death_loses_one_life_and_applies_parent_return_once --settings=config.settings.local
         assertion: Each path preserves or changes campaign resources according to contract
       - id: H015-BOARD-007 negative
-        classification: UNIT
+        classification: API
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-BOARD-007 negative or hostile test"
+        command: cd backend && python manage.py test boarding.tests.test_boarding_api.BoardingApiTests.test_complete_requires_matching_digest_and_is_idempotent boarding.tests.test_boarding_api.BoardingApiTests.test_rejects_unknown_fields_and_bad_capability --settings=config.settings.local
         assertion: Double completion, stuck session or ungoverned fallback fails
     evidence_gate: ordinary-boarding
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Existing API contracts prove deterministic resource outcomes,
+      idempotency, and capability rejection. Unit and ordinary-browser layers remain required.
   - requirement_id: H015-AUTH-001
     area: Security
     requirement:
