@@ -194,3 +194,47 @@ test("H015-DES-CANVAS-001__e2e_ordinary_user__governed_canvas_and_grid_save_relo
   await expect(page.getByLabel("Level configuration").getByLabel("Grid size")).toHaveValue("8");
   expect(strictRuntime.unexpectedFailures).toEqual([]);
 });
+
+test("H015-DES-POINTER-002__e2e_ordinary_user__touch_chooser_places_a_canonical_scout", async ({
+  page,
+  strictRuntime,
+}) => {
+  await loginAsAdministrator(page);
+  const scouts = page.locator('button[aria-label^="SCOUT at"]');
+  const before = await scouts.count();
+  const category = page.getByRole("button", { name: "Alien Ships", exact: true });
+  const categoryBox = await category.boundingBox();
+  if (!categoryBox) throw new Error("The Alien Ships palette control is not touch reachable.");
+  await page.touchscreen.tap(categoryBox.x + categoryBox.width / 2, categoryBox.y + categoryBox.height / 2);
+  const chooser = page.getByRole("dialog", { name: "Alien Ships chooser" });
+  await expect(chooser).toBeVisible();
+  const scoutOption = chooser.getByRole("button", { name: /^SCOUT/ });
+  const scoutBox = await scoutOption.boundingBox();
+  if (!scoutBox) throw new Error("The Scout asset control is not touch reachable.");
+  await page.touchscreen.tap(scoutBox.x + scoutBox.width / 2, scoutBox.y + scoutBox.height / 2);
+  await expect(chooser).toBeHidden();
+  await expect(scouts).toHaveCount(before + 1);
+  await expect(scouts.last()).toBeVisible();
+  expect(strictRuntime.unexpectedFailures).toEqual([]);
+});
+
+test("H015-DES-POINTER-002__e2e_ordinary_user_negative__touch_cancel_leaves_the_canvas_unchanged", async ({
+  page,
+  strictRuntime,
+}) => {
+  await loginAsAdministrator(page);
+  const scouts = page.locator('button[aria-label^="SCOUT at"]');
+  const before = await scouts.count();
+  const category = page.getByRole("button", { name: "Alien Ships", exact: true });
+  const categoryBox = await category.boundingBox();
+  if (!categoryBox) throw new Error("The Alien Ships palette control is not touch reachable.");
+  await page.touchscreen.tap(categoryBox.x + categoryBox.width / 2, categoryBox.y + categoryBox.height / 2);
+  const chooser = page.getByRole("dialog", { name: "Alien Ships chooser" });
+  const cancel = chooser.getByRole("button", { name: "Close chooser" });
+  const cancelBox = await cancel.boundingBox();
+  if (!cancelBox) throw new Error("The chooser cancel control is not touch reachable.");
+  await page.touchscreen.tap(cancelBox.x + cancelBox.width / 2, cancelBox.y + cancelBox.height / 2);
+  await expect(chooser).toBeHidden();
+  await expect(scouts).toHaveCount(before);
+  expect(strictRuntime.unexpectedFailures).toEqual([]);
+});
