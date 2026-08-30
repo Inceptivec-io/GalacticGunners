@@ -1,0 +1,53 @@
+{
+  "tested_sha": "UNSPECIFIED",
+  "generated_at": "2026-08-30T12:28:28.305Z",
+  "grid_size": 8,
+  "zoom_cases": [
+    {
+      "zoom": 0.5,
+      "input": "mouse-pointer-capture",
+      "before": "SCOUT at 90, 120",
+      "after": "SCOUT at 96, 128",
+      "undo_redo": true
+    },
+    {
+      "zoom": 0.75,
+      "input": "mouse-pointer-capture",
+      "before": "SCOUT at 96, 128",
+      "after": "SCOUT at 104, 136",
+      "undo_redo": true
+    },
+    {
+      "zoom": 1,
+      "input": "mouse-pointer-capture",
+      "before": "SCOUT at 104, 136",
+      "after": "SCOUT at 112, 144",
+      "undo_redo": true
+    },
+    {
+      "zoom": 1.25,
+      "input": "mouse-pointer-capture",
+      "before": "SCOUT at 112, 144",
+      "after": "SCOUT at 120, 152",
+      "undo_redo": true
+    },
+    {
+      "zoom": 1.5,
+      "input": "mouse-pointer-capture",
+      "before": "SCOUT at 120, 152",
+      "after": "SCOUT at 128, 160",
+      "undo_redo": true
+    }
+  ],
+  "touch_drag": {
+    "before": "SCOUT at 128, 160",
+    "after": "SCOUT at 136, 168"
+  },
+  "thumbnail_sources": [
+    "/gg-runtime-assets/designer-previews/enemy-scout.svg",
+    "/gg-runtime-assets/designer-previews/enemy-cruiser.svg",
+    "/gg-runtime-assets/designer-previews/enemy-destroyer.svg"
+  ],
+  "console_errors": [],
+  "result": "PASS"
+}

@@ -578,11 +578,18 @@ async function runHostileCases(browser) {
     && !state.visibleTexts.some((text) => text.includes('LIVES') || numericHudCounterPattern.test(text));
   cases.nuke_initial_count = state.currentNukes === 2 && state.maxNukes === 2 && state.rearmProgress === 150 && state.rearmMax === 150;
   await page.evaluate((index) => window.__GALACTIC_GUNNERS_HOSTILE__.setPlayerUnderScout(index, 0), findScoutClearOfShield(state));
-  await page.keyboard.press('N');
-  await page.waitForFunction(() => {
-    const s = window.__GALACTIC_GUNNERS_HOSTILE__.state();
-    return s.currentNukes === 1 && s.nukeProjectileCount >= 1;
-  }, null, { timeout: 2000 });
+  // A single synthetic keypress can begin and end between Phaser updates on a
+  // loaded Linux runner. Hold the genuine input until the observable launch
+  // condition proves that gameplay consumed it, then release it immediately.
+  await page.keyboard.down('N');
+  try {
+    await page.waitForFunction(() => {
+      const s = window.__GALACTIC_GUNNERS_HOSTILE__.state();
+      return s.currentNukes === 1 && s.nukeProjectileCount >= 1;
+    }, null, { timeout: 2000 });
+  } finally {
+    await page.keyboard.up('N');
+  }
   const nukeFiredState = await getGameState(page);
   await page.screenshot({ path: path.join(outputDir, 'nuke-projectile-mid-flight.png'), fullPage: true });
   await page.waitForFunction(() => window.__GALACTIC_GUNNERS_HOSTILE__.state().score >= 25, null, { timeout: 12000 });

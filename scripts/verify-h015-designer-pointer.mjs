@@ -31,6 +31,10 @@ try {
   await page.locator('button[type="submit"]').click();
   await page.waitForSelector('[data-designer-route="campaign"]');
   const zoom = page.locator('input[aria-label="Canvas zoom"]');
+  const gridSize = Number(
+    await page.getByLabel('Level configuration').getByLabel('Grid size').inputValue(),
+  );
+  assert([8, 16, 24, 32].includes(gridSize), `Unsupported Designer grid size: ${gridSize}.`);
   const cases = [];
 
   for (const level of [0.5, 0.75, 1, 1.25, 1.5]) {
@@ -42,16 +46,16 @@ try {
     const box = await viewportRect(entity);
     const field = await viewportRect(page.locator('.designer-playfield'));
     assert(box && field, `Designer geometry unavailable at ${level * 100}% zoom.`);
-    const deltaX = field.width * 16 / 1280;
-    const deltaY = field.height * 16 / 720;
+    const deltaX = field.width * gridSize / 1280;
+    const deltaY = field.height * gridSize / 720;
     const start = { clientX: box.x + box.width / 2, clientY: box.y + box.height / 2, pointerId: 1, pointerType: 'mouse', button: 0, buttons: 1 };
     await entity.dispatchEvent('pointerdown', start);
     await page.locator('.designer-playfield').dispatchEvent('pointermove', { ...start, clientX: start.clientX + deltaX, clientY: start.clientY + deltaY });
     await page.locator('.designer-playfield').dispatchEvent('pointerup', { ...start, clientX: start.clientX + deltaX, clientY: start.clientY + deltaY, buttons: 0 });
     const after = await entity.getAttribute('aria-label');
     const [nextX, nextY] = coordinate(after);
-    const expectedX = Math.round((x + 16) / 16) * 16;
-    const expectedY = Math.round((y + 16) / 16) * 16;
+    const expectedX = Math.round((x + gridSize) / gridSize) * gridSize;
+    const expectedY = Math.round((y + gridSize) / gridSize) * gridSize;
     assert(nextX === expectedX && nextY === expectedY,
       `Pointer mapping drift at ${level * 100}%: ${before} -> ${after}.`);
     await page.getByRole('button', { name: 'Undo' }).click();
@@ -81,8 +85,8 @@ try {
   const touchBox = await viewportRect(touchEntity);
   const touchField = await viewportRect(page.locator('.designer-playfield'));
   assert(touchBox && touchField, 'Touch Designer geometry unavailable.');
-  const dx = touchField.width * 16 / 1280;
-  const dy = touchField.height * 16 / 720;
+  const dx = touchField.width * gridSize / 1280;
+  const dy = touchField.height * gridSize / 720;
   const touchStart = { clientX: touchBox.x + touchBox.width / 2, clientY: touchBox.y + touchBox.height / 2, pointerId: 3, pointerType: 'touch', button: 0, buttons: 1 };
   await touchEntity.dispatchEvent('pointerdown', touchStart);
   await page.locator('.designer-playfield').dispatchEvent('pointermove', { ...touchStart, clientX: touchStart.clientX + dx, clientY: touchStart.clientY + dy });
@@ -98,7 +102,7 @@ try {
   await page.getByRole('button', { name: 'Close chooser' }).click();
   await page.screenshot({ path: path.join(outputDir, 'designer-pointer-and-thumbnails.png'), fullPage: true });
   assert(errors.length === 0, `Console errors: ${errors.join(' | ')}`);
-  const result = { tested_sha: testedSha, generated_at: new Date().toISOString(), zoom_cases: cases, touch_drag: { before: touchBefore, after: touchAfter }, thumbnail_sources: thumbnailSources, console_errors: errors, result: 'PASS' };
+  const result = { tested_sha: testedSha, generated_at: new Date().toISOString(), grid_size: gridSize, zoom_cases: cases, touch_drag: { before: touchBefore, after: touchAfter }, thumbnail_sources: thumbnailSources, console_errors: errors, result: 'PASS' };
   writeFileSync(path.join(outputDir, 'designer-pointer-verification.json'), `${JSON.stringify(result, null, 2)}\n`);
   console.log(JSON.stringify(result, null, 2));
 } finally { await browser.close(); }
