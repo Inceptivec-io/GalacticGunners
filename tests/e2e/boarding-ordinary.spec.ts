@@ -263,3 +263,60 @@ test("H015-BOARD-005__e2e_ordinary_user_negative__entry_airlock_cannot_complete_
     ],
   });
 });
+
+test("H015-BOARD-006__e2e_ordinary_user__escape_pauses_resumes_and_requires_confirmed_abort", async ({
+  page,
+  strictRuntime,
+}) => {
+  test.setTimeout(60_000);
+  await startLevelFour(page);
+  await fireAtBoardingTarget(page);
+  const canvas = page.locator(".game-canvas-host canvas");
+  const box = await canvas.boundingBox();
+  if (!box) throw new Error("Gameplay canvas is unavailable.");
+  await canvas.click({
+    position: { x: box.width * 0.4, y: box.height * 0.57 },
+  });
+  await expect(page.locator("[data-game-announcement]")).toHaveText(
+    "Boarding active. Clear the frigate and reach the airlock.",
+    { timeout: 12_000 },
+  );
+
+  await page.keyboard.press("Escape");
+  await expect(page.locator("[data-game-status]")).toHaveText(
+    "Galactic Gunners paused. Resume, restart, or return to the main menu.",
+  );
+  await page.keyboard.press("Escape");
+  await expect(page.locator("[data-game-status]")).toHaveText(
+    "Galactic Gunners gameplay started.",
+  );
+
+  await page.keyboard.press("Escape");
+  await expect(page.locator("[data-game-status]")).toHaveText(
+    "Galactic Gunners paused. Resume, restart, or return to the main menu.",
+  );
+  const pauseActionY = box.height / 2 + 156;
+  await canvas.click({ position: { x: box.width / 2, y: pauseActionY } });
+  await page.waitForTimeout(150);
+  await canvas.click({ position: { x: box.width / 2, y: pauseActionY } });
+  await expect(page.locator("[data-game-announcement]")).toHaveText(
+    "Boarding aborted. Shooter assault resumed.",
+    { timeout: 12_000 },
+  );
+  await expect(page.locator("[data-game-status]")).toHaveText(
+    "Galactic Gunners gameplay started.",
+  );
+  expect(strictRuntime.unexpectedFailures).toEqual([]);
+  await captureOrdinaryJourney({
+    page,
+    testInfo: test.info(),
+    gate: "boarding-entry-abort",
+    route: "/ -> Play -> /play",
+    actions: [
+      "Entered live Boarding through normal public gameplay, used Escape to pause and resume, then selected the visible abort action twice.",
+    ],
+    assertions: [
+      "Escape pauses rather than aborts, Escape resumes, and Boarding abort only occurs after the explicit confirmation action before returning to Shooter.",
+    ],
+  });
+});

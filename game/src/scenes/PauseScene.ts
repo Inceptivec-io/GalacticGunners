@@ -5,6 +5,7 @@ import { RUNTIME_ASSETS } from '../config/assets';
 export class PauseScene extends Phaser.Scene {
   #sequence = 1;
   #targetScene = 'Level1Scene';
+  #abortConfirmationPending = false;
   constructor() {
     super('PauseScene');
   }
@@ -35,7 +36,8 @@ export class PauseScene extends Phaser.Scene {
       align: 'center',
     }).setOrigin(0.5).setDepth(33);
     const resume = this.createAction(width / 2, height / 2 + 94, 'RESUME', () => this.resumeLevel());
-    const restart = this.createAction(width / 2, height / 2 + 156, 'RESTART', () => this.restartLevel());
+    const restartLabel = this.#targetScene === 'BoardingScene' ? 'ABORT MISSION' : 'RESTART';
+    const restart = this.createAction(width / 2, height / 2 + 156, restartLabel, () => this.restartLevel(restart));
     const menu = this.createAction(width / 2, height / 2 + 218, 'MAIN MENU', () => this.returnToMenu());
     [resume, restart, menu].forEach((control) => control.setData('qa', 'pause-action'));
     this.input.keyboard?.on('keydown-ESC', this.resumeLevel, this);
@@ -89,11 +91,19 @@ export class PauseScene extends Phaser.Scene {
     this.registry.get('runtimeConfig')?.onLaunchStateChange?.('gameplay');
   }
 
-  private restartLevel(): void {
+  private restartLevel(control?: Phaser.GameObjects.Text): void {
     this.input.keyboard?.resetKeys();
     if (this.#targetScene === 'BoardingScene') {
-      this.scene.stop('BoardingScene');
-      this.scene.resume('Level1Scene', { boardingOutcome: 'ABORTED', boardingValidated: false });
+      if (!this.#abortConfirmationPending) {
+        this.#abortConfirmationPending = true;
+        control?.setText('CONFIRM ABORT');
+        return;
+      }
+      const boarding = this.scene.get('BoardingScene') as Phaser.Scene & {
+        abortFromPause?: () => void;
+      };
+      this.scene.stop();
+      boarding.abortFromPause?.();
       return;
     }
     this.scene.stop('Level1Scene');

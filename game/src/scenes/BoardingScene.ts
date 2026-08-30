@@ -241,22 +241,34 @@ export class BoardingScene extends Phaser.Scene {
         }),
       };
     }
-    this.input.keyboard?.once('keydown-ESC', () => this.finish('ABORTED'));
+    this.input.keyboard?.on('keydown-ESC', this.pauseBoarding, this);
     this.input.keyboard?.on('keydown-P', this.pauseBoarding, this);
     for (const key of ['A', 'D', 'LEFT', 'RIGHT', 'W', 'UP', 'SPACE', 'E']) this.keys[key] = this.input.keyboard!.addKey(key);
     this.createTouchControls();
     this.events.on('resume', this.onResume, this);
     this.events.once('shutdown', () => {
       this.input.keyboard?.off('keydown-P', this.pauseBoarding, this);
+      this.input.keyboard?.off('keydown-ESC', this.pauseBoarding, this);
       this.events.off('resume', this.onResume, this);
       this.touchControls.splice(0).forEach((control) => control.destroy());
     });
   }
 
   private pauseBoarding(): void {
-    if (this.completed || !this.active || this.time.now < this.pauseBlockedUntil) return;
+    if (
+      this.completed ||
+      !this.active ||
+      this.time.now < this.pauseBlockedUntil ||
+      this.scene.isActive('PauseScene')
+    ) {
+      return;
+    }
     this.scene.launch('PauseScene', { targetScene: 'BoardingScene' });
     this.scene.sleep();
+  }
+
+  abortFromPause(): void {
+    void this.finish('ABORTED');
   }
 
   onResume(): void {
@@ -458,6 +470,7 @@ export class BoardingScene extends Phaser.Scene {
     this.scene.stop();
     if (typeof window !== 'undefined') delete window.__GALACTIC_GUNNERS_BOARDING_QA__;
     this.scene.resume('Level1Scene', { boardingOutcome: outcome, boardingSnapshot: this.simulation.snapshot(), boardingReturnState: returnState, boardingValidated: Boolean(returnState) });
+    this.registry.get('runtimeConfig')?.onLaunchStateChange?.('gameplay');
     this.onGameplayAnnouncement?.(
       outcome === 'ABORTED'
         ? 'Boarding aborted. Shooter assault resumed.'

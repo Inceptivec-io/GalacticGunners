@@ -1149,21 +1149,21 @@ rows:
     negative_or_hostile_proof: Immediate abort, loop, duplicate offer or state loss fails
     test_cases:
       - id: H015-BOARD-006 positive
-        classification: UNIT
+        classification: E2E_ORDINARY_USER
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-BOARD-006 positive test"
+        command: npx playwright test tests/e2e/boarding-ordinary.spec.ts --project=chromium-desktop --grep escape_pauses_resumes --workers=1
         assertion: Resume continues; confirmed abort returns to exact Shooter checkpoint
       - id: H015-BOARD-006 negative
-        classification: UNIT
+        classification: E2E_ORDINARY_USER
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-BOARD-006 negative or hostile test"
+        command: npx playwright test tests/e2e/boarding-ordinary.spec.ts --project=chromium-desktop --grep escape_pauses_resumes --workers=1
         assertion: Immediate abort, loop, duplicate offer or state loss fails
     evidence_gate: ordinary-boarding
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: An ordinary browser journey now covers pause, resume, and explicit
+      confirmation-gated abort. Unit and exact-SHA CI layers remain required.
   - requirement_id: H015-BOARD-007
     area: Boarding
     requirement: Success, death and API failure have safe deterministic outcomes
