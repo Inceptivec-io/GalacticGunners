@@ -58,6 +58,21 @@ def test_authoring_document_requires_governed_canvas_geometry_and_background():
     }
 
 
+def test_authoring_document_requires_one_enabled_slot_one_player_spawn_in_bounds():
+    document = blank_authoring_document(identifier='map-01', slug='map-01', name='Blank Map', sequence=1, seed=77)
+    assert validate_authoring_document(document) == []
+
+    document['player_spawns'][0].update({'slot': 2, 'x': 1281})
+    document['player_spawns'][1].update({'enabled': True})
+
+    assert 'PLAYER_SPAWN_CARDINALITY' in {
+        error['code'] for error in validate_authoring_document(document)
+    }
+    assert 'INVALID_PLAYER_SPAWN' in {
+        error['code'] for error in validate_authoring_document(document)
+    }
+
+
 def test_authoring_document_rejects_duplicate_entity_ids_and_unknown_formation_members():
     document = blank_authoring_document(identifier='map-01', slug='map-01', name='Blank Map', sequence=1, seed=77)
     entity = {'id': 'scout-1', 'entity_type': 'SCOUT', 'asset_id': 'enemy.scout', 'x': 640, 'y': 100, 'width': 44, 'height': 58, 'rotation': 0, 'z_index': 4, 'behaviour_profile': 'enemy.scout.standard', 'enabled': True, 'tags': []}
