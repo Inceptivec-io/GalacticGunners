@@ -87,3 +87,26 @@ class PortalOrganizationScopeTests(TestCase):
         self.client.force_authenticate(self.other_owner)
         response = self.client.delete(f'/api/v1/portal/organizations/other-org/maps/{self.map.id}/')
         self.assertEqual(response.status_code, 404)
+
+    def test_other_tenant_cannot_create_edit_or_preview_a_foreign_map(self):
+        version = self.map.versions.get(version=1)
+        self.client.force_authenticate(self.other_owner)
+
+        create = self.client.post(
+            '/api/v1/portal/organizations/owned-org/maps/',
+            {'project_id': str(self.project.id), 'slug': 'foreign-map', 'name': 'Foreign Map'},
+            format='json',
+        )
+        draft = self.client.post(
+            f'/api/v1/portal/organizations/owned-org/maps/{self.map.id}/drafts/',
+            {'expected_checksum': version.checksum, 'config': version.config},
+            format='json',
+        )
+        preview = self.client.get(
+            f'/api/v1/portal/organizations/owned-org/maps/{self.map.id}/preview/{version.checksum}/'
+        )
+
+        self.assertEqual(create.status_code, 404)
+        self.assertEqual(draft.status_code, 404)
+        self.assertEqual(preview.status_code, 404)
+        self.assertEqual(self.map.versions.count(), 1)
