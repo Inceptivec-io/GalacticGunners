@@ -93,6 +93,21 @@ def test_authoring_document_requires_typed_entity_asset_geometry_and_profile():
     }
 
 
+def test_authoring_document_requires_valid_ship_formation_members_and_bounds():
+    document = blank_authoring_document(identifier='map-01', slug='map-01', name='Blank Map', sequence=1, seed=77)
+    document['entities'] = [
+        {'id': 'scout-1', 'entity_type': 'SCOUT', 'asset_id': 'enemy.scout', 'x': 320, 'y': 128, 'width': 44, 'height': 58, 'rotation': 0, 'z_index': 4, 'behaviour_profile': 'enemy.scout.standard', 'enabled': True, 'tags': []},
+        {'id': 'cruiser-1', 'entity_type': 'CRUISER', 'asset_id': 'enemy.cruiser', 'x': 448, 'y': 128, 'width': 58, 'height': 62, 'rotation': 0, 'z_index': 4, 'behaviour_profile': 'enemy.cruiser.standard', 'enabled': True, 'tags': []},
+    ]
+    document['formations'] = [{'id': 'formation-1', 'name': 'Opening wave', 'layout': 'LINE', 'bounds': {'x': 256, 'y': 96, 'width': 256, 'height': 96}, 'member_ids': ['scout-1', 'cruiser-1'], 'motion_profile': 'formation.standard', 'entry_delay_ms': 0, 'repeat': 0}]
+    assert validate_authoring_document(document) == []
+
+    document['formations'][0].update({'layout': 'INVALID', 'member_ids': ['scout-1', 'scout-1'], 'bounds': {'x': 1200, 'y': 700, 'width': 128, 'height': 64}})
+    assert 'UNKNOWN_ENTITY_REFERENCE' in {
+        error['code'] for error in validate_authoring_document(document)
+    }
+
+
 def test_authoring_document_rejects_duplicate_entity_ids_and_unknown_formation_members():
     document = blank_authoring_document(identifier='map-01', slug='map-01', name='Blank Map', sequence=1, seed=77)
     entity = {'id': 'scout-1', 'entity_type': 'SCOUT', 'asset_id': 'enemy.scout', 'x': 640, 'y': 100, 'width': 44, 'height': 58, 'rotation': 0, 'z_index': 4, 'behaviour_profile': 'enemy.scout.standard', 'enabled': True, 'tags': []}
