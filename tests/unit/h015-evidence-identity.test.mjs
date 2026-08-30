@@ -85,3 +85,21 @@ test("H015-EVID-002 negative: a shortened or different SHA fails evidence identi
       .length >= 2,
   );
 });
+
+test("H015-EVID-006 positive: ordinary browser evidence has its own explicit classification", () => {
+  const { root, testedSha, manifest } = buildManifest();
+  manifest.gates[0].classification = "E2E_ORDINARY_USER";
+  assert.deepEqual(
+    auditManifest(manifest, { root, expectedSha: testedSha }),
+    [],
+  );
+});
+
+test("H015-EVID-006 negative: an unclassified gate fails the closure audit", () => {
+  const { root, testedSha, manifest } = buildManifest();
+  manifest.gates[0].classification = "UNCLASSIFIED";
+  assert.match(
+    auditManifest(manifest, { root, expectedSha: testedSha }).join("\n"),
+    /invalid classification/,
+  );
+});

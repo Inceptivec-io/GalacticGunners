@@ -1,4 +1,5 @@
 import { expect, test } from "./fixtures/strictRuntime";
+import { captureOrdinaryJourney } from "./fixtures/ordinaryEvidence";
 
 test("H015-LAUNCH-001__e2e_ordinary_user__fresh_play_shows_splash_before_menu", async ({
   page,
@@ -29,6 +30,21 @@ test("H015-LAUNCH-001__e2e_ordinary_user__fresh_play_shows_splash_before_menu", 
   );
   await expect(page.locator(".game-canvas-host canvas")).toBeFocused();
   expect(strictRuntime.unexpectedFailures).toEqual([]);
+  await captureOrdinaryJourney({
+    page,
+    testInfo: test.info(),
+    gate: "splash-navigation",
+    route: "/ -> Play -> /play",
+    actions: [
+      "Opened the public root route.",
+      "Selected the visible Play link.",
+      "Waited for the governed splash and Main Menu.",
+    ],
+    assertions: [
+      "The splash remained visible for its governed duration.",
+      "The canvas received usable Main Menu focus.",
+    ],
+  });
 });
 
 test("H015-LAUNCH-001__e2e_ordinary_user_negative__internal_navigation_does_not_replay_splash", async ({
@@ -53,4 +69,15 @@ test("H015-LAUNCH-001__e2e_ordinary_user_negative__internal_navigation_does_not_
     "Galactic Gunners launch sequence.",
   );
   expect(strictRuntime.unexpectedFailures).toEqual([]);
+  await captureOrdinaryJourney({
+    page,
+    testInfo: test.info(),
+    gate: "splash-navigation",
+    route: "/play",
+    actions: [
+      "Started gameplay from the visible Main Menu action.",
+      "Observed internal navigation after gameplay began.",
+    ],
+    assertions: ["Internal navigation did not replay the launch splash."],
+  });
 });

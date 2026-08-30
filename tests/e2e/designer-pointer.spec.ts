@@ -1,4 +1,5 @@
 import { expect, test } from "./fixtures/strictRuntime";
+import { captureOrdinaryJourney } from "./fixtures/ordinaryEvidence";
 
 const administrator = {
   username: process.env.FOUNDER_REVIEW_USERNAME,
@@ -109,6 +110,20 @@ test("H015-DES-POINTER-001__e2e_ordinary_user__native_mouse_drag_undo_redo_is_ex
   }
 
   expect(strictRuntime.unexpectedFailures).toEqual([]);
+  await captureOrdinaryJourney({
+    page,
+    testInfo: test.info(),
+    gate: "designer-roundtrip",
+    route: "/inceptivec-gamification-admin/login",
+    actions: [
+      "Authenticated through the visible Administrator login form.",
+      "Dragged a real Scout placement at each supported zoom.",
+      "Used visible Undo and Redo controls, then reloaded the Designer.",
+    ],
+    assertions: [
+      "Pointer placement stayed grid-aligned, undo and redo restored exact positions, and the persisted configuration reloaded.",
+    ],
+  });
 });
 
 test("H015-DES-POINTER-001__e2e_ordinary_user_negative__outside_drag_is_clamped_and_undoable", async ({
@@ -139,6 +154,19 @@ test("H015-DES-POINTER-001__e2e_ordinary_user_negative__outside_drag_is_clamped_
   await page.getByRole("button", { name: "Undo" }).click();
   await expect(entity).toHaveAttribute("aria-label", beforeLabel);
   expect(strictRuntime.unexpectedFailures).toEqual([]);
+  await captureOrdinaryJourney({
+    page,
+    testInfo: test.info(),
+    gate: "designer-roundtrip",
+    route: "/inceptivec-gamification-admin/login",
+    actions: [
+      "Authenticated through the visible Administrator login form.",
+      "Dragged a placed Scout to the canvas edge and selected Undo.",
+    ],
+    assertions: [
+      "The placement remained inside the governed canvas and Undo restored its original position.",
+    ],
+  });
 });
 
 test("H015-DES-THUMB-001__e2e_ordinary_user__palette_uses_loaded_canonical_single-frame_previews", async ({
@@ -167,6 +195,19 @@ test("H015-DES-THUMB-001__e2e_ordinary_user__palette_uses_loaded_canonical_singl
   ).toBe(false);
   await page.getByRole("button", { name: "Close chooser" }).click();
   expect(strictRuntime.unexpectedFailures).toEqual([]);
+  await captureOrdinaryJourney({
+    page,
+    testInfo: test.info(),
+    gate: "designer-review-matrix",
+    route: "/inceptivec-gamification-admin/login",
+    actions: [
+      "Authenticated as Administrator.",
+      "Opened the visible Alien Ships chooser and inspected its asset thumbnails.",
+    ],
+    assertions: [
+      "Every chooser thumbnail loaded a canonical single-frame preview rather than a source sheet.",
+    ],
+  });
 });
 
 test("H015-DES-META-001__e2e_ordinary_user__valid_seed_save_reloads_from_immutable_draft", async ({
@@ -193,6 +234,20 @@ test("H015-DES-META-001__e2e_ordinary_user__valid_seed_save_reloads_from_immutab
     page.getByLabel("Level configuration").getByLabel("Deterministic seed"),
   ).toHaveValue(String(nextSeed));
   expect(strictRuntime.unexpectedFailures).toEqual([]);
+  await captureOrdinaryJourney({
+    page,
+    testInfo: test.info(),
+    gate: "designer-roundtrip",
+    route: "/inceptivec-gamification-admin/login",
+    actions: [
+      "Authenticated as Administrator.",
+      "Changed the visible deterministic seed and selected Save immutable draft.",
+      "Reloaded the Designer.",
+    ],
+    assertions: [
+      "The server created a draft and the saved seed reloaded from the immutable draft.",
+    ],
+  });
 });
 
 test("H015-DES-META-001__e2e_ordinary_user_negative__invalid_seed_is_rejected_by_the_server", async ({
@@ -231,6 +286,19 @@ test("H015-DES-META-001__e2e_ordinary_user_negative__invalid_seed_is_rejected_by
     page.getByText(/level definition failed validation/i),
   ).toBeVisible();
   expect(strictRuntime.unexpectedFailures).toEqual([]);
+  await captureOrdinaryJourney({
+    page,
+    testInfo: test.info(),
+    gate: "designer-roundtrip",
+    route: "/inceptivec-gamification-admin/login",
+    actions: [
+      "Authenticated as Administrator.",
+      "Entered an invalid deterministic seed and selected Save immutable draft.",
+    ],
+    assertions: [
+      "The product displayed the server validation failure and did not accept the invalid draft.",
+    ],
+  });
 });
 
 test("H015-DES-CANVAS-001__e2e_ordinary_user__governed_canvas_and_grid_save_reload", async ({
@@ -259,6 +327,20 @@ test("H015-DES-CANVAS-001__e2e_ordinary_user__governed_canvas_and_grid_save_relo
     page.getByLabel("Level configuration").getByLabel("Grid size"),
   ).toHaveValue("8");
   expect(strictRuntime.unexpectedFailures).toEqual([]);
+  await captureOrdinaryJourney({
+    page,
+    testInfo: test.info(),
+    gate: "designer-roundtrip",
+    route: "/inceptivec-gamification-admin/login",
+    actions: [
+      "Authenticated as Administrator.",
+      "Selected an allowed grid size and saved an immutable draft.",
+      "Reloaded the Designer.",
+    ],
+    assertions: [
+      "Governed canvas dimensions remained immutable and the selected grid persisted.",
+    ],
+  });
 });
 
 test("H015-DES-POINTER-002__e2e_ordinary_user__touch_chooser_places_a_canonical_scout", async ({
@@ -298,6 +380,19 @@ test("H015-DES-POINTER-002__e2e_ordinary_user__touch_chooser_places_a_canonical_
   await expect(scouts).toHaveCount(before + 1);
   await expect(scouts.last()).toBeVisible();
   expect(strictRuntime.unexpectedFailures).toEqual([]);
+  await captureOrdinaryJourney({
+    page,
+    testInfo: test.info(),
+    gate: "designer-review-matrix",
+    route: "/inceptivec-gamification-admin/login",
+    actions: [
+      "Authenticated as Administrator on a touch viewport.",
+      "Tapped the Alien Ships chooser and tapped the Scout option.",
+    ],
+    assertions: [
+      "The chooser closed and the canonical Scout was added to the visible canvas.",
+    ],
+  });
 });
 
 test("H015-DES-POINTER-002__e2e_ordinary_user_negative__touch_cancel_leaves_the_canvas_unchanged", async ({
@@ -335,4 +430,15 @@ test("H015-DES-POINTER-002__e2e_ordinary_user_negative__touch_cancel_leaves_the_
   await expect(chooser).toBeHidden();
   await expect(scouts).toHaveCount(before);
   expect(strictRuntime.unexpectedFailures).toEqual([]);
+  await captureOrdinaryJourney({
+    page,
+    testInfo: test.info(),
+    gate: "designer-review-matrix",
+    route: "/inceptivec-gamification-admin/login",
+    actions: [
+      "Authenticated as Administrator on a touch viewport.",
+      "Opened the Alien Ships chooser and tapped Close chooser.",
+    ],
+    assertions: ["Cancelling the chooser left the authored canvas unchanged."],
+  });
 });

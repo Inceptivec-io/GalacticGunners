@@ -1,4 +1,5 @@
 import { expect, test } from "./fixtures/strictRuntime";
+import { captureOrdinaryJourney } from "./fixtures/ordinaryEvidence";
 
 function accountIdentity() {
   const suffix = `${Date.now().toString(36).slice(-7)}${Math.floor(Math.random() * 1_000).toString(36)}`;
@@ -40,6 +41,20 @@ test("H015-AUTH-002__e2e_ordinary_user__registration_restores_session_and_logout
   ).toBeVisible();
   await expect(page.getByRole("link", { name: "Sign in" })).toBeVisible();
   expect(strictRuntime.unexpectedFailures).toEqual([]);
+  await captureOrdinaryJourney({
+    page,
+    testInfo: test.info(),
+    gate: "player-logout",
+    route: "/account/register -> /account",
+    actions: [
+      "Registered through the visible player form.",
+      "Reloaded the account page to restore the session.",
+      "Selected the visible Logout control.",
+    ],
+    assertions: [
+      "The registered session restored after reload and Logout returned the product to anonymous player state.",
+    ],
+  });
 });
 
 test("H015-AUTH-002__e2e_ordinary_user_negative__duplicate_username_is_rejected_without_replacing_session", async ({
@@ -65,4 +80,17 @@ test("H015-AUTH-002__e2e_ordinary_user_negative__duplicate_username_is_rejected_
     page.getByRole("heading", { name: identity.displayName }),
   ).toBeVisible();
   expect(strictRuntime.unexpectedFailures).toEqual([]);
+  await captureOrdinaryJourney({
+    page,
+    testInfo: test.info(),
+    gate: "player-logout",
+    route: "/account/register -> /account/register",
+    actions: [
+      "Registered a player through the visible form.",
+      "Attempted to register the same visible username again.",
+    ],
+    assertions: [
+      "The duplicate registration was rejected and the existing player session remained intact.",
+    ],
+  });
 });

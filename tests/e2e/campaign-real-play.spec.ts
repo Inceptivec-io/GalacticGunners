@@ -1,4 +1,5 @@
 import { expect, test } from "./fixtures/strictRuntime";
+import { captureOrdinaryJourney } from "./fixtures/ordinaryEvidence";
 
 async function startCampaign(page: import("@playwright/test").Page) {
   await page.goto("/");
@@ -37,6 +38,18 @@ test("H015-GAME-004__e2e_ordinary_user__published_release_continue_loads_the_nex
     },
   );
   expect(strictRuntime.unexpectedFailures).toEqual([]);
+  await captureOrdinaryJourney({
+    page,
+    testInfo: test.info(),
+    gate: "campaign-progression",
+    route: "/ -> Play -> /play",
+    actions: [
+      "Started the public Play journey.",
+      "Waited for ordinary Level 1 completion.",
+      "Selected the visible Continue control.",
+    ],
+    assertions: ["Continue loaded the distinct Level 2 campaign entry."],
+  });
 });
 
 test("H015-GAME-004__e2e_ordinary_user__continue_traverses_the_published_release_without_level_seven", async ({
@@ -75,6 +88,19 @@ test("H015-GAME-004__e2e_ordinary_user__continue_traverses_the_published_release
   await page.waitForTimeout(500);
   await expect(announcement).not.toHaveText(/Level 7/);
   expect(strictRuntime.unexpectedFailures).toEqual([]);
+  await captureOrdinaryJourney({
+    page,
+    testInfo: test.info(),
+    gate: "campaign-progression",
+    route: "/ -> Play -> /play",
+    actions: [
+      "Started an ordinary campaign from the public entry.",
+      "Used visible Continue controls through Levels 1 to 6.",
+    ],
+    assertions: [
+      "Each Continue selected the next pinned entry and Level 6 ended at final victory without Level 7.",
+    ],
+  });
 });
 
 test("H015-GAME-004__e2e_ordinary_user_negative__result_does_not_advance_without_continue_input", async ({
@@ -92,4 +118,16 @@ test("H015-GAME-004__e2e_ordinary_user_negative__result_does_not_advance_without
   await page.waitForTimeout(500);
   await expect(announcement).toHaveText(/Level 1 complete.*Continue available/);
   expect(strictRuntime.unexpectedFailures).toEqual([]);
+  await captureOrdinaryJourney({
+    page,
+    testInfo: test.info(),
+    gate: "campaign-progression",
+    route: "/ -> Play -> /play",
+    actions: [
+      "Started an ordinary campaign and did not select Continue after Level 1 completion.",
+    ],
+    assertions: [
+      "The result panel remained on Level 1 until explicit user input.",
+    ],
+  });
 });
