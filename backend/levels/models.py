@@ -103,3 +103,6 @@ class LevelAuditEvent(models.Model):
         if self.pk and type(self).objects.filter(pk=self.pk).exists():
             raise ValidationError('Audit events are immutable.')
         super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        raise ValidationError('Audit events are append-only.')

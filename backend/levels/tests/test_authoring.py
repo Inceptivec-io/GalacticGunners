@@ -25,6 +25,16 @@ def test_v10_to_v11_migration_is_deterministic_and_materialises_level_one():
     assert validate_authoring_document(first) == []
 
 
+def test_migration_does_not_silently_rewrite_invalid_current_documents():
+    document = blank_authoring_document(identifier='map-01', slug='map-01', name='Blank Map', sequence=1, seed=77)
+    document['seed'] = -1
+
+    migrated = migrate_v1_to_v11(document)
+
+    assert migrated == document
+    assert 'INVALID_LEVEL_METADATA' in {error['code'] for error in validate_authoring_document(migrated)}
+
+
 def test_blank_document_is_playable_authoring_surface_without_placeholder_hostiles():
     document = blank_authoring_document(identifier='map-01', slug='map-01', name='Blank Map', sequence=1, seed=77)
     assert document['entities'] == []

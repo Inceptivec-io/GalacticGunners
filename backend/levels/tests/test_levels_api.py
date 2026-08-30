@@ -4,12 +4,13 @@ from pathlib import Path
 import pytest
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
+from django.core.exceptions import ValidationError
 
-from levels.models import Level, LevelVersion
-from game_runs.models import GameRun, GameVersion
-from games.models import GameProject, OwnerScope, Visibility
 from campaigns.models import CampaignVersion
 from campaigns.services import CampaignService
+from game_runs.models import GameRun, GameVersion
+from games.models import GameProject, OwnerScope, Visibility
+from levels.models import Level, LevelAuditEvent, LevelVersion
 
 
 def golden_level():
@@ -52,6 +53,28 @@ def test_level_one_admission_publish_and_public_resolution(client, level_admin, 
 
 
 @pytest.mark.django_db
+def test_privileged_level_actions_create_attributable_append_only_audit_records(client, level_admin, core_project):
+    level = Level.objects.create(slug='level-01', name='Level 1', sequence=1, game_project=core_project)
+    version = LevelVersion.objects.create(level=level, version=1, config=golden_level())
+
+    assert client.post(f'/api/v1/admin/levels/{level.id}/validate/', {'version': 1}, content_type='application/json').status_code == 403
+    assert LevelAuditEvent.objects.count() == 0
+
+    client.force_login(level_admin)
+    assert client.post(f'/api/v1/admin/levels/{level.id}/validate/', {'version': 1}, content_type='application/json').status_code == 200
+    assert client.post(f'/api/v1/admin/levels/{level.id}/publish/', {'version': 1}, content_type='application/json').status_code == 200
+
+    events = list(LevelAuditEvent.objects.filter(level=level).order_by('created_at'))
+    assert [event.action for event in events] == ['validate', 'publish']
+    assert all(event.actor_id == level_admin.id and event.version_id == version.id for event in events)
+    with pytest.raises(ValidationError):
+        events[0].action = 'tampered'
+        events[0].save()
+    with pytest.raises(ValidationError):
+        events[0].delete()
+
+
+@pytest.mark.django_db
 def test_published_version_is_immutable_and_unknown_routes_are_absent(client, level_admin, core_project):
     level = Level.objects.create(slug='level-01', name='Level 1', sequence=1, game_project=core_project)
     version = LevelVersion.objects.create(level=level, version=1, config=golden_level())
@@ -59,7 +82,7 @@ def test_published_version_is_immutable_and_unknown_routes_are_absent(client, le
     version.save()
     version.publish()
     version.config['name'] = 'Tampered'
-    with pytest.raises(Exception):
+    with pytest.raises(ValidationError):
         version.save()
     assert client.get('/admin/').status_code == 404
     assert client.get('/editor/').status_code == 404
