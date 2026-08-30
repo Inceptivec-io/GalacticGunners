@@ -109,10 +109,16 @@ requirements:
   - {
       id: H015-PERM-002,
       implementation: [backend/organizations/policy.py],
-      positive_tests: [tests/e2e/tenant-isolation.spec.ts],
-      negative_tests: [tests/e2e/tenant-isolation.spec.ts],
+      positive_tests:
+        [
+          tests/e2e/tenant-isolation.spec.ts::H015-PERM-002__e2e_ordinary_user__command_post_member_reads_only_its_authorised_workspace,
+        ],
+      negative_tests:
+        [
+          tests/e2e/tenant-isolation.spec.ts::H015-PERM-002__e2e_ordinary_user_negative__command_post_member_cannot_open_an_unrelated_workspace,
+        ],
       test_layer: E2E_ORDINARY_USER,
-      ci_jobs: [e2e-ordinary],
+      ci_jobs: [runtime-browser],
       evidence: [playwright-trace],
       status: PENDING,
     }

@@ -4,6 +4,7 @@ type StrictRuntime = {
   unexpectedFailures: string[];
   allowHttpFailure: (url: RegExp, status: number) => void;
   allowConsoleError: (message: RegExp) => void;
+  allowRequestFailure: (url: RegExp, error: RegExp) => void;
 };
 
 export const test = base.extend<{ strictRuntime: StrictRuntime }>({
@@ -11,6 +12,7 @@ export const test = base.extend<{ strictRuntime: StrictRuntime }>({
     const unexpectedFailures: string[] = [];
     const allowedHttpFailures: Array<{ url: RegExp; status: number }> = [];
     const allowedConsoleErrors: RegExp[] = [];
+    const allowedRequestFailures: Array<{ url: RegExp; error: RegExp }> = [];
     page.on("console", (message) => {
       if (
         message.type() === "error" &&
@@ -22,11 +24,17 @@ export const test = base.extend<{ strictRuntime: StrictRuntime }>({
     page.on("pageerror", (error) =>
       unexpectedFailures.push(`pageerror: ${error.message}`),
     );
-    page.on("requestfailed", (request) =>
-      unexpectedFailures.push(
-        `requestfailed: ${request.url()} (${request.failure()?.errorText ?? "unknown"})`,
-      ),
-    );
+    page.on("requestfailed", (request) => {
+      const error = request.failure()?.errorText ?? "unknown";
+      if (
+        allowedRequestFailures.some(
+          (rule) => rule.url.test(request.url()) && rule.error.test(error),
+        )
+      ) {
+        return;
+      }
+      unexpectedFailures.push(`requestfailed: ${request.url()} (${error})`);
+    });
     page.on("response", (response) => {
       const allowed = allowedHttpFailures.some(
         (rule) =>
@@ -45,6 +53,8 @@ export const test = base.extend<{ strictRuntime: StrictRuntime }>({
       allowHttpFailure: (url, status) =>
         allowedHttpFailures.push({ url, status }),
       allowConsoleError: (message) => allowedConsoleErrors.push(message),
+      allowRequestFailure: (url, error) =>
+        allowedRequestFailures.push({ url, error }),
     });
     expect(
       unexpectedFailures,
