@@ -39,6 +39,24 @@ class AuthenticationSurfaceTests(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['code'], 'INVALID_REQUEST')
 
+    def test_logout_requires_csrf_and_clears_the_authenticated_session(self):
+        client = APIClient(enforce_csrf_checks=True)
+        csrf = client.get('/api/v1/auth/csrf/')
+        self.assertEqual(csrf.status_code, 200)
+        login_response = client.post(
+            '/api/v1/auth/login/',
+            {'username': 'platform-admin', 'password': 'A-strong-password-123', 'audience': 'PLAYER_ACCOUNT'},
+            format='json',
+            HTTP_X_CSRFTOKEN=csrf.data['csrf_token'],
+        )
+        self.assertEqual(login_response.status_code, 200)
+        self.assertTrue(client.get('/api/v1/auth/me/').data['authenticated'])
+
+        self.assertEqual(client.post('/api/v1/auth/logout/').status_code, 403)
+        csrf = client.get('/api/v1/auth/csrf/')
+        self.assertEqual(client.post('/api/v1/auth/logout/', HTTP_X_CSRFTOKEN=csrf.data['csrf_token']).status_code, 200)
+        self.assertFalse(client.get('/api/v1/auth/me/').data['authenticated'])
+
     def test_dashboard_operations_require_platform_permission_and_return_safe_user_inventory(self):
         self.assertEqual(self.client.get('/api/v1/admin/operations/users/').status_code, 403)
         self.user.user_permissions.add(Permission.objects.get(codename='manage_platform'))
