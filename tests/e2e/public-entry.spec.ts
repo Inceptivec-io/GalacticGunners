@@ -1,4 +1,5 @@
 import { expect, test } from "./fixtures/strictRuntime";
+import { captureOrdinaryJourney } from "./fixtures/ordinaryEvidence";
 
 test("H015-ENTRY-001__e2e_ordinary_user__root_play_enters_governed_launch", async ({
   page,
@@ -12,6 +13,19 @@ test("H015-ENTRY-001__e2e_ordinary_user__root_play_enters_governed_launch", asyn
   await expect(page).toHaveURL(/\/play$/);
   await expect(page.locator(".game-host")).toBeVisible();
   expect(strictRuntime.unexpectedFailures).toEqual([]);
+  await captureOrdinaryJourney({
+    page,
+    testInfo: test.info(),
+    gate: "splash-navigation",
+    route: "/ -> Play -> /play",
+    actions: [
+      "Opened the public root route.",
+      "Selected the visible Play link.",
+    ],
+    assertions: [
+      "The customer entered the governed game route through the public Play boundary.",
+    ],
+  });
 });
 
 test("H015-ENTRY-001__e2e_ordinary_user_negative__boot_request_failure_surfaces_a_safe_error", async ({
@@ -39,4 +53,17 @@ test("H015-ENTRY-001__e2e_ordinary_user_negative__boot_request_failure_surfaces_
     { timeout: 25_000 },
   );
   expect(strictRuntime.unexpectedFailures).toEqual([]);
+  await captureOrdinaryJourney({
+    page,
+    testInfo: test.info(),
+    gate: "splash-navigation",
+    route: "/ -> Play -> /play",
+    actions: [
+      "Opened the public root route.",
+      "Selected Play while the campaign-start endpoint returned a governed service failure.",
+    ],
+    assertions: [
+      "The product surfaced a safe runtime error instead of starting an incomplete game.",
+    ],
+  });
 });

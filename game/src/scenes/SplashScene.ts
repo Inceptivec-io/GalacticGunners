@@ -1,6 +1,7 @@
 import * as Phaser from "phaser";
 
 import { RUNTIME_ASSETS } from "../config/assets";
+import { SPLASH_COPY, SPLASH_DURATION_MS } from "../config/splashCopy";
 
 /** First-launch-only key-art hold. Scene transitions never restart it. */
 export class SplashScene extends Phaser.Scene {
@@ -29,19 +30,14 @@ export class SplashScene extends Phaser.Scene {
       0.48,
     );
     this.add
-      .text(
-        width / 2,
-        height * 0.9,
-        "Copyright © 2026. Powered by Inceptivec. All rights reserved.\nCollaborators: Aroura Leonardi",
-        {
-          color: "#f7d56a",
-          fontFamily: "GalacticGunnersGoldDisplay, Arial, sans-serif",
-          fontSize: `${Math.max(14, Math.min(24, width * 0.018))}px`,
-          align: "center",
-          stroke: "#02050d",
-          strokeThickness: 5,
-        },
-      )
+      .text(width / 2, height * 0.9, SPLASH_COPY, {
+        color: "#f7d56a",
+        fontFamily: "GalacticGunnersGoldDisplay, Arial, sans-serif",
+        fontSize: `${Math.max(14, Math.min(24, width * 0.018))}px`,
+        align: "center",
+        stroke: "#02050d",
+        strokeThickness: 5,
+      })
       .setOrigin(0.5)
       .setDepth(2);
     if (
@@ -51,14 +47,14 @@ export class SplashScene extends Phaser.Scene {
       window.__GALACTIC_GUNNERS_SPLASH_QA__ = {
         scene: "SplashScene",
         startedAt,
-        durationMs: 2000,
+        durationMs: SPLASH_DURATION_MS,
       };
     }
     const timer = window.setTimeout(() => {
       if (typeof window !== "undefined")
         delete window.__GALACTIC_GUNNERS_SPLASH_QA__;
       this.scene.start("MainMenuScene");
-    }, 2000);
+    }, SPLASH_DURATION_MS);
     this.events.once("shutdown", () => window.clearTimeout(timer));
   }
 }

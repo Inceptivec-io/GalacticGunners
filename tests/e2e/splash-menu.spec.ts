@@ -14,6 +14,9 @@ test("H015-LAUNCH-001__e2e_ordinary_user__fresh_play_shows_splash_before_menu", 
     "Galactic Gunners launch sequence.",
     { timeout: 25_000 },
   );
+  await expect(page.locator("[data-game-splash-copy]")).toHaveText(
+    "Copyright © 2026. Powered by Inceptivec. All rights reserved.\nCollaborators: Aurora Leonardi",
+  );
   const remainingVisibleWindow = Math.max(
     0,
     1_850 - (Date.now() - launchRequestedAt),
@@ -28,6 +31,14 @@ test("H015-LAUNCH-001__e2e_ordinary_user__fresh_play_shows_splash_before_menu", 
     "Galactic Gunners main menu ready.",
     { timeout: 25_000 },
   );
+  const splashDuration = Number(
+    await page
+      .locator("[data-game-host]")
+      .getAttribute("data-game-splash-duration-ms"),
+  );
+  expect(splashDuration).toBeGreaterThanOrEqual(1_900);
+  expect(splashDuration).toBeLessThanOrEqual(3_000);
+  await expect(page.locator("[data-game-splash-copy]")).toHaveCount(0);
   await expect(page.locator(".game-canvas-host canvas")).toBeFocused();
   expect(strictRuntime.unexpectedFailures).toEqual([]);
   await captureOrdinaryJourney({
@@ -42,6 +53,7 @@ test("H015-LAUNCH-001__e2e_ordinary_user__fresh_play_shows_splash_before_menu", 
     ],
     assertions: [
       "The splash remained visible for its governed duration.",
+      "The exact governed copyright and collaborator copy was rendered.",
       "The canvas received usable Main Menu focus.",
     ],
   });
@@ -52,6 +64,10 @@ test("H015-LAUNCH-001__e2e_ordinary_user_negative__internal_navigation_does_not_
   strictRuntime,
 }) => {
   await page.goto("/play");
+  await expect(page.locator("[data-game-status]")).toHaveText(
+    "Galactic Gunners launch sequence.",
+    { timeout: 25_000 },
+  );
   await expect(page.locator("[data-game-status]")).toHaveText(
     "Galactic Gunners main menu ready.",
     { timeout: 25_000 },
@@ -65,6 +81,14 @@ test("H015-LAUNCH-001__e2e_ordinary_user_negative__internal_navigation_does_not_
   await expect(page.locator("[data-game-status]")).toHaveText(
     "Galactic Gunners gameplay started.",
   );
+  await canvas.press("KeyP");
+  await expect(page.locator("[data-game-status]")).toHaveText(
+    "Galactic Gunners paused. Resume, restart, or return to the main menu.",
+  );
+  await canvas.press("KeyM");
+  await expect(page.locator("[data-game-status]")).toHaveText(
+    "Galactic Gunners main menu ready.",
+  );
   await expect(page.locator("[data-game-status]")).not.toHaveText(
     "Galactic Gunners launch sequence.",
   );
@@ -75,9 +99,13 @@ test("H015-LAUNCH-001__e2e_ordinary_user_negative__internal_navigation_does_not_
     gate: "splash-navigation",
     route: "/play",
     actions: [
+      "Opened a new independent game entry and observed its launch splash.",
       "Started gameplay from the visible Main Menu action.",
-      "Observed internal navigation after gameplay began.",
+      "Opened Pause with P and selected Main Menu with M.",
     ],
-    assertions: ["Internal navigation did not replay the launch splash."],
+    assertions: [
+      "A new independent entry remained capable of showing the splash.",
+      "Internal return to the Main Menu did not replay the launch splash.",
+    ],
   });
 });

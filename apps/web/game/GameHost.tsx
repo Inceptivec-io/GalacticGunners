@@ -2,19 +2,23 @@
 
 import { useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
-import type { LevelRuntimeConfig } from "@galactic-gunners/game";
+import { SPLASH_COPY, type LevelRuntimeConfig } from "@galactic-gunners/game";
 
 import { publicConfig } from "../lib/config/publicConfig";
 
 export function GameHost() {
   const hostRef = useRef<HTMLDivElement | null>(null);
   const gameRef = useRef<unknown>(null);
+  const splashStartedAtRef = useRef<number | null>(null);
   const [status, setStatus] = useState<
     "loading" | "splash" | "main-menu" | "gameplay" | "paused" | "error"
   >("loading");
   const [gameplayAnnouncement, setGameplayAnnouncement] = useState(
     "Preparing Galactic Gunners gameplay.",
   );
+  const [lastSplashDurationMs, setLastSplashDurationMs] = useState<
+    number | null
+  >(null);
 
   useEffect(() => {
     let active = true;
@@ -83,6 +87,15 @@ export function GameHost() {
           allowOfflinePackage: params.get("api") === "offline",
           previewRuntime,
           onLaunchStateChange: (nextState) => {
+            if (nextState === "splash") {
+              splashStartedAtRef.current = Date.now();
+            } else if (
+              nextState === "main-menu" &&
+              splashStartedAtRef.current !== null
+            ) {
+              setLastSplashDurationMs(Date.now() - splashStartedAtRef.current);
+              splashStartedAtRef.current = null;
+            }
             if (active) flushSync(() => setStatus(nextState));
           },
           onGameplayAnnouncement: (announcement) => {
@@ -117,6 +130,7 @@ export function GameHost() {
     <section
       aria-label="Galactic Gunners game runtime"
       data-game-host
+      data-game-splash-duration-ms={lastSplashDurationMs ?? undefined}
       className="game-host"
     >
       <div ref={hostRef} className="game-canvas-host" />
@@ -138,6 +152,11 @@ export function GameHost() {
                   ? "Galactic Gunners paused. Resume, restart, or return to the main menu."
                   : "Loading Galactic Gunners..."}
       </p>
+      {status === "splash" ? (
+        <p className="game-status--visually-hidden" data-game-splash-copy>
+          {SPLASH_COPY}
+        </p>
+      ) : null}
       <p
         className="game-status game-status--visually-hidden"
         data-game-announcement
