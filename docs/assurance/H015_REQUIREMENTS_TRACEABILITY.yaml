@@ -1208,21 +1208,20 @@ rows:
     negative_or_hostile_proof: Anonymous, wrong-role and cross-organisation access fails
     test_cases:
       - id: H015-AUTH-001 positive
-        classification: UNIT
+        classification: API
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-AUTH-001 positive test"
+        command: cd backend && python manage.py test organizations.tests.test_portal_api.PortalOrganizationScopeTests.test_business_admin_receives_scoped_member_inventory --settings=config.settings.local
         assertion: Authorised role succeeds only for owned scope
       - id: H015-AUTH-001 negative
-        classification: UNIT
+        classification: API
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-AUTH-001 negative or hostile test"
+        command: cd backend && python manage.py test organizations.tests.test_portal_api.PortalOrganizationScopeTests.test_other_tenant_cannot_create_edit_or_preview_a_foreign_map tests.test_auth_surfaces.AuthenticationSurfaceTests.test_platform_audience_requires_platform_permission --settings=config.settings.local
         assertion: Anonymous, wrong-role and cross-organisation access fails
     evidence_gate: ordinary-security
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Existing API contracts prove scoped permitted access and deny wrong-role and cross-tenant operations. Unit and ordinary browser layers remain required.
   - requirement_id: H015-AUTH-002
     area: Security
     requirement: Login redirects use one same-origin internal-path validator
@@ -1237,14 +1236,14 @@ rows:
       active-protocol forms fail
     test_cases:
       - id: H015-AUTH-002 positive
-        classification: UNIT
+        classification: E2E_ORDINARY_USER
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-AUTH-002 positive test"
+        command: npx playwright test tests/e2e/auth-session.spec.ts --project=chromium-desktop --grep registration_restores_session --workers=1
         assertion: Valid internal next succeeds
       - id: H015-AUTH-002 negative
-        classification: UNIT
+        classification: API
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-AUTH-002 negative or hostile test"
+        command: cd backend && python manage.py test tests.test_auth_surfaces.AuthenticationSurfaceTests.test_login_requires_explicit_audience --settings=config.settings.local
         assertion:
           External, protocol-relative, backslash, encoded and active-protocol
           forms fail
@@ -1252,8 +1251,7 @@ rows:
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Existing product registration and API audience controls are mapped. Dedicated redirect-validator unit and hostile-route coverage remain required.
   - requirement_id: H015-AUTH-003
     area: Security
     requirement: Player account provides visible CSRF-protected logout
@@ -1268,19 +1266,18 @@ rows:
       - id: H015-AUTH-003 positive
         classification: API
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-AUTH-003 positive test"
+        command: cd backend && python manage.py test tests.test_auth_surfaces.AuthenticationSurfaceTests.test_logout_requires_csrf_and_clears_the_authenticated_session --settings=config.settings.local
         assertion: Logout clears session and returns to public route
       - id: H015-AUTH-003 negative
         classification: API
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-AUTH-003 negative or hostile test"
+        command: cd backend && python manage.py test tests.test_auth_surfaces.AuthenticationSurfaceTests.test_logout_requires_csrf_and_clears_the_authenticated_session --settings=config.settings.local
         assertion: Missing/invalid CSRF and post-logout API access fail
     evidence_gate: ordinary-security
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Existing API contract proves CSRF rejection and session clearing; ordinary visible logout coverage is present but exact-SHA evidence remains required.
   - requirement_id: H015-AUTH-004
     area: Security
     requirement: Django Admin remains diagnostic and is not the product authoring authority
