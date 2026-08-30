@@ -1,6 +1,9 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- The Designer renders API-selected canonical asset thumbnails, not static page media. */
+
 import {
+  startTransition,
   useEffect,
   useMemo,
   useRef,
@@ -629,14 +632,21 @@ export function CampaignDesigner({
     }
   }
   useEffect(() => {
-    void load();
+    startTransition(() => {
+      void load();
+    });
+    // The route context is fixed for the component lifetime; later reloads use
+    // the explicit Refresh authority control rather than a render-loop fetch.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     if (selectedLevel) {
-      setDocument(asDocument(selectedLevel));
-      setSelectedIds([]);
-      setHistory([]);
-      setFuture([]);
+      startTransition(() => {
+        setDocument(asDocument(selectedLevel));
+        setSelectedIds([]);
+        setHistory([]);
+        setFuture([]);
+      });
     }
   }, [selectedLevel]);
   useEffect(() => {

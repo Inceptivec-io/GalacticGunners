@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
@@ -16,7 +17,7 @@ export default function LeaderboardPage() {
   return <main className="leaderboard-shell">
     <header className="leaderboard-header">
       <Link href="/" className="leaderboard-back">Main Menu</Link>
-      <img src="/gg-runtime-assets/branding/gg_logo_primary_v002.png" alt="Galactic Gunners" />
+      <Image src="/gg-runtime-assets/branding/gg_logo_primary_v002.png" alt="Galactic Gunners" width={1024} height={512} priority />
       <Link href="/play" className="leaderboard-back">Play</Link>
     </header>
     <section className="leaderboard-panel" aria-labelledby="leaderboard-title">
