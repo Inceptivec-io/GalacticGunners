@@ -108,6 +108,21 @@ def test_authoring_document_requires_valid_ship_formation_members_and_bounds():
     }
 
 
+def test_authoring_document_requires_destructible_shield_tile_matrices():
+    document = blank_authoring_document(identifier='map-01', slug='map-01', name='Blank Map', sequence=1, seed=77)
+    document['shield_structures'] = [{
+        'id': 'shield-1', 'name': 'Bunker 1', 'origin': {'x': 96, 'y': 520},
+        'tile_asset_id': 'shield.tile', 'tile_width': 10, 'tile_height': 10,
+        'matrix': [[1, 1, 1], [1, 0, 1]], 'destructible': True,
+    }]
+    assert validate_authoring_document(document) == []
+
+    document['shield_structures'][0].update({'tile_asset_id': 'enemy.scout', 'matrix': [[1, 2]], 'destructible': False})
+    assert 'INVALID_SHIELD_MATRIX' in {
+        error['code'] for error in validate_authoring_document(document)
+    }
+
+
 def test_authoring_document_rejects_duplicate_entity_ids_and_unknown_formation_members():
     document = blank_authoring_document(identifier='map-01', slug='map-01', name='Blank Map', sequence=1, seed=77)
     entity = {'id': 'scout-1', 'entity_type': 'SCOUT', 'asset_id': 'enemy.scout', 'x': 640, 'y': 100, 'width': 44, 'height': 58, 'rotation': 0, 'z_index': 4, 'behaviour_profile': 'enemy.scout.standard', 'enabled': True, 'tags': []}
