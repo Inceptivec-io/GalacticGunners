@@ -7,7 +7,8 @@
     "game"
   ],
   "scripts": {
-    "assets:sync": "node scripts/sync-runtime-assets.mjs",
+    "assets:sync": "node scripts/sync-runtime-assets.mjs && node scripts/compile-canonical-sprites.mjs",
+    "sprites:compile": "node scripts/compile-canonical-sprites.mjs",
     "web:dev": "npm --workspace apps/web run dev",
     "web:build": "npm --workspace apps/web run build",
     "web:typecheck": "npm --workspace apps/web run typecheck",
@@ -59,6 +60,7 @@
     "jsdom": "^26.1.0",
     "playwright": "^1.62.1",
     "prettier": "^3.9.6",
+    "sharp": "^0.35.4",
     "vitest": "^3.2.7",
     "yaml": "^2.9.0"
   }
