@@ -22,7 +22,7 @@ class Command(BaseCommand):
         parser.add_argument("--duration-ms", type=int, default=900)
         parser.add_argument(
             "--scenario",
-            choices=("campaign", "boarding"),
+            choices=("campaign", "boarding", "hazards"),
             default="campaign",
             help="Ephemeral browser fixture; never used by normal product runtime.",
         )
@@ -50,6 +50,43 @@ class Command(BaseCommand):
             "required": True,
             "target_entity_ids": [],
             "duration_ms": max(duration_ms, 30_000),
+        }]
+        return config
+
+    @staticmethod
+    def _hazard_fixture(config, duration_ms):
+        """Keep normal input while making Level 4 hazard interactions observable."""
+        config["entities"] = []
+        config["formations"] = []
+        config["shield_structures"] = []
+        config["boarding_anchors"] = []
+        config["hazard_emitters"] = [{
+            "id": "browser-assurance-comet",
+            "hazard_type": "COMET",
+            "asset_id": "hazard.comet",
+            "variant_mode": "FIXED",
+            "variant_ids": ["COMET_VARIANT_02"],
+            "enabled": True,
+            "initial_count": 1,
+            "maximum_active": 1,
+            "spawn_interval_ms": 30000,
+            "spawn_jitter_ms": 0,
+            "speed_min": 90,
+            "speed_max": 90,
+            "angular_velocity_min": 0,
+            "angular_velocity_max": 0,
+            "entry_edges": ["TOP"],
+            "spawn_pattern": "FIXED_POINTS",
+            "spawn_points": [{"x": 640, "y": 260}],
+            "despawn_margin": 64,
+            "collision_damage": 1,
+        }]
+        config["objectives"] = [{
+            "id": "browser-assurance-level-04-hazards",
+            "type": "SURVIVE_DURATION",
+            "required": True,
+            "target_entity_ids": [],
+            "duration_ms": max(duration_ms, 30000),
         }]
         return config
 
@@ -87,6 +124,8 @@ class Command(BaseCommand):
             ]
             if scenario == "boarding" and level.sequence == 4:
                 config = self._boarding_fixture(config, duration_ms)
+            elif scenario == "hazards" and level.sequence == 4:
+                config = self._hazard_fixture(config, duration_ms)
             version = LevelVersion.objects.create(
                 level=level,
                 version=level.versions.order_by("-version").first().version + 1,

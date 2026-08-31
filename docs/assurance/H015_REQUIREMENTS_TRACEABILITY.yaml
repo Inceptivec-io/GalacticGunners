@@ -471,23 +471,23 @@ rows:
     negative_or_hostile_proof: Invisible bodies, max-active breach or QA-only targeting fails
     test_cases:
       - id: H015-GAME-006 positive
-        classification: UNIT
+        classification: E2E_ORDINARY_USER
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-GAME-006 positive test"
+        command: npx playwright test tests/e2e/level4-hazards.spec.ts --project=chromium-desktop --grep H015-GAME-006 --workers=1
         assertion:
           Normal play proves varied direction, speed, collision, destruction
           and despawn
       - id: H015-GAME-006 negative
-        classification: UNIT
+        classification: E2E_ORDINARY_USER
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-GAME-006 negative or hostile test"
+        command: npx playwright test tests/e2e/level4-hazards.spec.ts --project=chromium-desktop --grep H015-GAME-006 --workers=1
         assertion: Invisible bodies, max-active breach or QA-only targeting fails
     evidence_gate: ordinary-gameplay
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Ordinary browser positive and negative journeys are executable. Exact-SHA
+      CI evidence remains required before this derived row can pass.
   - requirement_id: H015-GAME-007
     area: Gameplay
     requirement: Levels 1 through 6 are independently configured and playable

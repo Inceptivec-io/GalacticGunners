@@ -1,5 +1,11 @@
 import * as Phaser from "phaser";
-import { deterministicHazardRange, hazardVariantFrame } from "../systems/HazardPolicy";
+import {
+  deterministicHazardRange,
+  hazardEntryEdge,
+  hazardEntryPoint,
+  hazardTravelVector,
+  hazardVariantFrame,
+} from "../systems/HazardPolicy";
 
 import { Player, type MovementVector } from "../entities/Player";
 import { hostileDisplaySize, Scout } from "../entities/Scout";
@@ -610,7 +616,7 @@ export class Level1Scene extends CombatLevelScene {
       true,
     );
     const edge = emitter?.entry_edges.length
-      ? emitter.entry_edges[ordinal % emitter.entry_edges.length]
+      ? hazardEntryEdge(emitter, ordinal)
       : "TOP";
     const magnitude = emitter
       ? this.deterministicRange(
@@ -619,14 +625,8 @@ export class Level1Scene extends CombatLevelScene {
           `${emitter.id}:speed:${ordinal}`,
         )
       : speed;
-    const direction =
-      edge === "LEFT"
-        ? new Phaser.Math.Vector2(1, 0.4)
-        : edge === "RIGHT"
-          ? new Phaser.Math.Vector2(-1, 0.4)
-          : edge === "BOTTOM"
-            ? new Phaser.Math.Vector2(0, -1)
-            : new Phaser.Math.Vector2(0, 1);
+    const travel = hazardTravelVector(edge);
+    const direction = new Phaser.Math.Vector2(travel.x, travel.y);
     direction.normalize().scale(magnitude);
     if (type === "asteroid") {
       hazard.setAngularVelocity(
@@ -660,7 +660,12 @@ export class Level1Scene extends CombatLevelScene {
     maximum: number,
     key: string,
   ): number {
-    return deterministicHazardRange(this.#definition.seed, minimum, maximum, key);
+    return deterministicHazardRange(
+      this.#definition.seed,
+      minimum,
+      maximum,
+      key,
+    );
   }
 
   private updateHazardEmitters(time: number): void {
@@ -703,26 +708,10 @@ export class Level1Scene extends CombatLevelScene {
     emitter: RuntimeHazardEmitter,
     ordinal: number,
   ): { x: number; y: number } {
-    const edge =
-      emitter.entry_edges[ordinal % emitter.entry_edges.length] ?? "TOP";
-    const lane = this.deterministicRange(
-      80,
-      this.scale.width - 80,
-      `${emitter.id}:lane:${ordinal}`,
-    );
-    if (edge === "LEFT")
-      return {
-        x: -emitter.despawn_margin,
-        y: lane * (this.scale.height / this.scale.width),
-      };
-    if (edge === "RIGHT")
-      return {
-        x: this.scale.width + emitter.despawn_margin,
-        y: lane * (this.scale.height / this.scale.width),
-      };
-    if (edge === "BOTTOM")
-      return { x: lane, y: this.scale.height + emitter.despawn_margin };
-    return { x: lane, y: -emitter.despawn_margin };
+    return hazardEntryPoint(emitter, ordinal, this.#definition.seed, {
+      width: this.scale.width,
+      height: this.scale.height,
+    });
   }
 
   private formationTravelMargin(): number {
@@ -1445,6 +1434,9 @@ export class Level1Scene extends CombatLevelScene {
     if (!hazard.active) return;
     const type = hazard.getData("hazardType") as "asteroid" | "comet";
     hazard.disableBody(true, true);
+    this.#runtimeConfig.onGameplayAnnouncement?.(
+      `${type === "comet" ? "Comet" : "Asteroid"} destroyed.`,
+    );
     this.#score.apply(
       type === "comet" ? "comet_destroyed" : "asteroid_destroyed",
       this.time.now,

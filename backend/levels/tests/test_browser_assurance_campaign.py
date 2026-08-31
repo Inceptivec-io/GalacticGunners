@@ -36,3 +36,14 @@ class BrowserAssuranceCampaignTests(TestCase):
         self.assertEqual(level_four["hazard_emitters"], [])
         self.assertGreaterEqual(level_four["objectives"][0]["duration_ms"], 30000)
         self.assertEqual(entries[0].level_version.config["objectives"][0]["duration_ms"], 1500)
+
+    def test_hazards_scenario_uses_a_real_level_four_emitter_without_runtime_hooks(self):
+        call_command("seed_browser_assurance_campaign", duration_ms=250, scenario="hazards")
+
+        run, _ = CampaignService.start(user=None, seed_root=15150)
+        level_four = list(run.campaign_version.entries.order_by("position"))[3].level_version.config
+        self.assertEqual(level_four["entities"], [])
+        self.assertEqual(level_four["hazard_emitters"][0]["hazard_type"], "COMET")
+        self.assertEqual(level_four["hazard_emitters"][0]["variant_ids"], ["COMET_VARIANT_02"])
+        self.assertEqual(level_four["hazard_emitters"][0]["spawn_points"], [{"x": 640, "y": 260}])
+        self.assertGreaterEqual(level_four["objectives"][0]["duration_ms"], 30000)

@@ -35,6 +35,10 @@
       "classification": "E2E_ORDINARY_USER"
     },
     {
+      "file": "tests/e2e/level4-hazards.spec.ts",
+      "classification": "E2E_ORDINARY_USER"
+    },
+    {
       "file": "tests/e2e/main-menu.spec.ts",
       "classification": "E2E_ORDINARY_USER"
     },
