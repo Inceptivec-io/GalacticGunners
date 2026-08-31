@@ -233,6 +233,19 @@ if (import.meta.url === `file:///${process.argv[1].replaceAll("\\", "/")}`) {
       ],
       "06-bootstrap-review",
     );
+    docker(
+      [
+        "exec",
+        "-T",
+        "backend",
+        "python",
+        "manage.py",
+        "seed_browser_assurance_campaign",
+        "--duration-ms",
+        "2500",
+      ],
+      "07-seed-browser-assurance",
+    );
     const readiness = await waitStableReadiness();
     writeFileSync(
       path.join(evidenceRoot, "readiness.json"),
