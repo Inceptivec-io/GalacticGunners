@@ -42,7 +42,8 @@ class BrowserAssuranceCampaignTests(TestCase):
 
         run, _ = CampaignService.start(user=None, seed_root=15150)
         level_four = list(run.campaign_version.entries.order_by("position"))[3].level_version.config
-        self.assertEqual(level_four["entities"], [])
+        self.assertEqual(len(level_four["entities"]), 1)
+        self.assertEqual(level_four["entities"][0]["entity_type"], "SCOUT")
         self.assertEqual(level_four["hazard_emitters"][0]["hazard_type"], "COMET")
         self.assertEqual(level_four["hazard_emitters"][0]["variant_ids"], ["COMET_VARIANT_02"])
         self.assertEqual(level_four["hazard_emitters"][0]["spawn_points"], [{"x": 640, "y": 260}])

@@ -226,6 +226,65 @@ test("hazard policy emits reproducible off-screen entries and inward trajectorie
   }
 });
 
+test("a hazard-focused authored level retains a real hostile runtime contract", () => {
+  const hazardLevel: LevelAuthoringDocument = {
+    ...document,
+    id: "level-04-hazard-assurance",
+    slug: "level-04-hazard-assurance",
+    sequence: 4,
+    entities: [{ ...document.entities[0], id: "hazard-scout", x: 180, y: 120 }],
+    formations: [
+      {
+        id: "hazard-scout-formation",
+        name: "Hazard Scout",
+        layout: "FREEFORM",
+        bounds: { x: 180, y: 120, width: 0, height: 0 },
+        member_ids: ["hazard-scout"],
+        motion_profile: "formation.standard",
+        entry_delay_ms: 0,
+        repeat: 0,
+      },
+    ],
+    shield_structures: [],
+    hazard_emitters: [
+      {
+        id: "hazard-comet",
+        hazard_type: "COMET",
+        asset_id: "hazard.comet",
+        enabled: true,
+        variant_mode: "FIXED",
+        variant_ids: ["COMET_VARIANT_02"],
+        spawn_pattern: "FIXED_POINTS",
+        entry_edges: ["TOP"],
+        spawn_points: [{ x: 640, y: 260 }],
+        spawn_interval_ms: 30000,
+        spawn_jitter_ms: 0,
+        initial_count: 1,
+        maximum_active: 1,
+        speed_min: 90,
+        speed_max: 90,
+        angular_velocity_min: 0,
+        angular_velocity_max: 0,
+        collision_damage: 1,
+        despawn_margin: 64,
+      },
+    ],
+    objectives: [
+      {
+        id: "survive-hazard",
+        type: "SURVIVE_DURATION",
+        required: true,
+        target_entity_ids: [],
+        duration_ms: 30000,
+      },
+    ],
+  };
+  const compiled = compileLevelDocument(hazardLevel);
+  validateLevelDefinition(compiled);
+  assert.equal(compiled.enemy_formations.length, 1);
+  assert.equal(compiled.hazards?.[0].type, "comet");
+});
+
 test("sparse authored grid compiles each real member without inventing phantom ships", () => {
   const sparse: LevelAuthoringDocument = {
     ...document,

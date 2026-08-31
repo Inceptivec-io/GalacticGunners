@@ -56,8 +56,22 @@ class Command(BaseCommand):
     @staticmethod
     def _hazard_fixture(config, duration_ms):
         """Keep normal input while making Level 4 hazard interactions observable."""
-        config["entities"] = []
-        config["formations"] = []
+        scout = next(
+            entity for entity in config["entities"]
+            if entity["entity_type"] == "SCOUT"
+        )
+        scout.update({"x": 180, "y": 120, "behaviour_profile": "enemy.scout.standard"})
+        config["entities"] = [scout]
+        config["formations"] = [{
+            "id": "browser-assurance-hazard-scout",
+            "name": "Hazard fixture scout",
+            "layout": "FREEFORM",
+            "bounds": {"x": 180, "y": 120, "width": 0, "height": 0},
+            "member_ids": [scout["id"]],
+            "motion_profile": "formation.standard",
+            "entry_delay_ms": 0,
+            "repeat": 0,
+        }]
         config["shield_structures"] = []
         config["boarding_anchors"] = []
         config["hazard_emitters"] = [{
