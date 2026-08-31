@@ -31,6 +31,20 @@ class Command(BaseCommand):
 
         def review_user(username, password, display_name, player=False):
             user, _ = User.objects.get_or_create(username=username, defaults={'is_active': True})
+            if player:
+                conflicting_profile = (
+                    PlayerProfile.objects
+                    .filter(display_name__iexact=display_name)
+                    .exclude(user=user)
+                    .select_related('user')
+                    .first()
+                )
+                if conflicting_profile:
+                    raise CommandError(
+                        'Founder review credential drift: requested display name '
+                        f"'{display_name}' is retained by '{conflicting_profile.user.username}'. "
+                        'Use the generated retained-volume review configuration or choose a distinct local review display name.'
+                    )
             user.is_active = True
             user.is_staff = False
             user.is_superuser = False

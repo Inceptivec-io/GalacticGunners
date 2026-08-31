@@ -21,6 +21,25 @@ export function validateLevelDefinition(value: unknown): asserts value is LevelD
   for (const shield of level.shields) {
     if (!Number.isInteger(shield.count) || shield.count < 0 || shield.matrix.some((row) => row.some((tile) => tile !== 0 && tile !== 1))) throw new Error('Invalid shield matrix.');
   }
+  if (level.drop_tables !== undefined) {
+    if (!Array.isArray(level.drop_tables)) throw new Error('Invalid pickup tables.');
+    for (const table of level.drop_tables) {
+      if (!['scout', 'cruiser', 'destroyer'].includes(table.host)
+        || !Array.isArray(table.entries)
+        || table.entries.length === 0) {
+        throw new Error('Invalid pickup table.');
+      }
+      for (const entry of table.entries) {
+        if (!['nuke', 'life'].includes(entry.pickup)
+          || !Number.isFinite(entry.weight)
+          || entry.weight <= 0
+          || (entry.maximum_per_level !== undefined
+            && (!Number.isInteger(entry.maximum_per_level) || entry.maximum_per_level < 1))) {
+          throw new Error('Invalid pickup entry.');
+        }
+      }
+    }
+  }
   if (level.boarding_anchors) {
     if (level.boarding_anchors.length > 1) throw new Error('A level can have at most one Boarding anchor.');
     for (const anchor of level.boarding_anchors) {

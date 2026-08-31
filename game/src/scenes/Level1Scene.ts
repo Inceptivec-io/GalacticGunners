@@ -1833,7 +1833,10 @@ export class Level1Scene extends CombatLevelScene {
     const table = this.#definition.drop_tables?.find(
       (candidate) => candidate.host === type,
     );
-    if (!table) return;
+    // LevelLoader rejects malformed remote definitions. Retain this narrow
+    // runtime boundary for an older cached definition from a prior release.
+    if (!table || !Array.isArray(table.entries) || table.entries.length === 0)
+      return;
     const pickup = this.#pickupSystem.choose(
       String(host.getData("entityId")),
       table.entries,

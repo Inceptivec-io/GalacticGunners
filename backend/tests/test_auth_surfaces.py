@@ -1,4 +1,9 @@
+import os
+from unittest.mock import patch
+
 from django.contrib.auth.models import Permission
+from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.test import TestCase
 from rest_framework.test import APIClient, APIRequestFactory
 from rest_framework.views import APIView
@@ -88,3 +93,20 @@ class AuthenticationSurfaceTests(TestCase):
         record = next(item for item in response.data['results'] if item['username'] == 'platform-admin')
         self.assertEqual(set(record), {'id', 'username', 'active', 'display_name', 'memberships', 'platform_access'})
         self.assertNotIn('password', record)
+
+    def test_founder_review_bootstrap_fails_closed_for_retained_volume_display_name_drift(self):
+        environment = {
+            'FOUNDER_REVIEW_MODE': 'true',
+            'DJANGO_SETTINGS_MODULE': 'config.settings.local',
+            'FOUNDER_REVIEW_USERNAME': 'review-admin',
+            'FOUNDER_REVIEW_PASSWORD': 'Review-admin-password-123',
+            'COMMAND_POST_REVIEW_USERNAME': 'review-command',
+            'COMMAND_POST_REVIEW_PASSWORD': 'Review-command-password-123',
+            'COMMAND_POST_REVIEW_DISPLAY_NAME': 'Platform Admin',
+            'PLAYER_REVIEW_USERNAME': 'review-player',
+            'PLAYER_REVIEW_PASSWORD': 'Review-player-password-123',
+        }
+        with patch.dict(os.environ, environment, clear=False):
+            with self.assertRaisesRegex(CommandError, 'Founder review credential drift'):
+                call_command('bootstrap_founder_review')
+        self.assertFalse(User.objects.filter(username='review-command').exists())

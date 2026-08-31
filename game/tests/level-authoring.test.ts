@@ -46,6 +46,15 @@ test('schema 1.1 permits an authored timed hazard emitter with no initial instan
   validateLevelDefinition(compiled);
 });
 
+test('runtime validation rejects a malformed pickup table before it reaches Phaser', () => {
+  const compiled = compileLevelDocument(document);
+  compiled.drop_tables = [{ host: 'scout', entries: [] }];
+  assert.throws(
+    () => validateLevelDefinition(compiled),
+    /Invalid pickup table/,
+  );
+});
+
 test('sparse authored grid compiles each real member without inventing phantom ships', () => {
   const sparse: LevelAuthoringDocument = {
     ...document,
