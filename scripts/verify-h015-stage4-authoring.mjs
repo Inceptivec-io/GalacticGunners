@@ -30,7 +30,7 @@ try {
     assert(await page.locator('.designer-inspector').getByText(label, { exact: false }).count() > 0, `Missing entity control: ${label}`);
   }
   await page.getByRole('button', { name: 'Hazards', exact: true }).click();
-  await page.getByRole('button', { name: 'Add recurring ASTEROID' }).click();
+  await page.getByRole('button', { name: 'ASTEROID_VARIANT_01', exact: true }).click();
   const emitter = page.locator('[aria-label^="ASTEROID emitter at"]').last();
   await emitter.click();
   for (const label of ['Spawn jitter', 'Minimum angular velocity', 'Maximum angular velocity', 'Entry edges', 'Spawn pattern', 'Fixed spawn points', 'Despawn margin', 'Collision damage']) {
