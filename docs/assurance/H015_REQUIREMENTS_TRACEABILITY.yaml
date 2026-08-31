@@ -501,19 +501,19 @@ rows:
       - id: H015-GAME-007 positive
         classification: API
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-GAME-007 positive test"
+        command: docker compose --env-file .founder-review.env exec -T backend pytest tests/test_campaign_service.py -q && npx playwright test tests/e2e/campaign-real-play.spec.ts --project=chromium-desktop --grep continue_traverses --workers=1
         assertion: Each level loads its pinned checksum and completes by ordinary input
       - id: H015-GAME-007 negative
         classification: API
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-GAME-007 negative or hostile test"
+        command: docker compose --env-file .founder-review.env exec -T backend pytest tests/test_campaign_service.py -q && npx playwright test tests/e2e/campaign-real-play.spec.ts --project=chromium-desktop --grep result_does_not_advance --workers=1
         assertion: Missing, duplicated fallback or hard-coded seed use fails
     evidence_gate: ordinary-gameplay
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: API campaign identity checks and ordinary browser traversal are executable.
+      Exact-SHA CI evidence remains required before this derived row can pass.
   - requirement_id: H015-GAME-008
     area: Gameplay
     requirement: Final campaign victory occurs only after the last pinned release entry
@@ -525,21 +525,21 @@ rows:
     negative_or_hostile_proof: Premature victory or post-final Continue fails
     test_cases:
       - id: H015-GAME-008 positive
-        classification: UNIT
+        classification: E2E_ORDINARY_USER
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-GAME-008 positive test"
+        command: npx playwright test tests/e2e/campaign-real-play.spec.ts --project=chromium-desktop --grep continue_traverses --workers=1
         assertion: Ordinary completion of final entry renders victory without Continue
       - id: H015-GAME-008 negative
-        classification: UNIT
+        classification: E2E_ORDINARY_USER
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-GAME-008 negative or hostile test"
+        command: npm run game:test -- tests/terminal-actions.test.ts && npx playwright test tests/e2e/campaign-real-play.spec.ts --project=chromium-desktop --grep continue_traverses --workers=1
         assertion: Premature victory or post-final Continue fails
     evidence_gate: ordinary-gameplay
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Final-entry terminal behavior has executable unit and ordinary browser
+      coverage. Exact-SHA CI evidence remains required before this derived row can pass.
   - requirement_id: H015-DES-001
     area: Designer
     requirement: All existing CORE Levels 1 through 6 open directly in the product Designer
