@@ -339,7 +339,15 @@ jobs:
       - run: npx playwright install chromium
       - run: docker compose up --build -d
       - run: |
-          timeout --signal=KILL 125s node scripts/wait-for-http.mjs --url http://localhost:3002/api/health
+          web_ready=false
+          for attempt in $(seq 1 12); do
+            if curl --connect-timeout 2 --max-time 5 -fsS http://localhost:3002/api/health; then web_ready=true; break; fi
+            sleep 5
+          done
+          if [ "$web_ready" != true ]; then
+            echo 'Timed out waiting for web health after 120 seconds' >&2
+            exit 1
+          fi
           docker compose exec -T backend python manage.py migrate --noinput
           docker compose exec -T backend python manage.py seed_service_plans
           docker compose exec -T backend python manage.py seed_runtime_authority
