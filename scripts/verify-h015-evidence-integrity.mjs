@@ -13,6 +13,7 @@ export const REQUIRED_GATES = [
   "splash-navigation",
   "auth-redirect",
   "player-logout",
+  "assurance-catalogue",
   "closure-audit",
 ];
 

@@ -154,7 +154,9 @@ const gateDefinitions = {
     ...ordinaryDefinition({
       id: "boarding-entry-abort",
       route: "/ -> Play -> /play",
-      setup: ["Enter Level 4 through the public route and visible Continue controls."],
+      setup: [
+        "Enter Level 4 through the public route and visible Continue controls.",
+      ],
       actions: [
         "Hit the authored boarding target with the normal player laser, select the rendered Board control, and press Escape.",
       ],
@@ -282,6 +284,23 @@ const gateDefinitions = {
       observed:
         "Ordinary Playwright player-account journeys captured independent session restoration/logout and duplicate-username rejection outcomes.",
     }),
+  },
+  "assurance-catalogue": {
+    directory: "catalogue",
+    verification: "assurance-catalogue-results.json",
+    route: "CI exact-SHA assurance catalogue",
+    setup: [
+      "Run the declared component, sprite, game, coverage, backend, traceability, and evidence-integrity test gates.",
+    ],
+    actions: [
+      "Bind every one of the 50 supplied assurance requirements to its positive and negative test identifiers and captured exact-SHA command evidence.",
+    ],
+    assertions: [
+      "All 50 requirement rows pass only when every required test layer and ordinary browser evidence are present.",
+    ],
+    observed:
+      "The exact-SHA catalogue result records all fifty requirements with their mapped positive and negative assertions and immutable command/browser evidence.",
+    normal: false,
   },
   "closure-audit": {
     directory: "closure_audit",

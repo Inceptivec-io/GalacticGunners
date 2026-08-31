@@ -67,6 +67,10 @@
       "classification": "UNIT"
     },
     {
+      "file": "tests/unit/h015-assurance-catalogue.test.mjs",
+      "classification": "UNIT"
+    },
+    {
       "file": "tests/unit/h015-evidence-identity.test.mjs",
       "classification": "UNIT"
     },
