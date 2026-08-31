@@ -1,0 +1,169 @@
+{
+  "schema_version": "1.0",
+  "authority": "H015 canonical spritesheet intake inventory",
+  "assets": [
+    {
+      "asset_key": "player.ship",
+      "source_path": "assets/sprites/ships/gg_player_ship_v002_sheet.png",
+      "source_size": "2172x724",
+      "source_sha256": "A3E2EDBDEE85B312AD1766EE00C5A5438F60ABF9DFCD006B2BD8474012DDFF38"
+    },
+    {
+      "asset_key": "enemy.scout",
+      "source_path": "assets/sprites/ships/gg_enemy_scout_v002_sheet.png",
+      "source_size": "1983x793",
+      "source_sha256": "FBB60A9EB52346CB57CDF22FA1B6088DD24B08F9132540B05DFD0F1612405A7F"
+    },
+    {
+      "asset_key": "enemy.cruiser",
+      "source_path": "assets/sprites/ships/gg_enemy_cruiser_v002_sheet.png",
+      "source_size": "1672x941",
+      "source_sha256": "05DA611A926239711E2310EDCDC1D3C4AF06497D5B96E70761D5102B9D402AE3"
+    },
+    {
+      "asset_key": "enemy.destroyer",
+      "source_path": "assets/sprites/ships/gg_enemy_destroyer_v002_sheet.png",
+      "source_size": "2172x724",
+      "source_sha256": "7E0BA8F3763EE030E6BB23B6D7999E28E8F23A86A73564A1580FBD74D538D88C"
+    },
+    {
+      "asset_key": "enemy.mothership",
+      "source_path": "assets/sprites/ships/gg_boss_mothership_normal_v002_sheet.png",
+      "source_size": "1425x724",
+      "source_sha256": "5B49D62BE022A2633388BF0F8465CCEDA9A215D678AFBFC5A26E82931DF2974A"
+    },
+    {
+      "asset_key": "enemy.mothership.hit",
+      "source_path": "assets/sprites/ships/gg_boss_mothership_HIT_v002_sheet.png",
+      "source_size": "724x724",
+      "source_sha256": "E829B094078363F051F41929F48E92C3288B98E2CD43425E8A0309B52B989088"
+    },
+    {
+      "asset_key": "fx.asteroid",
+      "source_path": "assets/sprites/objects/gg_asteroid_v002_sheet.png",
+      "source_size": "2172x724",
+      "source_sha256": "0421BFD58EA30608ADF8E0E684B22419F63F6C57DFCC06B59594BE6947625D01"
+    },
+    {
+      "asset_key": "fx.comet",
+      "source_path": "assets/sprites/objects/gg_comet_v002_horizontal_vertical_facing.png",
+      "source_size": "2688x448",
+      "source_sha256": "B9EB2BD211F9A922707CCEEA4E1EB4EAA5B1205249E38D6BBECB76DFBA33978F"
+    },
+    {
+      "asset_key": "fx.explosionSmall",
+      "source_path": "assets/sprites/objects/gg_explosion_small_v002_horizontal.png",
+      "source_size": "3952x494",
+      "source_sha256": "895ECEAFF03C8390A3F17FA9D829B7B86A6D0AE0B4D73BBA3CD2D2A267D569CC"
+    },
+    {
+      "asset_key": "projectile.nuke",
+      "source_path": "assets/sprites/objects/gg_nuke_projectile_v002_horizontal_upright.png",
+      "source_size": "2880x800",
+      "source_sha256": "3B826087AD38EB6963046260EC384B9507C80E450DFAA3B302B923875B8B21AA"
+    },
+    {
+      "asset_key": "fx.nukeBurst",
+      "source_path": "assets/sprites/objects/gg_nuke_burst_v002_horizontal.png",
+      "source_size": "5160x516",
+      "source_sha256": "F9E47B6D3875778217620FE0FDDACAA515405D377900BA5F7F2D1271F0A96C53"
+    },
+    {
+      "asset_key": "projectile.playerLaser",
+      "source_path": "assets/sprites/objects/gg_player_laser_v002.png",
+      "source_size": "1912x823",
+      "source_sha256": "D89ED695599F72F4980538E6AB89AEE2BFA85A6307A392C9FC08E2BDA38D1E13"
+    },
+    {
+      "asset_key": "projectile.enemyLaser",
+      "source_path": "assets/sprites/objects/gg_enemy_laser_v002.png",
+      "source_size": "1536x1024",
+      "source_sha256": "C25388AA4C1BAA3123AFCAB5B820718150806749E4AE5F6D8B99331C793578AC"
+    },
+    {
+      "asset_key": "shield.tile",
+      "source_path": "assets/sprites/objects/gg_shield_tile_v002.png",
+      "source_size": "1254x1254",
+      "source_sha256": "ECE44E993871F2A474215BDAD8DEC6C5097861F487AF66D685FA1DA2A44402B3"
+    },
+    {
+      "asset_key": "boarding.player.idle",
+      "source_path": "assets/boarding/characters/player_001_v001.png",
+      "source_size": "1881x836",
+      "source_sha256": "136304BD25E0D04F8BB843BB51B6BE0C5BF10D761BFAB41D6BD53F782E70D115"
+    },
+    {
+      "asset_key": "boarding.player.walk",
+      "source_path": "assets/boarding/characters/player_002_v001.png",
+      "source_size": "1983x793",
+      "source_sha256": "39AFB450B74F0D07837AC18547DB1D161E59B173AE14DDA86C0BE5E614466C8E"
+    },
+    {
+      "asset_key": "boarding.player.run",
+      "source_path": "assets/boarding/characters/player_003_v001.png",
+      "source_size": "1881x836",
+      "source_sha256": "35AEAA1E2EF301B0816A561D9BBA09A7171793BFBC6D0EE3731025974A4702BD"
+    },
+    {
+      "asset_key": "boarding.player.jump",
+      "source_path": "assets/boarding/characters/player_004_v001.png",
+      "source_size": "2172x724",
+      "source_sha256": "F02B7C3BD067AE545289D0B6EC0FCDA39026BA48768331E161897176E40FF31F"
+    },
+    {
+      "asset_key": "boarding.player.fire",
+      "source_path": "assets/boarding/characters/player_005_v001.png",
+      "source_size": "2172x724",
+      "source_sha256": "1D3F4027A5C2E6FD926CFE403F618AE54E5251C4B9741CF41ACA8C443D57D3DB"
+    },
+    {
+      "asset_key": "boarding.player.hit_death",
+      "source_path": "assets/boarding/characters/player_006_v001.png",
+      "source_size": "2172x724",
+      "source_sha256": "48568E668055D5581EA13A455D2010FC30780EE29FF751048BDAABB37D391E6B"
+    },
+    {
+      "asset_key": "boarding.player.crouch_aim",
+      "source_path": "assets/boarding/characters/player_007_v001.png",
+      "source_size": "2103x748",
+      "source_sha256": "56A8124D51E62CA2F6CFE9C2BCB4D2605201F6E07500124FC19FC0353D540228"
+    },
+    {
+      "asset_key": "boarding.alien.idle",
+      "source_path": "assets/boarding/characters/alien_001_v001.png",
+      "source_size": "1831x859",
+      "source_sha256": "6D34DEC77EFACA897FD129CE3D7F5D36119E558CD06928FC5FA23235CC1EB740"
+    },
+    {
+      "asset_key": "boarding.alien.walk",
+      "source_path": "assets/boarding/characters/alien_002_v001.png",
+      "source_size": "2071x725",
+      "source_sha256": "E8E48EC29A51167D768BD4D4ACD2A945D4CD04E3AFDA708BAB4BFB0324EEB479"
+    },
+    {
+      "asset_key": "boarding.alien.run_attack",
+      "source_path": "assets/boarding/characters/alien_003_v001.png",
+      "source_size": "2032x731",
+      "source_sha256": "EFEE9CF76A7495D429F5BD4E79442333566C81C40544A75CFEA75B1D97ED4BA8"
+    },
+    {
+      "asset_key": "boarding.alien.jump_fall",
+      "source_path": "assets/boarding/characters/alien_004_v001.png",
+      "source_size": "2007x762",
+      "source_sha256": "FFE6A63C9F98A42AED89677B298341B9532F0E0937EA4F60F2B22234464EC32B"
+    },
+    {
+      "asset_key": "boarding.alien.fire",
+      "source_path": "assets/boarding/characters/alien_005_v001.png",
+      "source_size": "2172x704",
+      "source_sha256": "18840813F9321F82E5595AE9BED2943D9EF0D68CA0FCFC74EF813863405B746B"
+    },
+    {
+      "asset_key": "boarding.alien.hit_death",
+      "source_path": "assets/boarding/characters/alien_006_v001.png",
+      "source_size": "2171x691",
+      "source_sha256": "7A4E4CF7FC57D745A4BE28EA821ABAA640BF2F9EDE3AFC6C0EB8D372D9B97F66"
+    }
+  ]
+}
+

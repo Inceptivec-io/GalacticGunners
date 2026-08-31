@@ -96,9 +96,27 @@ test('canonical compiler rejects a supplied definition with source dimension dri
     );
   } finally {
     rmSync(temporaryAuthority, { recursive: true, force: true });
-    execFileSync(process.execPath, ['scripts/compile-canonical-sprites.mjs'], {
-      cwd: root,
-      stdio: 'pipe',
-    });
+  }
+});
+
+test('canonical compiler rejects a changed admitted source hash before extraction', () => {
+  const source = path.join(root, 'assets/sprites/ships/gg_player_ship_v002_sheet.png');
+  const original = readFileSync(source);
+  const altered = Buffer.from(original);
+  altered[altered.length - 1] ^= 0x01;
+  try {
+    writeFileSync(source, altered);
+    assert.throws(
+      () => execFileSync(process.execPath, ['scripts/compile-canonical-sprites.mjs'], {
+        cwd: root,
+        stdio: 'pipe',
+      }),
+      (error) => {
+        assert.match(String(error.stderr), /Source hash drift: player\.ship/);
+        return true;
+      },
+    );
+  } finally {
+    writeFileSync(source, original);
   }
 });

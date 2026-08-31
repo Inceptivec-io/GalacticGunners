@@ -9,6 +9,17 @@ const authority = process.env.GG_SPRITE_AUTHORITY_DIR
   ? path.resolve(process.env.GG_SPRITE_AUTHORITY_DIR)
   : path.join(root, 'docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/12_CANONICAL_SPRITESHEET_DEFINITION_AND_CORRECTION_PACK_v1.0/unpacked');
 const output = path.join(root, 'apps/web/public/gg-runtime-assets/generated');
+const sourceInventoryPath = path.join(root, 'docs/assurance/H015_CANONICAL_SPRITE_SOURCE_INVENTORY.json');
+// The intake-bound source inventory is separate from generated output. A
+// failed compile may clear the latter, but it must never erase source authority.
+const priorSourceInventory = existsSync(sourceInventoryPath)
+  ? new Map(
+      JSON.parse(readFileSync(sourceInventoryPath, 'utf8')).assets.map((asset) => [
+        asset.asset_key,
+        { sourcePath: asset.source_path, sourceSha256: asset.source_sha256 },
+      ]),
+    )
+  : new Map();
 const parseLine = (line) => {
   const values = []; let value = ''; let quoted = false;
   for (let index = 0; index < line.length; index += 1) {
@@ -123,13 +134,25 @@ async function transparent(image, method) {
   return sharp(data, { raw: info }).png().toBuffer();
 }
 
-async function compile(row) {
+async function verifySourceDefinition(row) {
   const source = path.join(root, row.source_path);
   if (!existsSync(source)) throw new Error(`Missing source: ${row.source_path}`);
-  const sourceBytes = readFileSync(source); const sourceHash = hash(sourceBytes);
+  const sourceHash = hash(readFileSync(source));
+  const priorSource = priorSourceInventory.get(row.asset_key);
+  if (!priorSource) throw new Error(`Missing admitted source inventory: ${row.asset_key}`);
+  if (priorSource.sourcePath !== row.source_path || priorSource.sourceSha256 !== sourceHash) {
+    throw new Error(`Source hash drift: ${row.asset_key}`);
+  }
   const sourceMeta = await sharp(source).metadata();
   const [expectedWidth, expectedHeight] = dimensions(row.source_size);
-  if (sourceMeta.width !== expectedWidth || sourceMeta.height !== expectedHeight) throw new Error(`Source dimension drift: ${row.asset_key}`);
+  if (sourceMeta.width !== expectedWidth || sourceMeta.height !== expectedHeight) {
+    throw new Error(`Source dimension drift: ${row.asset_key}`);
+  }
+  return { source, sourceHash };
+}
+
+async function compile(row) {
+  const { source, sourceHash } = await verifySourceDefinition(row);
   const declared = frames(row);
   if (declared.length !== Number(row.source_frames)) throw new Error(`Frame count drift: ${row.asset_key}`);
   const [sheetWidth, sheetHeight] = dimensions(row.derivative_size);
@@ -166,6 +189,8 @@ async function compile(row) {
   return { ...row, source_sha256: sourceHash, derivative_sha256: hash(derivative), thumbnail_path: `/gg-runtime-assets/generated/thumbnails/${path.basename(thumbnail)}`, thumbnail_sha256: hash(readFileSync(thumbnail)), frame_count: declared.length, background_method: method, max_texture_axis: 4096, variants };
 }
 
+// Refuse invalid source authority before mutating the last known-good output.
+await Promise.all([...shooter, ...boarding].map(verifySourceDefinition));
 rmSync(output, { recursive: true, force: true });
 const artworkCatalogue = [];
 for (const artwork of portableArtwork) {
