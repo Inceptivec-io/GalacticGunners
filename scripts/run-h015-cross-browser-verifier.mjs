@@ -2,7 +2,6 @@ import { createHash } from "node:crypto";
 import { execFileSync, spawnSync } from "node:child_process";
 import {
   existsSync,
-  cpSync,
   mkdirSync,
   readFileSync,
   rmSync,
@@ -189,16 +188,6 @@ function writeManifest(result) {
   );
 }
 
-function preservePlaywrightOutput(directory) {
-  const output = path.join(root, "test-results");
-  if (existsSync(output)) {
-    cpSync(output, path.join(directory, "test-results"), {
-      recursive: true,
-      force: true,
-    });
-  }
-}
-
 function acquireLock() {
   if (existsSync(lockPath))
     throw new Error(
@@ -277,7 +266,6 @@ if (import.meta.url === `file:///${process.argv[1].replaceAll("\\", "/")}`) {
     await runSerialProjects(projects, async (project) => {
       const before = generation();
       const command = [
-        "playwright",
         "test",
         "tests/e2e/generated-sprites.spec.ts",
         "tests/e2e/level4-hazards.spec.ts",
@@ -285,9 +273,15 @@ if (import.meta.url === `file:///${process.argv[1].replaceAll("\\", "/")}`) {
         "--workers=1",
         "--trace=on",
       ];
+      const directory = path.join(evidenceRoot, project);
+      const playwrightOutput = path.join(directory, "test-results");
+      mkdirSync(directory, { recursive: true });
       const browser = spawnSync(
-        process.platform === "win32" ? "npx.cmd" : "npx",
-        command,
+        process.execPath,
+        [
+          path.join(root, "node_modules", "@playwright", "test", "cli.js"),
+          ...command,
+        ],
         {
           cwd: root,
           encoding: "utf8",
@@ -297,20 +291,19 @@ if (import.meta.url === `file:///${process.argv[1].replaceAll("\\", "/")}`) {
             GG_EVIDENCE_DIR: evidenceRoot,
             GG_RUNTIME_EVIDENCE: "1",
             GG_TESTED_SHA: sha,
+            GG_PLAYWRIGHT_OUTPUT_DIR: playwrightOutput,
           },
         },
       );
-      const directory = path.join(evidenceRoot, project);
-      mkdirSync(directory, { recursive: true });
       writeFileSync(path.join(directory, "stdout.log"), browser.stdout ?? "");
       writeFileSync(path.join(directory, "stderr.log"), browser.stderr ?? "");
-      preservePlaywrightOutput(directory);
       const after = generation();
       const execution_valid = sameGeneration(before, after);
       const browserRun = {
         project,
-        command: `npx ${command.join(" ")}`,
+        command: `${process.execPath} ${path.join("node_modules", "@playwright", "test", "cli.js")} ${command.join(" ")}`,
         exit_code: browser.status,
+        spawn_error: browser.error?.message ?? null,
         before,
         after,
         execution_valid,
@@ -323,6 +316,10 @@ if (import.meta.url === `file:///${process.argv[1].replaceAll("\\", "/")}`) {
       if (!execution_valid)
         throw new Error(
           `EXECUTION_INVALID: ${project} service generation changed.`,
+        );
+      if (browser.error)
+        throw new Error(
+          `EXECUTION_INVALID: ${project} browser process could not start: ${browser.error.message}`,
         );
       if (browser.status !== 0)
         throw new Error(`BROWSER_FAIL: ${project} exited ${browser.status}.`);

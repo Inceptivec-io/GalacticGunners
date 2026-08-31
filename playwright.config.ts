@@ -1,7 +1,9 @@
 import { defineConfig, devices } from "@playwright/test";
+import path from "node:path";
 
 const baseURL = process.env.GG_RUNTIME_URL ?? "http://localhost:3002";
 const captureRuntimeEvidence = process.env.GG_RUNTIME_EVIDENCE === "1";
+const outputDir = process.env.GG_PLAYWRIGHT_OUTPUT_DIR ?? "test-results";
 
 export default defineConfig({
   testDir: "./tests",
@@ -10,8 +12,9 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   reporter: [
     ["list"],
-    ["junit", { outputFile: "test-results/playwright-junit.xml" }],
+    ["junit", { outputFile: path.join(outputDir, "playwright-junit.xml") }],
   ],
+  outputDir,
   use: {
     baseURL,
     trace: captureRuntimeEvidence ? "on" : "on-first-retry",
