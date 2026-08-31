@@ -17,6 +17,7 @@ COPY apps/web ./apps/web
 COPY game ./game
 COPY assets ./assets
 COPY scripts ./scripts
+COPY docs/assurance/H015_CANONICAL_SPRITE_SOURCE_INVENTORY.json ./docs/assurance/H015_CANONICAL_SPRITE_SOURCE_INVENTORY.json
 COPY docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_014 ./docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_014
 COPY docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/12_CANONICAL_SPRITESHEET_DEFINITION_AND_CORRECTION_PACK_v1.0 ./docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/12_CANONICAL_SPRITESHEET_DEFINITION_AND_CORRECTION_PACK_v1.0
 RUN npm run assets:sync
