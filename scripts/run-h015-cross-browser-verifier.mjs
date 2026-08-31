@@ -291,7 +291,7 @@ if (import.meta.url === `file:///${process.argv[1].replaceAll("\\", "/")}`) {
         {
           cwd: root,
           encoding: "utf8",
-          shell: true,
+          shell: false,
           env: {
             ...process.env,
             GG_EVIDENCE_DIR: evidenceRoot,
