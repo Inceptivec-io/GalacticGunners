@@ -83,6 +83,10 @@
       "classification": "UNIT"
     },
     {
+      "file": "tests/unit/runtime-verifier-lifecycle.test.mjs",
+      "classification": "UNIT"
+    },
+    {
       "file": "game/tests/boarding-simulation.test.ts",
       "classification": "UNIT"
     },

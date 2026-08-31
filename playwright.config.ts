@@ -1,6 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
 const baseURL = process.env.GG_RUNTIME_URL ?? "http://localhost:3002";
+const captureRuntimeEvidence = process.env.GG_RUNTIME_EVIDENCE === "1";
 
 export default defineConfig({
   testDir: "./tests",
@@ -13,9 +14,9 @@ export default defineConfig({
   ],
   use: {
     baseURL,
-    trace: "on-first-retry",
-    video: "retain-on-failure",
-    screenshot: "only-on-failure",
+    trace: captureRuntimeEvidence ? "on" : "on-first-retry",
+    video: captureRuntimeEvidence ? "on" : "retain-on-failure",
+    screenshot: captureRuntimeEvidence ? "on" : "only-on-failure",
   },
   projects: [
     { name: "chromium-desktop", use: { ...devices["Desktop Chrome"] } },

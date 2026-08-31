@@ -9,16 +9,18 @@ async function startLevelFour(page: import("@playwright/test").Page) {
     { timeout: 25_000 },
   );
   const canvas = page.locator(".game-canvas-host canvas");
-  // Firefox does not route a synthetic key press into a canvas until normal
-  // pointer interaction has focused the real game surface.
-  await canvas.click({ position: { x: 8, y: 8 } });
-  await canvas.press("Space");
+  const box = await canvas.boundingBox();
+  if (!box) throw new Error("Gameplay canvas is unavailable.");
+  // Start through the visible Main Menu action. This is the same pointer path
+  // available to a player, rather than an empty-canvas click plus test-only
+  // keyboard focus assumption.
+  await canvas.click({
+    position: { x: box.width / 2, y: box.height * 0.63 },
+  });
   await expect(page.locator("[data-game-status]")).toHaveText(
     "Galactic Gunners gameplay started.",
   );
 
-  const box = await canvas.boundingBox();
-  if (!box) throw new Error("Gameplay canvas is unavailable.");
   const announcement = page.locator("[data-game-announcement]");
   for (let sequence = 1; sequence < 4; sequence += 1) {
     await expect(announcement).toHaveText(

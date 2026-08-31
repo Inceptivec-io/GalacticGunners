@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { execFileSync, spawnSync } from "node:child_process";
 import {
   existsSync,
+  cpSync,
   mkdirSync,
   readFileSync,
   rmSync,
@@ -13,10 +14,11 @@ import path from "node:path";
 const root = process.cwd();
 const sha =
   process.env.GG_TESTED_SHA ?? exec("git", ["rev-parse", "HEAD"]).trim();
+const evidenceRunId = new Date().toISOString().replace(/[:.]/g, "-");
 const envFile = path.join(root, ".founder-review.env");
 const evidenceRoot = path.resolve(
   process.env.GG_EVIDENCE_DIR ??
-    path.join(os.tmpdir(), `gg-h015-cross-browser-${sha}`),
+    path.join(os.tmpdir(), `gg-h015-cross-browser-${sha}-${evidenceRunId}`),
 );
 const lockPath = path.join(
   os.tmpdir(),
@@ -102,6 +104,14 @@ export function assertStableGeneration(before, after) {
     );
 }
 
+export async function runSerialProjects(projectNames, runProject) {
+  const results = [];
+  for (const project of projectNames) {
+    results.push(await runProject(project));
+  }
+  return results;
+}
+
 async function probe(url) {
   try {
     const response = await fetch(url);
@@ -179,6 +189,16 @@ function writeManifest(result) {
   );
 }
 
+function preservePlaywrightOutput(directory) {
+  const output = path.join(root, "test-results");
+  if (existsSync(output)) {
+    cpSync(output, path.join(directory, "test-results"), {
+      recursive: true,
+      force: true,
+    });
+  }
+}
+
 function acquireLock() {
   if (existsSync(lockPath))
     throw new Error(
@@ -253,8 +273,8 @@ if (import.meta.url === `file:///${process.argv[1].replaceAll("\\", "/")}`) {
       path.join(evidenceRoot, "readiness.json"),
       `${JSON.stringify(readiness, null, 2)}\n`,
     );
-    const runs = [];
-    for (const project of projects) {
+    const recordedRuns = [];
+    await runSerialProjects(projects, async (project) => {
       const before = generation();
       const command = [
         "playwright",
@@ -265,36 +285,49 @@ if (import.meta.url === `file:///${process.argv[1].replaceAll("\\", "/")}`) {
         "--workers=1",
         "--trace=on",
       ];
-      const browser = spawnSync("npx", command, {
-        cwd: root,
-        encoding: "utf8",
-        shell: true,
-      });
+      const browser = spawnSync(
+        process.platform === "win32" ? "npx.cmd" : "npx",
+        command,
+        {
+          cwd: root,
+          encoding: "utf8",
+          shell: true,
+          env: {
+            ...process.env,
+            GG_EVIDENCE_DIR: evidenceRoot,
+            GG_RUNTIME_EVIDENCE: "1",
+            GG_TESTED_SHA: sha,
+          },
+        },
+      );
       const directory = path.join(evidenceRoot, project);
       mkdirSync(directory, { recursive: true });
       writeFileSync(path.join(directory, "stdout.log"), browser.stdout ?? "");
       writeFileSync(path.join(directory, "stderr.log"), browser.stderr ?? "");
+      preservePlaywrightOutput(directory);
       const after = generation();
       const execution_valid = sameGeneration(before, after);
-      runs.push({
+      const browserRun = {
         project,
         command: `npx ${command.join(" ")}`,
         exit_code: browser.status,
         before,
         after,
         execution_valid,
-      });
+      };
+      recordedRuns.push(browserRun);
+      writeFileSync(
+        path.join(evidenceRoot, "browser-runs.json"),
+        `${JSON.stringify(recordedRuns, null, 2)}\n`,
+      );
       if (!execution_valid)
         throw new Error(
           `EXECUTION_INVALID: ${project} service generation changed.`,
         );
       if (browser.status !== 0)
         throw new Error(`BROWSER_FAIL: ${project} exited ${browser.status}.`);
-    }
-    writeFileSync(
-      path.join(evidenceRoot, "browser-runs.json"),
-      `${JSON.stringify(runs, null, 2)}\n`,
-    );
+      return browserRun;
+    });
     result = "PASS";
   } catch (error) {
     writeFileSync(
