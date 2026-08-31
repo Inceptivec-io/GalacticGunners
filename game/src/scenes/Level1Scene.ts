@@ -1,4 +1,5 @@
 import * as Phaser from "phaser";
+import { deterministicHazardRange, hazardVariantFrame } from "../systems/HazardPolicy";
 
 import { Player, type MovementVector } from "../entities/Player";
 import { hostileDisplaySize, Scout } from "../entities/Scout";
@@ -651,22 +652,7 @@ export class Level1Scene extends CombatLevelScene {
     type: "asteroid" | "comet",
     ordinal: number,
   ): number {
-    const prefix = type === "asteroid" ? "ASTEROID_VARIANT_" : "COMET_VARIANT_";
-    const ids =
-      emitter?.variant_ids?.filter((id) => id.startsWith(prefix)) ?? [];
-    if (!ids.length) return ordinal % 6;
-    const index =
-      emitter?.variant_mode === "SEEDED_RANDOM"
-        ? Math.floor(
-            this.deterministicRange(
-              0,
-              ids.length,
-              `${emitter.id}:variant:${ordinal}`,
-            ),
-          ) % ids.length
-        : ordinal % ids.length;
-    const match = /_(\d{2})$/.exec(ids[index]);
-    return match ? Number(match[1]) - 1 : 0;
+    return hazardVariantFrame(emitter, type, ordinal, this.#definition.seed);
   }
 
   private deterministicRange(
@@ -674,10 +660,7 @@ export class Level1Scene extends CombatLevelScene {
     maximum: number,
     key: string,
   ): number {
-    let value = this.#definition.seed >>> 0;
-    for (const character of key)
-      value = Math.imul(value ^ character.charCodeAt(0), 16777619) >>> 0;
-    return minimum + (value / 0xffffffff) * (maximum - minimum);
+    return deterministicHazardRange(this.#definition.seed, minimum, maximum, key);
   }
 
   private updateHazardEmitters(time: number): void {

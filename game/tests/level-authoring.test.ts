@@ -6,6 +6,7 @@ import type { LevelAuthoringDocument } from '../src/levels/LevelAuthoringDocumen
 import { levelChecksum } from '../src/levels/LevelChecksum';
 import { validateLevelDefinition } from '../src/levels/LevelValidator';
 import { CAMPAIGN_DEFINITIONS } from '../src/levels/campaignDefinitions';
+import { hazardVariantFrame } from '../src/systems/HazardPolicy';
 
 const document: LevelAuthoringDocument = {
   schema_version: '1.1', id: 'level-02', slug: 'level-02', name: 'Mixed Formation', version: 2, status: 'DRAFT', sequence: 2, seed: 7,
@@ -53,6 +54,13 @@ test('runtime validation rejects a malformed pickup table before it reaches Phas
     () => validateLevelDefinition(compiled),
     /Invalid pickup table/,
   );
+});
+
+test('hazard variants remain deterministic and ignore the wrong asset family', () => {
+  const emitter = { id: 'level-04-comets', variant_mode: 'ORDERED' as const, variant_ids: ['COMET_VARIANT_02', 'COMET_VARIANT_05'], entry_edges: ['LEFT' as const], despawn_margin: 64 };
+  assert.equal(hazardVariantFrame(emitter, 'comet', 0, 12004), 1);
+  assert.equal(hazardVariantFrame(emitter, 'comet', 1, 12004), 4);
+  assert.equal(hazardVariantFrame(emitter, 'asteroid', 0, 12004), 0);
 });
 
 test('sparse authored grid compiles each real member without inventing phantom ships', () => {
