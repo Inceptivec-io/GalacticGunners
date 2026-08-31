@@ -85,7 +85,16 @@ test("H015-BOARD-001__e2e_ordinary_user__laser_hit_opens_visible_boarding_offer_
     { timeout: 12_000 },
   );
 
+  // Escape is intentionally pause-only. The visible abort action requires a
+  // second deliberate confirmation before a live Boarding run may return.
   await page.keyboard.press("Escape");
+  await expect(page.locator("[data-game-status]")).toHaveText(
+    "Galactic Gunners paused. Resume, restart, or return to the main menu.",
+  );
+  const pauseActionY = box.height / 2 + 156;
+  await canvas.click({ position: { x: box.width / 2, y: pauseActionY } });
+  await page.waitForTimeout(150);
+  await canvas.click({ position: { x: box.width / 2, y: pauseActionY } });
   await expect(page.locator("[data-game-announcement]")).toHaveText(
     "Boarding aborted. Shooter assault resumed.",
     { timeout: 12_000 },
@@ -99,10 +108,10 @@ test("H015-BOARD-001__e2e_ordinary_user__laser_hit_opens_visible_boarding_offer_
     actions: [
       "Started the public Play route and selected visible Continue controls into Level 4.",
       "Fired the normal player laser into the reachable boarding target.",
-      "Selected the rendered Board control and pressed Escape from live Boarding.",
+      "Selected the rendered Board control, paused with Escape, and confirmed the visible Boarding abort action.",
     ],
     assertions: [
-      "The offer followed a player laser hit, Boarding became active, and Escape returned to the Shooter state.",
+      "The offer followed a player laser hit, Boarding became active, and only the confirmed abort returned to the Shooter state.",
     ],
   });
 });
