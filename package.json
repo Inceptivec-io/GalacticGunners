@@ -31,6 +31,7 @@
     "runtime:h015:boarding-success": "node scripts/verify-h015-boarding-success.mjs",
     "runtime:h015:designer-roundtrip": "node scripts/verify-h015-designer-roundtrip.mjs",
     "runtime:h015:review-matrix": "node scripts/capture-h015-review-matrix.mjs",
+    "runtime:h015:cross-browser": "node scripts/run-h015-cross-browser-verifier.mjs",
     "h015:closure-audit": "node scripts/verify-h015-evidence-integrity.mjs",
     "h015:closure-attest": "node scripts/generate-h015-closure-attestation.mjs",
     "h015:build-evidence-manifest": "node scripts/build-h015-evidence-manifest.mjs",
