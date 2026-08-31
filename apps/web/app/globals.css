@@ -429,7 +429,9 @@ a {
 .designer-chooser section {
   background: #141c28;
   border: 1px solid #7ee8ff;
+  max-height: calc(100dvh - 48px);
   max-width: 520px;
+  overflow-y: auto;
   padding: 20px;
   width: min(100%, 520px);
 }
