@@ -114,6 +114,14 @@ export class MainMenuScene extends Phaser.Scene {
 
     start.on("pointerover", () => this.playOptionalAudio("uiSelect"));
     start.on("pointerdown", () => this.go());
+    // Keyboard confirmation is an event, rather than only a sampled key state.
+    // A normal short press may begin and end between Phaser update ticks.
+    this.input.keyboard?.on("keydown-ENTER", this.go, this);
+    this.input.keyboard?.on("keydown-SPACE", this.go, this);
+    this.events.once("shutdown", () => {
+      this.input.keyboard?.off("keydown-ENTER", this.go, this);
+      this.input.keyboard?.off("keydown-SPACE", this.go, this);
+    });
     if (this.#resumeSequence) {
       const fresh = this.add
         .text(this.scale.width / 2, this.scale.height * 0.73, "NEW CAMPAIGN", {
