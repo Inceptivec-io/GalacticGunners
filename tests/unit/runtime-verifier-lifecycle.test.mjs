@@ -9,9 +9,14 @@ const {
 } = await import("../../scripts/run-h015-cross-browser-verifier.mjs");
 
 const stable = {
-  web: { id: "web-a", restart_count: 0 },
-  backend: { id: "backend-a", restart_count: 1 },
-  db: { id: "db-a", restart_count: 0 },
+  web: { id: "web-a", restart_count: 0, status: "running", health: "healthy" },
+  backend: {
+    id: "backend-a",
+    restart_count: 1,
+    status: "running",
+    health: "healthy",
+  },
+  db: { id: "db-a", restart_count: 0, status: "running", health: "healthy" },
 };
 
 test("runtime lifecycle accepts an unchanged service generation", () => {
@@ -46,6 +51,7 @@ test("runtime lifecycle rejects unavailable services before browser launch", asy
       wait: async () => {},
       snapshot: () => structuredClone(stable),
       request: async () => false,
+      maxAttempts: 1,
     }),
     /Stable readiness failed/,
   );
@@ -59,6 +65,34 @@ test("runtime lifecycle accepts three healthy probes and an unchanged stability 
   });
   assert.equal(result.transcript.length, 3);
   assert.deepEqual(result.generation, stable);
+});
+
+test("runtime lifecycle requires three consecutive healthy probes after startup", async () => {
+  let probes = 0;
+  const result = await waitStableReadiness({
+    wait: async () => {},
+    snapshot: () => structuredClone(stable),
+    request: async () => {
+      probes += 1;
+      return probes > 1;
+    },
+    maxAttempts: 4,
+  });
+  assert.equal(result.transcript.length, 4);
+});
+
+test("runtime lifecycle rejects an unhealthy database dependency", async () => {
+  const unhealthy = structuredClone(stable);
+  unhealthy.db.health = "starting";
+  await assert.rejects(
+    waitStableReadiness({
+      wait: async () => {},
+      snapshot: () => structuredClone(unhealthy),
+      request: async () => true,
+      maxAttempts: 1,
+    }),
+    /Stable readiness failed/,
+  );
 });
 
 test("runtime lifecycle runs browser projects serially", async () => {
