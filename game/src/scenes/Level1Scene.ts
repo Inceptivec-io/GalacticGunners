@@ -349,6 +349,16 @@ export class Level1Scene extends CombatLevelScene {
       Phaser.Input.Keyboard.KeyCodes.ENTER,
     );
     this.#pauseKey?.on("down", this.handlePauseKeyDown, this);
+    this.input.keyboard?.on(
+      "keydown-ENTER",
+      this.handleTerminalConfirm,
+      this,
+    );
+    this.input.keyboard?.on(
+      "keydown-SPACE",
+      this.handleTerminalConfirm,
+      this,
+    );
     if (typeof window !== "undefined") {
       this.#windowPauseHandler = (event) => {
         if (event.code !== "KeyP" || event.repeat) return;
@@ -369,6 +379,16 @@ export class Level1Scene extends CombatLevelScene {
     this.events.once("shutdown", () => {
       this.scale.off("resize", this.handleResize, this);
       this.#pauseKey?.off("down", this.handlePauseKeyDown, this);
+      this.input.keyboard?.off(
+        "keydown-ENTER",
+        this.handleTerminalConfirm,
+        this,
+      );
+      this.input.keyboard?.off(
+        "keydown-SPACE",
+        this.handleTerminalConfirm,
+        this,
+      );
       this.#pauseKey = undefined;
       this.#boardingConfirmKey = undefined;
       if (this.#windowPauseHandler) {
@@ -2083,6 +2103,12 @@ export class Level1Scene extends CombatLevelScene {
     }
     this.#inputSystem.syncOneShotState();
     this.pauseLevel();
+  }
+
+  private handleTerminalConfirm(): void {
+    if (this.#terminalState) {
+      this.runTerminalAction(this.primaryTerminalAction());
+    }
   }
 
   private handleResume(): void {

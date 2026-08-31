@@ -15,15 +15,14 @@ async function startLevelFour(page: import("@playwright/test").Page) {
     "Galactic Gunners gameplay started.",
   );
 
-  const box = await canvas.boundingBox();
-  if (!box) throw new Error("Gameplay canvas is unavailable.");
   const announcement = page.locator("[data-game-announcement]");
   for (let sequence = 1; sequence < 4; sequence += 1) {
     await expect(announcement).toHaveText(
       new RegExp(`Level ${sequence} complete\\. Continue available`),
       { timeout: 12_000 },
     );
-    await canvas.click({ position: { x: box.width / 2, y: box.height * 0.83 } });
+    await canvas.focus();
+    await page.keyboard.press("Enter");
     await expect(announcement).toHaveText(
       new RegExp(`Level ${sequence + 1}: Browser Assurance ${sequence + 1} started`),
       { timeout: 12_000 },
