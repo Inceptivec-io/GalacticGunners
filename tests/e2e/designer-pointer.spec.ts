@@ -27,8 +27,29 @@ async function loginAsAdministrator(page: import("@playwright/test").Page) {
   await page.getByRole("button", { name: "Log in" }).click();
   await expect(page.locator('[data-designer-route="campaign"]')).toBeVisible();
   await expect(
+    page.getByText(
+      "Authenticated campaign authority, revision lineage and approved assets loaded.",
+      { exact: true },
+    ),
+  ).toBeVisible({ timeout: 15_000 });
+  await expect(
     page.locator('button[aria-label^="SCOUT at"]').first(),
-  ).toBeVisible();
+  ).toBeVisible({ timeout: 15_000 });
+  const canvasImages = page.locator(".designer-canvas img");
+  await expect
+    .poll(
+      () =>
+        canvasImages.evaluateAll(
+          (images) =>
+            images.length > 0 &&
+            images.every((image) => image.complete && image.naturalWidth > 0),
+        ),
+      {
+        message:
+          "Visible Designer artwork did not decode before ordinary interaction began.",
+      },
+    )
+    .toBe(true);
 }
 
 async function reachableScout(page: import("@playwright/test").Page) {
@@ -177,20 +198,25 @@ test("H015-DES-THUMB-001__e2e_ordinary_user__palette_uses_loaded_canonical_singl
   await page.getByRole("button", { name: "Alien Ships", exact: true }).click();
   const previewImages = page.locator(".designer-chooser .tool-button img");
   await expect(previewImages).toHaveCount(3);
+  await expect
+    .poll(
+      () =>
+        previewImages.evaluateAll((images) =>
+          images.every((image) => image.complete && image.naturalWidth > 0),
+        ),
+      {
+        message:
+          "Canonical chooser thumbnails did not decode before inspection.",
+      },
+    )
+    .toBe(true);
   const previews = await previewImages.evaluateAll((images) =>
-    images.map((image) => ({
-      src: image.getAttribute("src"),
-      complete: image.complete,
-      naturalWidth: image.naturalWidth,
-    })),
+    images.map((image) => ({ src: image.getAttribute("src") })),
   );
   expect(
     previews.every((preview) =>
       preview.src?.includes("/gg-runtime-assets/generated/thumbnails/"),
     ),
-  ).toBe(true);
-  expect(
-    previews.every((preview) => preview.complete && preview.naturalWidth > 0),
   ).toBe(true);
   expect(
     previews.some((preview) => /sprite|sheet/i.test(preview.src ?? "")),

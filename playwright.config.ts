@@ -9,7 +9,8 @@ export default defineConfig({
   testDir: "./tests",
   fullyParallel: false,
   forbidOnly: Boolean(process.env.CI),
-  retries: process.env.CI ? 1 : 0,
+  // Runtime evidence is fail-closed: a retry would conceal a first-attempt race.
+  retries: 0,
   reporter: [
     ["list"],
     ["junit", { outputFile: path.join(outputDir, "playwright-junit.xml") }],

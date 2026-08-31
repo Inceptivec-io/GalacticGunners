@@ -1481,7 +1481,7 @@ export function CampaignDesigner({
                     onPointerDown={(event) => beginDrag(event, `player:${spawn.id}`)}
                     onKeyDown={keyMove}
                   >
-                    {asset ? <img src={asset.thumbnail_path} alt="" /> : "PLAYER"}
+                    {asset ? <img src={asset.thumbnail_path} alt="" loading="eager" decoding="sync" /> : "PLAYER"}
                   </button>
                 );
               })}
@@ -1565,7 +1565,7 @@ export function CampaignDesigner({
                     setSelectedIds([`emitter:${emitter.id}`]);
                   }}
                 >
-                  {asset ? <img src={asset.thumbnail_path} alt="" /> : emitter.hazard_type}
+                  {asset ? <img src={asset.thumbnail_path} alt="" loading="eager" decoding="sync" /> : emitter.hazard_type}
                 </button>
               );
             })}
@@ -1597,7 +1597,7 @@ export function CampaignDesigner({
                   onKeyDown={keyMove}
                 >
                   {asset ? (
-                    <img src={asset.thumbnail_path} alt="" />
+                    <img src={asset.thumbnail_path} alt="" loading="eager" decoding="sync" />
                   ) : (
                     entity.entity_type
                   )}
@@ -1949,7 +1949,7 @@ export function CampaignDesigner({
                       updateEmitter("variant_ids", selectedEmitter.variant_mode === "FIXED" ? next.slice(-1) : next);
                     }}
                   />
-                  <img src={asset.thumbnail_path} alt="" />
+                  <img src={asset.thumbnail_path} alt="" loading="eager" decoding="sync" />
                   <span>{variantId}</span>
                 </label>;
               })}
@@ -2129,7 +2129,7 @@ export function CampaignDesigner({
                   setCategory(null);
                 }}
               >
-                <img src={assets.find((asset) => asset.key === "player.ship")?.thumbnail_path} alt="" />
+                <img src={assets.find((asset) => asset.key === "player.ship")?.thumbnail_path} alt="" loading="eager" decoding="sync" />
                 <span>
                   Player spawn
                   <small>Required Slot 1 spawn. Select to position and inspect.</small>
@@ -2147,7 +2147,7 @@ export function CampaignDesigner({
                 }
                 onClick={() => addEntity(type)}
               >
-                <img src={asset?.thumbnail_path} alt="" />
+                <img src={asset?.thumbnail_path} alt="" loading="eager" decoding="sync" />
                 <span>
                   {type}
                   <small>
@@ -2166,7 +2166,7 @@ export function CampaignDesigner({
                     const variantId = asset.animation?.variant_id;
                     const type = variantId?.startsWith("ASTEROID_") ? "ASTEROID" : "COMET";
                     return <button key={asset.key} onClick={() => variantId && addEmitter(type, variantId)}>
-                      <img src={asset.thumbnail_path} alt="" />
+                      <img src={asset.thumbnail_path} alt="" loading="eager" decoding="sync" />
                       <span>{variantId}</span>
                     </button>;
                   })}
