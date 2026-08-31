@@ -54,21 +54,21 @@ rows:
       - id: H015-EVID-002 positive
         classification: CI
         polarity: POSITIVE
-        command: node --test tests/unit/h015-evidence-identity.test.mjs
+        command: npm run test:h015:evidence-integrity
         assertion: Manifest, runtime, CI and evidence record the same 40-character SHA
       - id: H015-EVID-002 negative
         classification: CI
         polarity: NEGATIVE
-        command: node --test tests/unit/h015-evidence-identity.test.mjs
+        command: npm run test:h015:evidence-integrity
         assertion: Missing, shortened, alias or different SHA fails closure
     evidence_gate: h015-closure-audit
     evidence_paths: []
     status: FAIL
     derived: true
     reason:
-      Unit characterization proves exact-SHA rejection behaviour, but no new
-      exact-SHA CI artifact has yet independently reconciled runtime, manifest and
-      attestation identity.
+      Unit characterization now independently verifies both manifest identity and
+      post-upload attestation/artifact identity. A new exact-SHA CI artifact is
+      still required before this derived row can pass.
   - requirement_id: H015-EVID-003
     area: Evidence
     requirement: Every catalogue row maps to implementation, tests and evidence

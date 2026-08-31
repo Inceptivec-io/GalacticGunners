@@ -71,6 +71,10 @@
       "classification": "UNIT"
     },
     {
+      "file": "tests/unit/h015-closure-attestation.test.mjs",
+      "classification": "UNIT"
+    },
+    {
       "file": "tests/unit/h015-qa-boundaries.test.mjs",
       "classification": "UNIT"
     },
