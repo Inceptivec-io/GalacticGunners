@@ -213,8 +213,9 @@ rows:
     status: FAIL
     derived: true
     reason:
-      The root-to-Play browser journey and a boot-service failure are green;
-      a direct deep-link exclusion proof still needs to be added before this row can pass.
+      The root-to-Play browser journey and the direct-entry negative journey are
+      executable ordinary-user proofs. This row remains FAIL until the exact-SHA
+      CI artifact captures both journeys under the shared entry evidence gate.
   - requirement_id: H015-ENTRY-002
     area: Entry
     requirement: Approved splash image is visible for two seconds
@@ -308,19 +309,21 @@ rows:
       - id: H015-ENTRY-005 positive
         classification: E2E_ORDINARY_USER
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-ENTRY-005 positive test"
+        command: npx playwright test tests/e2e/splash-menu.spec.ts --project=chromium-desktop --grep internal_navigation_does_not_replay_splash --workers=1
         assertion: Navigate away and back without another splash
       - id: H015-ENTRY-005 negative
         classification: E2E_ORDINARY_USER
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-ENTRY-005 negative or hostile test"
+        command: npx playwright test tests/e2e/splash-menu.spec.ts --project=chromium-desktop --grep internal_navigation_does_not_replay_splash --workers=1
         assertion: New independent game entry remains capable of showing splash
     evidence_gate: ordinary-entry
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: >
+      The single ordinary browser journey proves both lifecycle boundaries:
+      a fresh direct entry shows one splash, while Main Menu return in that same
+      launch does not replay it. Exact-SHA CI evidence remains required.
   - requirement_id: H015-GAME-001
     area: Gameplay
     requirement: Pause freezes the complete simulation
