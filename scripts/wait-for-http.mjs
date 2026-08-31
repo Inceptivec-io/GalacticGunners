@@ -17,11 +17,16 @@ if (!url || !Number.isFinite(timeoutMs) || !Number.isFinite(intervalMs) || !Numb
 
 const deadline = Date.now() + timeoutMs;
 let lastFailure = "No response received.";
+const deadlineTimer = setTimeout(() => {
+  console.error(`HTTP readiness timed out after ${timeoutMs}ms: ${url}; last failure: ${lastFailure}`);
+  process.exit(1);
+}, timeoutMs);
 
 while (Date.now() < deadline) {
   try {
     const response = await fetch(url, { signal: AbortSignal.timeout(requestTimeoutMs) });
     if (response.ok) {
+      clearTimeout(deadlineTimer);
       console.log(`HTTP readiness passed: ${url} (${response.status})`);
       process.exit(0);
     }
@@ -36,5 +41,6 @@ while (Date.now() < deadline) {
   }
 }
 
+clearTimeout(deadlineTimer);
 console.error(`HTTP readiness timed out after ${timeoutMs}ms: ${url}; last failure: ${lastFailure}`);
 process.exit(1);

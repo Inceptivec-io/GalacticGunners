@@ -48,3 +48,21 @@ test("CI readiness fails closed when no server can respond", async () => {
   assert.equal(result.code, 1);
   assert.match(result.output, /timed out/i);
 });
+
+test("CI readiness terminates a connection that never sends an HTTP response", async () => {
+  const server = createServer(() => {});
+  server.listen(0, "127.0.0.1");
+  await once(server, "listening");
+  const { port } = server.address();
+
+  try {
+    const startedAt = Date.now();
+    const result = await runWaitForHttp(["--url", `http://127.0.0.1:${port}`, "--timeout-ms", "80", "--interval-ms", "10", "--request-timeout-ms", "500"]);
+    assert.equal(result.code, 1);
+    assert.match(result.output, /timed out/i);
+    assert.ok(Date.now() - startedAt < 400, result.output);
+  } finally {
+    server.close();
+    await once(server, "close");
+  }
+});
