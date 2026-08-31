@@ -361,22 +361,10 @@ jobs:
            cp test-results/playwright-junit.xml "$GG_EVIDENCE_DIR/ordinary-browser/chromium-mobile-touch-junit.xml"
            printf 'Inceptivec administrator: %s / %s\nCommand Post customer: %s / %s\nPlayer: %s / %s\n' "$FOUNDER_REVIEW_USERNAME" "$FOUNDER_REVIEW_PASSWORD" "$COMMAND_POST_REVIEW_USERNAME" "$COMMAND_POST_REVIEW_PASSWORD" "$PLAYER_REVIEW_USERNAME" "$PLAYER_REVIEW_PASSWORD" > FOUNDER_REVIEW_ACCESS.local.txt
            mkdir -p "$GG_EVIDENCE_DIR"
-           # Diagnostic probes follow the ordinary short campaign only after
-           # restoring a long-lived fixture, so their movement/collision
-           # journeys cannot terminate on the objective timer.
-           docker compose exec -T backend python manage.py seed_browser_assurance_campaign --duration-ms 300000
-           GG_RUNTIME_URL=http://localhost:3002 GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/hostile" npm run runtime:hostile
-          GG_RUNTIME_URL=http://localhost:3002 GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/rectification/stage-1" npm run runtime:h015:stage1
-          GG_RUNTIME_URL=http://localhost:3002 GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/rectification/stage-2" npm run runtime:h015:stage2
-          GG_RUNTIME_URL=http://localhost:3002 GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/rectification/stage-3" npm run runtime:h015:stage3
-          GG_RUNTIME_URL=http://localhost:3002 GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/rectification/stage-4" npm run runtime:h015:stage4
+           # QA diagnostics run in the dedicated runtime-hostile job. They are
+           # deliberately excluded here: this artifact is ordinary-user and
+           # exact-SHA closure evidence, not a diagnostic archive.
           GG_RUNTIME_URL=http://localhost:3002 GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/rectification/stage-9" npm run runtime:h015:stage9
-          GG_RUNTIME_URL=http://localhost:3002 GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/campaign_runtime" npm run runtime:campaign
-          GG_RUNTIME_URL=http://localhost:3002 GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/rectification/boarding" npm run runtime:h015:boarding
-          GG_RUNTIME_URL=http://localhost:3002 GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/rectification/boarding_success" npm run runtime:h015:boarding-success
-          GG_RUNTIME_URL=http://localhost:3002 GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/rectification/level4_hazards" npm run runtime:h015:level4-hazards
-          GG_RUNTIME_URL=http://localhost:3002 GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/rectification/designer_roundtrip" npm run runtime:h015:designer-roundtrip
-          GG_RUNTIME_URL=http://localhost:3002 GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/review_matrix" npm run runtime:h015:review-matrix
           npm run h015:build-evidence-manifest
       - name: Upload immutable H015 browser evidence
         id: upload-evidence
