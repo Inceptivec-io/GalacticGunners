@@ -555,21 +555,21 @@ rows:
       - id: H015-DES-001 positive
         classification: API
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-DES-001 positive test"
+        command: docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q && npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-desktop --grep H015-DES-META-001 --workers=1
         assertion:
           Authorised admin can inspect complete draft, published and release
           identity
       - id: H015-DES-001 negative
         classification: API
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-DES-001 negative or hostile test"
+        command: docker compose --env-file .founder-review.env exec -T backend pytest organizations/tests/test_portal_api.py -q
         assertion: Customer, anonymous or cross-owner access fails server-side
     evidence_gate: ordinary-designer
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Authorised product Designer and tenant-denial checks are executable.
+      Exact-SHA CI evidence remains required before this derived row can pass.
   - requirement_id: H015-DES-002
     area: Designer
     requirement: Pointer mapping is accurate at 50, 75, 100, 125 and 150 percent zoom
@@ -584,23 +584,23 @@ rows:
     negative_or_hostile_proof: Wrapper coordinates, pointer loss and out-of-bounds values fail
     test_cases:
       - id: H015-DES-002 positive
-        classification: UNIT
+        classification: E2E_ORDINARY_USER
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-DES-002 positive test"
+        command: npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-desktop --grep H015-DES-POINTER-001 --workers=1
         assertion:
           Real pointer drag from centre and edges saves expected canonical
           coordinates
       - id: H015-DES-002 negative
-        classification: UNIT
+        classification: E2E_ORDINARY_USER
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-DES-002 negative or hostile test"
+        command: npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-desktop --grep outside_drag --workers=1
         assertion: Wrapper coordinates, pointer loss and out-of-bounds values fail
     evidence_gate: ordinary-designer
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Native multi-zoom drag and boundary-clamp browser journeys are executable.
+      Exact-SHA CI evidence remains required before this derived row can pass.
   - requirement_id: H015-DES-003
     area: Designer
     requirement:
@@ -614,23 +614,23 @@ rows:
     negative_or_hostile_proof: Mouse-only handlers, centre jump or multiple undo entries fail
     test_cases:
       - id: H015-DES-003 positive
-        classification: COMPONENT
+        classification: E2E_ORDINARY_USER
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-DES-003 positive test"
+        command: npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-desktop --grep H015-DES-POINTER-001 --workers=1 && npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-mobile-touch --grep H015-DES-POINTER-002 --workers=1
         assertion:
           Real browser input leaves/re-enters playfield and completes one
           transaction
       - id: H015-DES-003 negative
-        classification: COMPONENT
+        classification: E2E_ORDINARY_USER
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-DES-003 negative or hostile test"
+        command: npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-desktop --grep outside_drag --workers=1 && npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-mobile-touch --grep touch_cancel --workers=1
         assertion: Mouse-only handlers, centre jump or multiple undo entries fail
     evidence_gate: ordinary-designer
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Desktop pointer and touch ordinary browser journeys are executable.
+      Exact-SHA CI evidence remains required before this derived row can pass.
   - requirement_id: H015-DES-004
     area: Designer
     requirement: Animated assets use one canonical representative preview frame
@@ -643,21 +643,21 @@ rows:
     negative_or_hostile_proof: Full sprite-sheet thumbnails or unexplained UI crop constants fail
     test_cases:
       - id: H015-DES-004 positive
-        classification: UNIT
+        classification: E2E_ORDINARY_USER
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-DES-004 positive test"
+        command: npm run test:sprites && npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-desktop --grep H015-DES-THUMB-001 --workers=1
         assertion: Palette, layers and inspector show governed frame and aspect ratio
       - id: H015-DES-004 negative
-        classification: UNIT
+        classification: E2E_ORDINARY_USER
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-DES-004 negative or hostile test"
+        command: npm run test:sprites && npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-desktop --grep H015-DES-THUMB-001 --workers=1
         assertion: Full sprite-sheet thumbnails or unexplained UI crop constants fail
     evidence_gate: ordinary-designer
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Compiler hostile checks and ordinary generated-thumbnail verification are executable.
+      Exact-SHA CI evidence remains required before this derived row can pass.
   - requirement_id: H015-DES-005
     area: Designer
     requirement:
@@ -674,19 +674,19 @@ rows:
       - id: H015-DES-005 positive
         classification: API
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-DES-005 positive test"
+        command: docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_authoring.py -q && npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-desktop --grep "H015-DES-META-001|H015-DES-CANVAS-001" --workers=1
         assertion: Save, reload and preview prove typed values persist and execute
       - id: H015-DES-005 negative
         classification: API
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-DES-005 negative or hostile test"
+        command: docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_authoring.py -q && npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-desktop --grep invalid_seed --workers=1
         assertion: Invalid bounds, duplicate enabled spawn and immutable-field edits fail
     evidence_gate: ordinary-designer
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Typed authoring validation and ordinary save/reload journeys are executable.
+      Exact-SHA CI evidence remains required before this derived row can pass.
   - requirement_id: H015-DES-006
     area: Designer
     requirement: Entities and mixed formations expose complete governed configuration
