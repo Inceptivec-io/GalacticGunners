@@ -185,7 +185,9 @@ test("H015-DES-THUMB-001__e2e_ordinary_user__palette_uses_loaded_canonical_singl
     })),
   );
   expect(
-    previews.every((preview) => preview.src?.includes("/designer-previews/")),
+    previews.every((preview) =>
+      preview.src?.includes("/gg-runtime-assets/generated/thumbnails/"),
+    ),
   ).toBe(true);
   expect(
     previews.every((preview) => preview.complete && preview.naturalWidth > 0),

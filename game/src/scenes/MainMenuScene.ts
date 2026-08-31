@@ -112,9 +112,7 @@ export class MainMenuScene extends Phaser.Scene {
       .setDepth(3);
     footer.setData("qa", "input-hint");
 
-    start.on("pointerover", () =>
-      this.sound.play(RUNTIME_ASSETS.audio.uiSelect.key),
-    );
+    start.on("pointerover", () => this.playOptionalAudio("uiSelect"));
     start.on("pointerdown", () => this.go());
     if (this.#resumeSequence) {
       const fresh = this.add
@@ -155,8 +153,13 @@ export class MainMenuScene extends Phaser.Scene {
       return;
     }
     this.#started = true;
-    this.sound.play(RUNTIME_ASSETS.audio.uiConfirm.key);
+    this.playOptionalAudio("uiConfirm");
     this.scene.start("Level1Scene", { sequence: this.#resumeSequence ?? 1 });
+  }
+
+  private playOptionalAudio(cue: "uiSelect" | "uiConfirm"): void {
+    const key = RUNTIME_ASSETS.audio[cue].key;
+    if (this.cache.audio.exists(key)) this.sound.play(key);
   }
 
   private publishQaState(): void {

@@ -5,7 +5,9 @@ import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const authority = path.join(root, 'docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/12_CANONICAL_SPRITESHEET_DEFINITION_AND_CORRECTION_PACK_v1.0/unpacked');
+const authority = process.env.GG_SPRITE_AUTHORITY_DIR
+  ? path.resolve(process.env.GG_SPRITE_AUTHORITY_DIR)
+  : path.join(root, 'docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/12_CANONICAL_SPRITESHEET_DEFINITION_AND_CORRECTION_PACK_v1.0/unpacked');
 const output = path.join(root, 'apps/web/public/gg-runtime-assets/generated');
 const parseLine = (line) => {
   const values = []; let value = ''; let quoted = false;
@@ -26,6 +28,37 @@ const dimensions = (value) => value.split('x').map(Number);
 const shooter = csv('SHOOTER_SPRITESHEET_DEFINITIONS.csv');
 const boarding = csv('BOARDING_SPRITESHEET_DEFINITIONS.csv');
 const slices = Object.fromEntries(csv('BOARDING_SOURCE_SLICES.csv').map((row) => [row.asset_key, row]));
+const portableArtwork = [
+  {
+    key: 'keyArt.launch',
+    sourcePath: 'assets/key_art/marketing_v1.0/gg_key_art_primary_v001.png',
+    derivativePath: 'apps/web/public/gg-runtime-assets/generated/key-art/gg_key_art_primary_v001_1920.png',
+  },
+  {
+    key: 'keyArt.heroBattle',
+    sourcePath: 'assets/key_art/posters/gg_hero_image_player_fighting_v002_4k_uhd_master.png',
+    derivativePath: 'apps/web/public/gg-runtime-assets/generated/key-art/gg_hero_image_player_fighting_v002_1920.png',
+  },
+  {
+    key: 'pause.screen',
+    sourcePath: 'assets/key_art/posters/gg_pause_screen_v2.1_4k_uhd_master.png',
+    derivativePath: 'apps/web/public/gg-runtime-assets/generated/key-art/gg_pause_screen_v2_1_1920.png',
+  },
+];
+const portableAudio = [
+  ['audio.uiConfirm', 'gg_ui_confirm_v001.wav'],
+  ['audio.uiSelect', 'gg_ui_select_v001.wav'],
+  ['audio.playerLaser', 'gg_player_laser_v001.wav'],
+  ['audio.enemyLaser', 'gg_enemy_laser_v001.wav'],
+  ['audio.explosionSmall', 'gg_explosion_small_v001.wav'],
+  ['audio.playerHit', 'gg_player_hit_v001.wav'],
+  ['audio.nukeFire', 'gg_nuke_fire_v001.wav'],
+  ['audio.nukeBurst', 'gg_nuke_burst_v001.wav'],
+].map(([key, filename]) => ({
+  key,
+  sourcePath: `assets/audio/owned/rev2/${filename}`,
+  derivativePath: `apps/web/public/gg-runtime-assets/generated/audio/${filename}`,
+}));
 
 function frames(row) {
   const count = Number(row.source_frames);
@@ -48,6 +81,35 @@ function frames(row) {
   if (count === 1) return [{ left: 0, top: 0, width: sourceWidth, height: sourceHeight }];
   const [width, height] = explicit.slice(1, 3);
   return Array.from({ length: count }, (_, index) => ({ left: index * width, top: 0, width, height }));
+}
+
+function convertPcm24ToPcm16(source, sourcePath) {
+  if (source.toString('ascii', 0, 4) !== 'RIFF' || source.toString('ascii', 8, 12) !== 'WAVE') {
+    throw new Error(`Unsupported audio container: ${sourcePath}`);
+  }
+  if (source.toString('ascii', 12, 16) !== 'fmt ' || source.readUInt16LE(20) !== 1 || source.readUInt16LE(34) !== 24) {
+    throw new Error(`Expected 24-bit PCM WAV: ${sourcePath}`);
+  }
+  const channels = source.readUInt16LE(22);
+  const sampleRate = source.readUInt32LE(24);
+  const dataOffset = source.indexOf(Buffer.from('data'));
+  if (dataOffset < 0) throw new Error(`Missing WAV data chunk: ${sourcePath}`);
+  const dataLength = source.readUInt32LE(dataOffset + 4);
+  if (dataLength % 3 !== 0 || dataOffset + 8 + dataLength > source.length) {
+    throw new Error(`Invalid 24-bit PCM data length: ${sourcePath}`);
+  }
+  const convertedLength = (dataLength / 3) * 2;
+  const output = Buffer.alloc(44 + convertedLength);
+  output.write('RIFF', 0); output.writeUInt32LE(36 + convertedLength, 4); output.write('WAVE', 8);
+  output.write('fmt ', 12); output.writeUInt32LE(16, 16); output.writeUInt16LE(1, 20);
+  output.writeUInt16LE(channels, 22); output.writeUInt32LE(sampleRate, 24);
+  output.writeUInt32LE(sampleRate * channels * 2, 28); output.writeUInt16LE(channels * 2, 32);
+  output.writeUInt16LE(16, 34); output.write('data', 36); output.writeUInt32LE(convertedLength, 40);
+  for (let sourceIndex = dataOffset + 8, outputIndex = 44; sourceIndex < dataOffset + 8 + dataLength; sourceIndex += 3, outputIndex += 2) {
+    output[outputIndex] = source[sourceIndex + 1];
+    output[outputIndex + 1] = source[sourceIndex + 2];
+  }
+  return output;
 }
 
 async function transparent(image, method) {
@@ -105,19 +167,74 @@ async function compile(row) {
 }
 
 rmSync(output, { recursive: true, force: true });
+const artworkCatalogue = [];
+for (const artwork of portableArtwork) {
+  const source = path.join(root, artwork.sourcePath);
+  if (!existsSync(source)) throw new Error(`Missing portable artwork source: ${artwork.sourcePath}`);
+  const sourceBytes = readFileSync(source);
+  const derivative = await sharp(source)
+    .resize({ width: 1920, height: 1080, fit: 'inside', withoutEnlargement: true })
+    .png({ compressionLevel: 9, adaptiveFiltering: false })
+    .toBuffer();
+  const destination = path.join(root, artwork.derivativePath);
+  mkdirSync(path.dirname(destination), { recursive: true });
+  writeFileSync(destination, derivative);
+  const metadata = await sharp(derivative).metadata();
+  if (!metadata.width || !metadata.height || metadata.width > 1920 || metadata.height > 1920) {
+    throw new Error(`Portable artwork limit exceeded: ${artwork.key}`);
+  }
+  artworkCatalogue.push({
+    ...artwork,
+    source_sha256: hash(sourceBytes),
+    derivative_sha256: hash(derivative),
+    derivative_width: metadata.width,
+    derivative_height: metadata.height,
+  });
+}
+const audioCatalogue = [];
+for (const audio of portableAudio) {
+  const source = path.join(root, audio.sourcePath);
+  if (!existsSync(source)) throw new Error(`Missing portable audio source: ${audio.sourcePath}`);
+  const sourceBytes = readFileSync(source);
+  const derivative = convertPcm24ToPcm16(sourceBytes, audio.sourcePath);
+  const destination = path.join(root, audio.derivativePath);
+  mkdirSync(path.dirname(destination), { recursive: true });
+  writeFileSync(destination, derivative);
+  audioCatalogue.push({ ...audio, source_sha256: hash(sourceBytes), derivative_sha256: hash(derivative), sample_format: 'PCM_S16LE' });
+}
 const catalogue = [];
 for (const row of [...shooter, ...boarding]) {
   try { catalogue.push(await compile(row)); }
   catch (error) { throw new Error(`${row.asset_key}: ${error instanceof Error ? error.message : String(error)}`); }
 }
-writeFileSync(path.join(output, 'sprite-catalogue.json'), `${JSON.stringify({ version: 1, generated_by: 'compile-canonical-sprites.mjs', assets: catalogue }, null, 2)}\n`);
+writeFileSync(path.join(output, 'sprite-catalogue.json'), `${JSON.stringify({ version: 1, generated_by: 'compile-canonical-sprites.mjs', assets: catalogue, portable_artwork: artworkCatalogue, portable_audio: audioCatalogue }, null, 2)}\n`);
 const runtimeManifestPath = path.join(root, 'apps/web/public/gg-runtime-assets/manifest.json');
 if (existsSync(runtimeManifestPath)) {
   const runtimeManifest = JSON.parse(readFileSync(runtimeManifestPath, 'utf8'));
   const derivatives = new Map(catalogue.map((asset) => [asset.asset_key, asset]));
+  const artworkDerivatives = new Map(artworkCatalogue.map((asset) => [asset.key, asset]));
+  const audioDerivatives = new Map(audioCatalogue.map((asset) => [asset.key, asset]));
   runtimeManifest.assets = runtimeManifest.assets.map((asset) => {
     const derivative = derivatives.get(asset.key);
-    if (!derivative) return asset;
+    const artwork = artworkDerivatives.get(asset.key);
+    const audio = audioDerivatives.get(asset.key);
+    if (!derivative && !artwork && !audio) return asset;
+    if (artwork) {
+      return {
+        ...asset,
+        runtime_path: `/${artwork.derivativePath.replace(/^apps\/web\/public\//, '')}`,
+        runtime_sha256: artwork.derivative_sha256,
+        portable_derivative: true,
+      };
+    }
+    if (audio) {
+      return {
+        ...asset,
+        runtime_path: `/${audio.derivativePath.replace(/^apps\/web\/public\//, '')}`,
+        runtime_sha256: audio.derivative_sha256,
+        portable_derivative: true,
+      };
+    }
     return {
       ...asset,
       runtime_path: `/${derivative.derivative_path.replace(/^apps\/web\/public\//, '')}`,

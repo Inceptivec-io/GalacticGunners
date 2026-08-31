@@ -91,10 +91,13 @@ def authored_grid(slug, prefix, entity_type, rows, columns, x, y, dx, dy, *, lay
 
 
 def hazard_emitter(identifier, hazard_type, *, initial_count, maximum_active, speed_min, speed_max, edges, pattern='ALTERNATING_EDGES', points=None, interval=3500):
+    variants = [f'{hazard_type}_VARIANT_{index:02d}' for index in range(1, 7)]
     return {
         'id': identifier,
         'hazard_type': hazard_type,
         'asset_id': f'hazard.{hazard_type.lower()}',
+        'variant_mode': 'ORDERED',
+        'variant_ids': variants,
         'enabled': True,
         'initial_count': initial_count,
         'maximum_active': maximum_active,
@@ -262,7 +265,7 @@ class Command(BaseCommand):
             ('enemy.cruiser', 'ships', '/gg-runtime-assets/generated/sprites/ships/enemy_cruiser_v003.png', '8319c973f4277c14df9c1697d2310844dd4f48190e13edde1ccce9d1882fe07d'),
             ('enemy.destroyer', 'ships', '/gg-runtime-assets/generated/sprites/ships/enemy_destroyer_v003.png', '395daF22c4067282c25e0cc646b5e7b236be57c1e93afc2c5aeff68ad164b69f'),
             ('enemy.mothership', 'ships', '/gg-runtime-assets/generated/sprites/ships/mothership_normal_v003.png', '9767f1395cab3e69274cab3760f9ee3d51aae433d87ad69d960d6138b98cbf81'),
-            ('enemy.mothership.hit', 'ships', '/gg-runtime-assets/sprites/ships/gg_boss_mothership_HIT_v002_sheet.png', 'e829b094078363f051f41929f48e92c3288b98e2cd43425e8a0309b52b989088'),
+            ('enemy.mothership.hit', 'ships', '/gg-runtime-assets/generated/sprites/ships/mothership_hit_v003.png', '8029168201adedaa1a8f301c8cf3a2003923f8f607c4eb4d222ce68b124a96c3'),
             ('projectile.nuke', 'ui', '/gg-runtime-assets/generated/sprites/objects/nuke_projectile_v003.png', 'f36b7413d933ca086466e0b5daef9e7f0bbc9b0271acd90419671f72c60a5d18'),
             ('hazard.asteroid', 'hazards', '/gg-runtime-assets/generated/sprites/objects/asteroid_variants_v003.png', '9d17274b80d70365ccfcfce9fc5432bd5335e2735c67ac6fbb5e1c798021ba5f'),
             ('hazard.comet', 'hazards', '/gg-runtime-assets/generated/sprites/objects/comet_variants_v003.png', '81f0544da23d1608cfe162c58d5803dac35c34a3fe7016ebd5385deaa0540e93'),
@@ -291,6 +294,38 @@ class Command(BaseCommand):
                     'provenance_ref': 'apps/web/public/gg-runtime-assets/manifest.json',
                 },
             )
+        # A hazard sheet is a transport derivative, not a Designer object. Each
+        # selectable frame is registered independently while retaining the
+        # shared runtime sheet and its governed frame identity.
+        variant_catalogue = {
+            'asteroid': [
+                '06314ca3f35bd976bbc3c00bf2a816f7a49c3047ae3a846454879008b38d116c', '9dc1b4f5436ff37527e5256e3f180431774bb292a351584c39e69ecacfff4312',
+                '0ce2925b9f88e71764cdfd3f6268bdb2d0f75655aa45b2da96d69139805edf16', 'd0c22d4a675eea5a31ce2f3055f923093ac11d651700193a7dd00627a3847e4',
+                '025fa6b616bed36dc894d5c23c78853a8627eb07734d4ab34c00717f3704ba0a', 'a8c1f398dc3a570c8f7ab84c3a8411d142bc208ac0f3ac52bcf297569d38e72c',
+            ],
+            'comet': [
+                '9d3fe0c3721f4a9425409f808a4947b5ad63ef5fc2188290c5c440c265e7e8de', 'b2f246f9c32316310df8bcc31a57308b34281440a56451c1cfb6f9f318ea6bab',
+                'f8c74d852c4334385cdab31885afc62f9fb9f7a3de88ed69512b81fdf0fbd64c', 'ce1789bd8ccddb51f9f23a8c2ca747e858cd146ca69ec1782ee65ec21e2d6fe0',
+                'bd800318739e646bc613a07be21b8d52a20d0b380f537af1bf880f5c6fcfec87', '7f1d2cffe97ec1b10fabba0a9e15b970990d3ad6255238165b75a8c5daff4206',
+            ],
+        }
+        for hazard, digests in variant_catalogue.items():
+            runtime_path = f'/gg-runtime-assets/generated/sprites/objects/{hazard}_variants_v003.png'
+            for frame_index, digest in enumerate(digests):
+                variant_id = f'{hazard.upper()}_VARIANT_{frame_index + 1:02d}'
+                AssetRecord.objects.update_or_create(
+                    key=f'hazard.{hazard}.variant.{frame_index + 1:02d}',
+                    defaults={
+                        'category': category_rows['hazards'], 'owner_scope': OwnerScope.CORE,
+                        'visibility': Visibility.PUBLIC, 'status': AssetRecord.Status.ACTIVE,
+                        'runtime_path': runtime_path,
+                        'thumbnail_path': f'/gg-runtime-assets/generated/thumbnails/fx-{hazard}-variant-{frame_index + 1:02d}.png',
+                        'mime_type': 'image/png', 'checksum': digest,
+                        'frame_width': 512, 'frame_height': 512, 'frame_count': 1,
+                        'animation': {'variant_id': variant_id, 'canonical_frame_index': frame_index, 'canonical_orientation': 'SOUTH' if hazard == 'comet' else 'NORTH'},
+                        'provenance_ref': 'apps/web/public/gg-runtime-assets/generated/sprite-catalogue.json',
+                    },
+                )
 
         authored = {
             1: authored_level(1, 'Frontier Screen', [('SCOUT', 2, 29, (50, 120), (40, 50), 'GRID')], hazards=[hazard_emitter('level-01-asteroids', 'ASTEROID', initial_count=1, maximum_active=2, speed_min=64, speed_max=84, edges=['LEFT', 'RIGHT'], interval=6200), hazard_emitter('level-01-comets', 'COMET', initial_count=0, maximum_active=1, speed_min=130, speed_max=150, edges=['TOP'], interval=10000)]),

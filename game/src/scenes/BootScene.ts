@@ -27,7 +27,7 @@ export class BootScene extends Phaser.Scene {
     for (const asset of REQUIRED_RUNTIME_ASSETS) {
       if (GENERATED_SPRITE_ASSET_KEYS.has(asset.key)) continue;
       if (asset.key.startsWith("audio.")) {
-        this.load.audio(asset.key, asset.runtimePath);
+        continue;
       } else {
         this.load.image(asset.key, asset.runtimePath);
       }
@@ -49,7 +49,7 @@ export class BootScene extends Phaser.Scene {
     try {
       const missing = REQUIRED_RUNTIME_ASSETS.filter((asset) => {
         if (asset.key.startsWith("audio.")) {
-          return !this.cache.audio.exists(asset.key);
+          return false;
         }
         return !this.textures.exists(asset.key);
       });
@@ -68,6 +68,7 @@ export class BootScene extends Phaser.Scene {
       }
 
       this.createShipAnimations();
+      this.queueOptionalAudio();
       validateLevelDefinition(LEVEL_ONE_DEFINITION);
       // Golden Level 1 must start without an API request. Remote resolution is an
       // explicit campaign-loader capability, never an implicit gameplay dependency.
@@ -158,9 +159,28 @@ export class BootScene extends Phaser.Scene {
   }
 
   private createRuntimeAnimations(): void {
-    this.createCatalogueAnimation("fx.explosionSmall", "fx.explosionSmall.play", true);
+    this.createCatalogueAnimation(
+      "fx.explosionSmall",
+      "fx.explosionSmall.play",
+      true,
+    );
     this.createCatalogueAnimation("projectile.nuke", "projectile.nuke.fly");
     this.createCatalogueAnimation("fx.nukeBurst", "fx.nukeBurst.play", true);
+  }
+
+  /**
+   * WebKit can reject the Founder-supplied WAV container even after a valid
+   * HTTP response. Audio is an enhancement, never permission for the visual
+   * game boot to stall. Successful decodes join the cache asynchronously and
+   * gameplay checks that cache before requesting a cue.
+   */
+  private queueOptionalAudio(): void {
+    for (const asset of REQUIRED_RUNTIME_ASSETS) {
+      if (asset.key.startsWith("audio.")) {
+        this.load.audio(asset.key, asset.runtimePath);
+      }
+    }
+    this.load.start();
   }
 
   private createShipAnimations(): void {

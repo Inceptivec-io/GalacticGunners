@@ -31,6 +31,10 @@
       "classification": "E2E_ORDINARY_USER"
     },
     {
+      "file": "tests/e2e/generated-sprites.spec.ts",
+      "classification": "E2E_ORDINARY_USER"
+    },
+    {
       "file": "tests/e2e/main-menu.spec.ts",
       "classification": "E2E_ORDINARY_USER"
     },
@@ -64,6 +68,10 @@
     },
     {
       "file": "tests/unit/h015-qa-boundaries.test.mjs",
+      "classification": "UNIT"
+    },
+    {
+      "file": "tests/unit/canonical-sprites.test.mjs",
       "classification": "UNIT"
     },
     {

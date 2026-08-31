@@ -1095,12 +1095,12 @@ rows:
       - id: H015-BOARD-004 positive
         classification: UNIT
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-BOARD-004 positive test"
+        command: npm run test:sprites
         assertion: Idle, move, jump/fall, fire, hit and death states use admitted metadata
       - id: H015-BOARD-004 negative
         classification: UNIT
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-BOARD-004 negative or hostile test"
+        command: npm run test:sprites
         assertion:
           Static crop, unexplained frame constants or missing required state
           fails
@@ -1108,8 +1108,10 @@ rows:
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: The generated catalogue contract now proves all thirteen Boarding
+      state sheets exist and that BoardScene contains neither source-sheet loads
+      nor legacy crop authority. Gameplay-state and exact-SHA browser evidence
+      remain required before this row can pass.
   - requirement_id: H015-BOARD-005
     area: Boarding
     requirement: Visible far exit succeeds only after the interior objective

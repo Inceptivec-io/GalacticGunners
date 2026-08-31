@@ -56,6 +56,8 @@ type SweptHitTarget =
 type RuntimeHazardEmitter = {
   id: string;
   hazard_type: "ASTEROID" | "COMET";
+  variant_mode?: "FIXED" | "ORDERED" | "SEEDED_RANDOM";
+  variant_ids?: string[];
   initial_count: number;
   maximum_active: number;
   spawn_interval_ms: number;
@@ -262,9 +264,10 @@ export class Level1Scene extends CombatLevelScene {
       this.#lives.restore(campaignState.lives);
     }
     this.#entryScore = this.#score.value;
-    this.#audio = new AudioSystem((cue) =>
-      this.sound.play(RUNTIME_ASSETS.audio[cue].key),
-    );
+    this.#audio = new AudioSystem((cue) => {
+      const key = RUNTIME_ASSETS.audio[cue].key;
+      if (this.cache.audio.exists(key)) this.sound.play(key);
+    });
     const isCampaignPreview = Boolean(this.registry.get("campaignPreview"));
     const campaignRun = isCampaignPreview ? null : this.#campaignSession?.run;
     // A checksum-bound Designer preview must render the exact authored content
@@ -589,19 +592,16 @@ export class Level1Scene extends CombatLevelScene {
       type === "asteroid"
         ? RUNTIME_ASSETS.fx.asteroid
         : RUNTIME_ASSETS.fx.comet;
+    const frame = this.hazardFrame(emitter, type, ordinal);
     const hazard = this.physics.add
-      .sprite(
-        origin.x,
-        origin.y,
-        asset.key,
-        Phaser.Math.Between(0, 5),
-      )
+      .sprite(origin.x, origin.y, asset.key, frame)
       .setDisplaySize(type === "asteroid" ? 54 : 72, 54)
       .setDepth(3);
     hazard
       .setName(`${type}-hazard`)
       .setData("hazardType", type)
-      .setData("emitterId", emitter?.id ?? null);
+      .setData("emitterId", emitter?.id ?? null)
+      .setData("variantFrame", frame);
     const body = hazard.body as Phaser.Physics.Arcade.Body;
     body.setSize(
       (hazard.displayWidth * 0.68) / hazard.scaleX,
@@ -644,6 +644,29 @@ export class Level1Scene extends CombatLevelScene {
     // Arcade group admission applies its defaults to a child. Set the motion
     // afterwards so edge-emitted hazards retain their authored trajectory.
     body.setVelocity(direction.x, direction.y);
+  }
+
+  private hazardFrame(
+    emitter: RuntimeHazardEmitter | undefined,
+    type: "asteroid" | "comet",
+    ordinal: number,
+  ): number {
+    const prefix = type === "asteroid" ? "ASTEROID_VARIANT_" : "COMET_VARIANT_";
+    const ids =
+      emitter?.variant_ids?.filter((id) => id.startsWith(prefix)) ?? [];
+    if (!ids.length) return ordinal % 6;
+    const index =
+      emitter?.variant_mode === "SEEDED_RANDOM"
+        ? Math.floor(
+            this.deterministicRange(
+              0,
+              ids.length,
+              `${emitter.id}:variant:${ordinal}`,
+            ),
+          ) % ids.length
+        : ordinal % ids.length;
+    const match = /_(\d{2})$/.exec(ids[index]);
+    return match ? Number(match[1]) - 1 : 0;
   }
 
   private deterministicRange(

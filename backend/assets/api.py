@@ -39,6 +39,7 @@ class AssetCatalogueView(APIView):
                 'runtime_path': asset.runtime_path, 'thumbnail_path': asset.thumbnail_path,
                 'width': asset.width, 'height': asset.height, 'frame_count': asset.frame_count,
                 'checksum': asset.checksum, 'provenance_ref': asset.provenance_ref,
+                'animation': asset.animation,
             }
             for asset in assets
         ]})

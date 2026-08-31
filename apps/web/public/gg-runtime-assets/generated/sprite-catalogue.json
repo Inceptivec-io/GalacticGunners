@@ -725,5 +725,100 @@
       "max_texture_axis": 4096,
       "variants": []
     }
+  ],
+  "portable_artwork": [
+    {
+      "key": "keyArt.launch",
+      "sourcePath": "assets/key_art/marketing_v1.0/gg_key_art_primary_v001.png",
+      "derivativePath": "apps/web/public/gg-runtime-assets/generated/key-art/gg_key_art_primary_v001_1920.png",
+      "source_sha256": "819E2F0C372A03913166282EDCC68F19207DC50A7FE45D71BAA98375B57CCFBC",
+      "derivative_sha256": "E5E8D983C01FDB29FB72C96066852D4A443A0846D9D1C63B60DCE4B002D36867",
+      "derivative_width": 1920,
+      "derivative_height": 1080
+    },
+    {
+      "key": "keyArt.heroBattle",
+      "sourcePath": "assets/key_art/posters/gg_hero_image_player_fighting_v002_4k_uhd_master.png",
+      "derivativePath": "apps/web/public/gg-runtime-assets/generated/key-art/gg_hero_image_player_fighting_v002_1920.png",
+      "source_sha256": "054D150DA322ACCDA4256306DB40B30CC0A098D7B307702C5CCFFA6148A5CE8F",
+      "derivative_sha256": "BF0F65516FFA8080859DB3F1D2337D6143DA5D23CFAF625C4F10E946EB336DF4",
+      "derivative_width": 1920,
+      "derivative_height": 1080
+    },
+    {
+      "key": "pause.screen",
+      "sourcePath": "assets/key_art/posters/gg_pause_screen_v2.1_4k_uhd_master.png",
+      "derivativePath": "apps/web/public/gg-runtime-assets/generated/key-art/gg_pause_screen_v2_1_1920.png",
+      "source_sha256": "751008091C1144B657A54EE3B8EBD47C9B3823EFFB679420D5F96E39E7438937",
+      "derivative_sha256": "4ED7D65D49F23C430D679F0AE9E32C6BCB06B0BB3616141B5A5044C800AC35CE",
+      "derivative_width": 1920,
+      "derivative_height": 1080
+    }
+  ],
+  "portable_audio": [
+    {
+      "key": "audio.uiConfirm",
+      "sourcePath": "assets/audio/owned/rev2/gg_ui_confirm_v001.wav",
+      "derivativePath": "apps/web/public/gg-runtime-assets/generated/audio/gg_ui_confirm_v001.wav",
+      "source_sha256": "5126059176E8D15623C5EFF70DCD8EAF39ED092156E8C5EFA3D55468C5317B93",
+      "derivative_sha256": "0515BC6CE9684F1BDB12F12C7C9C9F73AEAAC596E70BF115B80DF0168076608F",
+      "sample_format": "PCM_S16LE"
+    },
+    {
+      "key": "audio.uiSelect",
+      "sourcePath": "assets/audio/owned/rev2/gg_ui_select_v001.wav",
+      "derivativePath": "apps/web/public/gg-runtime-assets/generated/audio/gg_ui_select_v001.wav",
+      "source_sha256": "BB382B07D808043ECD484DE8F92C154596F7DA95A11DCE60FB770E2862AF0618",
+      "derivative_sha256": "A759D86F7F6577F1AB04D8CC5C9BCE79FC47F0ECFB1519AAD705C24B49B29C9C",
+      "sample_format": "PCM_S16LE"
+    },
+    {
+      "key": "audio.playerLaser",
+      "sourcePath": "assets/audio/owned/rev2/gg_player_laser_v001.wav",
+      "derivativePath": "apps/web/public/gg-runtime-assets/generated/audio/gg_player_laser_v001.wav",
+      "source_sha256": "9EDA7CF68F47E307AB3F7041E1DD59AC5F07E279C32CB1A9C9D3405905247AFF",
+      "derivative_sha256": "08C7659AC86B20A2A8C0FFF4C039FE23697B07514D591F5D63588E46F08DE60E",
+      "sample_format": "PCM_S16LE"
+    },
+    {
+      "key": "audio.enemyLaser",
+      "sourcePath": "assets/audio/owned/rev2/gg_enemy_laser_v001.wav",
+      "derivativePath": "apps/web/public/gg-runtime-assets/generated/audio/gg_enemy_laser_v001.wav",
+      "source_sha256": "FCE8F2C8853FF92A6EF2F80D9418C11B34F9601B5EFDA385377080999E6D5942",
+      "derivative_sha256": "CCE4103A1582F22038CACE7C68574BAC53C0F057D24614462D78E9AFFD3D0107",
+      "sample_format": "PCM_S16LE"
+    },
+    {
+      "key": "audio.explosionSmall",
+      "sourcePath": "assets/audio/owned/rev2/gg_explosion_small_v001.wav",
+      "derivativePath": "apps/web/public/gg-runtime-assets/generated/audio/gg_explosion_small_v001.wav",
+      "source_sha256": "AEFFDB12344846F6207C61F0A70F19F9FDF5835D621745A75BD4707012F94FE4",
+      "derivative_sha256": "614729C03E0DE9980999D0E470C190A473906FA3FF964B8314E0ACAF92E8F0D9",
+      "sample_format": "PCM_S16LE"
+    },
+    {
+      "key": "audio.playerHit",
+      "sourcePath": "assets/audio/owned/rev2/gg_player_hit_v001.wav",
+      "derivativePath": "apps/web/public/gg-runtime-assets/generated/audio/gg_player_hit_v001.wav",
+      "source_sha256": "049D14BD1353957D2A859FF4F5C56E5B854B6D75B9D136310559CA45810BF311",
+      "derivative_sha256": "73D0F1BE708AAFB5B624B8AA008FF806985D5369E36BF8C4AC4A8D95948B53D6",
+      "sample_format": "PCM_S16LE"
+    },
+    {
+      "key": "audio.nukeFire",
+      "sourcePath": "assets/audio/owned/rev2/gg_nuke_fire_v001.wav",
+      "derivativePath": "apps/web/public/gg-runtime-assets/generated/audio/gg_nuke_fire_v001.wav",
+      "source_sha256": "CDECCACB879343A5D3772EFE6ABF6A514F8E7B2CC5C5486C123D4B8906898E1C",
+      "derivative_sha256": "EC28811DA7E04BF91BDEF5CE9F7B5D6E5A3A80EFAE65D2C540137747FB2BB732",
+      "sample_format": "PCM_S16LE"
+    },
+    {
+      "key": "audio.nukeBurst",
+      "sourcePath": "assets/audio/owned/rev2/gg_nuke_burst_v001.wav",
+      "derivativePath": "apps/web/public/gg-runtime-assets/generated/audio/gg_nuke_burst_v001.wav",
+      "source_sha256": "46E97A344CBCEF9E775B9FCC81B0895858D29E975C32C416C6E3CD91C8DA6D2B",
+      "derivative_sha256": "F780EDC9FCDF7B8484522ED2828B45CF15D16D3E2BC2B8AF494C28141D3B50F2",
+      "sample_format": "PCM_S16LE"
+    }
   ]
 }

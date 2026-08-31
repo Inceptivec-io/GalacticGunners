@@ -31,6 +31,7 @@ type Asset = {
   object_type: string;
   thumbnail_path: string;
   checksum: string;
+  animation?: { variant_id?: string; canonical_frame_index?: number; canonical_orientation?: string };
 };
 type Entity = {
   id: string;
@@ -60,6 +61,8 @@ type Emitter = {
   id: string;
   hazard_type: "ASTEROID" | "COMET";
   asset_id: string;
+  variant_mode: "FIXED" | "ORDERED" | "SEEDED_RANDOM";
+  variant_ids: string[];
   enabled: boolean;
   initial_count: number;
   maximum_active: number;
@@ -257,6 +260,8 @@ const descriptions: Record<EntityType, string> = {
   NUKE_PICKUP: "Governed nuke drop",
   LIFE_PICKUP: "Governed life drop",
 };
+const variantIds = (type: "ASTEROID" | "COMET") =>
+  Array.from({ length: 6 }, (_, index) => `${type}_VARIANT_${String(index + 1).padStart(2, "0")}`);
 const uid = (prefix: string) =>
   `${prefix}-${globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`}`;
 const defaultDocument = (level: DesignerLevel): AuthoringDocument => ({
@@ -425,6 +430,8 @@ function migrateLegacyDocument(
       id: `${hazard.type}-emitter-${index}`,
       hazard_type: hazard.type.toUpperCase() as "ASTEROID" | "COMET",
       asset_id: `hazard.${hazard.type}`,
+      variant_mode: "ORDERED",
+      variant_ids: variantIds(hazard.type.toUpperCase() as "ASTEROID" | "COMET"),
       enabled: true,
       initial_count: hazard.count,
       maximum_active: hazard.count,
@@ -447,8 +454,21 @@ function migrateLegacyDocument(
 }
 function asDocument(level: DesignerLevel): AuthoringDocument {
   const config = (level.editable_version ?? level.active_version)?.config;
-  if (config?.schema_version === "1.1")
-    return config as unknown as AuthoringDocument;
+  if (config?.schema_version === "1.1") {
+    const document = config as unknown as AuthoringDocument;
+    // Existing immutable drafts predate governed hazard variants. Upgrade their
+    // authoring representation deterministically before the next save; the
+    // resulting new immutable version records the explicit variant pool.
+    return {
+      ...document,
+      hazard_emitters: document.hazard_emitters.map((emitter) => ({
+        ...emitter,
+        variant_mode: emitter.variant_mode ?? "ORDERED",
+        variant_ids:
+          emitter.variant_ids ?? variantIds(emitter.hazard_type),
+      })),
+    };
+  }
   return config?.schema_version === "1.0"
     ? migrateLegacyDocument(level, config)
     : defaultDocument(level);
@@ -736,11 +756,16 @@ export function CampaignDesigner({
       ),
     }));
   }
-  function addEmitter(type: "ASTEROID" | "COMET") {
+  function addEmitter(
+    type: "ASTEROID" | "COMET",
+    fixedVariant?: string,
+  ) {
     const emitter: Emitter = {
       id: uid(`${type.toLowerCase()}-emitter`),
       hazard_type: type,
       asset_id: assetForType[type],
+      variant_mode: fixedVariant ? "FIXED" : "ORDERED",
+      variant_ids: fixedVariant ? [fixedVariant] : variantIds(type),
       enabled: true,
       initial_count: 1,
       maximum_active: type === "COMET" ? 3 : 5,
@@ -1898,6 +1923,38 @@ export function CampaignDesigner({
             </label>
             <label>Asset<input value={selectedEmitter.asset_id} disabled /></label>
             <label>
+              Variant selection
+              <select
+                value={selectedEmitter.variant_mode ?? "ORDERED"}
+                onChange={(event) => updateEmitter("variant_mode", event.target.value as Emitter["variant_mode"])}
+              >
+                <option value="FIXED">Fixed variant</option>
+                <option value="ORDERED">Ordered variant pool</option>
+                <option value="SEEDED_RANDOM">Seeded-random variant pool</option>
+              </select>
+            </label>
+            <fieldset className="designer-variant-grid">
+              <legend>Canonical {selectedEmitter.hazard_type.toLowerCase()} variants</legend>
+              {assets.filter((asset) => asset.key.startsWith(`hazard.${selectedEmitter.hazard_type.toLowerCase()}.variant.`)).map((asset) => {
+                const variantId = asset.animation?.variant_id;
+                const selected = Boolean(variantId && (selectedEmitter.variant_ids ?? []).includes(variantId));
+                return <label key={asset.key}>
+                  <input
+                    type="checkbox"
+                    checked={selected}
+                    onChange={(event) => {
+                      if (!variantId) return;
+                      const current = selectedEmitter.variant_ids ?? [];
+                      const next = event.target.checked ? [...current, variantId] : current.filter((id) => id !== variantId);
+                      updateEmitter("variant_ids", selectedEmitter.variant_mode === "FIXED" ? next.slice(-1) : next);
+                    }}
+                  />
+                  <img src={asset.thumbnail_path} alt="" />
+                  <span>{variantId}</span>
+                </label>;
+              })}
+            </fieldset>
+            <label>
               Initial count
               <input type="number" min="0" value={selectedEmitter.initial_count} onChange={(event) => updateEmitter("initial_count", Number(event.target.value))} />
             </label>
@@ -2080,7 +2137,7 @@ export function CampaignDesigner({
                 <strong>Select</strong>
               </button>
             ) : null}
-            {chooserAssets.map(({ type, asset }) => (
+            {chooserAssets.filter(({ type }) => category !== "Hazards" || !["ASTEROID", "COMET"].includes(type)).map(({ type, asset }) => (
               <button
                 key={type}
                 className="tool-button"
@@ -2102,12 +2159,17 @@ export function CampaignDesigner({
               </button>
             ))}
             {category === "Hazards" ? (
-              <div className="chooser-actions">
-                {(["ASTEROID", "COMET"] as const).map((type) => (
-                  <button key={type} onClick={() => addEmitter(type)}>
-                    Add recurring {type} emitter
-                  </button>
-                ))}
+              <div className="chooser-actions designer-variant-grid">
+                {assets
+                  .filter((asset) => asset.key.startsWith("hazard.") && asset.key.includes(".variant."))
+                  .map((asset) => {
+                    const variantId = asset.animation?.variant_id;
+                    const type = variantId?.startsWith("ASTEROID_") ? "ASTEROID" : "COMET";
+                    return <button key={asset.key} onClick={() => variantId && addEmitter(type, variantId)}>
+                      <img src={asset.thumbnail_path} alt="" />
+                      <span>{variantId}</span>
+                    </button>;
+                  })}
               </div>
             ) : null}
             {category === "Shields and Bunkers" ? (

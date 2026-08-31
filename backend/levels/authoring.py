@@ -7,6 +7,10 @@ ENTITY_TYPES = {'SCOUT', 'CRUISER', 'DESTROYER', 'MOTHERSHIP', 'ASTEROID', 'COME
 SHIP_TYPES = {'SCOUT', 'CRUISER', 'DESTROYER', 'MOTHERSHIP'}
 FORMATION_LAYOUTS = {'GRID', 'LINE', 'WEDGE', 'ARC', 'FREEFORM'}
 HAZARD_TYPES = {'ASTEROID', 'COMET'}
+HAZARD_VARIANTS = {
+    'ASTEROID': {f'ASTEROID_VARIANT_{index:02d}' for index in range(1, 7)},
+    'COMET': {f'COMET_VARIANT_{index:02d}' for index in range(1, 7)},
+}
 OBJECTIVE_TYPES = {'DESTROY_ALL_HOSTILES', 'DESTROY_MOTHERSHIP', 'SURVIVE_DURATION', 'BOARD_TARGET'}
 EMITTER_PATTERNS = {'RANDOM_EDGE', 'ALTERNATING_EDGES', 'LANE', 'FIXED_POINTS'}
 EDGES = {'TOP', 'RIGHT', 'BOTTOM', 'LEFT'}
@@ -76,7 +80,8 @@ def migrate_v1_to_v11(value):
                 result['entities'].append({'id': entity_id, 'entity_type': formation['type'].upper(), 'asset_id': f"enemy.{formation['type']}", 'x': formation['origin']['x'] + column * formation['spacing']['x'], 'y': formation['origin']['y'] + row * formation['spacing']['y'], 'width': formation.get('width', profile[0]), 'height': formation.get('height', profile[1]), 'rotation': 0, 'z_index': 2, 'behaviour_profile': formation.get('behaviour_profile', profile[2]), 'enabled': True, 'tags': []})
         result['formations'].append({'id': f'formation-{formation_index}', 'name': f"Formation {formation_index + 1}", 'layout': 'GRID', 'bounds': {'x': formation['origin']['x'], 'y': formation['origin']['y'], 'width': max(1, formation['columns'] - 1) * formation['spacing']['x'], 'height': max(1, formation['rows'] - 1) * formation['spacing']['y']}, 'member_ids': members, 'motion_profile': 'formation.standard', 'entry_delay_ms': 0, 'repeat': 0})
     for index, hazard in enumerate(value.get('hazards', [])):
-        result['hazard_emitters'].append({'id': f"{hazard['type']}-emitter-{index + 1}", 'hazard_type': hazard['type'].upper(), 'asset_id': f"hazard.{hazard['type']}", 'enabled': True, 'initial_count': hazard['count'], 'maximum_active': hazard['count'], 'spawn_interval_ms': 3500, 'spawn_jitter_ms': 0, 'speed_min': hazard['speed'], 'speed_max': hazard['speed'], 'angular_velocity_min': 0, 'angular_velocity_max': 0, 'entry_edges': ['TOP'], 'spawn_pattern': 'FIXED_POINTS', 'spawn_points': [{'x': hazard['origin']['x'] + item * hazard['spacing']['x'], 'y': hazard['origin']['y'] + item * hazard['spacing']['y']} for item in range(hazard['count'])], 'despawn_margin': 64, 'collision_damage': 1})
+        hazard_type = hazard['type'].upper()
+        result['hazard_emitters'].append({'id': f"{hazard['type']}-emitter-{index + 1}", 'hazard_type': hazard_type, 'asset_id': f"hazard.{hazard['type']}", 'variant_mode': 'ORDERED', 'variant_ids': sorted(HAZARD_VARIANTS[hazard_type]), 'enabled': True, 'initial_count': hazard['count'], 'maximum_active': hazard['count'], 'spawn_interval_ms': 3500, 'spawn_jitter_ms': 0, 'speed_min': hazard['speed'], 'speed_max': hazard['speed'], 'angular_velocity_min': 0, 'angular_velocity_max': 0, 'entry_edges': ['TOP'], 'spawn_pattern': 'FIXED_POINTS', 'spawn_points': [{'x': hazard['origin']['x'] + item * hazard['spacing']['x'], 'y': hazard['origin']['y'] + item * hazard['spacing']['y']} for item in range(hazard['count'])], 'despawn_margin': 64, 'collision_damage': 1})
     for index, shield in enumerate(value.get('shields', [])):
         for bunker in range(shield['count']):
             # Matches the established eight-bunker Level 1 layout at the canonical 1280x720 canvas.
@@ -165,6 +170,8 @@ def validate_authoring_document(value):
     for index, emitter in enumerate(value.get('hazard_emitters', [])):
         numeric = ('initial_count', 'maximum_active', 'spawn_interval_ms', 'spawn_jitter_ms', 'speed_min', 'speed_max', 'angular_velocity_min', 'angular_velocity_max', 'despawn_margin', 'collision_damage')
         non_negative = ('initial_count', 'maximum_active', 'spawn_interval_ms', 'spawn_jitter_ms', 'speed_min', 'speed_max', 'despawn_margin', 'collision_damage')
+        variant_ids = emitter.get('variant_ids', [])
+        variant_mode = emitter.get('variant_mode', 'ORDERED')
         if (
             emitter.get('hazard_type') not in HAZARD_TYPES
             or emitter.get('asset_id') != f"hazard.{str(emitter.get('hazard_type', '')).lower()}"
@@ -176,6 +183,12 @@ def validate_authoring_document(value):
             or any(emitter[field] < 0 for field in non_negative)
             or emitter.get('speed_max', 0) < emitter.get('speed_min', 0)
             or any(not isinstance(point.get('x'), (int, float)) or not isinstance(point.get('y'), (int, float)) or not 0 <= point['x'] <= 1280 or not 0 <= point['y'] <= 720 for point in emitter.get('spawn_points', []))
+            or variant_mode not in {'FIXED', 'ORDERED', 'SEEDED_RANDOM'}
+            or not isinstance(variant_ids, list)
+            or not variant_ids
+            or len(variant_ids) != len(set(variant_ids))
+            or any(variant not in HAZARD_VARIANTS[emitter.get('hazard_type', '')] for variant in variant_ids)
+            or (variant_mode == 'FIXED' and len(variant_ids) != 1)
         ):
             issue(f'/hazard_emitters/{index}', 'INVALID_EMITTER')
     for index, rule in enumerate(value.get('drop_rules', [])):
