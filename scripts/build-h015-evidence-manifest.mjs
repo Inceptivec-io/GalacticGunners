@@ -166,36 +166,38 @@ const gateDefinitions = {
     }),
   },
   "boarding-success-return": {
-    directory: "rectification/boarding_success",
-    verification: "boarding-success-browser-verification.json",
-    route: "/play?qa=hostile",
-    setup: [
-      "Launch a governed Boarding encounter with its physical exit locked.",
-    ],
-    actions: [
-      "Eliminate the required target and traverse to the exit airlock.",
-    ],
-    assertions: [
-      "The exit unlocks only after the objective and returns to the preserved Shooter checkpoint.",
-    ],
-    observed:
-      "QA diagnostic: deterministic Boarding probes recorded success, physical exit, and Shooter return behaviour.",
-    normal: false,
+    ...ordinaryDefinition({
+      id: "boarding-success-return",
+      route: "/ -> Play -> /play",
+      setup: [
+        "Enter Level 4 through public Play and the rendered campaign Continue controls.",
+      ],
+      actions: [
+        "Open Boarding with a normal player-laser hit, clear the live interior, traverse to the far airlock, and select its visible exit action.",
+      ],
+      assertions: [
+        "The physical far exit completes only after the Boarding objective and restores the preserved Shooter checkpoint.",
+      ],
+      observed:
+        "Ordinary Playwright Boarding journeys used public entry, normal player input, live interior combat, and the rendered far-exit control before Shooter return.",
+    }),
   },
   "level4-hazards": {
-    directory: "rectification/level4_hazards",
-    verification: "level4-hazard-browser-verification.json",
-    route: "/play?qa=hostile",
-    setup: ["Start the database-backed Level 4 definition."],
-    actions: [
-      "Observe configured hazards and fire a player laser through a live hazard collision.",
-    ],
-    assertions: [
-      "Asteroid and comet instances are visible, collide through their meaningful body, and resolve once.",
-    ],
-    observed:
-      "QA diagnostic: Level 4 hazard probes recorded configured hazard and projectile resolution behaviour.",
-    normal: false,
+    ...ordinaryDefinition({
+      id: "level4-hazards",
+      route: "/ -> Play -> /play",
+      setup: [
+        "Enter the published Level 4 campaign entry through the public route and explicit Continue controls.",
+      ],
+      actions: [
+        "Observe authored comet hazards in ordinary live play and resolve an intersecting hazard with a normal player laser.",
+      ],
+      assertions: [
+        "Visible Level 4 hazards use their configured variants, trajectories, collider and single-resolution behaviour without diagnostic controls.",
+      ],
+      observed:
+        "Ordinary Playwright gameplay captured the published Level 4 hazard lifecycle and normal player-laser interaction without a QA route or forced state.",
+    }),
   },
   "designer-roundtrip": {
     ...ordinaryDefinition({
