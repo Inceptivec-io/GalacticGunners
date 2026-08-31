@@ -9,6 +9,9 @@ async function startLevelFour(page: import("@playwright/test").Page) {
     { timeout: 25_000 },
   );
   const canvas = page.locator(".game-canvas-host canvas");
+  // Firefox does not route a synthetic key press into a canvas until normal
+  // pointer interaction has focused the real game surface.
+  await canvas.click({ position: { x: 8, y: 8 } });
   await canvas.press("Space");
   await expect(page.locator("[data-game-status]")).toHaveText(
     "Galactic Gunners gameplay started.",
