@@ -339,7 +339,7 @@ jobs:
       - run: npx playwright install chromium
       - run: docker compose up --build -d
       - run: |
-          timeout --signal=KILL 125s node scripts/wait-for-http.mjs --url http://localhost:3002/api/v1/health/
+          timeout --signal=KILL 125s node scripts/wait-for-http.mjs --url http://localhost:3002/api/health
           docker compose exec -T backend python manage.py migrate --noinput
           docker compose exec -T backend python manage.py seed_service_plans
           docker compose exec -T backend python manage.py seed_runtime_authority
