@@ -243,6 +243,8 @@ if (import.meta.url === `file:///${process.argv[1].replaceAll("\\", "/")}`) {
         "seed_browser_assurance_campaign",
         "--duration-ms",
         "2500",
+        "--scenario",
+        "hazards",
       ],
       "07-seed-browser-assurance",
     );
