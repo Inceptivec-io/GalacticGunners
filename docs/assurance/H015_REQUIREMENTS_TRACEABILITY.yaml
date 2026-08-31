@@ -486,7 +486,8 @@ rows:
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: Ordinary browser positive and negative journeys are executable. Exact-SHA
+    reason:
+      Ordinary browser positive and negative journeys are executable. Exact-SHA
       CI evidence remains required before this derived row can pass.
   - requirement_id: H015-GAME-007
     area: Gameplay
@@ -512,7 +513,8 @@ rows:
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: API campaign identity checks and ordinary browser traversal are executable.
+    reason:
+      API campaign identity checks and ordinary browser traversal are executable.
       Exact-SHA CI evidence remains required before this derived row can pass.
   - requirement_id: H015-GAME-008
     area: Gameplay
@@ -538,7 +540,8 @@ rows:
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: Final-entry terminal behavior has executable unit and ordinary browser
+    reason:
+      Final-entry terminal behavior has executable unit and ordinary browser
       coverage. Exact-SHA CI evidence remains required before this derived row can pass.
   - requirement_id: H015-DES-001
     area: Designer
@@ -599,7 +602,8 @@ rows:
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: Native multi-zoom drag and boundary-clamp browser journeys are executable.
+    reason:
+      Native multi-zoom drag and boundary-clamp browser journeys are executable.
       Exact-SHA CI evidence remains required before this derived row can pass.
   - requirement_id: H015-DES-003
     area: Designer
@@ -656,7 +660,8 @@ rows:
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: Compiler hostile checks and ordinary generated-thumbnail verification are executable.
+    reason:
+      Compiler hostile checks and ordinary generated-thumbnail verification are executable.
       Exact-SHA CI evidence remains required before this derived row can pass.
   - requirement_id: H015-DES-005
     area: Designer
@@ -685,7 +690,8 @@ rows:
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: Typed authoring validation and ordinary save/reload journeys are executable.
+    reason:
+      Typed authoring validation and ordinary save/reload journeys are executable.
       Exact-SHA CI evidence remains required before this derived row can pass.
   - requirement_id: H015-DES-006
     area: Designer
@@ -702,14 +708,14 @@ rows:
       - id: H015-DES-006 positive
         classification: API
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-DES-006 positive test"
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_authoring.py -q && npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-desktop --grep 'POINTER-001|CANVAS-001' --workers=1"
         assertion:
           Membership, layout, bounds, spacing, motion, timing and repeat
           round-trip
       - id: H015-DES-006 negative
         classification: API
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-DES-006 negative or hostile test"
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_authoring.py -q"
         assertion:
           Invalid member, unsafe profile, overlap rule or missing field fails
           validation
@@ -717,8 +723,7 @@ rows:
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Typed authoring contracts and ordinary pointer/grid journeys provide executable positive and hostile proof. Exact-SHA CI evidence remains required before this derived row can pass.
   - requirement_id: H015-DES-007
     area: Designer
     requirement: Hazards, placed hazards, shields and destructible matrices are
@@ -734,19 +739,18 @@ rows:
       - id: H015-DES-007 positive
         classification: API
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-DES-007 positive test"
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_authoring.py -q && npx playwright test tests/e2e/level4-hazards.spec.ts --project=chromium-desktop --workers=1"
         assertion: Every runtime field round-trips and changes exact-checksum preview
       - id: H015-DES-007 negative
         classification: API
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-DES-007 negative or hostile test"
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_authoring.py -q && npx playwright test tests/e2e/level4-hazards.spec.ts --project=chromium-desktop --grep negative --workers=1"
         assertion: Invalid ranges, missing assets or budget overflow fail
     evidence_gate: ordinary-designer
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Typed hazard validation and ordinary Level 4 hazard journeys are executable. Exact-SHA CI evidence remains required before this derived row can pass.
   - requirement_id: H015-DES-008
     area: Designer
     requirement:
@@ -765,20 +769,19 @@ rows:
       - id: H015-DES-008 positive
         classification: API
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-DES-008 positive test"
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_authoring.py levels/tests/test_browser_assurance_campaign.py -q && npx playwright test tests/e2e/campaign-real-play.spec.ts --project=chromium-desktop --workers=1"
         assertion: Every Level 1-6 differing value has a usable typed control or
           governed exception
       - id: H015-DES-008 negative
         classification: API
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-DES-008 negative or hostile test"
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_authoring.py -q"
         assertion: Source-only, seed-only or UI-shadow configuration fails
     evidence_gate: ordinary-designer
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Authoring validation and complete ordinary campaign traversal are executable. Exact-SHA CI evidence remains required before this derived row can pass.
   - requirement_id: H015-DES-009
     area: Designer
     requirement: Draft save is immutable, refresh-safe and checksum-addressable
@@ -792,19 +795,18 @@ rows:
       - id: H015-DES-009 positive
         classification: API
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-DES-009 positive test"
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q && npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-desktop --grep valid_seed_save_reloads --workers=1"
         assertion: Material edits save a new version and survive full refresh/relogin
       - id: H015-DES-009 negative
         classification: API
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-DES-009 negative or hostile test"
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q && npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-desktop --grep invalid_seed --workers=1"
         assertion: In-place historical mutation, stale checksum or lost edit fails
     evidence_gate: ordinary-designer
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Immutable revision API coverage and ordinary save/refresh plus invalid-save browser journeys are executable. Exact-SHA CI evidence remains required before this derived row can pass.
   - requirement_id: H015-DES-010
     area: Designer
     requirement: Exact-checksum preview uses the same configuration authority as runtime
@@ -818,21 +820,20 @@ rows:
       - id: H015-DES-010 positive
         classification: API
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-DES-010 positive test"
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q && npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-desktop --grep 'POINTER-001|THUMB-001' --workers=1"
         assertion:
           Moved object, formation, composition and hazard changes appear in
           preview
       - id: H015-DES-010 negative
         classification: API
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-DES-010 negative or hostile test"
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q"
         assertion: Seed fallback, source constant or checksum mismatch fails
     evidence_gate: ordinary-designer
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Exact-checksum preview API coverage and canonical Designer pointer/thumbnail journeys are executable. Exact-SHA CI evidence remains required before this derived row can pass.
   - requirement_id: H015-PUB-001
     area: Publication
     requirement: Only authorised internal administrators publish CORE content
@@ -849,19 +850,18 @@ rows:
       - id: H015-PUB-001 positive
         classification: API
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-PUB-001 positive test"
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q"
         assertion: Authorised publication creates immutable version and audit record
       - id: H015-PUB-001 negative
         classification: API
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-PUB-001 negative or hostile test"
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py organizations/tests/test_portal_api.py -q"
         assertion: Anonymous, customer and organisation attempts fail server-side
     evidence_gate: publication-runtime
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Privileged publish/audit and cross-surface authority rejection coverage are executable. Exact-SHA CI evidence remains required before this derived row can pass.
   - requirement_id: H015-PUB-002
     area: Publication
     requirement: Published Designer changes appear in a newly started ordinary campaign
@@ -875,21 +875,20 @@ rows:
       - id: H015-PUB-002 positive
         classification: API
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-PUB-002 positive test"
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q && npx playwright test tests/e2e/campaign-real-play.spec.ts --project=chromium-desktop --grep published_release_continue --workers=1"
         assertion:
           New campaign resolves new release and visibly plays all material
           changes
       - id: H015-PUB-002 negative
         classification: API
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-PUB-002 negative or hostile test"
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q"
         assertion: Old seed, cached release or hard-coded runtime fallback fails
     evidence_gate: publication-runtime
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Fresh-release API and ordinary Continue runtime coverage are executable. Exact-SHA CI evidence remains required before this derived row can pass.
   - requirement_id: H015-PUB-003
     area: Publication
     requirement: Existing active campaigns remain pinned to their original release
@@ -903,19 +902,18 @@ rows:
       - id: H015-PUB-003 positive
         classification: API
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-PUB-003 positive test"
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q"
         assertion: Campaign created before publication continues on old checksums
       - id: H015-PUB-003 negative
         classification: API
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-PUB-003 negative or hostile test"
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q"
         assertion: Silent mutation to the new release fails
     evidence_gate: publication-runtime
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: API coverage proves release pinning and rejects silent historical mutation. Exact-SHA CI evidence remains required before this derived row can pass.
   - requirement_id: H015-PUB-004
     area: Publication
     requirement: Rollback publishes a new version derived from selected history
@@ -929,19 +927,18 @@ rows:
       - id: H015-PUB-004 positive
         classification: API
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-PUB-004 positive test"
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q"
         assertion: Restored baseline appears in a new campaign with complete audit lineage
       - id: H015-PUB-004 negative
         classification: API
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-PUB-004 negative or hostile test"
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q"
         assertion: Destructive rewrite or deletion of history fails
     evidence_gate: publication-runtime
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: API coverage proves rollback creates a new immutable revision and preserves history. Exact-SHA CI evidence remains required before this derived row can pass.
   - requirement_id: H015-PUB-005
     area: Publication
     requirement:
@@ -958,21 +955,20 @@ rows:
       - id: H015-PUB-005 positive
         classification: UNIT
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-PUB-005 positive test"
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest tests/test_campaign_service.py -q && npx playwright test tests/e2e/campaign-real-play.spec.ts --project=chromium-desktop --grep continue_traverses --workers=1"
         assertion:
           Six- and seven-level publications succeed and Continue follows pinned
           order
       - id: H015-PUB-005 negative
         classification: UNIT
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-PUB-005 negative or hostile test"
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest tests/test_campaign_service.py -q"
         assertion: Gaps, duplicate/non-positive sequence or unpublished entry fails
     evidence_gate: publication-runtime
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Campaign service sequence validation and ordinary six-entry traversal are executable. Exact-SHA CI evidence remains required before this derived row can pass.
   - requirement_id: H015-PUB-006
     area: Publication
     requirement: Administration identifies current draft, published version and
@@ -987,19 +983,18 @@ rows:
       - id: H015-PUB-006 positive
         classification: API
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-PUB-006 positive test"
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q && npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-desktop --grep valid_seed_save_reloads --workers=1"
         assertion: Every Level 1-6 view exposes unambiguous identities and preview status
       - id: H015-PUB-006 negative
         classification: API
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-PUB-006 negative or hostile test"
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q"
         assertion: Ambiguous, stale or ranked-preview labelling fails
     evidence_gate: publication-runtime
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Authority API and ordinary Designer revision display coverage are executable. Exact-SHA CI evidence remains required before this derived row can pass.
   - requirement_id: H015-BOARD-001
     area: Boarding
     requirement: Board and Continue are distinct governed actions
@@ -1297,19 +1292,18 @@ rows:
       - id: H015-AUTH-004 positive
         classification: API
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-AUTH-004 positive test"
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q && npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-desktop --grep valid_seed_save_reloads --workers=1"
         assertion: Product administration performs all governed CORE workflows
       - id: H015-AUTH-004 negative
         classification: API
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-AUTH-004 negative or hostile test"
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q"
         assertion: Production/public Django Admin and product-control substitution fail
     evidence_gate: ordinary-security
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Product administration and Django Admin exclusion are covered by executable API and ordinary browser tests. Exact-SHA CI evidence remains required before this derived row can pass.
   - requirement_id: H015-QUAL-001
     area: Quality
     requirement:
@@ -1327,19 +1321,18 @@ rows:
       - id: H015-QUAL-001 positive
         classification: CI
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-QUAL-001 positive test"
+        command: "npm run quality && npm run test:h015:evidence-integrity"
         assertion: Clean checkout executes documented commands successfully
       - id: H015-QUAL-001 negative
         classification: CI
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-QUAL-001 negative or hostile test"
+        command: "node scripts/test-h015-ci-artifacts.mjs"
         assertion: Introduced violation fails CI
     evidence_gate: quality-gates
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: The documented quality command and CI workflow contract are executable; the workflow contract has a controlled missing-required-journey negative test. Exact-SHA CI evidence remains required before this derived row can pass.
   - requirement_id: H015-QUAL-002
     area: Quality
     requirement: Changed high-risk code has maintainable test seams and
@@ -1354,19 +1347,18 @@ rows:
       - id: H015-QUAL-002 positive
         classification: UNIT
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-QUAL-002 positive test"
+        command: "npm run game:typecheck && npm run game:test && docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_authoring.py tests/test_campaign_service.py -q"
         assertion: Review confirms cohesive modules, typed contracts and decision comments
       - id: H015-QUAL-002 negative
         classification: UNIT
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-QUAL-002 negative or hostile test"
+        command: "npm run test:h015:traceability"
         assertion: God-file growth, duplicate logic or unexplained constants fails review
     evidence_gate: quality-gates
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Typed game/backend seams and fail-closed traceability boundary tests are executable. Exact-SHA CI evidence remains required before this derived row can pass.
   - requirement_id: H015-QUAL-003
     area: Quality
     requirement: Coverage and test-effectiveness gates prevent assertion-free success
@@ -1379,19 +1371,18 @@ rows:
       - id: H015-QUAL-003 positive
         classification: CI
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-QUAL-003 positive test"
+        command: "npm run test:coverage && npm run test:h015:evidence-integrity"
         assertion: Thresholds pass and a controlled fault is detected by relevant tests
       - id: H015-QUAL-003 negative
         classification: CI
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-QUAL-003 negative or hostile test"
+        command: "npm run test:h015:evidence-integrity"
         assertion: Empty test, removed assertion or deliberate mutation surviving fails
     evidence_gate: quality-gates
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: Coverage and evidence-integrity tests are executable; controlled mutation cases reject missing artifact bindings, missing gate evidence, and assertion-free evidence claims. Exact-SHA CI evidence remains required before this derived row can pass.
   - requirement_id: H015-QUAL-004
     area: Quality
     requirement: Final exact-SHA closure is independently reproducible and fail-closed
@@ -1410,14 +1401,14 @@ rows:
       - id: H015-QUAL-004 positive
         classification: CI
         polarity: POSITIVE
-        command: "UNPROVEN: implement H015-QUAL-004 positive test"
+        command: "npm run h015:closure-audit"
         assertion:
           Clean launcher, CI artifacts and closure audit agree with zero
           failed/pending rows
       - id: H015-QUAL-004 negative
         classification: CI
         polarity: NEGATIVE
-        command: "UNPROVEN: implement H015-QUAL-004 negative or hostile test"
+        command: "npm run test:h015:evidence-integrity && node scripts/test-h015-ci-artifacts.mjs"
         assertion:
           Dirty tree, provenance mismatch, manual PASS, missing artifact or
           injected defect fails
@@ -1425,5 +1416,4 @@ rows:
     evidence_paths: []
     status: FAIL
     derived: true
-    reason: No independently executable positive and negative proof has yet been
-      admitted under the replacement assurance authority.
+    reason: The closure auditor and controlled evidence/CI artifact negative cases are executable. A final exact-SHA artifact must still prove this row before it can pass.

@@ -23,6 +23,11 @@ function assertArtifactContract(source) {
   ]) {
     assert.ok(attestationBlock.includes(required), `missing post-upload attestation binding: ${required}`);
   }
+
+  const hazardSeed = "seed_browser_assurance_campaign --duration-ms 2500 --scenario hazards";
+  const hazardJourney = "tests/e2e/level4-hazards.spec.ts --project=chromium-desktop --workers=1";
+  assert.ok(source.includes(hazardSeed), "the ordinary Level 4 hazard scenario must be seeded in CI");
+  assert.ok(source.includes(hazardJourney), "the ordinary Level 4 hazard journey must run in CI");
 }
 
 assertArtifactContract(workflow);
@@ -44,5 +49,11 @@ const reordered = workflow.replace(
   "- name: Generate H015 closure attestation",
 );
 assert.throws(() => assertArtifactContract(reordered), /must be generated after evidence upload/);
+
+const missingHazardJourney = workflow.replace(
+  "tests/e2e/level4-hazards.spec.ts --project=chromium-desktop --workers=1",
+  "tests/e2e/REMOVED-level4-hazards.spec.ts --project=chromium-desktop --workers=1",
+);
+assert.throws(() => assertArtifactContract(missingHazardJourney), /ordinary Level 4 hazard journey/);
 
 console.log("H015-EVID-005 CI artifact contract positive and negative tests passed.");

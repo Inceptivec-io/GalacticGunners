@@ -86,6 +86,7 @@ def test_published_version_is_immutable_and_unknown_routes_are_absent(client, le
         version.save()
     assert client.get('/admin/').status_code == 404
     assert client.get('/editor/').status_code == 404
+    assert client.get('/django-admin/').status_code == 404
 
 
 @pytest.mark.django_db

@@ -22,9 +22,13 @@ async function startLevelFour(page: import("@playwright/test").Page) {
       new RegExp(`Level ${sequence} complete\\. Continue available`),
       { timeout: 12_000 },
     );
-    await canvas.click({ position: { x: box.width / 2, y: box.height * 0.83 } });
+    await canvas.click({
+      position: { x: box.width / 2, y: box.height * 0.83 },
+    });
     await expect(announcement).toHaveText(
-      new RegExp(`Level ${sequence + 1}: Browser Assurance ${sequence + 1} started`),
+      new RegExp(
+        `Level ${sequence + 1}: Browser Assurance ${sequence + 1} started`,
+      ),
       { timeout: 12_000 },
     );
   }
@@ -40,7 +44,9 @@ test("H015-GAME-006__e2e_ordinary_user__player_laser_destroys_the_authored_level
   await canvas.focus();
   await page.keyboard.down("Space");
   try {
-    await expect(announcement).toHaveText("Comet destroyed.", { timeout: 12_000 });
+    await expect(announcement).toHaveText("Comet destroyed.", {
+      timeout: 12_000,
+    });
   } finally {
     await page.keyboard.up("Space");
   }
@@ -55,7 +61,9 @@ test("H015-GAME-006__e2e_ordinary_user__player_laser_destroys_the_authored_level
       "Used visible Continue controls to reach Level 4.",
       "Held the normal Fire control until the authored comet was physically destroyed.",
     ],
-    assertions: ["The Level 4 comet used its governed runtime emitter and resolved through normal player-laser collision."],
+    assertions: [
+      "The Level 4 comet used its governed runtime emitter and resolved through normal player-laser collision.",
+    ],
   });
 });
 
@@ -74,6 +82,8 @@ test("H015-GAME-006__e2e_ordinary_user_negative__level_four_hazard_does_not_dest
     gate: "level4-hazards",
     route: "/ -> Play -> /play",
     actions: ["Reached Level 4 and deliberately supplied no Fire input."],
-    assertions: ["The authored comet did not report a false player-laser destruction without collision input."],
+    assertions: [
+      "The authored comet did not report a false player-laser destruction without collision input.",
+    ],
   });
 });

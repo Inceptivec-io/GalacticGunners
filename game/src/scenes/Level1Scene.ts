@@ -349,16 +349,8 @@ export class Level1Scene extends CombatLevelScene {
       Phaser.Input.Keyboard.KeyCodes.ENTER,
     );
     this.#pauseKey?.on("down", this.handlePauseKeyDown, this);
-    this.input.keyboard?.on(
-      "keydown-ENTER",
-      this.handleTerminalConfirm,
-      this,
-    );
-    this.input.keyboard?.on(
-      "keydown-SPACE",
-      this.handleTerminalConfirm,
-      this,
-    );
+    this.input.keyboard?.on("keydown-ENTER", this.handleTerminalConfirm, this);
+    this.input.keyboard?.on("keydown-SPACE", this.handleTerminalConfirm, this);
     if (typeof window !== "undefined") {
       this.#windowPauseHandler = (event) => {
         if (event.code !== "KeyP" || event.repeat) return;
