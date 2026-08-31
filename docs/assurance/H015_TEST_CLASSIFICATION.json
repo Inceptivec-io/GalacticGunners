@@ -87,6 +87,10 @@
       "classification": "UNIT"
     },
     {
+      "file": "tests/unit/wait-for-http.test.mjs",
+      "classification": "UNIT"
+    },
+    {
       "file": "game/tests/boarding-simulation.test.ts",
       "classification": "UNIT"
     },
