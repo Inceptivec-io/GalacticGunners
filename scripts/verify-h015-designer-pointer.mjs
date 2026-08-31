@@ -96,9 +96,17 @@ try {
 
   await page.getByRole('button', { name: 'Alien Ships', exact: true }).click();
   await page.waitForSelector('.designer-chooser');
-  const thumbnailSources = await page.locator('.designer-chooser .tool-button img').evaluateAll((images) => images.map((image) => image.getAttribute('src')));
-  assert(thumbnailSources.length > 0 && thumbnailSources.every((source) => source?.includes('/designer-previews/') || source?.includes('ui/icons/')),
-    `Designer palette contains a raw animation sheet thumbnail: ${JSON.stringify(thumbnailSources)}`);
+  const thumbnails = await page.locator('.designer-chooser .tool-button img').evaluateAll((images) => images.map((image) => ({
+    source: image.getAttribute('src'),
+    naturalWidth: image.naturalWidth,
+    naturalHeight: image.naturalHeight,
+  })));
+  const thumbnailSources = thumbnails.map((thumbnail) => thumbnail.source);
+  assert(thumbnails.length > 0
+    && thumbnails.every((thumbnail) => thumbnail.source?.includes('/generated/thumbnails/')
+      && thumbnail.naturalWidth > 0
+      && thumbnail.naturalHeight > 0),
+  `Designer palette does not use loadable canonical frame thumbnails: ${JSON.stringify(thumbnails)}`);
   await page.getByRole('button', { name: 'Close chooser' }).click();
   await page.screenshot({ path: path.join(outputDir, 'designer-pointer-and-thumbnails.png'), fullPage: true });
   assert(errors.length === 0, `Console errors: ${errors.join(' | ')}`);
