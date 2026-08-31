@@ -343,6 +343,10 @@ jobs:
           docker compose exec -T backend python manage.py migrate --noinput
           docker compose exec -T backend python manage.py seed_service_plans
           docker compose exec -T backend python manage.py seed_runtime_authority
+          # This remains diagnostic evidence, kept distinct from ordinary browser
+          # journeys below. The closure auditor requires its exact-SHA record.
+          docker compose exec -T backend python manage.py seed_browser_assurance_campaign --duration-ms 300000
+          GG_RUNTIME_URL=http://localhost:3002 GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/hostile" npm run runtime:hostile
           # Ordinary input journeys need enough live simulation time to exercise
           # pause and controls. The short deterministic objective is reseeded
           # only for the campaign-progression browser suite below.

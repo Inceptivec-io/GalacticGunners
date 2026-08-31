@@ -26,8 +26,10 @@ function assertArtifactContract(source) {
 
   const hazardSeed = "seed_browser_assurance_campaign --duration-ms 2500 --scenario hazards";
   const hazardJourney = "tests/e2e/level4-hazards.spec.ts --project=chromium-desktop --workers=1";
+  const hostileEvidence = 'GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/hostile" npm run runtime:hostile';
   assert.ok(source.includes(hazardSeed), "the ordinary Level 4 hazard scenario must be seeded in CI");
   assert.ok(source.includes(hazardJourney), "the ordinary Level 4 hazard journey must run in CI");
+  assert.ok(source.includes(hostileEvidence), "the closure artifact must retain the separate runtime-hostile diagnostic evidence");
 }
 
 assertArtifactContract(workflow);
@@ -55,5 +57,11 @@ const missingHazardJourney = workflow.replace(
   "tests/e2e/REMOVED-level4-hazards.spec.ts --project=chromium-desktop --workers=1",
 );
 assert.throws(() => assertArtifactContract(missingHazardJourney), /ordinary Level 4 hazard journey/);
+
+const missingHostileEvidence = workflow.replace(
+  'GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/hostile" npm run runtime:hostile',
+  'GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/REMOVED-hostile" npm run runtime:hostile',
+);
+assert.throws(() => assertArtifactContract(missingHostileEvidence), /runtime-hostile diagnostic evidence/);
 
 console.log("H015-EVID-005 CI artifact contract positive and negative tests passed.");
