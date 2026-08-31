@@ -43,7 +43,7 @@ export function sha256(file) {
   return createHash("sha256").update(readFileSync(file)).digest("hex");
 }
 
-function evidenceDigest(gates) {
+export function evidenceDigest(gates) {
   const canonical = gates
     .filter((gate) => gate.id !== "closure-audit")
     .map((gate) => ({
