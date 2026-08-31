@@ -66,8 +66,15 @@ jobs:
       - run: docker compose config
       - run: docker compose up --build -d
       - run: |
-          timeout --kill-after=5s 120s bash -c 'until curl --connect-timeout 2 --max-time 5 -fsS http://localhost:8010/api/v1/health/; do sleep 5; done'
-          timeout --kill-after=5s 120s bash -c 'until curl --connect-timeout 2 --max-time 5 -fsS http://localhost:3002/api/v1/health/; do sleep 5; done'
+          wait_for_health() {
+            local url="$1" deadline=$((SECONDS + 120))
+            until curl --connect-timeout 2 --max-time 5 -fsS "$url"; do
+              if (( SECONDS >= deadline )); then echo "Timed out waiting for $url" >&2; return 1; fi
+              sleep 5
+            done
+          }
+          wait_for_health http://localhost:8010/api/v1/health/
+          wait_for_health http://localhost:3002/api/v1/health/
           curl -fsS http://localhost:3002/
       - run: GG_RUNTIME_URL=http://localhost:3002 npx playwright test tests/e2e/production-mode-negative.spec.ts --project=chromium-desktop --workers=1
       - if: always()
@@ -88,8 +95,15 @@ jobs:
       - run: docker compose config
       - run: docker compose up --build -d
       - run: |
-          timeout --kill-after=5s 120s bash -c 'until curl --connect-timeout 2 --max-time 5 -fsS http://localhost:8010/api/v1/health/; do sleep 5; done'
-          timeout --kill-after=5s 120s bash -c 'until curl --connect-timeout 2 --max-time 5 -fsS http://localhost:3002/api/v1/health/; do sleep 5; done'
+          wait_for_health() {
+            local url="$1" deadline=$((SECONDS + 120))
+            until curl --connect-timeout 2 --max-time 5 -fsS "$url"; do
+              if (( SECONDS >= deadline )); then echo "Timed out waiting for $url" >&2; return 1; fi
+              sleep 5
+            done
+          }
+          wait_for_health http://localhost:8010/api/v1/health/
+          wait_for_health http://localhost:3002/api/v1/health/
           docker compose exec -T backend python manage.py migrate --noinput
           # Pool, movement and collision diagnostics need time to complete;
           # this isolated fixture does not alter player-facing game tuning.
@@ -339,7 +353,11 @@ jobs:
       - run: npx playwright install chromium
       - run: docker compose up --build -d
       - run: |
-          timeout --kill-after=5s 120s bash -c 'until curl --connect-timeout 2 --max-time 5 -fsS http://localhost:3002/api/v1/health/; do sleep 5; done'
+          deadline=$((SECONDS + 120))
+          until curl --connect-timeout 2 --max-time 5 -fsS http://localhost:3002/api/v1/health/; do
+            if (( SECONDS >= deadline )); then echo 'Timed out waiting for web API health' >&2; exit 1; fi
+            sleep 5
+          done
           docker compose exec -T backend python manage.py migrate --noinput
           docker compose exec -T backend python manage.py seed_service_plans
           docker compose exec -T backend python manage.py seed_runtime_authority
