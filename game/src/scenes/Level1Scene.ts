@@ -590,7 +590,12 @@ export class Level1Scene extends CombatLevelScene {
         ? RUNTIME_ASSETS.fx.asteroid
         : RUNTIME_ASSETS.fx.comet;
     const hazard = this.physics.add
-      .sprite(origin.x, origin.y, asset.key, "stable-0")
+      .sprite(
+        origin.x,
+        origin.y,
+        asset.key,
+        Phaser.Math.Between(0, 5),
+      )
       .setDisplaySize(type === "asteroid" ? 54 : 72, 54)
       .setDepth(3);
     hazard
@@ -1391,7 +1396,7 @@ export class Level1Scene extends CombatLevelScene {
       scout.setTexture(RUNTIME_ASSETS.enemy.mothershipHit.key);
       this.time.delayedCall(110, () => {
         if (scout.active && !scout.getData("destroyed"))
-          scout.setTexture(RUNTIME_ASSETS.enemy.mothership.key, "stable-0");
+          scout.setTexture(RUNTIME_ASSETS.enemy.mothership.key, 0);
       });
       this.#score.apply("mothership_hit", this.time.now, {
         source: "player_laser",

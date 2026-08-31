@@ -1,10 +1,11 @@
 import * as Phaser from "phaser";
 
+import { REQUIRED_RUNTIME_ASSETS, RUNTIME_ASSETS } from "../config/assets";
 import {
-  FRAME_RECTS,
-  REQUIRED_RUNTIME_ASSETS,
-  RUNTIME_ASSETS,
-} from "../config/assets";
+  GENERATED_SPRITE_ASSET_KEYS,
+  GENERATED_SPRITE_BY_KEY,
+  GENERATED_SPRITE_CATALOGUE,
+} from "../config/generatedSpriteCatalogue";
 import type { GameRuntimeConfig } from "../config/gameConfig";
 import { levelChecksum } from "../levels/LevelChecksum";
 import { compileLevelDocument } from "../levels/LevelCompiler";
@@ -24,43 +25,24 @@ export class BootScene extends Phaser.Scene {
   preload(): void {
     this.registry.set("runtimeConfig", this.runtimeConfig);
     for (const asset of REQUIRED_RUNTIME_ASSETS) {
-      if (
-        asset.key === RUNTIME_ASSETS.fx.explosionSmall.key ||
-        asset.key === RUNTIME_ASSETS.projectile.nuke.key ||
-        asset.key === RUNTIME_ASSETS.fx.nukeBurst.key
-      ) {
-        continue;
-      }
+      if (GENERATED_SPRITE_ASSET_KEYS.has(asset.key)) continue;
       if (asset.key.startsWith("audio.")) {
         this.load.audio(asset.key, asset.runtimePath);
       } else {
         this.load.image(asset.key, asset.runtimePath);
       }
     }
-    this.load.spritesheet(
-      RUNTIME_ASSETS.fx.explosionSmall.key,
-      RUNTIME_ASSETS.fx.explosionSmall.runtimePath,
-      {
-        frameWidth: FRAME_RECTS.explosionSmall.frameWidth,
-        frameHeight: FRAME_RECTS.explosionSmall.frameHeight,
-      },
-    );
-    this.load.spritesheet(
-      RUNTIME_ASSETS.projectile.nuke.key,
-      RUNTIME_ASSETS.projectile.nuke.runtimePath,
-      {
-        frameWidth: FRAME_RECTS.nukeProjectile.frameWidth,
-        frameHeight: FRAME_RECTS.nukeProjectile.frameHeight,
-      },
-    );
-    this.load.spritesheet(
-      RUNTIME_ASSETS.fx.nukeBurst.key,
-      RUNTIME_ASSETS.fx.nukeBurst.runtimePath,
-      {
-        frameWidth: FRAME_RECTS.nukeBurst.frameWidth,
-        frameHeight: FRAME_RECTS.nukeBurst.frameHeight,
-      },
-    );
+    for (const definition of GENERATED_SPRITE_CATALOGUE) {
+      if (definition.assetKey.startsWith("boarding.")) continue;
+      if (definition.frameCount === 1) {
+        this.load.image(definition.assetKey, definition.runtimePath);
+      } else {
+        this.load.spritesheet(definition.assetKey, definition.runtimePath, {
+          frameWidth: definition.frameWidth,
+          frameHeight: definition.frameHeight,
+        });
+      }
+    }
   }
 
   async create(): Promise<void> {
@@ -85,7 +67,6 @@ export class BootScene extends Phaser.Scene {
         return;
       }
 
-      this.registerTextureFrames();
       this.createShipAnimations();
       validateLevelDefinition(LEVEL_ONE_DEFINITION);
       // Golden Level 1 must start without an API request. Remote resolution is an
@@ -177,120 +158,35 @@ export class BootScene extends Phaser.Scene {
   }
 
   private createRuntimeAnimations(): void {
-    this.anims.create({
-      key: "fx.explosionSmall.play",
-      frames: this.anims.generateFrameNumbers(
-        RUNTIME_ASSETS.fx.explosionSmall.key,
-        { start: 0, end: FRAME_RECTS.explosionSmall.endFrame },
-      ),
-      frameRate: 14,
-      repeat: 0,
-      hideOnComplete: true,
-    });
-    this.anims.create({
-      key: "projectile.nuke.fly",
-      frames: this.anims.generateFrameNumbers(
-        RUNTIME_ASSETS.projectile.nuke.key,
-        { start: 0, end: FRAME_RECTS.nukeProjectile.endFrame },
-      ),
-      frameRate: 10,
-      repeat: -1,
-    });
-    this.anims.create({
-      key: "fx.nukeBurst.play",
-      frames: this.anims.generateFrameNumbers(RUNTIME_ASSETS.fx.nukeBurst.key, {
-        start: 0,
-        end: FRAME_RECTS.nukeBurst.endFrame,
-      }),
-      frameRate: 14,
-      repeat: 0,
-      hideOnComplete: true,
-    });
-  }
-
-  private registerTextureFrames(): void {
-    const playerTexture = this.textures.get(RUNTIME_ASSETS.player.ship.key);
-    for (const frame of FRAME_RECTS.player) {
-      if (!playerTexture.has(frame.name)) {
-        playerTexture.add(
-          frame.name,
-          0,
-          frame.x,
-          frame.y,
-          frame.width,
-          frame.height,
-        );
-      }
-    }
-
-    const scoutTexture = this.textures.get(RUNTIME_ASSETS.enemy.scout.key);
-    for (const frame of FRAME_RECTS.scout) {
-      if (!scoutTexture.has(frame.name)) {
-        scoutTexture.add(
-          frame.name,
-          0,
-          frame.x,
-          frame.y,
-          frame.width,
-          frame.height,
-        );
-      }
-    }
-    const fixedFrames = [
-      [RUNTIME_ASSETS.enemy.cruiser.key, FRAME_RECTS.cruiser],
-      [RUNTIME_ASSETS.enemy.destroyer.key, FRAME_RECTS.destroyer],
-      [RUNTIME_ASSETS.enemy.mothership.key, FRAME_RECTS.mothership],
-      [RUNTIME_ASSETS.enemy.mothershipHit.key, FRAME_RECTS.mothership],
-      [RUNTIME_ASSETS.fx.asteroid.key, FRAME_RECTS.asteroid],
-      [RUNTIME_ASSETS.fx.comet.key, FRAME_RECTS.comet],
-    ] as const;
-    for (const [key, frames] of fixedFrames) {
-      const texture = this.textures.get(key);
-      for (const frame of frames) {
-        if (!texture.has(frame.name))
-          texture.add(
-            frame.name,
-            0,
-            frame.x,
-            frame.y,
-            frame.width,
-            frame.height,
-          );
-      }
-    }
+    this.createCatalogueAnimation("fx.explosionSmall", "fx.explosionSmall.play", true);
+    this.createCatalogueAnimation("projectile.nuke", "projectile.nuke.fly");
+    this.createCatalogueAnimation("fx.nukeBurst", "fx.nukeBurst.play", true);
   }
 
   private createShipAnimations(): void {
-    this.anims.create({
-      key: "player.ship.idle",
-      frames: FRAME_RECTS.player.map((frame) => ({
-        key: RUNTIME_ASSETS.player.ship.key,
-        frame: frame.name,
-      })),
-      frameRate: 8,
-      repeat: -1,
-    });
-    for (const [key, asset] of [
-      ["enemy.cruiser.idle", RUNTIME_ASSETS.enemy.cruiser],
-      ["enemy.destroyer.idle", RUNTIME_ASSETS.enemy.destroyer],
-      ["enemy.mothership.idle", RUNTIME_ASSETS.enemy.mothership],
-    ] as const) {
-      this.anims.create({
-        key,
-        frames: [{ key: asset.key, frame: "stable-0" }],
-        frameRate: 1,
-        repeat: -1,
-      });
-    }
+    this.createCatalogueAnimation("player.ship", "player.ship.idle");
+    this.createCatalogueAnimation("enemy.scout", "enemy.scout.idle");
+    this.createCatalogueAnimation("enemy.cruiser", "enemy.cruiser.idle");
+    this.createCatalogueAnimation("enemy.destroyer", "enemy.destroyer.idle");
+    this.createCatalogueAnimation("enemy.mothership", "enemy.mothership.idle");
+  }
 
+  private createCatalogueAnimation(
+    assetKey: string,
+    animationKey: string,
+    hideOnComplete = false,
+  ): void {
+    const definition = GENERATED_SPRITE_BY_KEY.get(assetKey);
+    if (!definition || definition.static) return;
     this.anims.create({
-      key: "enemy.scout.idle",
-      frames: FRAME_RECTS.scout.map((frame) => ({
-        key: RUNTIME_ASSETS.enemy.scout.key,
-        frame: frame.name,
-      })),
-      frameRate: 6,
-      repeat: -1,
+      key: animationKey,
+      frames: this.anims.generateFrameNumbers(assetKey, {
+        start: 0,
+        end: definition.frameCount - 1,
+      }),
+      frameRate: definition.frameRate,
+      repeat: definition.repeat ? -1 : 0,
+      hideOnComplete,
     });
   }
 }

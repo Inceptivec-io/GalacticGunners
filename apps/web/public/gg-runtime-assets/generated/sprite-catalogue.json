@@ -24,7 +24,8 @@
       "thumbnail_sha256": "9D18BBCCB9551600553183E968DC4B56975E25433D121CA7D7A3F19762675E50",
       "frame_count": 4,
       "background_method": "source alpha; alpha-trim",
-      "max_texture_axis": 4096
+      "max_texture_axis": 4096,
+      "variants": []
     },
     {
       "asset_key": "enemy.scout",
@@ -48,7 +49,8 @@
       "thumbnail_sha256": "381E4D4CA374BB5470F4470871CC5B81474BFF7E63A558BFA2CC8E1DEF81A5DC",
       "frame_count": 4,
       "background_method": "source alpha; alpha-trim",
-      "max_texture_axis": 4096
+      "max_texture_axis": 4096,
+      "variants": []
     },
     {
       "asset_key": "enemy.cruiser",
@@ -72,7 +74,8 @@
       "thumbnail_sha256": "B73F1DE6629BF79CD9114F4ADE5F72482933D899BFBB89994CF9E6B1A7DFA135",
       "frame_count": 4,
       "background_method": "source alpha; alpha-trim",
-      "max_texture_axis": 4096
+      "max_texture_axis": 4096,
+      "variants": []
     },
     {
       "asset_key": "enemy.destroyer",
@@ -96,7 +99,8 @@
       "thumbnail_sha256": "318DAD1EA9D6636636CF87B44302FF3CFD541B6AADAC4F2013B9E8FF53280055",
       "frame_count": 4,
       "background_method": "source alpha; alpha-trim",
-      "max_texture_axis": 4096
+      "max_texture_axis": 4096,
+      "variants": []
     },
     {
       "asset_key": "enemy.mothership",
@@ -120,7 +124,8 @@
       "thumbnail_sha256": "42B96C024E4E7061BF687B061E14F1AAB99C6ED28D44FD7E18C690F780AFA63D",
       "frame_count": 4,
       "background_method": "source alpha; alpha-trim",
-      "max_texture_axis": 4096
+      "max_texture_axis": 4096,
+      "variants": []
     },
     {
       "asset_key": "enemy.mothership.hit",
@@ -144,7 +149,8 @@
       "thumbnail_sha256": "8BFDF550F0D7B5C31AC63731B52897324F5AD24E9EFC976D57E2F4D078672003",
       "frame_count": 1,
       "background_method": "source alpha; alpha-trim",
-      "max_texture_axis": 4096
+      "max_texture_axis": 4096,
+      "variants": []
     },
     {
       "asset_key": "fx.asteroid",
@@ -168,7 +174,45 @@
       "thumbnail_sha256": "06314CA3F35BD976BBC3C00BF2A816F7A49C3047AE3A846454879008B38D116C",
       "frame_count": 6,
       "background_method": "source alpha; alpha-trim",
-      "max_texture_axis": 4096
+      "max_texture_axis": 4096,
+      "variants": [
+        {
+          "variant_id": "ASTEROID_VARIANT_01",
+          "canonical_frame_index": 0,
+          "thumbnail_path": "/gg-runtime-assets/generated/thumbnails/fx-asteroid-variant-01.png",
+          "thumbnail_sha256": "06314CA3F35BD976BBC3C00BF2A816F7A49C3047AE3A846454879008B38D116C"
+        },
+        {
+          "variant_id": "ASTEROID_VARIANT_02",
+          "canonical_frame_index": 1,
+          "thumbnail_path": "/gg-runtime-assets/generated/thumbnails/fx-asteroid-variant-02.png",
+          "thumbnail_sha256": "9DC1B4F5436FF37527E5256E3F180431774BB292A351584C39E69ECACFFF4312"
+        },
+        {
+          "variant_id": "ASTEROID_VARIANT_03",
+          "canonical_frame_index": 2,
+          "thumbnail_path": "/gg-runtime-assets/generated/thumbnails/fx-asteroid-variant-03.png",
+          "thumbnail_sha256": "0CE2925B9F88E71764CDFD3F6268BDB2D0F75655AA45B2DA96D69139805EDF16"
+        },
+        {
+          "variant_id": "ASTEROID_VARIANT_04",
+          "canonical_frame_index": 3,
+          "thumbnail_path": "/gg-runtime-assets/generated/thumbnails/fx-asteroid-variant-04.png",
+          "thumbnail_sha256": "D0C22D4A405E85A5A31CE2F3055F923093AC11D651700193A7DD00627A3847E4"
+        },
+        {
+          "variant_id": "ASTEROID_VARIANT_05",
+          "canonical_frame_index": 4,
+          "thumbnail_path": "/gg-runtime-assets/generated/thumbnails/fx-asteroid-variant-05.png",
+          "thumbnail_sha256": "025FA6B616BED36DC894D5C23C78853A8627EB07734D4AB34C00717F3704BA0A"
+        },
+        {
+          "variant_id": "ASTEROID_VARIANT_06",
+          "canonical_frame_index": 5,
+          "thumbnail_path": "/gg-runtime-assets/generated/thumbnails/fx-asteroid-variant-06.png",
+          "thumbnail_sha256": "A8C1F398DC3A570C8F7AB84C3A8411D142BC208AC0F3AC52BCF297569D38E72C"
+        }
+      ]
     },
     {
       "asset_key": "fx.comet",
@@ -192,7 +236,45 @@
       "thumbnail_sha256": "9D3FE0C3721F4A9425409F808A4947B5AD63EF5FC2188290C5C440C265E7E8DE",
       "frame_count": 6,
       "background_method": "source alpha; alpha-trim",
-      "max_texture_axis": 4096
+      "max_texture_axis": 4096,
+      "variants": [
+        {
+          "variant_id": "COMET_VARIANT_01",
+          "canonical_frame_index": 0,
+          "thumbnail_path": "/gg-runtime-assets/generated/thumbnails/fx-comet-variant-01.png",
+          "thumbnail_sha256": "9D3FE0C3721F4A9425409F808A4947B5AD63EF5FC2188290C5C440C265E7E8DE"
+        },
+        {
+          "variant_id": "COMET_VARIANT_02",
+          "canonical_frame_index": 1,
+          "thumbnail_path": "/gg-runtime-assets/generated/thumbnails/fx-comet-variant-02.png",
+          "thumbnail_sha256": "B2F246F9C32316310DF8BCC31A57308B34281440A56451C1CFB6F9F318EA6BAB"
+        },
+        {
+          "variant_id": "COMET_VARIANT_03",
+          "canonical_frame_index": 2,
+          "thumbnail_path": "/gg-runtime-assets/generated/thumbnails/fx-comet-variant-03.png",
+          "thumbnail_sha256": "F8C74D852C4334385CDAB31885AFC62F9FB9F7A3DE88ED69512B81FDF0FBD64C"
+        },
+        {
+          "variant_id": "COMET_VARIANT_04",
+          "canonical_frame_index": 3,
+          "thumbnail_path": "/gg-runtime-assets/generated/thumbnails/fx-comet-variant-04.png",
+          "thumbnail_sha256": "CE1789BD8CCDDB51F9F23A8C2CA747E858CD146CA69EC1782EE65EC21E2D6FE0"
+        },
+        {
+          "variant_id": "COMET_VARIANT_05",
+          "canonical_frame_index": 4,
+          "thumbnail_path": "/gg-runtime-assets/generated/thumbnails/fx-comet-variant-05.png",
+          "thumbnail_sha256": "BD800318739E646BC613A07BE21B8D52A20D0B380F537AF1BF880F5C6FCFEC87"
+        },
+        {
+          "variant_id": "COMET_VARIANT_06",
+          "canonical_frame_index": 5,
+          "thumbnail_path": "/gg-runtime-assets/generated/thumbnails/fx-comet-variant-06.png",
+          "thumbnail_sha256": "7F1D2CFFE97EC1B10FABBA0A9E15B970990D3AD6255238165B75A8C5DAFF4206"
+        }
+      ]
     },
     {
       "asset_key": "fx.explosionSmall",
@@ -216,7 +298,8 @@
       "thumbnail_sha256": "40DDE3D35A2DEA64F49734734B133A4A5A5FF1186DACDECB3FCF6EFB3EE5776E",
       "frame_count": 8,
       "background_method": "source alpha; alpha-trim",
-      "max_texture_axis": 4096
+      "max_texture_axis": 4096,
+      "variants": []
     },
     {
       "asset_key": "projectile.nuke",
@@ -240,7 +323,8 @@
       "thumbnail_sha256": "6A34CCFAC7B8E61B4636C5FF95C9A10B2741036D31211A1FBA5D520A368BE699",
       "frame_count": 4,
       "background_method": "source alpha; alpha-trim",
-      "max_texture_axis": 4096
+      "max_texture_axis": 4096,
+      "variants": []
     },
     {
       "asset_key": "fx.nukeBurst",
@@ -264,7 +348,8 @@
       "thumbnail_sha256": "67CA6FB11C04D586CA0C00538D0A7932556CA770D426ABF945E74F51AEAAFC35",
       "frame_count": 10,
       "background_method": "source alpha; alpha-trim",
-      "max_texture_axis": 4096
+      "max_texture_axis": 4096,
+      "variants": []
     },
     {
       "asset_key": "projectile.playerLaser",
@@ -288,7 +373,8 @@
       "thumbnail_sha256": "36BDFA3B3EF1C476E0548AD143659C982439D9D0EA9A790AB68546EBDD8094DB",
       "frame_count": 1,
       "background_method": "source alpha; alpha-trim",
-      "max_texture_axis": 4096
+      "max_texture_axis": 4096,
+      "variants": []
     },
     {
       "asset_key": "projectile.enemyLaser",
@@ -312,7 +398,8 @@
       "thumbnail_sha256": "7F519BAF91CB54060C82587F513E69F4A2DCD5CCAD2D83C7C6D64CE53C0C2306",
       "frame_count": 1,
       "background_method": "source alpha; alpha-trim",
-      "max_texture_axis": 4096
+      "max_texture_axis": 4096,
+      "variants": []
     },
     {
       "asset_key": "shield.tile",
@@ -336,7 +423,8 @@
       "thumbnail_sha256": "57BA5DC1388F76FDE285EEA5139DA0B71DD04FF785B0FEA3C9FCF78BE85DAB28",
       "frame_count": 1,
       "background_method": "source alpha; alpha-trim",
-      "max_texture_axis": 4096
+      "max_texture_axis": 4096,
+      "variants": []
     },
     {
       "asset_key": "boarding.player.idle",
@@ -358,7 +446,8 @@
       "thumbnail_sha256": "18BA6B3FC61A7843F59F4426D6A57B2929591DFC8BF87E6FED6C3F45EA479E07",
       "frame_count": 6,
       "background_method": "remove baked light checkerboard by deterministic colour/edge mask; manual review required",
-      "max_texture_axis": 4096
+      "max_texture_axis": 4096,
+      "variants": []
     },
     {
       "asset_key": "boarding.player.walk",
@@ -380,7 +469,8 @@
       "thumbnail_sha256": "0B45FC58E232A9A0AB85DC815FE6AAE39D705CD1DDF6BAC4681E07934464F294",
       "frame_count": 8,
       "background_method": "remove baked light checkerboard by deterministic colour/edge mask; manual review required",
-      "max_texture_axis": 4096
+      "max_texture_axis": 4096,
+      "variants": []
     },
     {
       "asset_key": "boarding.player.run",
@@ -402,7 +492,8 @@
       "thumbnail_sha256": "0CA2F858D152F23768DA9F18E318D33F6663386871E10A9D784722F2F8B15300",
       "frame_count": 6,
       "background_method": "remove baked light checkerboard by deterministic colour/edge mask; manual review required",
-      "max_texture_axis": 4096
+      "max_texture_axis": 4096,
+      "variants": []
     },
     {
       "asset_key": "boarding.player.jump",
@@ -424,7 +515,8 @@
       "thumbnail_sha256": "9DF6C9552B0E59F095A4427215C61D8E528FE6540A785E9088950BEB17DE7CB0",
       "frame_count": 8,
       "background_method": "remove baked light checkerboard by deterministic colour/edge mask; manual review required",
-      "max_texture_axis": 4096
+      "max_texture_axis": 4096,
+      "variants": []
     },
     {
       "asset_key": "boarding.player.fire",
@@ -446,7 +538,8 @@
       "thumbnail_sha256": "0AFF3AB0B639B0CAA03888602DC3566FAC1EA852CA601887F4BB28D1E2A3E0B3",
       "frame_count": 8,
       "background_method": "remove baked light checkerboard by deterministic colour/edge mask; manual review required",
-      "max_texture_axis": 4096
+      "max_texture_axis": 4096,
+      "variants": []
     },
     {
       "asset_key": "boarding.player.hit_death",
@@ -468,7 +561,8 @@
       "thumbnail_sha256": "BF9BF2D930FADCB9F55112C4DE66891087E32EF7935FE133663092898932E5B4",
       "frame_count": 8,
       "background_method": "remove baked light checkerboard by deterministic colour/edge mask; manual review required",
-      "max_texture_axis": 4096
+      "max_texture_axis": 4096,
+      "variants": []
     },
     {
       "asset_key": "boarding.player.crouch_aim",
@@ -490,7 +584,8 @@
       "thumbnail_sha256": "8369B3BDA99EFB4F084FDE601F875E776CFCFEF5038BCDB454A1ED449DC30416",
       "frame_count": 6,
       "background_method": "remove baked light checkerboard by deterministic colour/edge mask; manual review required",
-      "max_texture_axis": 4096
+      "max_texture_axis": 4096,
+      "variants": []
     },
     {
       "asset_key": "boarding.alien.idle",
@@ -512,7 +607,8 @@
       "thumbnail_sha256": "82EFB01A1CCEC3498C7C0E3E08908B72665289FCB6E9D314741C06E44CF26820",
       "frame_count": 6,
       "background_method": "remove opaque light background by deterministic colour/edge mask; manual review required",
-      "max_texture_axis": 4096
+      "max_texture_axis": 4096,
+      "variants": []
     },
     {
       "asset_key": "boarding.alien.walk",
@@ -534,7 +630,8 @@
       "thumbnail_sha256": "B7313C29ACCC76C1EC9B0BCAB914C19E8EA114291D72BDBE2BC2F6542D758102",
       "frame_count": 8,
       "background_method": "use existing alpha; crop logical slice then alpha-trim",
-      "max_texture_axis": 4096
+      "max_texture_axis": 4096,
+      "variants": []
     },
     {
       "asset_key": "boarding.alien.run_attack",
@@ -556,7 +653,8 @@
       "thumbnail_sha256": "1777545D4659AAA1229F51F0F567931725A88E25F3C2B64C954EFE2D45CF9A61",
       "frame_count": 6,
       "background_method": "use existing alpha; crop logical slice then alpha-trim",
-      "max_texture_axis": 4096
+      "max_texture_axis": 4096,
+      "variants": []
     },
     {
       "asset_key": "boarding.alien.jump_fall",
@@ -578,7 +676,8 @@
       "thumbnail_sha256": "7A5AEE556A84DC83BE88D144D897FC1810611C36D0568E70350887F918255C00",
       "frame_count": 8,
       "background_method": "use existing alpha; crop logical slice then alpha-trim",
-      "max_texture_axis": 4096
+      "max_texture_axis": 4096,
+      "variants": []
     },
     {
       "asset_key": "boarding.alien.fire",
@@ -600,7 +699,8 @@
       "thumbnail_sha256": "3D042C2D7343E8C0E7AB3BC433F6A810F7089022EDAD9A15FDB32DEAB263F827",
       "frame_count": 8,
       "background_method": "use existing alpha; crop logical slice then alpha-trim",
-      "max_texture_axis": 4096
+      "max_texture_axis": 4096,
+      "variants": []
     },
     {
       "asset_key": "boarding.alien.hit_death",
@@ -622,7 +722,8 @@
       "thumbnail_sha256": "470177C719E539040D52706FCD9811690E30CDB6E1B3AE0D75693FF526AF383A",
       "frame_count": 6,
       "background_method": "use existing alpha; crop logical slice then alpha-trim",
-      "max_texture_axis": 4096
+      "max_texture_axis": 4096,
+      "variants": []
     }
   ]
 }

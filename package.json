@@ -9,6 +9,7 @@
   "scripts": {
     "assets:sync": "node scripts/sync-runtime-assets.mjs && node scripts/compile-canonical-sprites.mjs",
     "sprites:compile": "node scripts/compile-canonical-sprites.mjs",
+    "test:sprites": "node --test tests/unit/canonical-sprites.test.mjs",
     "web:dev": "npm --workspace apps/web run dev",
     "web:build": "npm --workspace apps/web run build",
     "web:typecheck": "npm --workspace apps/web run typecheck",

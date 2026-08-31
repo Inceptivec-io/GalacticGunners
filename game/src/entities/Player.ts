@@ -16,7 +16,7 @@ export class Player {
 
   constructor(scene: Phaser.Scene, layout: PlayfieldLayout, spawn = layout.playerSpawn) {
     this.#spawn = spawn;
-    this.sprite = scene.physics.add.sprite(spawn.x, spawn.y, RUNTIME_ASSETS.player.ship.key, 'stable-0');
+    this.sprite = scene.physics.add.sprite(spawn.x, spawn.y, RUNTIME_ASSETS.player.ship.key, 0);
     this.sprite.setName('player');
     this.applyLayout(layout);
     this.sprite.setCollideWorldBounds(false);

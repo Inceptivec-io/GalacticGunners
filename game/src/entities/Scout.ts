@@ -34,7 +34,7 @@ export class Scout {
         : type === 'destroyer'
           ? RUNTIME_ASSETS.enemy.destroyer
           : RUNTIME_ASSETS.enemy.mothership;
-    this.sprite = scene.physics.add.sprite(x, y, asset.key, 'stable-0');
+    this.sprite = scene.physics.add.sprite(x, y, asset.key, 0);
     this.sprite.setName(`hostile:${type}`);
     this.sprite.setData('enemyType', type);
     this.sprite.setData('health', HOSTILE_PROFILES[type].health);

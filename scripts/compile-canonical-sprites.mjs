@@ -1,9 +1,10 @@
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 
-const root = path.resolve(import.meta.dirname, '..');
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const authority = path.join(root, 'docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/12_CANONICAL_SPRITESHEET_DEFINITION_AND_CORRECTION_PACK_v1.0/unpacked');
 const output = path.join(root, 'apps/web/public/gg-runtime-assets/generated');
 const parseLine = (line) => {
@@ -88,8 +89,19 @@ async function compile(row) {
   }
   const derivative = await sharp({ create: { width: sheetWidth, height: sheetHeight, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } }).composite(framesPng.map((frame, index) => ({ ...frame, left: frame.left + index * cellWidth }))).png({ compressionLevel: 9, adaptiveFiltering: false }).toBuffer();
   const destination = path.join(root, row.derivative_path); mkdirSync(path.dirname(destination), { recursive: true }); writeFileSync(destination, derivative);
-  const thumbnail = path.join(output, 'thumbnails', `${row.asset_key.replaceAll('.', '-')}.png`); mkdirSync(path.dirname(thumbnail), { recursive: true }); writeFileSync(thumbnail, await sharp(derivative).extract({ left: 0, top: 0, width: cellWidth, height: cellHeight }).png().toBuffer());
-  return { ...row, source_sha256: sourceHash, derivative_sha256: hash(derivative), thumbnail_path: `/gg-runtime-assets/generated/thumbnails/${path.basename(thumbnail)}`, thumbnail_sha256: hash(readFileSync(thumbnail)), frame_count: declared.length, background_method: method, max_texture_axis: 4096 };
+  const thumbnailDirectory = path.join(output, 'thumbnails');
+  const thumbnail = path.join(thumbnailDirectory, `${row.asset_key.replaceAll('.', '-')}.png`);
+  mkdirSync(thumbnailDirectory, { recursive: true });
+  writeFileSync(thumbnail, await sharp(derivative).extract({ left: 0, top: 0, width: cellWidth, height: cellHeight }).png().toBuffer());
+  const variants = row.asset_key === 'fx.asteroid' || row.asset_key === 'fx.comet'
+    ? await Promise.all(Array.from({ length: declared.length }, async (_, index) => {
+      const label = row.asset_key === 'fx.asteroid' ? 'ASTEROID' : 'COMET';
+      const variantFile = path.join(thumbnailDirectory, `${row.asset_key.replaceAll('.', '-')}-variant-${String(index + 1).padStart(2, '0')}.png`);
+      writeFileSync(variantFile, await sharp(derivative).extract({ left: index * cellWidth, top: 0, width: cellWidth, height: cellHeight }).png().toBuffer());
+      return { variant_id: `${label}_VARIANT_${String(index + 1).padStart(2, '0')}`, canonical_frame_index: index, thumbnail_path: `/gg-runtime-assets/generated/thumbnails/${path.basename(variantFile)}`, thumbnail_sha256: hash(readFileSync(variantFile)) };
+    }))
+    : [];
+  return { ...row, source_sha256: sourceHash, derivative_sha256: hash(derivative), thumbnail_path: `/gg-runtime-assets/generated/thumbnails/${path.basename(thumbnail)}`, thumbnail_sha256: hash(readFileSync(thumbnail)), frame_count: declared.length, background_method: method, max_texture_axis: 4096, variants };
 }
 
 rmSync(output, { recursive: true, force: true });
@@ -99,4 +111,50 @@ for (const row of [...shooter, ...boarding]) {
   catch (error) { throw new Error(`${row.asset_key}: ${error instanceof Error ? error.message : String(error)}`); }
 }
 writeFileSync(path.join(output, 'sprite-catalogue.json'), `${JSON.stringify({ version: 1, generated_by: 'compile-canonical-sprites.mjs', assets: catalogue }, null, 2)}\n`);
+const runtimeManifestPath = path.join(root, 'apps/web/public/gg-runtime-assets/manifest.json');
+if (existsSync(runtimeManifestPath)) {
+  const runtimeManifest = JSON.parse(readFileSync(runtimeManifestPath, 'utf8'));
+  const derivatives = new Map(catalogue.map((asset) => [asset.asset_key, asset]));
+  runtimeManifest.assets = runtimeManifest.assets.map((asset) => {
+    const derivative = derivatives.get(asset.key);
+    if (!derivative) return asset;
+    return {
+      ...asset,
+      runtime_path: `/${derivative.derivative_path.replace(/^apps\/web\/public\//, '')}`,
+      runtime_sha256: derivative.derivative_sha256,
+      thumbnail_path: derivative.thumbnail_path,
+      thumbnail_sha256: derivative.thumbnail_sha256,
+      sprite_catalogue_key: derivative.asset_key,
+      frame_count: derivative.frame_count,
+    };
+  });
+  writeFileSync(runtimeManifestPath, `${JSON.stringify(runtimeManifest, null, 2)}\n`);
+}
+const runtimeCatalogue = catalogue.map((asset) => ({
+  assetKey: asset.asset_key,
+  runtimePath: `/${asset.derivative_path.replace(/^apps\/web\/public\//, '')}`,
+  derivativePath: asset.derivative_path,
+  derivativeSha256: asset.derivative_sha256,
+  sourcePath: asset.source_path,
+  sourceSha256: asset.source_sha256,
+  thumbnailPath: asset.thumbnail_path,
+  thumbnailSha256: asset.thumbnail_sha256,
+  frameCount: asset.frame_count,
+  frameWidth: Number(asset.cell_size.split('x')[0]),
+  frameHeight: Number(asset.cell_size.split('x')[1]),
+  state: asset.state,
+  authoredDirection: asset.authored_direction,
+  frameRate: Number(asset.fps),
+  repeat: asset.repeat === 'true',
+  static: Number(asset.source_frames) === 1 || asset.asset_key === 'fx.asteroid' || asset.asset_key === 'fx.comet',
+  variants: asset.variants,
+}));
+const generatedTypeScript = `// Generated by scripts/compile-canonical-sprites.mjs. Do not edit by hand.\n\nexport interface GeneratedSpriteDefinition {\n  readonly assetKey: string;\n  readonly runtimePath: string;\n  readonly derivativePath: string;\n  readonly derivativeSha256: string;\n  readonly sourcePath: string;\n  readonly sourceSha256: string;\n  readonly thumbnailPath: string;\n  readonly thumbnailSha256: string;\n  readonly frameCount: number;\n  readonly frameWidth: number;\n  readonly frameHeight: number;\n  readonly state: string;\n  readonly authoredDirection: string;\n  readonly frameRate: number;\n  readonly repeat: boolean;\n  readonly static: boolean;\n}\n\nexport const GENERATED_SPRITE_CATALOGUE: readonly GeneratedSpriteDefinition[] = ${JSON.stringify(runtimeCatalogue, null, 2)} as const;\n\nexport const GENERATED_SPRITE_BY_KEY = new Map(\n  GENERATED_SPRITE_CATALOGUE.map((definition) => [definition.assetKey, definition]),\n);\n\nexport const GENERATED_SPRITE_ASSET_KEYS = new Set(\n  GENERATED_SPRITE_CATALOGUE.map((definition) => definition.assetKey),\n);\n`;
+writeFileSync(
+  path.join(root, 'game/src/config/generatedSpriteCatalogue.ts'),
+  generatedTypeScript.replace(
+    '  readonly static: boolean;\n}',
+    '  readonly static: boolean;\n  readonly variants: readonly { readonly variant_id: string; readonly canonical_frame_index: number; readonly thumbnail_path: string; readonly thumbnail_sha256: string }[];\n}',
+  ),
+);
 console.log(`Compiled ${catalogue.length} canonical sprite derivatives.`);
