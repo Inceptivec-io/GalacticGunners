@@ -576,7 +576,7 @@ async function runHostileCases(browser) {
   state = await getGameState(page);
   cases.life_hud_icon_only = state.hudPositions.lives.filter((icon) => icon.visible).length === state.lives
     && !state.visibleTexts.some((text) => text.includes('LIVES') || numericHudCounterPattern.test(text));
-  cases.nuke_initial_count = state.currentNukes === 2 && state.maxNukes === 2 && state.rearmProgress === 150 && state.rearmMax === 150;
+  cases.nuke_initial_count = state.currentNukes === 2 && state.inventoryLimit === null && state.rearmProgress === 150 && state.rearmMax === 150;
   await page.evaluate((index) => window.__GALACTIC_GUNNERS_HOSTILE__.setPlayerUnderScout(index, 0), findScoutClearOfShield(state));
   // A single synthetic keypress can begin and end between Phaser updates on a
   // loaded Linux runner. Hold the genuine input until the observable launch

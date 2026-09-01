@@ -4,6 +4,7 @@ param()
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
+$env:COMPOSE_PROJECT_NAME = 'galactic-gunners-founder-review'
 if ((git branch --show-current) -ne 'feature/v1-platform-foundation-campaign-continuity') { throw 'Founder review requires the H015 feature branch.' }
 if (git status --porcelain) { throw 'Founder review requires a clean worktree; no files were changed.' }
 $sourceSha = (git rev-parse HEAD).Trim()
@@ -142,7 +143,7 @@ Invoke-ReviewCommand { npm run h015:closure-attest } 'generated evidence closure
 @(
   "Source SHA: $sourceSha", 'Product/play: http://localhost:3002/play', 'Leaderboard: http://localhost:3002/leaderboard', 'Inceptivec admin: http://localhost:3002/inceptivec-gamification-admin', 'Command Post: http://localhost:3002/command-post',
   "Inceptivec administrator: $($values.FOUNDER_REVIEW_USERNAME) / $($values.FOUNDER_REVIEW_PASSWORD)", "Command Post customer: $($values.COMMAND_POST_REVIEW_USERNAME) / $($values.COMMAND_POST_REVIEW_PASSWORD)", "Player: $($values.PLAYER_REVIEW_USERNAME) / $($values.PLAYER_REVIEW_PASSWORD)",
-  'Review order: sign in to each permitted surface; verify cross-surface denial; play campaign Continue and Boarding; create/save a customer map; verify leaderboard and logout.', 'Stop: docker compose down', 'Restart: .\scripts\start-founder-review.ps1', 'Backend diagnostics only: http://localhost:8010. Django Admin is local technical tooling only when ENABLE_DJANGO_ADMIN=true.'
+  'Review order: sign in to each permitted surface; verify cross-surface denial; play campaign Continue and Boarding; create/save a customer map; verify leaderboard and logout.', 'Stop: .\scripts\stop-founder-review.ps1', 'Restart: .\scripts\start-founder-review.ps1', 'Backend diagnostics only: http://localhost:8010. Django Admin is local technical tooling only when ENABLE_DJANGO_ADMIN=true.'
 ) | Set-Content -LiteralPath (Join-Path $root 'FOUNDER_REVIEW_ACCESS.local.txt') -Encoding ascii
 Write-Output 'FOUNDER_REVIEW_GATES=PASS'
 Write-Output 'FOUNDER_REVIEW_READY=YES'

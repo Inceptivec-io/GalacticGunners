@@ -88,3 +88,21 @@ test('boarding coordinator rejects duplicate transitions and never creates a sec
   coordinator.complete('ABORTED', simulation.snapshot().resources);
   assert.equal(coordinator.state, 'RETURNED');
 });
+
+test('H015A-006 boarding pickups do not impose a two-nuke inventory cap', () => {
+  const simulation = new BoardingSimulation(1, { lives: 3, nukes: 2 });
+  const mutable = simulation as unknown as {
+    rng: { next: () => number };
+  };
+
+  // The container roll is part of the deterministic simulation. Force the
+  // admitted nuke outcome here so this test isolates the inventory rule rather
+  // than relying on an incidental seed sequence.
+  mutable.rng = { next: () => 0.2 };
+  for (const x of [1536, 2176, 2688, 3264]) {
+    simulation.synchronizePlayerProjection({ x, y: 576 });
+    simulation.step({ horizontal: 0, jump: false, fire: false, interact: true });
+  }
+
+  assert.equal(simulation.snapshot().resources.nukes, 6);
+});

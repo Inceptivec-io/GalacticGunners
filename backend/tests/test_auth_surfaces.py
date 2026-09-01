@@ -110,3 +110,30 @@ class AuthenticationSurfaceTests(TestCase):
             with self.assertRaisesRegex(CommandError, 'Founder review credential drift'):
                 call_command('bootstrap_founder_review')
         self.assertFalse(User.objects.filter(username='review-command').exists())
+
+    def test_founder_review_bootstrap_retains_existing_credentials(self):
+        environment = {
+            'FOUNDER_REVIEW_MODE': 'true',
+            'DJANGO_SETTINGS_MODULE': 'config.settings.local',
+            'FOUNDER_REVIEW_USERNAME': 'review-admin',
+            'FOUNDER_REVIEW_PASSWORD': 'Initial-review-password-123',
+            'COMMAND_POST_REVIEW_USERNAME': 'review-command',
+            'COMMAND_POST_REVIEW_PASSWORD': 'Initial-command-password-123',
+            'COMMAND_POST_REVIEW_DISPLAY_NAME': 'Command Post Review',
+            'PLAYER_REVIEW_USERNAME': 'review-player',
+            'PLAYER_REVIEW_PASSWORD': 'Initial-player-password-123',
+            'PLAYER_REVIEW_DISPLAY_NAME': 'Player Review',
+        }
+        with patch.dict(os.environ, environment, clear=False):
+            call_command('bootstrap_founder_review')
+        founder = User.objects.get(username='review-admin')
+        original_hash = founder.password
+
+        environment['FOUNDER_REVIEW_PASSWORD'] = 'Unexpected-replacement-password-123'
+        with patch.dict(os.environ, environment, clear=False):
+            call_command('bootstrap_founder_review')
+
+        founder.refresh_from_db()
+        self.assertEqual(founder.password, original_hash)
+        self.assertTrue(founder.check_password('Initial-review-password-123'))
+        self.assertFalse(founder.check_password('Unexpected-replacement-password-123'))

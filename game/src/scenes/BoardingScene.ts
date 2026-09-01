@@ -85,6 +85,8 @@ export class BoardingScene extends Phaser.Scene {
   private playerShotPoolUnavailable = 0;
   private playerHitEnabledAt = Number.POSITIVE_INFINITY;
   private updateTicks = 0;
+  private cursorHideEvent?: Phaser.Time.TimerEvent;
+  private cursorMoveHandler?: () => void;
   private onGameplayAnnouncement: ((announcement: string) => void) | undefined;
   private launch: BoardingLaunch = { anchorId: 'level-04-alien-frigate-01', sourceEntityId: 'level-04:formation-0:r0:c14', sourceEntityType: 'scout', interior: { slug: 'alien-frigate', version: 1, checksum: 'e9b1af65f0daef6725a7ddf4683b5f6d503e25dabc97aef1212102e6b1e994f3' }, levelVersion: 1, levelChecksum: '' };
 
@@ -137,6 +139,7 @@ export class BoardingScene extends Phaser.Scene {
     // Level1 pauses while handing control to Boarding. Arcade Physics is shared
     // by the game, so Boarding must explicitly resume its own active world.
     this.physics.world.resume();
+    this.physics.world.gravity.set(0, 1050);
     this.cameras.main.setBounds(0, 0, BOARDING_WORLD.width, BOARDING_WORLD.height);
     this.physics.world.setBounds(0, 0, BOARDING_WORLD.width, BOARDING_WORLD.height);
     this.add.image(BOARDING_WORLD.width / 2, 360, 'boarding.background').setDisplaySize(BOARDING_WORLD.width, 720).setScrollFactor(1);
@@ -155,7 +158,8 @@ export class BoardingScene extends Phaser.Scene {
     this.createBoardingAnimations();
     this.player = this.physics.add.sprite(128, 530, 'boarding.player.idle', 0).setDisplaySize(68, 104).setDepth(3);
     const playerBody = this.player.body as Phaser.Physics.Arcade.Body;
-    playerBody.setSize(34 / this.player.scaleX, 82 / this.player.scaleY, true).setCollideWorldBounds(true);
+    playerBody.setSize(34 / this.player.scaleX, 82 / this.player.scaleY, true).setCollideWorldBounds(true).setAllowGravity(true);
+    this.player.play('boarding.player.idle.play');
     this.aliens = this.physics.add.group();
     this.playerShots = this.physics.add.group({ maxSize: 48 });
     this.alienShots = this.physics.add.group({ maxSize: 48 });
@@ -163,7 +167,7 @@ export class BoardingScene extends Phaser.Scene {
       const sprite = this.aliens.create(alien.x, alien.y, 'boarding.alien.idle', 0) as Phaser.Physics.Arcade.Sprite;
       sprite.setDisplaySize(70, 100).setDepth(3).setData('alienId', alien.id);
       sprite.play('boarding.alien.idle.play');
-      (sprite.body as Phaser.Physics.Arcade.Body).setSize(38 / sprite.scaleX, 76 / sprite.scaleY, true).setCollideWorldBounds(true);
+      (sprite.body as Phaser.Physics.Arcade.Body).setSize(38 / sprite.scaleX, 76 / sprite.scaleY, true).setCollideWorldBounds(true).setAllowGravity(true);
     }
     this.exitAirlock = this.physics.add.staticSprite(BOARDING_WORLD.width - 72, 550, 'boarding.airlock').setDisplaySize(104, 180).setDepth(3);
     (this.exitAirlock.body as Phaser.Physics.Arcade.StaticBody).setSize(86 / this.exitAirlock.scaleX, 154 / this.exitAirlock.scaleY, true).updateFromGameObject();
@@ -253,11 +257,16 @@ export class BoardingScene extends Phaser.Scene {
     this.input.keyboard?.on('keydown-P', this.pauseBoarding, this);
     for (const key of ['A', 'D', 'LEFT', 'RIGHT', 'W', 'UP', 'SPACE', 'E']) this.keys[key] = this.input.keyboard!.addKey(key);
     this.createTouchControls();
+    this.installGameplayCursor();
     this.events.on('resume', this.onResume, this);
     this.events.once('shutdown', () => {
       this.input.keyboard?.off('keydown-P', this.pauseBoarding, this);
       this.input.keyboard?.off('keydown-ESC', this.pauseBoarding, this);
       this.events.off('resume', this.onResume, this);
+      this.cursorHideEvent?.remove(false);
+      this.cursorHideEvent = undefined;
+      if (this.cursorMoveHandler) this.game.canvas.removeEventListener('pointermove', this.cursorMoveHandler);
+      this.game.canvas.style.cursor = '';
       this.touchControls.splice(0).forEach((control) => control.destroy());
     });
   }
@@ -347,6 +356,7 @@ export class BoardingScene extends Phaser.Scene {
     shot.setPosition(this.player.x + 34, this.player.y).setActive(true).setVisible(true).setDisplaySize(30, 18);
     const body = shot.body as Phaser.Physics.Arcade.Body;
     body.enable = true; body.reset(shot.x, shot.y); body.setSize(26 / shot.scaleX, 12 / shot.scaleY, true);
+    body.setAllowGravity(false);
     shot.setVelocityX(620); shot.setData('spent', false);
   }
 
@@ -399,6 +409,7 @@ export class BoardingScene extends Phaser.Scene {
     shot.setPosition(alien.x - 36, alien.y).setActive(true).setVisible(true).setDisplaySize(30, 18).setFlipX(true);
     const body = shot.body as Phaser.Physics.Arcade.Body;
     body.enable = true; body.reset(shot.x, shot.y); body.setSize(26 / shot.scaleX, 12 / shot.scaleY, true);
+    body.setAllowGravity(false);
     shot.setVelocityX(-360); shot.setData('spent', false); this.simulation.alienFire(String(alien.getData('alienId')));
   }
 
@@ -445,6 +456,9 @@ export class BoardingScene extends Phaser.Scene {
     for (const definition of GENERATED_SPRITE_CATALOGUE) {
       if (!definition.assetKey.startsWith('boarding.')) continue;
       const animationKey = `${definition.assetKey}.play`;
+      if (!this.textures.exists(definition.assetKey)) {
+        throw new Error(`Boarding texture '${definition.assetKey}' was unavailable after preload.`);
+      }
       if (this.anims.exists(animationKey)) continue;
       this.anims.create({
         key: animationKey,
@@ -456,7 +470,19 @@ export class BoardingScene extends Phaser.Scene {
         repeat: definition.repeat ? -1 : 0,
       });
     }
-    this.player?.play('boarding.player.idle.play', true);
+  }
+
+  private installGameplayCursor(): void {
+    const reveal = () => {
+      this.game.canvas.style.cursor = '';
+      this.cursorHideEvent?.remove(false);
+      this.cursorHideEvent = this.time.delayedCall(5_000, () => {
+        this.game.canvas.style.cursor = 'none';
+      });
+    };
+    this.cursorMoveHandler = reveal;
+    this.game.canvas.addEventListener('pointermove', reveal);
+    reveal();
   }
 
   private updateBoardingAnimations(horizontal: number, fire: boolean): void {

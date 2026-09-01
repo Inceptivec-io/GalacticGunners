@@ -30,7 +30,7 @@ class Command(BaseCommand):
             raise CommandError('Founder, Command Post, and player review credentials are required.')
 
         def review_user(username, password, display_name, player=False):
-            user, _ = User.objects.get_or_create(username=username, defaults={'is_active': True})
+            user, created = User.objects.get_or_create(username=username, defaults={'is_active': True})
             if player:
                 conflicting_profile = (
                     PlayerProfile.objects
@@ -48,7 +48,13 @@ class Command(BaseCommand):
             user.is_active = True
             user.is_staff = False
             user.is_superuser = False
-            user.set_password(password)
+            # A retained local review volume is an identity boundary. Re-running
+            # the idempotent bootstrap must never silently replace a Founder's
+            # working password. New identities receive the supplied secret;
+            # existing identities retain theirs unless an explicit reset command
+            # is commissioned separately.
+            if created:
+                user.set_password(password)
             user.full_clean()
             user.save()
             if player:
@@ -86,10 +92,11 @@ class Command(BaseCommand):
         if bool(superuser_name) != bool(superuser_password):
             raise CommandError('Local Django superuser username and password must be supplied together.')
         if superuser_name:
-            technical, _ = get_user_model().objects.get_or_create(username=superuser_name)
+            technical, technical_created = get_user_model().objects.get_or_create(username=superuser_name)
             technical.is_active = True
             technical.is_staff = True
             technical.is_superuser = True
-            technical.set_password(superuser_password)
+            if technical_created:
+                technical.set_password(superuser_password)
             technical.save()
         self.stdout.write(self.style.SUCCESS('Founder review account ready.'))

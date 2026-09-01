@@ -1,5 +1,6 @@
 $ErrorActionPreference = 'Stop'
 Set-Location (Split-Path -Parent $PSScriptRoot)
+$env:COMPOSE_PROJECT_NAME = 'galactic-gunners-founder-review'
 $sourceSha = (git rev-parse HEAD).Trim()
 $remoteSha = (git rev-parse '@{u}').Trim()
 if ((git branch --show-current) -ne 'feature/v1-platform-foundation-campaign-continuity') { throw 'Founder review status requires the H015 feature branch.' }
@@ -13,3 +14,4 @@ $build | ConvertTo-Json -Compress
 Write-Output 'FOUNDER_REVIEW_GATES=PASS'
 Write-Output 'FOUNDER_REVIEW_READY=NOT_REEVALUATED'
 Write-Output 'Run .\scripts\start-founder-review.ps1 to execute the full readiness gate.'
+$env:COMPOSE_PROJECT_NAME = 'galactic-gunners-founder-review'
