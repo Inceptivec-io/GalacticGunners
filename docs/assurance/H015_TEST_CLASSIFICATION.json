@@ -31,6 +31,10 @@
       "classification": "E2E_ORDINARY_USER"
     },
     {
+      "file": "tests/e2e/gameplay-cursor.spec.ts",
+      "classification": "E2E_ORDINARY_USER"
+    },
+    {
       "file": "tests/e2e/generated-sprites.spec.ts",
       "classification": "E2E_ORDINARY_USER"
     },
