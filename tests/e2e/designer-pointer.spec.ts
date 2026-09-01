@@ -238,6 +238,78 @@ test("H015-DES-THUMB-001__e2e_ordinary_user__palette_uses_loaded_canonical_singl
   });
 });
 
+test("H015-DES-THUMB-002__e2e_ordinary_user__hazard_chooser_exposes_six_canonical_asteroid_and_comet_variants", async ({
+  page,
+  strictRuntime,
+}) => {
+  await loginAsAdministrator(page);
+  const expectedVariants = [
+    ...Array.from(
+      { length: 6 },
+      (_, index) => `ASTEROID_VARIANT_${String(index + 1).padStart(2, "0")}`,
+    ),
+    ...Array.from(
+      { length: 6 },
+      (_, index) => `COMET_VARIANT_${String(index + 1).padStart(2, "0")}`,
+    ),
+  ];
+  await page.getByRole("button", { name: "Hazards", exact: true }).click();
+  const chooser = page.getByRole("dialog", { name: "Hazards chooser" });
+  await expect(chooser).toBeVisible();
+  const variantButtons = chooser.locator(".designer-variant-grid button");
+  await expect(variantButtons).toHaveCount(12);
+  await expect
+    .poll(() =>
+      variantButtons.evaluateAll((buttons) =>
+        buttons.map((button) => {
+          const image = button.querySelector("img");
+          return {
+            label: button.textContent?.trim(),
+            source: image?.getAttribute("src"),
+            decoded: Boolean(image?.complete && image.naturalWidth > 0),
+          };
+        }),
+      ),
+    )
+    .toEqual(
+      expect.arrayContaining(
+        expectedVariants.map((label) =>
+          expect.objectContaining({
+            label,
+            source: expect.stringContaining(
+              "/gg-runtime-assets/generated/thumbnails/",
+            ),
+            decoded: true,
+          }),
+        ),
+      ),
+    );
+  await chooser.getByRole("button", { name: "ASTEROID_VARIANT_03" }).click();
+  await expect(chooser).toBeHidden();
+  await expect(
+    page.getByText("ASTEROID recurring emitter added."),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Hazards", exact: true }).click();
+  await chooser.getByRole("button", { name: "COMET_VARIANT_05" }).click();
+  await expect(page.getByText("COMET recurring emitter added.")).toBeVisible();
+  expect(strictRuntime.unexpectedFailures).toEqual([]);
+  await captureOrdinaryJourney({
+    page,
+    testInfo: test.info(),
+    gate: "designer-review-matrix",
+    route: "/inceptivec-gamification-admin/login",
+    actions: [
+      "Authenticated through the visible Administrator login form.",
+      "Opened the visible Hazards chooser and inspected all twelve supplied variant controls.",
+      "Selected the visible ASTEROID_VARIANT_03 and COMET_VARIANT_05 controls.",
+    ],
+    assertions: [
+      "Six decoded canonical asteroid previews and six decoded canonical comet previews were available.",
+      "Each selected fixed variant created the corresponding live authored hazard emitter.",
+    ],
+  });
+});
+
 test("H015-DES-META-001__e2e_ordinary_user__valid_seed_save_reloads_from_immutable_draft", async ({
   page,
   strictRuntime,
