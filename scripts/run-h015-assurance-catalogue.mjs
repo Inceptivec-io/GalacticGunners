@@ -138,11 +138,23 @@ writeFileSync(
   output,
   `${JSON.stringify({ tested_sha: sha, result, cases: results }, null, 2)}\n`,
 );
-if (result !== "PASS")
+// The closure audit deliberately depends on the evidence artifact produced
+// after this command returns. It is the only permitted deferred case; every
+// substantive test still fails this command immediately.
+const unresolved = results.filter(
+  (entry) =>
+    entry.result !== "PASS" &&
+    !(
+      entry.result === "DEFERRED" &&
+      deferredCommands.has(entry.command)
+    ),
+);
+if (unresolved.length)
   throw new Error(
-    `H015 catalogue is not complete: ${results
-      .filter((entry) => entry.result !== "PASS")
+    `H015 catalogue is not complete: ${unresolved
       .map((entry) => entry.test_case_id)
       .join(", ")}`,
   );
-console.log(`H015_CATALOGUE_COMMANDS=PASS\nH015_CATALOGUE_RESULTS=${output}`);
+console.log(
+  `H015_CATALOGUE_COMMANDS=${result === "PASS" ? "PASS" : "PENDING_CLOSURE_ATTESTATION"}\nH015_CATALOGUE_RESULTS=${output}`,
+);
