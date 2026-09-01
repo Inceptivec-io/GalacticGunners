@@ -185,6 +185,10 @@ def test_admin_authority_exposes_all_core_revisions_and_active_release(client, l
     assert first['versions'][0]['checksum'] == first['authority_version']['checksum']
     assert 'config' not in first['editable_version']
     assert 'config' not in first['versions'][0]
+    # Only the selected level transports its editable JSON authority. This
+    # protects ordinary Designer reloads from retained immutable history.
+    assert all(level['authority_version'] is None for level in response.json()['results'][1:])
+    assert all('config' not in level['active_version'] for level in response.json()['results'])
     assert response.json()['active_campaign_release']['campaign_version_id']
 
 

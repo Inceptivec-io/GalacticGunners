@@ -165,13 +165,13 @@ type DesignerLevel = {
     version: number;
     status: string;
     checksum: string;
-    config: Record<string, unknown>;
+    config?: Record<string, unknown>;
   } | null;
   editable_version?: {
     version: number;
     status: string;
     checksum: string;
-    config: Record<string, unknown>;
+    config?: Record<string, unknown>;
   } | null;
   authority_version?: {
     version: number;
