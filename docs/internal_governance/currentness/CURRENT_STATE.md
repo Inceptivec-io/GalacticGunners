@@ -79,9 +79,17 @@ FOUNDER ACCEPTED - KNOWN PLATFORM AND RUNTIME ITEMS DEFERRED TO H015. Developmen
 H015 Assurance Recovery:
 The Founder-issued replacement assurance transports were received and hash-verified at `a67843ddb3ce8c311123a72a9b1e9a63be763f39` on 2026-08-30. The admitted unpacked source members are under `docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/11_ASSURANCE_RECOVERY_REPLACEMENT_TRANSPORT_MEMBERS/`; the executable receiving record is `docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/assurance_recovery_intake/REPLACEMENT_RECEIVING_RECORD.md`. The prior closure-attestation artifacts at `b7e98a1c39fda3ae7fe7bea1b9f06dbf97f20dac` remain historical rejected evidence only. The recovery authority rejects their readiness claim because QA-hook, forced-completion and synthetic-event diagnostics were represented as ordinary-user proof.
 
-`H015_STATUS=IN_PROGRESS`
-`FOUNDER_REVIEW_READY=NO`
-`FOUNDER_TESTING_AUTHORISED=NO`
-`FOUNDER_ACCEPTANCE=REJECTED`
+`H015_STATUS=FOUNDER_REVIEW_READY`
+`FOUNDER_REVIEW_READY=YES`
+`FOUNDER_TESTING_AUTHORISED=YES`
+`FOUNDER_ACCEPTANCE=PENDING`
 `MERGE_AUTHORISED=NO`
-`CONTINUATION_AUTHORISED=YES`
+`CONTINUATION_AUTHORISED=NO - H015 RETURNED FOR FOUNDER REVIEW`
+
+H015 Final Exact-SHA Evidence:
+
+- implementation SHA `b80e4459d3b2e30d1ae63e52318f71ae0da3ee2e`;
+- GitHub Actions run `33504870195`: SUCCESS, all 15 jobs;
+- browser evidence artifact `9800230496`, digest `sha256:e4fa1689abd03624ddaf5f29eff35edb1cf085aa72cf8a8b53a964032f39d47f`;
+- closure attestation artifact `9800231112`, digest `sha256:06fe804a01adbc27566191a369d15851783a91aac7e0c2cf888ebe1ca52e48b4`;
+- PR #12 remains draft, open and unmerged to `dev`.

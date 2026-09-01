@@ -1,6 +1,6 @@
 # GALACTIC GUNNERS DEVTEAM HANDOFF OUT 015
 
-## Final Return
+## Founder Review Return
 
 | Field | Value |
 | --- | --- |
@@ -8,33 +8,35 @@
 | Repository | `Inceptivec-io/GalacticGunners` |
 | Entry authority | `dev` at `3270be64c67863dc848ebad26e2a33daf8b70742` |
 | Delivery branch | `feature/v1-platform-foundation-campaign-continuity` |
-| Validated implementation SHA | `ded96d0d99c69bac43726068d166a4386fcd6385` |
-| Final governance return SHA | Recorded externally after this non-self-referential return commit and exact-SHA audit |
-| PR | #12 to `dev`; draft, open, unmerged |
+| Exact tested implementation SHA | `b80e4459d3b2e30d1ae63e52318f71ae0da3ee2e` |
+| CI run | [33504870195](https://github.com/Inceptivec-io/GalacticGunners/actions/runs/33504870195) |
+| PR | [#12](https://github.com/Inceptivec-io/GalacticGunners/pull/12), draft, open, unmerged to `dev` |
 | Merge / acceptance | Founder Michael only; pending |
 
-## Closure Evidence
+## Exact-SHA Evidence
 
-- Exact implementation review: local `scripts/start-founder-review.ps1` returned `FOUNDER_REVIEW_GATES=PASS` and `FOUNDER_REVIEW_READY=YES`.
-- Exact implementation CI: GitHub Actions run `33268555046` passed, including the `runtime-browser` generated-evidence job and `runtime-hostile`.
-- Final governance-return CI: recorded externally after this metadata-only commit passes the full matrix.
-- Runtime coverage: hostile runtime, campaign continuity, Level 4 hazard collision, Boarding entry/success, Designer roundtrip, and 23 browser review surfaces.
-- Product, API, authentication, tenant isolation, score/leaderboard, contracts, migrations, Docker, and browser jobs are covered by the quality workflow.
-- POST_BOX contains boundary controls only; active payload is zero.
+- CI matrix: all 15 jobs passed, including `runtime-browser`, `runtime-hostile`, Docker smoke, backend, contracts, campaign, Boarding, tenant and authentication hostile gates.
+- Browser evidence: artifact `9800230496`, `h015-browser-evidence-b80e4459d3b2e30d1ae63e52318f71ae0da3ee2e`, digest `sha256:e4fa1689abd03624ddaf5f29eff35edb1cf085aa72cf8a8b53a964032f39d47f`.
+- Closure attestation: artifact `9800231112`, `h015-closure-attestation-b80e4459d3b2e30d1ae63e52318f71ae0da3ee2e`, digest `sha256:06fe804a01adbc27566191a369d15851783a91aac7e0c2cf888ebe1ca52e48b4`.
+- The exact-SHA catalogue passed all substantive rows. Its post-upload closure-audit dependency was resolved by the separate sealed attestation artifact with `CLOSURE_AUDIT=PASS`, `FAILED_GATES=0`, and `PENDING_GATES=0`.
+- POST_BOX contains only `BOUNDARY.md` and `README.md`; active payload is zero.
 
 ## Closure State
 
 ```text
 HANDOFF_OUT=GALACTIC_GUNNERS_DEVTEAM_HANDOFF_OUT_015
-BRANCH=feature/v1-platform-foundation-campaign-continuity
-PR_STATE=DRAFT_OPEN_UNMERGED
-FOUNDER_REVIEW_READY=YES
+H015_STATUS=FOUNDER_REVIEW_READY
+FINAL_HEAD=b80e4459d3b2e30d1ae63e52318f71ae0da3ee2e
+CI_RESULT=SUCCESS
+FAIL_CLOSED_VERIFIER=PASS
+CHROME_RUNTIME=PASS
+FIREFOX_RUNTIME=PASS
+WEBKIT_RUNTIME=PASS
+ALL_ASSURANCE_CATALOGUE_ROWS=PASS
+CLOSURE_AUDITOR=PASS
+POST_BOX_PAYLOAD=0
 FOUNDER_ACCEPTANCE=PENDING
 MERGE_PERFORMED=NO
-POST_BOX_BOUNDARY_CONTROLS_ONLY=PASS
-CLOSURE_RECOMMENDATION=PASS
 ```
 
-The former H015 readiness claim at `1b919d614fdb7fe72e9f04d62653dd436ac4676f` was rejected. This replacement is based on a generated artifact whose every required gate is PASS; it fails closed for a failed or missing gate, missing evidence, mismatched SHA, and duplicate required Designer or Boarding state captures.
-
-This record does not assert Founder acceptance or authorise merge. Its SHA-256 seal and final local/remote SHA are reported externally after the metadata commit completes its exact-SHA audit, avoiding a Git self-reference loop.
+This non-self-referential return records the exact CI-tested implementation SHA. Its repository-record update is subject to final metadata-only CI reconciliation; it does not assert Founder acceptance or authorise merge.
