@@ -64,7 +64,7 @@ function evidence(directory) {
   });
 }
 
-function ordinaryJourneyEvidence(gate) {
+function ordinaryJourneyEvidence(gate, { requireNegative = true } = {}) {
   const directory = path.join(root, "ordinary-browser", gate);
   const records = files(directory).filter((file) => file.endsWith(".json"));
   const valid = records.filter((file) => {
@@ -89,7 +89,8 @@ function ordinaryJourneyEvidence(gate) {
     items: evidence(path.join("ordinary-browser", gate)),
     result:
       valid.length > 0 &&
-      valid.some((file) => /negative/i.test(path.basename(file)))
+      (!requireNegative ||
+        valid.some((file) => /negative/i.test(path.basename(file))))
         ? "PASS"
         : "FAIL",
   };
@@ -102,8 +103,9 @@ function ordinaryDefinition({
   actions,
   assertions,
   observed,
+  requireNegative,
 }) {
-  const ordinary = ordinaryJourneyEvidence(id);
+  const ordinary = ordinaryJourneyEvidence(id, { requireNegative });
   return {
     directory: path.join("ordinary-browser", id),
     route,
@@ -283,6 +285,9 @@ const gateDefinitions = {
       ],
       observed:
         "Ordinary Playwright player-account journeys captured independent session restoration/logout and duplicate-username rejection outcomes.",
+      // The hostile counterpart is an explicitly mapped server API proof.
+      // The ordinary browser journey documents the positive logout flow.
+      requireNegative: false,
     }),
   },
   "assurance-catalogue": {

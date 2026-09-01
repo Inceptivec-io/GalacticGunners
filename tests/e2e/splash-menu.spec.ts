@@ -109,7 +109,7 @@ test("H015-LAUNCH-001__e2e_ordinary_user_negative__internal_navigation_does_not_
   await captureOrdinaryJourney({
     page,
     testInfo: test.info(),
-    gate: "ordinary-entry",
+    gate: "splash-navigation",
     route: "/play",
     actions: [
       "Opened a new independent game entry and observed its launch splash.",
