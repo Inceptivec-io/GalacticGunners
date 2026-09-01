@@ -31,17 +31,34 @@ const cases = catalogue.rows.flatMap((row) =>
 const deferredCommands = new Set(["npm run h015:closure-audit"]);
 const commandResults = new Map();
 
+function runShell(command) {
+  return spawnSync(command, {
+    cwd: process.cwd(),
+    encoding: "utf8",
+    env: process.env,
+    shell: true,
+  });
+}
+
+function scenarioSetup(command) {
+  if (command.includes("tests/e2e/campaign-real-play.spec.ts"))
+    return "docker compose exec -T backend python manage.py seed_browser_assurance_campaign --duration-ms 2500";
+  if (command.includes("tests/e2e/level4-hazards.spec.ts"))
+    return "docker compose exec -T backend python manage.py seed_browser_assurance_campaign --duration-ms 2500 --scenario hazards";
+  if (command.includes("tests/e2e/boarding-ordinary.spec.ts"))
+    return "docker compose exec -T backend python manage.py seed_browser_assurance_campaign --duration-ms 450 --scenario boarding";
+  return null;
+}
+
 for (const command of new Set(cases.map((testCase) => testCase.command))) {
   const startedAt = new Date().toISOString();
   const deferred = deferredCommands.has(command);
-  const run = deferred
-    ? null
-    : spawnSync(command, {
-        cwd: process.cwd(),
-        encoding: "utf8",
-        env: process.env,
-        shell: true,
-      });
+  const setup = deferred ? null : scenarioSetup(command);
+  const setupRun = setup ? runShell(setup) : null;
+  const run =
+    deferred || (setupRun && (setupRun.status !== 0 || setupRun.error))
+      ? null
+      : runShell(command);
   const safeName = `${commandResults.size + 1}-${command}`
     .replace(/[^a-z0-9]+/gi, "-")
     .replace(/^-|-$/g, "")
@@ -50,6 +67,8 @@ for (const command of new Set(cases.map((testCase) => testCase.command))) {
     command,
     started_at: startedAt,
     completed_at: new Date().toISOString(),
+    setup_command: setup,
+    setup_exit_code: setupRun?.status ?? null,
     exit_code: run?.status ?? null,
     signal: run?.signal ?? null,
     result: deferred
@@ -57,9 +76,9 @@ for (const command of new Set(cases.map((testCase) => testCase.command))) {
       : run?.status === 0 && !run.error
         ? "PASS"
         : "FAIL",
-    stdout: run?.stdout ?? "",
-    stderr: run?.stderr ?? "",
-    error: run?.error?.message ?? null,
+    stdout: `${setupRun?.stdout ?? ""}${run?.stdout ?? ""}`,
+    stderr: `${setupRun?.stderr ?? ""}${run?.stderr ?? ""}`,
+    error: setupRun?.error?.message ?? run?.error?.message ?? null,
     log_path: `catalogue/commands/${safeName}.log`,
   };
   commandResults.set(command, record);
