@@ -89,3 +89,11 @@ export function hazardTravelVector(edge: HazardEntryEdge): {
   if (edge === "BOTTOM") return { x: 0, y: -1 };
   return { x: 0, y: 1 };
 }
+
+/**
+ * The canonical comet image points down at zero rotation. Its leading body must
+ * follow velocity while the authored tail trails behind on every entry edge.
+ */
+export function cometRotationForVelocity(vector: { x: number; y: number }): number {
+  return Math.atan2(vector.y, vector.x) - Math.PI / 2;
+}

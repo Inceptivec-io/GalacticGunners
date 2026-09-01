@@ -109,7 +109,7 @@ class CompleteGameRunSerializer(serializers.Serializer):
     score = serializers.IntegerField(min_value=0)
     level_reached = serializers.IntegerField(min_value=1, max_value=10000)
     lives_end = serializers.IntegerField(min_value=0, max_value=3)
-    nukes_end = serializers.IntegerField(min_value=0, max_value=2)
+    nukes_end = serializers.IntegerField(min_value=0)
     victory = serializers.BooleanField()
     duration_ms = serializers.IntegerField(min_value=0)
     event_summary = serializers.DictField()

@@ -10,6 +10,7 @@ import {
   hazardEntryPoint,
   hazardTravelVector,
   hazardVariantFrame,
+  cometRotationForVelocity,
 } from "../src/systems/HazardPolicy";
 
 const document: LevelAuthoringDocument = {
@@ -422,4 +423,17 @@ test("compiler preserves authored objectives and stable Boarding target identity
     compiled.boarding_anchors?.[0].source_selector.formation_index,
     2,
   );
+});
+
+test("comet orientation keeps the authored south-facing tail behind travel on every edge", () => {
+  for (const edge of ["TOP", "RIGHT", "BOTTOM", "LEFT"] as const) {
+    const velocity = hazardTravelVector(edge);
+    const rotation = cometRotationForVelocity(velocity);
+    // A zero-rotation comet points south. Convert the transformed authored
+    // heading back to a world vector and compare its normalized direction.
+    const heading = { x: Math.cos(rotation + Math.PI / 2), y: Math.sin(rotation + Math.PI / 2) };
+    const magnitude = Math.hypot(velocity.x, velocity.y);
+    assert.ok(Math.abs(heading.x - velocity.x / magnitude) < 0.000001, edge);
+    assert.ok(Math.abs(heading.y - velocity.y / magnitude) < 0.000001, edge);
+  }
 });

@@ -177,7 +177,6 @@ type DesignerLevel = {
     version: number;
     status: string;
     checksum: string;
-    config: Record<string, unknown>;
     created_at?: string;
     published_at?: string | null;
   }>;
@@ -1366,7 +1365,11 @@ export function CampaignDesigner({
       ? `/play?preview_level_id=${encodeURIComponent(selectedLevel.id)}&preview_checksum=${encodeURIComponent(draftChecksum)}${context.surface === "COMMAND_POST" && context.organizationSlug ? `&preview_organization=${encodeURIComponent(context.organizationSlug)}` : ""}`
       : null;
   return (
-    <main className="designer-shell" data-designer-route="campaign">
+    <main
+      className="designer-shell"
+      data-designer-route="campaign"
+      data-designer-ready={document ? "true" : "false"}
+    >
       <aside className="designer-sidebar">
         <h1>
           {context.surface === "COMMAND_POST"

@@ -5,6 +5,7 @@ import {
   hazardEntryPoint,
   hazardTravelVector,
   hazardVariantFrame,
+  cometRotationForVelocity,
 } from "../systems/HazardPolicy";
 
 import { Player, type MovementVector } from "../entities/Player";
@@ -664,9 +665,7 @@ export class Level1Scene extends CombatLevelScene {
           : 28,
       );
     } else {
-      // Canonical comet frames face downward at zero rotation. Rotate the
-      // leading body into the velocity vector; the tail therefore trails it.
-      hazard.setRotation(direction.angle() - Math.PI / 2);
+      hazard.setRotation(cometRotationForVelocity(direction));
     }
     this.#hazards.add(hazard);
     // Arcade group admission applies its defaults to a child. Set the motion
@@ -2787,6 +2786,8 @@ export class Level1Scene extends CombatLevelScene {
           previousBodyCenterX: nuke?.getData("previousBodyCenterX") ?? null,
           previousBodyCenterY: nuke?.getData("previousBodyCenterY") ?? null,
           currentNukes: this.#currentNukes,
+          textureKey: nuke?.texture.key ?? null,
+          name: nuke?.name ?? null,
         };
       },
       verifyPlayerLaserPool: () => {

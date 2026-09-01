@@ -30,23 +30,31 @@ const cases = catalogue.rows.flatMap((row) =>
 // represented as deferred rather than silently skipped or treated as a pass.
 const deferredCommands = new Set(["npm run h015:closure-audit"]);
 const commandResults = new Map();
-const founderReviewEnvironment = Object.fromEntries(
-  readFileSync(".founder-review.env", "utf8")
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter((line) => line && !line.startsWith("#"))
-    .map((line) => {
-      const separator = line.indexOf("=");
-      return [line.slice(0, separator), line.slice(separator + 1)];
-    }),
-);
+const founderEnvironmentPath = ".founder-review.env";
+const founderReviewEnvironment = existsSync(founderEnvironmentPath)
+  ? Object.fromEntries(
+      readFileSync(founderEnvironmentPath, "utf8")
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter((line) => line && !line.startsWith("#"))
+        .map((line) => {
+          const separator = line.indexOf("=");
+          return [line.slice(0, separator), line.slice(separator + 1)];
+        }),
+    )
+  : {};
+// CI supplies the same review variables through its job environment and must
+// not depend on an ignored local credential file.
+const compose = existsSync(founderEnvironmentPath)
+  ? "docker compose --env-file .founder-review.env"
+  : "docker compose";
 
 function executableCommand(command) {
   const backendTest = command.match(
     /^cd backend && python manage\.py test (.+)$/,
   );
   if (backendTest) {
-    return `docker compose --env-file .founder-review.env exec -T backend python manage.py test ${backendTest[1]}`;
+    return `${compose} exec -T backend python manage.py test ${backendTest[1]}`;
   }
   return command;
 }
@@ -64,13 +72,13 @@ function runShell(command) {
 
 function scenarioSetup(command) {
   if (command.includes("tests/e2e/campaign-real-play.spec.ts"))
-    return "docker compose exec -T backend python manage.py seed_browser_assurance_campaign --duration-ms 2500";
+    return `${compose} exec -T backend python manage.py seed_browser_assurance_campaign --duration-ms 2500`;
   if (command.includes("tests/e2e/level4-hazards.spec.ts"))
-    return "docker compose exec -T backend python manage.py seed_browser_assurance_campaign --duration-ms 2500 --scenario hazards";
+    return `${compose} exec -T backend python manage.py seed_browser_assurance_campaign --duration-ms 2500 --scenario hazards`;
   if (command.includes("tests/e2e/boarding-ordinary.spec.ts"))
-    return "docker compose exec -T backend python manage.py seed_browser_assurance_campaign --duration-ms 450 --scenario boarding";
+    return `${compose} exec -T backend python manage.py seed_browser_assurance_campaign --duration-ms 450 --scenario boarding`;
   if (command.includes("npx playwright test"))
-    return "docker compose exec -T backend python manage.py seed_runtime_authority";
+    return `${compose} exec -T backend python manage.py seed_runtime_authority`;
   return null;
 }
 

@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from games.models import OwnerScope
 from .models import Level, LevelAuditEvent, LevelVersion
 from .permissions import IsLevelAdmin
-from .serializers import LevelCreateSerializer, LevelSerializer, LevelVersionCreateSerializer, LevelVersionSerializer
+from .serializers import LevelCreateSerializer, LevelSerializer, LevelVersionCreateSerializer, LevelVersionSerializer, LevelVersionSummarySerializer
 from .validation import checksum, validate_definition
 from .authoring import blank_authoring_document
 from campaigns.publication import publish_core_level
@@ -81,7 +81,11 @@ class AdminCoreLevelAuthorityView(APIView):
             payload.append({
                 **LevelSerializer(level).data,
                 'editable_version': LevelVersionSerializer(editable).data if editable else None,
-                'versions': LevelVersionSerializer(versions, many=True).data,
+                # The editor needs the current editable document and immutable
+                # revision identities for optimistic concurrency. Sending every
+                # historical JSON configuration made normal browser reloads a
+                # multi-megabyte request and left the Designer unusable.
+                'versions': LevelVersionSummarySerializer(versions, many=True).data,
             })
         return Response({
             'results': payload,

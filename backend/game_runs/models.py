@@ -44,7 +44,7 @@ class CampaignRun(models.Model):
         constraints = [
             models.CheckConstraint(condition=(Q(player__isnull=False, anonymous_capability_hash__isnull=True) | Q(player__isnull=True, anonymous_capability_hash__isnull=False)), name='campaign_run_single_owner'),
             models.CheckConstraint(condition=Q(lives__gte=0, lives__lte=3), name='campaign_run_lives_bounded'),
-            models.CheckConstraint(condition=Q(nukes__gte=0, nukes__lte=2), name='campaign_run_nukes_bounded'),
+            models.CheckConstraint(condition=Q(nukes__gte=0), name='campaign_run_nukes_non_negative'),
         ]
 
 

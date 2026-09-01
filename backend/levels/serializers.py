@@ -12,6 +12,14 @@ class LevelVersionSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'checksum', 'created_at', 'published_at']
 
 
+class LevelVersionSummarySerializer(serializers.ModelSerializer):
+    """Revision lineage for the Designer list without duplicating large configs."""
+
+    class Meta:
+        model = LevelVersion
+        fields = ['id', 'version', 'schema_version', 'checksum', 'status', 'created_at', 'published_at']
+
+
 class LevelSerializer(serializers.ModelSerializer):
     active_version = LevelVersionSerializer(read_only=True)
     class Meta:

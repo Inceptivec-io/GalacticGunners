@@ -119,7 +119,7 @@ class BoardingRun(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['game_run', 'level_version', 'anchor_id', 'source_entity_id'], name='boarding_attempt_unique'),
-            models.CheckConstraint(condition=Q(lives_start__gte=0, lives_start__lte=3) & Q(nukes_start__gte=0, nukes_start__lte=2), name='boarding_start_resources_bounded'),
+            models.CheckConstraint(condition=Q(lives_start__gte=0, lives_start__lte=3) & Q(nukes_start__gte=0), name='boarding_start_resources_non_negative'),
             models.CheckConstraint(condition=Q(time_limit_ms=60000), name='boarding_time_limit_exact'),
         ]
 

@@ -182,6 +182,8 @@ def test_admin_authority_exposes_all_core_revisions_and_active_release(client, l
     first = response.json()['results'][0]
     assert first['editable_version']['config']['name'] == 'Persisted authoring draft'
     assert len(first['versions']) == 2
+    assert first['versions'][0]['checksum'] == first['editable_version']['checksum']
+    assert 'config' not in first['versions'][0]
     assert response.json()['active_campaign_release']['campaign_version_id']
 
 

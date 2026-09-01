@@ -87,14 +87,14 @@ components:
       required: [lives, nukes]
       properties:
         lives: {type: integer, minimum: 0, maximum: 3}
-        nukes: {type: integer, minimum: 0, maximum: 2}
+        nukes: {type: integer, minimum: 0}
     ResourcesStart:
       type: object
       additionalProperties: false
       required: [lives, nukes]
       properties:
         lives: {type: integer, minimum: 1, maximum: 3}
-        nukes: {type: integer, minimum: 0, maximum: 2}
+        nukes: {type: integer, minimum: 0}
     BoardingStartRequest:
       type: object
       additionalProperties: false
@@ -167,7 +167,7 @@ components:
       required: [lives, nukes, score_delta, remove_source_entity_id]
       properties:
         lives: {type: integer, minimum: 0, maximum: 3}
-        nukes: {type: integer, minimum: 0, maximum: 2}
+        nukes: {type: integer, minimum: 0}
         score_delta: {type: integer, const: 0}
         remove_source_entity_id: {type: string, const: 'level-04:formation-0:r0:c14'}
     BoardingRunDetail:
