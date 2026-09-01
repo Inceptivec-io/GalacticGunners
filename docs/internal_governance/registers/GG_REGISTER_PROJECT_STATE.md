@@ -7,15 +7,15 @@
 | Commercial Repository | `Inceptivec-io/GalacticGunners` |
 | Historical Repository | `michael-leese/GallacticGunners` READ-ONLY |
 | Current Programme | H015 PLATFORM FOUNDATION AND CAMPAIGN CONTINUITY |
-| Current Stage | H015 ASSURANCE RECOVERY IN PROGRESS / FOUNDER REVIEW NOT AUTHORISED |
+| Current Stage | H015A CORRECTION COMPLETE / FOUNDER REVIEW READY |
 | Active Handoff | GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015 |
 | Current Feature Branch | `feature/v1-platform-foundation-campaign-continuity` |
 | Base Branch | `dev` |
 | Entry/Base SHA | `3270be64c67863dc848ebad26e2a33daf8b70742` |
 | Branch Model | `feature/* -> dev -> stage -> prod` |
 | Default Branch Target | `prod` |
-| Current Feature HEAD | replacement intake checkpoint `a67843ddb3ce8c311123a72a9b1e9a63be763f39`; all work since `4d74d9664a4cbf119ecebf30377e8e6468bf27cf` remains contained WIP pending row-by-row independent assurance review |
-| Closure State | FAIL-CLOSED / `FOUNDER_REVIEW_READY=NO`; prior artifact `9720659158`, attestation `9720659385`, and run `33272670524` are historical rejected evidence, not a closure claim |
+| Current Feature HEAD | exact tested implementation `d7d2b230db18ce875d7f7a26b22fc7b027069c8b`; CI run `33520881587` SUCCESS, all 15 jobs |
+| Closure State | `FOUNDER_REVIEW_READY=YES`; exact-SHA artifact `9807009122`, manifest `2efe3fd8fd13b7049487ff991bcb7df17e6d597bac69de60b0c30e8b7c6623dd`, strict closure audit PASS; Founder acceptance pending |
 | Root Execution Contract | `AGENTS.md` |
 | External Boundary | `_EXTERNAL_GalacticGunners` |
 | Internal Governance Root | `docs/internal_governance` |

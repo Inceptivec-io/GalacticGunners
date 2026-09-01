@@ -1,106 +1,52 @@
+# Current State
+
 Active Handoff:
-GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015 (BASE + REV1 + ADDITIVE)
+`GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015` including H015A correction authority.
 
 Programme:
-PLATFORM FOUNDATION AND CAMPAIGN CONTINUITY
+Platform Foundation and Campaign Continuity.
 
 Stage:
-H015 ASSURANCE RECOVERY IN PROGRESS / FOUNDER REVIEW NOT AUTHORISED
+H015A correction complete / Founder review ready.
 
 Branch:
-feature/v1-platform-foundation-campaign-continuity
+`feature/v1-platform-foundation-campaign-continuity`
 
-DEVTEAM_010 Entry SHA:
-051c7fc9170ae73344a0dc88214c48fc94e0bfdc
+## Exact-SHA Review Evidence
 
-DEVTEAM_010_REV1 Entry SHA:
-fd7a7e00b6ccd4683e90cff9f41676e19f04517d
+The exact tested implementation SHA is
+`d7d2b230db18ce875d7f7a26b22fc7b027069c8b`. GitHub Actions run
+[33520881587](https://github.com/Inceptivec-io/GalacticGunners/actions/runs/33520881587)
+completed successfully at that SHA with all 15 jobs passing.
 
-DEVTEAM_010_REV2 Entry SHA:
-6c1964a3148ab7743552c4f608ea8117730b499f
+- Browser evidence artifact: `9807009122`,
+  `h015-browser-evidence-d7d2b230db18ce875d7f7a26b22fc7b027069c8b`,
+  SHA-256 `cfda49c92939c283756d89685422c66fa9a2065f64756aabaf5e573a073736b0`.
+- Evidence manifest SHA-256:
+  `2efe3fd8fd13b7049487ff991bcb7df17e6d597bac69de60b0c30e8b7c6623dd`.
+- Closure audit evidence SHA-256:
+  `0cbd698ed9d8946413cf66d4515659d5e79e0cde0741193545a1a16bd59fc4bd`.
+- Strict closure audit: PASS; failed gates: 0; pending gates: 0; evidence
+  uniqueness: PASS.
 
-DEVTEAM_010_REV3 Entry SHA:
-771bf384ae3878e292acf8d7e53dca90576b23b3
+The runtime-verifier milestone SHA `b18d4afc265c831cae88e133fab862742b138c12`
+and traceability SHA `d9e8792cddd774b7386d7094ab46323f12cf37f0` are
+ancestors of the exact tested SHA. They remain intermediate evidence only.
 
-DEVTEAM_010_REV4 Entry SHA:
-5d0f8d04556a51f3398192e011e8b6b41b9bd2bf
+## Current Controls
 
-Current Repository Head Authority:
-origin/feature/v1-platform-foundation-campaign-continuity
+```text
+H015_STATUS=H015A_CORRECTION_COMPLETE_FOUNDER_REVIEW_READY
+FOUNDER_REVIEW_READY=YES
+FOUNDER_ACCEPTANCE=PENDING
+FOUNDER_TESTING_AUTHORISED=YES
+MERGE_AUTHORISED=NO
+PR_12=DRAFT_OPEN_UNMERGED
+POST_BOX_PAYLOAD=0
+INTERNAL_GOVERNANCE=CURRENT
+```
 
-Local/Remote Reconciliation At Current Checkpoint:
-PASS at replacement tested SHA `ded96d0d99c69bac43726068d166a4386fcd6385`; local HEAD equalled `origin/feature/v1-platform-foundation-campaign-continuity` when the replacement artifact and remote CI completed.
-
-Worktree At Return:
-CLEAN before non-self-referential governance closeout commit.
-
-POST_BOX:
-CLEAN - boundary controls only / active payload zero
-
-Internal Governance:
-CURRENT
-
-Registers:
-CURRENT
-
-Evidence:
-DURABLE
-
-REV4 Remote CI:
-PASS - GitHub Actions run 32894066325 backend/client-and-game/docker-smoke/runtime-hostile all SUCCESS
-
-REV4 Local Hostile:
-PASS x3 consecutive
-
-Handoff 011 APP1 HOTFIX1:
-COMPLETE - pooled projectile spawn/body reset, collision regression, full movement bounds, 210 player speed, equal 300 laser speeds, visible pause surface, upright nuke projectile followed only by nuke burst, cooldown-only Energise and zero-ammo blocking. H012 uses this accepted Level 1 state as its golden baseline.
-
-Runtime Gameplay:
-PASS - BootScene, MainMenuScene and bounded Level1 playable runtime corrected for REV3 scale/composition, semantic PlayfieldLayout authority, 58-enemy Level1 formation, four-direction player movement, respawn/regeneration, 8-bunker / 256-tile shield zone, rotated laser geometry/body alignment, widened meaningful body envelopes, swept laser collision checks, normal real-origin laser hits/near-misses, enemy laser left/center/right player-body hits, nuke projectile/burst, bottom-left icon-only lives, bottom-right icon-only nukes with fixed `ENERGISE` bar, top-left score, top-right sound, pause/resume and hostile runtime/composition verification.
-
-Full Level 1:
-GOLDEN BASELINE PRESERVED / HOSTILE REGRESSION PASS
-
-Campaign Progression / Result UI:
-LEVELS 1-6 PLAYABLE THROUGH PRODUCTION RESULT PANELS; FOUNDER ACCEPTANCE PENDING
-
-Final Victory / Game Over:
-PRODUCTION PANELS WITH DYNAMIC RUNTIME VALUES; FOUNDER ACCEPTANCE PENDING
-
-Validated Runs / Leaderboard:
-COMPLETE / PENDING FOUNDER REVIEW
-
-Boarding:
-H014 CLOSED UNDER FOUNDER ROUTING. Known platform and runtime completion items, including the character-source geometry issue, are deferred to H015. The Campaign Designer shell is accepted in its current visual and planning direction and must not be redesigned.
-
-Founder Acceptance:
-FOUNDER ACCEPTED - KNOWN PLATFORM AND RUNTIME ITEMS DEFERRED TO H015. Development does not assert unqualified Founder manual acceptance of deferred items. PR #11 remains open for Founder merge decision.
-
-H015 Assurance Recovery:
-The Founder-issued replacement assurance transports were received and hash-verified at `a67843ddb3ce8c311123a72a9b1e9a63be763f39` on 2026-08-30. The admitted unpacked source members are under `docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/11_ASSURANCE_RECOVERY_REPLACEMENT_TRANSPORT_MEMBERS/`; the executable receiving record is `docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/assurance_recovery_intake/REPLACEMENT_RECEIVING_RECORD.md`. The prior closure-attestation artifacts at `b7e98a1c39fda3ae7fe7bea1b9f06dbf97f20dac` remain historical rejected evidence only. The recovery authority rejects their readiness claim because QA-hook, forced-completion and synthetic-event diagnostics were represented as ordinary-user proof.
-
-`H015_STATUS=IN_PROGRESS`
-`FOUNDER_REVIEW_READY=NO`
-`FOUNDER_TESTING_AUTHORISED=NO`
-`FOUNDER_ACCEPTANCE=PENDING`
-`MERGE_AUTHORISED=NO`
-`CONTINUATION_AUTHORISED=YES`
-
-Current H015 correction checkpoint:
-
-- `bc65c26d09feb382045d96a748a6ce3a2fa1cf1d` corrects the Founder-review
-  smoke path to request a selected full Designer authority document and binds
-  the fail-closed assurance catalogue into the readiness launcher;
-- the local review smoke command and targeted authority regression pass at that
-  checkpoint;
-- the assurance catalogue remains incomplete and fails closed. It must not be
-  represented as Founder-review evidence until every required row is proven at
-  one exact final SHA and the resulting artifact passes the closure auditor.
-
-Superseded H015 readiness evidence (historical only, not current readiness proof):
-
-- implementation SHA `b80e4459d3b2e30d1ae63e52318f71ae0da3ee2e`;
-- GitHub Actions run `33504870195`: SUCCESS, all 15 jobs;
-- browser evidence artifact `9800230496`, digest `sha256:e4fa1689abd03624ddaf5f29eff35edb1cf085aa72cf8a8b53a964032f39d47f`;
-- closure attestation artifact `9800231112`, digest `sha256:06fe804a01adbc27566191a369d15851783a91aac7e0c2cf888ebe1ca52e48b4`;
-- PR #12 remains draft, open and unmerged to `dev`.
+POST_BOX is boundary controls only. Earlier rejected readiness records remain
+historical evidence and are not current proof. The non-self-referential
+Handoff-Out and the H015A evidence matrix identify the exact CI artifact that
+supports this state.
