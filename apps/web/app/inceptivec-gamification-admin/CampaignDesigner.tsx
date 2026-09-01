@@ -173,6 +173,12 @@ type DesignerLevel = {
     checksum: string;
     config: Record<string, unknown>;
   } | null;
+  authority_version?: {
+    version: number;
+    status: string;
+    checksum: string;
+    config: Record<string, unknown>;
+  } | null;
   versions?: Array<{
     version: number;
     status: string;
@@ -268,7 +274,7 @@ const defaultDocument = (level: DesignerLevel): AuthoringDocument => ({
   id: level.slug,
   slug: level.slug,
   name: level.name,
-  version: (level.editable_version ?? level.active_version)?.version ?? 1,
+  version: (level.authority_version ?? level.editable_version ?? level.active_version)?.version ?? 1,
   status: "DRAFT",
   sequence: level.sequence,
   seed: 12000 + level.sequence,
@@ -452,7 +458,7 @@ function migrateLegacyDocument(
   return result;
 }
 function asDocument(level: DesignerLevel): AuthoringDocument {
-  const config = (level.editable_version ?? level.active_version)?.config;
+  const config = (level.authority_version ?? level.editable_version ?? level.active_version)?.config;
   if (config?.schema_version === "1.1") {
     const document = config as unknown as AuthoringDocument;
     // Existing immutable drafts predate governed hazard variants. Upgrade their
@@ -617,12 +623,12 @@ export function CampaignDesigner({
     }
     return response.json();
   }
-  async function load() {
+  async function load(requestedLevelId?: string) {
     try {
       const [levelData, assetData] = await Promise.all([
         context.surface === "COMMAND_POST" && context.organizationSlug
           ? call(`/portal/organizations/${context.organizationSlug}/`)
-          : call("/admin/levels/authority/"),
+          : call(`/admin/levels/authority/${requestedLevelId ? `?level_id=${encodeURIComponent(requestedLevelId)}` : ""}`),
         call(
           context.surface === "COMMAND_POST" && context.organizationSlug
             ? `/assets/catalogue/?organization=${encodeURIComponent(context.organizationSlug)}`
@@ -640,7 +646,7 @@ export function CampaignDesigner({
         (current) =>
           current ?? context.project_id ?? levelData.projects?.[0]?.id ?? null,
       );
-      setSelectedLevelId((current) => current ?? nextLevels[0]?.id ?? null);
+      setSelectedLevelId((current) => requestedLevelId ?? current ?? nextLevels[0]?.id ?? null);
       setMessage("Authenticated campaign authority, revision lineage and approved assets loaded.");
     } catch (error) {
       setMessage(
@@ -1298,7 +1304,7 @@ export function CampaignDesigner({
         }),
       });
       setHistory([]);
-      await load();
+      await load(selectedLevelId ?? undefined);
       setOperationMessage(
         `Draft v${draft.version} saved with immutable checksum ${draft.checksum.slice(0, 12)}.`,
       );
@@ -1690,7 +1696,12 @@ export function CampaignDesigner({
         {levels.map((level) => (
           <button
             key={level.id}
-            onClick={() => setSelectedLevelId(level.id)}
+            onClick={() => {
+              if (level.id === selectedLevelId) return;
+              setDocument(null);
+              setSelectedLevelId(level.id);
+              void load(level.id);
+            }}
             className={selectedLevelId === level.id ? "selected" : ""}
           >
             {level.sequence}. {level.name}

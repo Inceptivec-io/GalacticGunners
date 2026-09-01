@@ -63,7 +63,15 @@ class AdminCoreLevelAuthorityView(APIView):
         levels = Level.objects.filter(
             archived=False,
             game_project__owner_scope=OwnerScope.CORE,
-        ).select_related('active_version').prefetch_related('versions').order_by('sequence')
+        ).select_related('active_version').order_by('sequence')
+        selected_level_id = request.query_params.get('level_id')
+        selected_level = (
+            next((level for level in levels if str(level.id) == selected_level_id), None)
+            if selected_level_id
+            else levels.first()
+        )
+        if selected_level_id and selected_level is None:
+            return Response({'code': 'NOT_FOUND', 'detail': 'Requested CORE level is unavailable.'}, status=status.HTTP_404_NOT_FOUND)
         project = levels.first().game_project if levels else None
         release = None
         if project:
@@ -73,14 +81,35 @@ class AdminCoreLevelAuthorityView(APIView):
             ).order_by('-published_at').first()
         payload = []
         for level in levels:
-            versions = list(level.versions.order_by('-version'))
+            # Loading every JSON configuration for every immutable revision made
+            # normal Designer reloads degrade with retained authoring history.
+            # Non-selected levels expose only revision identities; the selected
+            # level retains its complete version history and current document.
+            version_query = level.versions.order_by('-version')
+            if level != selected_level:
+                version_query = version_query.only(
+                    'id', 'level_id', 'version', 'schema_version', 'checksum',
+                    'status', 'created_at', 'published_at',
+                )
+            versions = list(version_query)
             editable = next(
                 (version for version in versions if version.status in {LevelVersion.Status.DRAFT, LevelVersion.Status.VALIDATED}),
                 None,
             )
+            authority_version = editable or level.active_version
             payload.append({
-                **LevelSerializer(level).data,
-                'editable_version': LevelVersionSerializer(editable).data if editable else None,
+                'id': str(level.id),
+                'slug': level.slug,
+                'name': level.name,
+                'campaign': level.campaign,
+                'sequence': level.sequence,
+                'archived': level.archived,
+                'active_version': LevelVersionSummarySerializer(level.active_version).data if level.active_version else None,
+                'editable_version': LevelVersionSummarySerializer(editable).data if editable else None,
+                # Only the selected level carries a complete document. The
+                # remaining six-level list stays responsive even with a long
+                # immutable authoring history.
+                'authority_version': LevelVersionSerializer(authority_version).data if level == selected_level and authority_version else None,
                 # The editor needs the current editable document and immutable
                 # revision identities for optimistic concurrency. Sending every
                 # historical JSON configuration made normal browser reloads a
