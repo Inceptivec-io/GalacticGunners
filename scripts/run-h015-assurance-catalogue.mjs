@@ -45,8 +45,11 @@ const founderReviewEnvironment = existsSync(founderEnvironmentPath)
   : {};
 // CI supplies the same review variables through its job environment and must
 // not depend on an ignored local credential file.
+// Local Founder review uses an explicitly named Compose project so it cannot
+// share mutable services with DEV. CI supplies the same variables directly and
+// intentionally uses its default ephemeral project.
 const compose = existsSync(founderEnvironmentPath)
-  ? "docker compose --env-file .founder-review.env"
+  ? "docker compose -p galactic-gunners-founder-review --env-file .founder-review.env"
   : "docker compose";
 
 function executableCommand(command) {
