@@ -1,10 +1,4 @@
-import {
-  existsSync,
-  readdirSync,
-  readFileSync,
-  statSync,
-  writeFileSync,
-} from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import YAML from "yaml";
 import { sha256 } from "./verify-h015-evidence-integrity.mjs";
@@ -20,127 +14,78 @@ const traceabilityPath = path.resolve(
   "docs/assurance/H015_REQUIREMENTS_TRACEABILITY.yaml",
 );
 const commandsPath = path.join(root, "catalogue", "command-results.json");
-const ordinaryPath = path.join(root, "ordinary-browser");
 if (!existsSync(commandsPath))
   throw new Error("Missing catalogue command result record.");
-if (!existsSync(ordinaryPath))
-  throw new Error("Missing ordinary browser evidence directory.");
 
 const commands = JSON.parse(readFileSync(commandsPath, "utf8"));
-if (
-  commands.tested_sha !== sha ||
-  commands.result !== "PASS" ||
-  commands.checks?.some((check) => check.result !== "PASS")
-)
+if (commands.tested_sha !== sha || !Array.isArray(commands.cases))
   throw new Error(
-    "Catalogue command results are not a passing exact-SHA record.",
+    "Catalogue command results are not an exact-SHA case record.",
   );
-
-const commandEvidence = new Map(
-  commands.checks.map((check) => [
-    check.id,
-    {
-      path: `catalogue/${check.id}.log`,
-      sha256: sha256(path.join(root, "catalogue", `${check.id}.log`)),
-      mime_type: "text/plain",
-    },
-  ]),
+const byTestCase = new Map(
+  commands.cases.map((entry) => [entry.test_case_id, entry]),
 );
-
-function ordinaryEvidence() {
-  const files = [];
-  const stack = [ordinaryPath];
-  while (stack.length) {
-    const directory = stack.pop();
-    for (const entry of requireDirectory(directory)) {
-      if (entry.directory) stack.push(entry.path);
-      else if (entry.path.endsWith(".json")) files.push(entry.path);
-    }
-  }
-  return files;
-}
-
-function requireDirectory(directory) {
-  return readdirSync(directory).map((name) => {
-    const item = path.join(directory, name);
-    return { path: item, directory: statSync(item).isDirectory() };
-  });
-}
-
-const ordinaryFiles = ordinaryEvidence();
-const ordinary = ordinaryFiles.map((file) => ({
-  path: path.relative(root, file).replaceAll("\\", "/"),
-  sha256: sha256(file),
-  mime_type: "application/json",
-}));
-const positives = ordinaryFiles.filter(
-  (file) => !/negative/i.test(path.basename(file)),
-);
-const negatives = ordinaryFiles.filter((file) =>
-  /negative/i.test(path.basename(file)),
-);
-if (!positives.length || !negatives.length)
-  throw new Error(
-    "Ordinary browser evidence must include positive and negative journeys.",
-  );
-
-function proofForLayers(layers) {
-  const ids = new Set(["traceability", "evidence-integrity"]);
-  if (layers.includes("COMPONENT")) ids.add("component");
-  if (layers.includes("UNIT")) {
-    ids.add("game");
-    ids.add("sprites");
-  }
-  if (layers.includes("API")) ids.add("backend");
-  if (layers.includes("CI") || layers.includes("REVIEW")) {
-    ids.add("coverage");
-    ids.add("traceability");
-  }
-  return [...ids].map((id) => commandEvidence.get(id));
-}
-
 const traceability = YAML.parse(readFileSync(traceabilityPath, "utf8"));
+
+function evidenceFor(testCase) {
+  const result = byTestCase.get(testCase.id);
+  if (!result || result.result !== "PASS" || !result.log_path) return null;
+  const file = path.join(root, result.log_path);
+  if (!existsSync(file)) return null;
+  return {
+    path: result.log_path,
+    sha256: sha256(file),
+    mime_type: "text/plain",
+    test_case_id: testCase.id,
+    command: result.command,
+  };
+}
+
 const rows = traceability.rows.map((row) => {
-  const requiresBrowser = row.required_layers.includes("E2E");
-  const evidence = [...proofForLayers(row.required_layers)];
-  if (requiresBrowser) evidence.push(...ordinary);
-  const result =
-    evidence.length &&
-    (!requiresBrowser || (positives.length && negatives.length))
-      ? "PASS"
-      : "FAIL";
+  const evidence = row.test_cases.map(evidenceFor).filter(Boolean);
+  const positive = row.test_cases.filter(
+    (testCase) => testCase.polarity === "POSITIVE",
+  );
+  const negative = row.test_cases.filter(
+    (testCase) => testCase.polarity === "NEGATIVE",
+  );
   return {
     requirement_id: row.requirement_id,
-    result,
+    result:
+      evidence.length === row.test_cases.length &&
+      positive.length &&
+      negative.length
+        ? "PASS"
+        : "FAIL",
     tested_sha: sha,
-    positive_test_ids: row.test_cases
-      .filter((testCase) => testCase.polarity === "POSITIVE")
-      .map((testCase) => testCase.id),
-    negative_test_ids: row.test_cases
-      .filter((testCase) => testCase.polarity === "NEGATIVE")
-      .map((testCase) => testCase.id),
+    positive_test_ids: positive.map((testCase) => testCase.id),
+    negative_test_ids: negative.map((testCase) => testCase.id),
     evidence,
   };
 });
-if (rows.length !== 50 || rows.some((row) => row.result !== "PASS"))
-  throw new Error(
-    "The exact-SHA catalogue result contains incomplete assurance rows.",
-  );
-
+const overall = rows.every((row) => row.result === "PASS") ? "PASS" : "FAIL";
 const output = path.join(root, "catalogue", "assurance-catalogue-results.json");
 writeFileSync(
   output,
   `${JSON.stringify(
     {
-      schema_version: "1.0",
+      schema_version: "2.0",
       tested_sha: sha,
-      result: "PASS",
+      result: overall,
       requirement_count: rows.length,
-      passed_requirement_count: rows.length,
+      passed_requirement_count: rows.filter((row) => row.result === "PASS")
+        .length,
       rows,
     },
     null,
     2,
   )}\n`,
 );
+if (overall !== "PASS")
+  throw new Error(
+    `The exact-SHA catalogue contains incomplete assurance rows: ${rows
+      .filter((row) => row.result !== "PASS")
+      .map((row) => row.requirement_id)
+      .join(", ")}`,
+  );
 console.log(`H015_ASSURANCE_CATALOGUE=PASS\nH015_ASSURANCE_RESULTS=${output}`);
