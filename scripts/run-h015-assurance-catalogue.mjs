@@ -161,12 +161,28 @@ const unresolved = results.filter(
       deferredCommands.has(entry.command)
     ),
 );
-if (unresolved.length)
+if (unresolved.length) {
+  const diagnostics = unresolved
+    .map(
+      (entry) =>
+        [
+          `CASE=${entry.test_case_id}`,
+          `RESULT=${entry.result}`,
+          `EXIT_CODE=${entry.exit_code ?? "none"}`,
+          `SIGNAL=${entry.signal ?? "none"}`,
+          `COMMAND=${entry.executed_command ?? entry.declared_command}`,
+          `LOG=${entry.log_path}`,
+          entry.error ? `ERROR=${entry.error}` : null,
+          entry.stderr ? `STDERR=${entry.stderr.trim()}` : null,
+        ]
+          .filter(Boolean)
+          .join("\n"),
+    )
+    .join("\n\n");
   throw new Error(
-    `H015 catalogue is not complete: ${unresolved
-      .map((entry) => entry.test_case_id)
-      .join(", ")}`,
+    `H015 catalogue is not complete:\n${diagnostics}`,
   );
+}
 console.log(
   `H015_CATALOGUE_COMMANDS=${result === "PASS" ? "PASS" : "PENDING_CLOSURE_ATTESTATION"}\nH015_CATALOGUE_RESULTS=${output}`,
 );
