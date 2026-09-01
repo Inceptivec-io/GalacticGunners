@@ -14,8 +14,8 @@
 | Entry/Base SHA | `3270be64c67863dc848ebad26e2a33daf8b70742` |
 | Branch Model | `feature/* -> dev -> stage -> prod` |
 | Default Branch Target | `prod` |
-| Exact Runtime Evidence SHA | `be41004429790f6d0a575dc17d98fbe9ec8fd2bd`; CI run `33532128537` SUCCESS, all 15 jobs. The branch tip may include only subsequent non-self-referential governance closeout records. |
-| Closure State | `FOUNDER_REVIEW_READY=YES`; exact-SHA browser artifact `9811526750`, closure-attestation artifact `9811527735`, manifest `2f87655824b7d5cf7f71c82ae6cff0718dd7b31524fd74fb6c7352db96693c02`, strict closure audit PASS; Founder acceptance pending |
+| Exact Runtime Evidence SHA | `5d510e373abf2e65d7c84ac05c870ec9c89d39e4`; CI run `33541341033` SUCCESS, all 15 jobs. The branch tip may include only subsequent non-self-referential governance closeout records. |
+| Closure State | `FOUNDER_REVIEW_READY=YES`; exact-SHA browser artifact `9814967837`, closure-attestation artifact `9814968592`, manifest `e694bf5f942d3209ad26af97397c27a4e83ea9c5f297263c879989b7d978e906`, strict closure audit PASS; Founder acceptance pending |
 | Root Execution Contract | `AGENTS.md` |
 | External Boundary | `_EXTERNAL_GalacticGunners` |
 | Internal Governance Root | `docs/internal_governance` |

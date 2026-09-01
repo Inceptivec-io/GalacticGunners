@@ -15,19 +15,19 @@ Branch:
 ## Exact-SHA Review Evidence
 
 The exact tested implementation SHA is
-`be41004429790f6d0a575dc17d98fbe9ec8fd2bd`. GitHub Actions run
-[33532128537](https://github.com/Inceptivec-io/GalacticGunners/actions/runs/33532128537)
+`5d510e373abf2e65d7c84ac05c870ec9c89d39e4`. GitHub Actions run
+[33541341033](https://github.com/Inceptivec-io/GalacticGunners/actions/runs/33541341033)
 completed successfully at that SHA with all 15 jobs passing.
 
-- Browser evidence artifact: `9811526750`,
-  `h015-browser-evidence-be41004429790f6d0a575dc17d98fbe9ec8fd2bd`,
-  SHA-256 `992ac9d1f5ca09ed462b942b2d9f8b3bb2761df139e96ff4d19fc7e51fdb4375`.
+- Browser evidence artifact: `9814967837`,
+  `h015-browser-evidence-5d510e373abf2e65d7c84ac05c870ec9c89d39e4`,
+  SHA-256 `d94a58ed05bc286255c7514705f55fc04e4b40dd7407e62a379f32782036a90a`.
 - Evidence manifest SHA-256:
-  `2f87655824b7d5cf7f71c82ae6cff0718dd7b31524fd74fb6c7352db96693c02`.
+  `e694bf5f942d3209ad26af97397c27a4e83ea9c5f297263c879989b7d978e906`.
 - Closure audit evidence SHA-256:
-  `15cc4a5579323e3ae492516ca6bd506b8758a096e71ec320cf4547d05464b211`.
-- Closure attestation artifact: `9811527735`,
-  `h015-closure-attestation-be41004429790f6d0a575dc17d98fbe9ec8fd2bd`.
+  `3d7dd57bf7992726b00e77ea65ab8a18402103efd04c49bc83fdb433528b698b`.
+- Closure attestation artifact: `9814968592`,
+  `h015-closure-attestation-5d510e373abf2e65d7c84ac05c870ec9c89d39e4`.
 - Strict closure audit: PASS; failed gates: 0; pending gates: 0; evidence
   uniqueness: PASS.
 
@@ -35,7 +35,10 @@ The prior H015A claim at `d7d2b230db18ce875d7f7a26b22fc7b027069c8b`
 and the subsequent failed run at `421197b` remain historical evidence only.
 The latter exposed a real teardown-time diagnostic access to disposed Phaser
 groups. `be41004429790f6d0a575dc17d98fbe9ec8fd2bd` guards that lifecycle
-boundary and is the sole current review-evidence SHA.
+boundary. The later exact-SHA diagnostic correction
+`5d510e373abf2e65d7c84ac05c870ec9c89d39e4` exposes complete per-case
+failure output without weakening the catalogue and is the sole current
+review-evidence SHA.
 
 ## Current Controls
 

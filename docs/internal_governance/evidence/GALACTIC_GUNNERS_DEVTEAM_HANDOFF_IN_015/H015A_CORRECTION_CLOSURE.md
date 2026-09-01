@@ -3,17 +3,17 @@
 **Handoff:** `GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015` including H015A
 correction authority
 
-**Exact tested SHA:** `be41004429790f6d0a575dc17d98fbe9ec8fd2bd`
+**Exact tested SHA:** `5d510e373abf2e65d7c84ac05c870ec9c89d39e4`
 
-**CI:** [33532128537](https://github.com/Inceptivec-io/GalacticGunners/actions/runs/33532128537), SUCCESS, 15/15 jobs
+**CI:** [33541341033](https://github.com/Inceptivec-io/GalacticGunners/actions/runs/33541341033), SUCCESS, 15/15 jobs
 
-**Evidence artifact:** `9811526750`,
-`h015-browser-evidence-be41004429790f6d0a575dc17d98fbe9ec8fd2bd`
+**Evidence artifact:** `9814967837`,
+`h015-browser-evidence-5d510e373abf2e65d7c84ac05c870ec9c89d39e4`
 
-**Artifact SHA-256:** `992ac9d1f5ca09ed462b942b2d9f8b3bb2761df139e96ff4d19fc7e51fdb4375`
-**Manifest SHA-256:** `2f87655824b7d5cf7f71c82ae6cff0718dd7b31524fd74fb6c7352db96693c02`
-**Closure-attestation artifact:** `9811527735`,
-`h015-closure-attestation-be41004429790f6d0a575dc17d98fbe9ec8fd2bd`
+**Artifact SHA-256:** `d94a58ed05bc286255c7514705f55fc04e4b40dd7407e62a379f32782036a90a`
+**Manifest SHA-256:** `e694bf5f942d3209ad26af97397c27a4e83ea9c5f297263c879989b7d978e906`
+**Closure-attestation artifact:** `9814968592`,
+`h015-closure-attestation-5d510e373abf2e65d7c84ac05c870ec9c89d39e4`
 
 ## H015A Defect Matrix
 
@@ -32,7 +32,7 @@ correction authority
 
 ## Assurance and Closure Audit
 
-The strict closure attestation was generated at `2026-09-01T17:05:49.449Z`
+The strict closure attestation was generated at `2026-09-01T18:37:13.024Z`
 by `node scripts/generate-h015-closure-attestation.mjs` at the tested SHA.
 It reports `CLOSURE_AUDIT=PASS`, `FAILED_GATES=0`, `PENDING_GATES=0`, and
 `EVIDENCE_UNIQUENESS=PASS`. Required exact-SHA gates all passed:
@@ -50,7 +50,11 @@ diagnostics after Phaser had disposed its scout/shield groups during splash
 navigation. `publishQaState()` now verifies the active scene and group
 ownership before publishing, while still allowing ordinary runtime errors to
 fail the verifier. Earlier H015 readiness claims and artifacts are historical
-rejected evidence; they are not used as proof for this exact SHA.
+rejected evidence; they are not used as proof for this exact SHA. The final
+CI run also validates per-case failure diagnostics in
+`scripts/run-h015-assurance-catalogue.mjs`; the runner now reports a failing
+case's result, exit code, command, log path and stderr without changing its
+fail-closed decision.
 
 ## Return State
 
