@@ -310,6 +310,64 @@ test("H015-DES-THUMB-002__e2e_ordinary_user__hazard_chooser_exposes_six_canonica
   });
 });
 
+test("H015-DES-THUMB-002__e2e_ordinary_user__fixed_hazard_variant_persists_through_immutable_draft_save", async ({
+  page,
+  strictRuntime,
+}) => {
+  await loginAsAdministrator(page);
+  const emitters = page.locator('button[aria-label^="ASTEROID emitter at"]');
+  const before = await emitters.count();
+  await page.getByRole("button", { name: "Hazards", exact: true }).click();
+  await page
+    .getByRole("dialog", { name: "Hazards chooser" })
+    .getByRole("button", { name: "ASTEROID_VARIANT_04" })
+    .click();
+  await expect(emitters).toHaveCount(before + 1);
+  await emitters.last().click();
+  const inspector = page.locator(".designer-inspector");
+  await expect(inspector.getByLabel("Variant selection")).toHaveValue("FIXED");
+  await expect(
+    inspector
+      .getByText("ASTEROID_VARIANT_04", { exact: true })
+      .locator("..")
+      .getByRole("checkbox"),
+  ).toBeChecked();
+  const saved = page.waitForResponse(
+    (response) =>
+      response.request().method() === "POST" &&
+      /\/api\/v1\/admin\/levels\/[^/]+\/drafts\/$/.test(
+        new URL(response.url()).pathname,
+      ),
+  );
+  await page.getByRole("button", { name: "Save immutable draft" }).click();
+  expect((await saved).status()).toBe(201);
+  await page.reload();
+  await expect(emitters).toHaveCount(before + 1);
+  await emitters.last().click();
+  await expect(inspector.getByLabel("Variant selection")).toHaveValue("FIXED");
+  await expect(
+    inspector
+      .getByText("ASTEROID_VARIANT_04", { exact: true })
+      .locator("..")
+      .getByRole("checkbox"),
+  ).toBeChecked();
+  expect(strictRuntime.unexpectedFailures).toEqual([]);
+  await captureOrdinaryJourney({
+    page,
+    testInfo: test.info(),
+    gate: "designer-roundtrip",
+    route: "/inceptivec-gamification-admin/login",
+    actions: [
+      "Authenticated through the visible Administrator login form.",
+      "Selected ASTEROID_VARIANT_04 from the visible Hazards chooser.",
+      "Saved an immutable draft, reloaded, and inspected the selected emitter.",
+    ],
+    assertions: [
+      "The authored emitter remained a fixed ASTEROID_VARIANT_04 after the draft round-trip.",
+    ],
+  });
+});
+
 test("H015-DES-META-001__e2e_ordinary_user__valid_seed_save_reloads_from_immutable_draft", async ({
   page,
   strictRuntime,
