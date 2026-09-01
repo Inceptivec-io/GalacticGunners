@@ -339,7 +339,8 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: "22", cache: npm }
       - run: npm ci
-      - run: npx playwright install --with-deps chromium firefox webkit
+      - name: Install closure-browser dependencies (fail closed)
+        run: timeout --signal=KILL 600s npx playwright install --with-deps chromium firefox webkit
       - name: Capture exact-SHA cross-browser runtime verification
         run: GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/cross-browser" npm run runtime:h015:cross-browser
       - run: docker compose up --build -d
