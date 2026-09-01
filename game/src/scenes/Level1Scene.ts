@@ -319,7 +319,9 @@ export class Level1Scene extends CombatLevelScene {
     });
     this.#playerLasers = this.physics.add.group({ maxSize: 48 });
     this.#enemyLasers = this.physics.add.group({ maxSize: 48 });
-    this.#nukes = this.physics.add.group({ maxSize: LEVEL_ONE_SLICE.nukeProjectilePoolSize });
+    this.#nukes = this.physics.add.group({
+      maxSize: LEVEL_ONE_SLICE.nukeProjectilePoolSize,
+    });
     this.#scouts = this.physics.add.group();
     this.#hazards = this.physics.add.group();
     this.#pickups = this.physics.add.group({ maxSize: 12 });
@@ -393,7 +395,10 @@ export class Level1Scene extends CombatLevelScene {
       this.#cursorHideEvent?.remove(false);
       this.#cursorHideEvent = undefined;
       if (this.#cursorMoveHandler)
-        this.game.canvas.removeEventListener("pointermove", this.#cursorMoveHandler);
+        this.game.canvas.removeEventListener(
+          "pointermove",
+          this.#cursorMoveHandler,
+        );
       this.game.canvas.style.cursor = "";
       this.#pauseKey = undefined;
       this.#boardingConfirmKey = undefined;
@@ -2043,9 +2048,19 @@ export class Level1Scene extends CombatLevelScene {
     this.#rearmText?.setText("ENERGISE");
     this.ensureNukeIcons(this.#currentNukes);
     const left = Math.max(24, this.#layout.viewport.width * 0.028);
-    const right = this.#layout.viewport.width - Math.max(30, this.#layout.viewport.width * 0.028);
-    const barWidth = Phaser.Math.Clamp(this.#layout.viewport.width * 0.1, 72, 170);
-    this.reflowNukeIcons(left, right - barWidth, this.#layout.viewport.height - 50);
+    const right =
+      this.#layout.viewport.width -
+      Math.max(30, this.#layout.viewport.width * 0.028);
+    const barWidth = Phaser.Math.Clamp(
+      this.#layout.viewport.width * 0.1,
+      72,
+      170,
+    );
+    this.reflowNukeIcons(
+      left,
+      right - barWidth,
+      this.#layout.viewport.height - 50,
+    );
     this.#nukeIcons.forEach((icon, index) => {
       icon.setVisible(index < this.#currentNukes);
     });
@@ -2129,13 +2144,20 @@ export class Level1Scene extends CombatLevelScene {
     }
   }
 
-  private reflowNukeIcons(left: number, nukeBarX: number, bottom: number): void {
+  private reflowNukeIcons(
+    left: number,
+    nukeBarX: number,
+    bottom: number,
+  ): void {
     const spacing = 36;
     const columns = Math.max(1, Math.floor((nukeBarX - left - 12) / spacing));
     this.#nukeIcons.forEach((icon, index) => {
       const column = index % columns;
       const row = Math.floor(index / columns);
-      icon.setPosition(nukeBarX - (column + 1) * spacing, bottom + 12 - row * spacing);
+      icon.setPosition(
+        nukeBarX - (column + 1) * spacing,
+        bottom + 12 - row * spacing,
+      );
     });
   }
 
@@ -2309,8 +2331,12 @@ export class Level1Scene extends CombatLevelScene {
     this.#terminalActions = [];
     this.#terminalActionHandled = false;
     const keyboard = this.input.keyboard;
-    const spaceHeld = Boolean(keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).isDown);
-    const enterHeld = Boolean(keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER).isDown);
+    const spaceHeld = Boolean(
+      keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).isDown,
+    );
+    const enterHeld = Boolean(
+      keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER).isDown,
+    );
     this.#terminalAwaitKeyRelease = spaceHeld || enterHeld;
     this.#terminalInputArmed = !this.#terminalAwaitKeyRelease;
     this.#player.stop();
