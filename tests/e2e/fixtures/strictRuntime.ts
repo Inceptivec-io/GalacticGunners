@@ -22,7 +22,7 @@ export const test = base.extend<{ strictRuntime: StrictRuntime }>({
       }
     });
     page.on("pageerror", (error) =>
-      unexpectedFailures.push(`pageerror: ${error.message}`),
+      unexpectedFailures.push(`pageerror: ${error.stack ?? error.message}`),
     );
     page.on("requestfailed", (request) => {
       const error = request.failure()?.errorText ?? "unknown";
