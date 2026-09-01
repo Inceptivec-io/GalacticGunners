@@ -50,13 +50,20 @@ const compose = existsSync(founderEnvironmentPath)
   : "docker compose";
 
 function executableCommand(command) {
+  // Traceability records local Founder-review commands verbatim. CI receives
+  // the same values as job environment, not as the ignored local env file.
+  // Normalize the transport detail without changing the declared assertion.
+  const portableCommand = command.replaceAll(
+    "docker compose --env-file .founder-review.env",
+    compose,
+  );
   const backendTest = command.match(
     /^cd backend && python manage\.py test (.+)$/,
   );
   if (backendTest) {
     return `${compose} exec -T backend python manage.py test ${backendTest[1]}`;
   }
-  return command;
+  return portableCommand;
 }
 
 function runShell(command) {
