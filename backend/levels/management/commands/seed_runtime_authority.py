@@ -2,6 +2,7 @@ import copy
 
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
+from django.db import transaction
 from django.utils import timezone
 
 from campaigns.models import Campaign, CampaignEntry, CampaignVersion
@@ -218,6 +219,7 @@ def authored_level(sequence, name, groups, *, hazards, layouts=None, drop_rules=
 class Command(BaseCommand):
     help = 'Seed the published campaign authority required for local Docker preview.'
 
+    @transaction.atomic
     def handle(self, *args, **options):
         user_model = get_user_model()
         system_user, created = user_model.objects.get_or_create(
@@ -238,6 +240,11 @@ class Command(BaseCommand):
                 'created_by': system_user,
             },
         )
+        # Browser and local verification both seed this shared authority. Hold
+        # the CORE project row through the complete reconciliation so a second
+        # invocation waits for a coherent campaign revision rather than racing
+        # its next immutable version number.
+        core_project = GameProject.objects.select_for_update().get(pk=core_project.pk)
         game_version, _ = GameVersion.objects.get_or_create(
             version='v1.0-s001-l1-slice',
             defaults={'is_active': True},

@@ -7,6 +7,7 @@ from campaigns.services import CampaignService
 class BrowserAssuranceCampaignTests(TestCase):
     def test_publishes_a_real_six_entry_campaign_with_time_based_objectives(self):
         call_command("seed_browser_assurance_campaign", duration_ms=250)
+        call_command("seed_browser_assurance_campaign", duration_ms=250)
 
         run, _ = CampaignService.start(user=None, seed_root=15150)
         entries = list(run.campaign_version.entries.order_by("position"))
