@@ -1,4 +1,4 @@
-from django.core.management import call_command
+from django.core.management import CommandError, call_command
 from django.test import TestCase
 
 from campaigns.services import CampaignService
@@ -49,3 +49,18 @@ class BrowserAssuranceCampaignTests(TestCase):
         self.assertEqual(level_four["hazard_emitters"][0]["variant_ids"], ["COMET_VARIANT_02"])
         self.assertEqual(level_four["hazard_emitters"][0]["spawn_points"], [{"x": 640, "y": 260}])
         self.assertGreaterEqual(level_four["objectives"][0]["duration_ms"], 30000)
+
+    def test_fixture_verifier_accepts_its_declared_campaign(self):
+        call_command("seed_browser_assurance_campaign", duration_ms=250)
+
+        call_command(
+            "verify_browser_assurance_campaign", duration_ms=250, scenario="campaign"
+        )
+
+    def test_fixture_verifier_rejects_a_different_specialised_scenario(self):
+        call_command("seed_browser_assurance_campaign", duration_ms=250, scenario="boarding")
+
+        with self.assertRaisesRegex(CommandError, "duration does not match campaign"):
+            call_command(
+                "verify_browser_assurance_campaign", duration_ms=250, scenario="campaign"
+            )

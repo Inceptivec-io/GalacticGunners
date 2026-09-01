@@ -200,8 +200,9 @@ def test_admin_authority_explicit_selected_level_includes_its_full_document(clie
     second = Level.objects.create(
         slug='level-02', name='Level 2', sequence=2, game_project=core_project,
     )
+    expected_config = golden_level()
     for level in (first, second):
-        version = LevelVersion.objects.create(level=level, version=1, config=golden_level())
+        version = LevelVersion.objects.create(level=level, version=1, config=expected_config)
         version.status = LevelVersion.Status.VALIDATED
         version.save()
         version.publish()
@@ -212,7 +213,7 @@ def test_admin_authority_explicit_selected_level_includes_its_full_document(clie
     assert response.status_code == 200
     selected = next(item for item in response.json()['results'] if item['id'] == str(second.id))
     summary = next(item for item in response.json()['results'] if item['id'] == str(first.id))
-    assert selected['authority_version']['config']['schema_version'] == '1.1'
+    assert selected['authority_version']['config'] == expected_config
     assert summary['authority_version'] is None
 
 

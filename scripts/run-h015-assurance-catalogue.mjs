@@ -81,12 +81,14 @@ function runShell(command) {
 }
 
 function scenarioSetup(command) {
+  const seed = (duration, scenario = "campaign") =>
+    `${compose} exec -T backend python manage.py seed_browser_assurance_campaign --duration-ms ${duration}${scenario === "campaign" ? "" : ` --scenario ${scenario}`} && ${compose} exec -T backend python manage.py verify_browser_assurance_campaign --duration-ms ${duration} --scenario ${scenario}`;
   if (command.includes("tests/e2e/campaign-real-play.spec.ts"))
-    return `${compose} exec -T backend python manage.py seed_browser_assurance_campaign --duration-ms 2500`;
+    return seed(2500);
   if (command.includes("tests/e2e/level4-hazards.spec.ts"))
-    return `${compose} exec -T backend python manage.py seed_browser_assurance_campaign --duration-ms 2500 --scenario hazards`;
+    return seed(2500, "hazards");
   if (command.includes("tests/e2e/boarding-ordinary.spec.ts"))
-    return `${compose} exec -T backend python manage.py seed_browser_assurance_campaign --duration-ms 450 --scenario boarding`;
+    return seed(450, "boarding");
   if (command.includes("npx playwright test"))
     return `${compose} exec -T backend python manage.py seed_runtime_authority`;
   return null;
