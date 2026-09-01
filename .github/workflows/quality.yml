@@ -62,7 +62,8 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: "22", cache: npm }
       - run: npm ci
-      - run: npx playwright install --with-deps chromium firefox webkit
+      - name: Install cross-browser runtime dependencies (fail closed)
+        run: timeout --signal=KILL 600s npx playwright install --with-deps chromium firefox webkit
       - name: Run locked cross-browser runtime verifier
         run: npm run runtime:h015:cross-browser
       - run: docker compose config
