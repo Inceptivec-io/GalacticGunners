@@ -3062,7 +3062,14 @@ export class Level1Scene extends CombatLevelScene {
   }
 
   private publishQaState(): void {
-    if (typeof window === "undefined") {
+    // Phaser can emit a final update while a navigation is destroying scene
+    // groups. Publishing diagnostics must not dereference disposed gameplay.
+    if (
+      typeof window === "undefined" ||
+      !this.sys.isActive() ||
+      !this.#scouts ||
+      !this.#shieldTiles
+    ) {
       return;
     }
     window.__GALACTIC_GUNNERS_SLICE_QA__ = this.buildQaState();
