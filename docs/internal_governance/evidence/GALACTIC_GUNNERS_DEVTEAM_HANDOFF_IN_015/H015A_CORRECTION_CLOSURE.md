@@ -3,15 +3,17 @@
 **Handoff:** `GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015` including H015A
 correction authority
 
-**Exact tested SHA:** `d7d2b230db18ce875d7f7a26b22fc7b027069c8b`
+**Exact tested SHA:** `be41004429790f6d0a575dc17d98fbe9ec8fd2bd`
 
-**CI:** [33520881587](https://github.com/Inceptivec-io/GalacticGunners/actions/runs/33520881587), SUCCESS, 15/15 jobs
+**CI:** [33532128537](https://github.com/Inceptivec-io/GalacticGunners/actions/runs/33532128537), SUCCESS, 15/15 jobs
 
-**Evidence artifact:** `9807009122`,
-`h015-browser-evidence-d7d2b230db18ce875d7f7a26b22fc7b027069c8b`
+**Evidence artifact:** `9811526750`,
+`h015-browser-evidence-be41004429790f6d0a575dc17d98fbe9ec8fd2bd`
 
-**Artifact SHA-256:** `cfda49c92939c283756d89685422c66fa9a2065f64756aabaf5e573a073736b0`
-**Manifest SHA-256:** `2efe3fd8fd13b7049487ff991bcb7df17e6d597bac69de60b0c30e8b7c6623dd`
+**Artifact SHA-256:** `992ac9d1f5ca09ed462b942b2d9f8b3bb2761df139e96ff4d19fc7e51fdb4375`
+**Manifest SHA-256:** `2f87655824b7d5cf7f71c82ae6cff0718dd7b31524fd74fb6c7352db96693c02`
+**Closure-attestation artifact:** `9811527735`,
+`h015-closure-attestation-be41004429790f6d0a575dc17d98fbe9ec8fd2bd`
 
 ## H015A Defect Matrix
 
@@ -30,7 +32,7 @@ correction authority
 
 ## Assurance and Closure Audit
 
-The strict closure attestation was generated at `2026-09-01T15:12:56.974Z`
+The strict closure attestation was generated at `2026-09-01T17:05:49.449Z`
 by `node scripts/generate-h015-closure-attestation.mjs` at the tested SHA.
 It reports `CLOSURE_AUDIT=PASS`, `FAILED_GATES=0`, `PENDING_GATES=0`, and
 `EVIDENCE_UNIQUENESS=PASS`. Required exact-SHA gates all passed:
@@ -41,8 +43,14 @@ It reports `CLOSURE_AUDIT=PASS`, `FAILED_GATES=0`, `PENDING_GATES=0`, and
 `player-logout`, `assurance-catalogue`, and `closure-audit`.
 
 The 50-row assurance catalogue is included in the `assurance-catalogue` gate.
-Earlier H015 readiness claims and artifacts are historical rejected evidence;
-they are not used as proof for this exact SHA.
+The final local catalogue result contains 99 substantive PASS cases and one
+intentional post-upload closure-audit deferral. The preceding CI run at
+`421197b` exposed a deterministic teardown defect: `Level1Scene` published
+diagnostics after Phaser had disposed its scout/shield groups during splash
+navigation. `publishQaState()` now verifies the active scene and group
+ownership before publishing, while still allowing ordinary runtime errors to
+fail the verifier. Earlier H015 readiness claims and artifacts are historical
+rejected evidence; they are not used as proof for this exact SHA.
 
 ## Return State
 

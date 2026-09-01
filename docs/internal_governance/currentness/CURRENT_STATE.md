@@ -15,23 +15,27 @@ Branch:
 ## Exact-SHA Review Evidence
 
 The exact tested implementation SHA is
-`d7d2b230db18ce875d7f7a26b22fc7b027069c8b`. GitHub Actions run
-[33520881587](https://github.com/Inceptivec-io/GalacticGunners/actions/runs/33520881587)
+`be41004429790f6d0a575dc17d98fbe9ec8fd2bd`. GitHub Actions run
+[33532128537](https://github.com/Inceptivec-io/GalacticGunners/actions/runs/33532128537)
 completed successfully at that SHA with all 15 jobs passing.
 
-- Browser evidence artifact: `9807009122`,
-  `h015-browser-evidence-d7d2b230db18ce875d7f7a26b22fc7b027069c8b`,
-  SHA-256 `cfda49c92939c283756d89685422c66fa9a2065f64756aabaf5e573a073736b0`.
+- Browser evidence artifact: `9811526750`,
+  `h015-browser-evidence-be41004429790f6d0a575dc17d98fbe9ec8fd2bd`,
+  SHA-256 `992ac9d1f5ca09ed462b942b2d9f8b3bb2761df139e96ff4d19fc7e51fdb4375`.
 - Evidence manifest SHA-256:
-  `2efe3fd8fd13b7049487ff991bcb7df17e6d597bac69de60b0c30e8b7c6623dd`.
+  `2f87655824b7d5cf7f71c82ae6cff0718dd7b31524fd74fb6c7352db96693c02`.
 - Closure audit evidence SHA-256:
-  `0cbd698ed9d8946413cf66d4515659d5e79e0cde0741193545a1a16bd59fc4bd`.
+  `15cc4a5579323e3ae492516ca6bd506b8758a096e71ec320cf4547d05464b211`.
+- Closure attestation artifact: `9811527735`,
+  `h015-closure-attestation-be41004429790f6d0a575dc17d98fbe9ec8fd2bd`.
 - Strict closure audit: PASS; failed gates: 0; pending gates: 0; evidence
   uniqueness: PASS.
 
-The runtime-verifier milestone SHA `b18d4afc265c831cae88e133fab862742b138c12`
-and traceability SHA `d9e8792cddd774b7386d7094ab46323f12cf37f0` are
-ancestors of the exact tested SHA. They remain intermediate evidence only.
+The prior H015A claim at `d7d2b230db18ce875d7f7a26b22fc7b027069c8b`
+and the subsequent failed run at `421197b` remain historical evidence only.
+The latter exposed a real teardown-time diagnostic access to disposed Phaser
+groups. `be41004429790f6d0a575dc17d98fbe9ec8fd2bd` guards that lifecycle
+boundary and is the sole current review-evidence SHA.
 
 ## Current Controls
 
