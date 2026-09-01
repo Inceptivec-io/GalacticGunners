@@ -193,6 +193,30 @@ def test_admin_authority_exposes_all_core_revisions_and_active_release(client, l
 
 
 @pytest.mark.django_db
+def test_admin_authority_explicit_selected_level_includes_its_full_document(client, level_admin, core_project):
+    first = Level.objects.create(
+        slug='level-01', name='Level 1', sequence=1, game_project=core_project,
+    )
+    second = Level.objects.create(
+        slug='level-02', name='Level 2', sequence=2, game_project=core_project,
+    )
+    for level in (first, second):
+        version = LevelVersion.objects.create(level=level, version=1, config=golden_level())
+        version.status = LevelVersion.Status.VALIDATED
+        version.save()
+        version.publish()
+
+    client.force_login(level_admin)
+    response = client.get(f'/api/v1/admin/levels/authority/?level_id={second.id}')
+
+    assert response.status_code == 200
+    selected = next(item for item in response.json()['results'] if item['id'] == str(second.id))
+    summary = next(item for item in response.json()['results'] if item['id'] == str(first.id))
+    assert selected['authority_version']['config']['schema_version'] == '1.1'
+    assert summary['authority_version'] is None
+
+
+@pytest.mark.django_db
 def test_pinned_campaign_entry_can_start_after_a_newer_level_is_published(client, level_admin, core_project):
     levels = []
     for sequence in range(1, 7):

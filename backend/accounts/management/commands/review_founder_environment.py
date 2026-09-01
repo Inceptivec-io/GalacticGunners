@@ -58,13 +58,18 @@ class Command(BaseCommand):
         if levels.status_code != 200 or len(levels.json()) < 6:
             raise CommandError('Published six-level campaign availability failed.')
         first_level = levels.json()[0]
-        authority = admin.get('/api/v1/admin/levels/authority/')
+        # The authority endpoint intentionally returns summaries for all but the
+        # selected level. Ask for the reviewed level explicitly before using its
+        # immutable document to exercise the Designer draft/preview round-trip.
+        authority = admin.get(f"/api/v1/admin/levels/authority/?level_id={first_level['id']}")
         if authority.status_code != 200:
             raise CommandError('Designer authority reload failed.')
         reviewed_level = next((item for item in authority.json().get('results', []) if item['id'] == first_level['id']), None)
         if not reviewed_level or not reviewed_level.get('versions'):
             raise CommandError('Designer authority did not include the first published level.')
-        latest = reviewed_level['versions'][0]
+        latest = reviewed_level['authority_version']
+        if not latest or not latest.get('config'):
+            raise CommandError('Designer authority did not return the selected level document.')
         if latest['status'] in {'DRAFT', 'VALIDATED'}:
             draft_checksum = latest['checksum']
         else:

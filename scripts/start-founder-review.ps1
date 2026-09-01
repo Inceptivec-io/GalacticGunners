@@ -126,6 +126,9 @@ try {
   Invoke-EvidenceRuntime 'rectification/boarding_success' { npm run runtime:h015:boarding-success } 'Boarding combat, physical exit, and server-return verification'
   Invoke-EvidenceRuntime 'rectification/designer_roundtrip' { npm run runtime:h015:designer-roundtrip } 'Designer draft, exact-checksum preview, publication, and runtime verification'
   Invoke-EvidenceRuntime 'review_matrix' { npm run runtime:h015:review-matrix } 'browser review matrix verification'
+  # Readiness is prohibited until the complete traceability catalogue has
+  # independently accepted every positive and hostile row for this exact SHA.
+  Invoke-EvidenceRuntime 'assurance_catalogue' { npm run h015:run-catalogue } 'fail-closed H015 assurance catalogue verification'
 } finally {
   $env:NEXT_PUBLIC_GG_QA_MODE = 'false'
   Invoke-ReviewCommand { docker compose --env-file $envFile up --build -d } 'production container restoration'
