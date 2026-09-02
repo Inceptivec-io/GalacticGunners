@@ -87,6 +87,10 @@
       "classification": "UNIT"
     },
     {
+      "file": "tests/unit/h015-locked-product-model.test.mjs",
+      "classification": "UNIT"
+    },
+    {
       "file": "tests/unit/canonical-sprites.test.mjs",
       "classification": "UNIT"
     },
