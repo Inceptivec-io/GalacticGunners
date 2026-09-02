@@ -1,0 +1,14 @@
+asset_key,source_path,source_size,canonical_cell,authority
+boarding.player.idle,assets/boarding/characters/player_001_v001.png,1881x836,256x384,H015 canonical sprite catalogue
+boarding.player.walk,assets/boarding/characters/player_002_v001.png,1983x793,256x384,H015 canonical sprite catalogue
+boarding.player.run,assets/boarding/characters/player_003_v001.png,1881x836,256x384,H015 canonical sprite catalogue
+boarding.player.jump,assets/boarding/characters/player_004_v001.png,2172x724,256x384,H015 canonical sprite catalogue
+boarding.player.fire,assets/boarding/characters/player_005_v001.png,2172x724,256x384,H015 canonical sprite catalogue
+boarding.player.hit_death,assets/boarding/characters/player_006_v001.png,2172x724,256x384,H015 canonical sprite catalogue
+boarding.player.crouch_aim,assets/boarding/characters/player_007_v001.png,2103x748,256x384,H015 canonical sprite catalogue
+boarding.alien.idle,assets/boarding/characters/alien_001_v001.png,1831x859,256x384,H015 canonical sprite catalogue
+boarding.alien.walk,assets/boarding/characters/alien_002_v001.png,2071x725,256x384,H015 canonical sprite catalogue
+boarding.alien.run_attack,assets/boarding/characters/alien_003_v001.png,2032x731,256x384,H015 canonical sprite catalogue
+boarding.alien.jump_fall,assets/boarding/characters/alien_004_v001.png,2007x762,256x384,H015 canonical sprite catalogue
+boarding.alien.fire,assets/boarding/characters/alien_005_v001.png,2172x704,256x384,H015 canonical sprite catalogue
+boarding.alien.hit_death,assets/boarding/characters/alien_006_v001.png,2171x691,256x384,H015 canonical sprite catalogue

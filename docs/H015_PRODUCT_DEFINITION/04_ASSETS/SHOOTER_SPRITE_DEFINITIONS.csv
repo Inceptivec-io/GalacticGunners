@@ -1,0 +1,15 @@
+asset_key,source_path,source_size,canonical_cell,authority
+player.ship,assets/sprites/ships/gg_player_ship_v002_sheet.png,2172x724,512x512,H015 canonical sprite catalogue
+enemy.scout,assets/sprites/ships/gg_enemy_scout_v002_sheet.png,1983x793,512x512,H015 canonical sprite catalogue
+enemy.cruiser,assets/sprites/ships/gg_enemy_cruiser_v002_sheet.png,1672x941,512x512,H015 canonical sprite catalogue
+enemy.destroyer,assets/sprites/ships/gg_enemy_destroyer_v002_sheet.png,2172x724,512x512,H015 canonical sprite catalogue
+enemy.mothership,assets/sprites/ships/gg_boss_mothership_normal_v002_sheet.png,1425x724,512x512,H015 canonical sprite catalogue
+enemy.mothership.hit,assets/sprites/ships/gg_boss_mothership_HIT_v002_sheet.png,724x724,512x512,H015 canonical sprite catalogue
+fx.asteroid,assets/sprites/objects/gg_asteroid_v002_sheet.png,2172x724,512x512,H015 canonical sprite catalogue
+fx.comet,assets/sprites/objects/gg_comet_v002_horizontal_vertical_facing.png,2688x448,512x512,H015 canonical sprite catalogue
+fx.explosionSmall,assets/sprites/objects/gg_explosion_small_v002_horizontal.png,3952x494,256x256,H015 canonical sprite catalogue
+projectile.nuke,assets/sprites/objects/gg_nuke_projectile_v002_horizontal_upright.png,2880x800,256x256,H015 canonical sprite catalogue
+fx.nukeBurst,assets/sprites/objects/gg_nuke_burst_v002_horizontal.png,5160x516,256x256,H015 canonical sprite catalogue
+projectile.playerLaser,assets/sprites/objects/gg_player_laser_v002.png,1912x823,256x256,H015 canonical sprite catalogue
+projectile.enemyLaser,assets/sprites/objects/gg_enemy_laser_v002.png,1536x1024,256x256,H015 canonical sprite catalogue
+shield.tile,assets/sprites/objects/gg_shield_tile_v002.png,1254x1254,256x256,H015 canonical sprite catalogue
