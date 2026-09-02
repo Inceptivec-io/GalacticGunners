@@ -62,8 +62,42 @@ async function fireAtBoardingTarget(page: import("@playwright/test").Page) {
   await holdKeyUntilAnnouncement(
     page,
     "Space",
-    /Boarding offer available\. Board or Continue the Shooter assault\./,
+    /Boardable alien incapacitated\. Fly within range to Board or Continue\./,
   );
+}
+
+async function approachBoardingTarget(page: import("@playwright/test").Page) {
+  const canvas = page.locator(".game-canvas-host canvas");
+  await canvas.focus();
+  // The browser-assurance scenario keeps the disabled Frigate in the player's
+  // centre lane. Use normal upward movement to reach its authored envelope.
+  await page.keyboard.down("w");
+  try {
+    await page.waitForTimeout(1_850);
+    await expect(page.locator("[data-game-announcement]")).toHaveText(
+      /Boarding offer available\. Board or Continue the Shooter assault\./,
+      { timeout: 12_000 },
+    );
+  } finally {
+    await page.keyboard.up("w");
+  }
+}
+
+async function selectBoardWithKeyboard(page: import("@playwright/test").Page) {
+  await holdKeyUntilAnnouncement(
+    page,
+    "Enter",
+    "Boarding active. Clear the frigate and reach the airlock.",
+  );
+}
+
+async function selectContinueWithTouch(page: import("@playwright/test").Page) {
+  const canvas = page.locator(".game-canvas-host canvas");
+  const box = await canvas.boundingBox();
+  if (!box) throw new Error("Gameplay canvas is unavailable.");
+  await canvas.click({
+    position: { x: box.width * 0.58, y: box.height * 0.23 },
+  });
 }
 
 test("H015-BOARD-001__e2e_ordinary_user__laser_hit_opens_visible_boarding_offer_and_escape_returns_to_shooter", async ({
@@ -73,16 +107,15 @@ test("H015-BOARD-001__e2e_ordinary_user__laser_hit_opens_visible_boarding_offer_
   test.setTimeout(60_000);
   await startLevelFour(page);
   await fireAtBoardingTarget(page);
+  await approachBoardingTarget(page);
 
   const canvas = page.locator(".game-canvas-host canvas");
   const box = await canvas.boundingBox();
   if (!box) throw new Error("Gameplay canvas is unavailable.");
-  await canvas.click({
-    position: { x: box.width * 0.4, y: box.height * 0.57 },
-  });
-  await expect(page.locator("[data-game-announcement]")).toHaveText(
+  await holdKeyUntilAnnouncement(
+    page,
+    "Enter",
     "Boarding active. Clear the frigate and reach the airlock.",
-    { timeout: 12_000 },
   );
 
   // Escape is intentionally pause-only. The visible abort action requires a
@@ -148,18 +181,17 @@ test("H015-BOARD-001__e2e_ordinary_user__continue_declines_the_offer_without_ent
   test.setTimeout(60_000);
   await startLevelFour(page);
   await fireAtBoardingTarget(page);
+  await approachBoardingTarget(page);
 
-  const canvas = page.locator(".game-canvas-host canvas");
-  const box = await canvas.boundingBox();
-  if (!box) throw new Error("Gameplay canvas is unavailable.");
-  await canvas.click({
-    position: { x: box.width * 0.6, y: box.height * 0.57 },
-  });
+  await selectContinueWithTouch(page);
   await expect(page.locator("[data-game-announcement]")).toHaveText(
-    "Boarding offer declined. Shooter assault resumed.",
+    "Boarding declined. The incapacitated target will expire.",
     { timeout: 12_000 },
   );
-  await page.waitForTimeout(300);
+  await expect(page.locator("[data-game-announcement]")).toHaveText(
+    "Boarding opportunity expired. Shooter assault continued.",
+    { timeout: 12_000 },
+  );
   await expect(page.locator("[data-game-status]")).toHaveText(
     "Galactic Gunners gameplay started.",
   );
@@ -186,17 +218,12 @@ test("H015-BOARD-005__e2e_ordinary_user__physical_boarding_combat_and_exit_retur
   test.setTimeout(90_000);
   await startLevelFour(page);
   await fireAtBoardingTarget(page);
+  await approachBoardingTarget(page);
 
   const canvas = page.locator(".game-canvas-host canvas");
   const box = await canvas.boundingBox();
   if (!box) throw new Error("Gameplay canvas is unavailable.");
-  await canvas.click({
-    position: { x: box.width * 0.4, y: box.height * 0.57 },
-  });
-  await expect(page.locator("[data-game-announcement]")).toHaveText(
-    "Boarding active. Clear the frigate and reach the airlock.",
-    { timeout: 12_000 },
-  );
+  await selectBoardWithKeyboard(page);
 
   await canvas.focus();
   await page.keyboard.down("d");
@@ -241,17 +268,12 @@ test("H015-BOARD-005__e2e_ordinary_user_negative__entry_airlock_cannot_complete_
   test.setTimeout(60_000);
   await startLevelFour(page);
   await fireAtBoardingTarget(page);
+  await approachBoardingTarget(page);
 
   const canvas = page.locator(".game-canvas-host canvas");
   const box = await canvas.boundingBox();
   if (!box) throw new Error("Gameplay canvas is unavailable.");
-  await canvas.click({
-    position: { x: box.width * 0.4, y: box.height * 0.57 },
-  });
-  await expect(page.locator("[data-game-announcement]")).toHaveText(
-    "Boarding active. Clear the frigate and reach the airlock.",
-    { timeout: 12_000 },
-  );
+  await selectBoardWithKeyboard(page);
 
   await page.keyboard.press("e");
   await page.waitForTimeout(500);
@@ -280,16 +302,11 @@ test("H015-BOARD-006__e2e_ordinary_user__escape_pauses_resumes_and_requires_conf
   test.setTimeout(60_000);
   await startLevelFour(page);
   await fireAtBoardingTarget(page);
+  await approachBoardingTarget(page);
   const canvas = page.locator(".game-canvas-host canvas");
   const box = await canvas.boundingBox();
   if (!box) throw new Error("Gameplay canvas is unavailable.");
-  await canvas.click({
-    position: { x: box.width * 0.4, y: box.height * 0.57 },
-  });
-  await expect(page.locator("[data-game-announcement]")).toHaveText(
-    "Boarding active. Clear the frigate and reach the airlock.",
-    { timeout: 12_000 },
-  );
+  await selectBoardWithKeyboard(page);
 
   await page.keyboard.press("Escape");
   await expect(page.locator("[data-game-status]")).toHaveText(
@@ -337,16 +354,11 @@ test("H015-BOARD-003__e2e_ordinary_user__boarding_player_fire_collides_with_and_
   test.setTimeout(60_000);
   await startLevelFour(page);
   await fireAtBoardingTarget(page);
+  await approachBoardingTarget(page);
   const canvas = page.locator(".game-canvas-host canvas");
   const box = await canvas.boundingBox();
   if (!box) throw new Error("Gameplay canvas is unavailable.");
-  await canvas.click({
-    position: { x: box.width * 0.4, y: box.height * 0.57 },
-  });
-  await expect(page.locator("[data-game-announcement]")).toHaveText(
-    "Boarding active. Clear the frigate and reach the airlock.",
-    { timeout: 12_000 },
-  );
+  await selectBoardWithKeyboard(page);
 
   await holdKeyUntilAnnouncement(
     page,
@@ -378,13 +390,7 @@ test("H015-BOARD-003__e2e_ordinary_user_negative__boarding_alien_is_not_eliminat
   const canvas = page.locator(".game-canvas-host canvas");
   const box = await canvas.boundingBox();
   if (!box) throw new Error("Gameplay canvas is unavailable.");
-  await canvas.click({
-    position: { x: box.width * 0.4, y: box.height * 0.57 },
-  });
-  await expect(page.locator("[data-game-announcement]")).toHaveText(
-    "Boarding active. Clear the frigate and reach the airlock.",
-    { timeout: 12_000 },
-  );
+  await selectBoardWithKeyboard(page);
 
   await page.waitForTimeout(1_500);
   await expect(page.locator("[data-game-announcement]")).toHaveText(

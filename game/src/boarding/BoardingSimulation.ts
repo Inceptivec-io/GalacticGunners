@@ -62,7 +62,7 @@ export class BoardingSimulation {
     container.open = true;
     const roll = Math.floor(this.rng.next() * 100);
     container.pickup = roll < 15 ? 'LIFE' : roll < 30 ? 'NUKE' : 'EMPTY';
-    if (container.pickup === 'LIFE') this.state.resources.lives = Math.min(3, this.state.resources.lives + 1);
+    if (container.pickup === 'LIFE') this.state.resources.lives += 1;
     if (container.pickup === 'NUKE') this.state.resources.nukes += 1;
     this.event('CONTAINER_OPENED', container.id, undefined, container.pickup);
   }

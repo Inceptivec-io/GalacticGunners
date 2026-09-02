@@ -16,6 +16,8 @@ interface BoardingLaunch {
   interior: { slug: 'alien-frigate'; version: 1; checksum: string };
   levelVersion: number;
   levelChecksum: string;
+  admittedServerRun?: BoardingRunRecord;
+  shooterStateDigest?: string;
 }
 
 interface BoardingQaState {
@@ -92,7 +94,7 @@ export class BoardingScene extends Phaser.Scene {
 
   constructor() { super('BoardingScene'); }
 
-  init(data: { seed?: number; lives?: number; nukes?: number; anchorId?: string; sourceEntityId?: string; sourceEntityType?: 'scout' | 'cruiser' | 'destroyer'; interior?: { slug: 'alien-frigate'; version: 1; checksum: string }; apiBaseUrl?: string; gameRunId?: string; levelVersion?: number; levelChecksum?: string; onGameplayAnnouncement?: (announcement: string) => void } = {}): void {
+  init(data: { seed?: number; lives?: number; nukes?: number; anchorId?: string; sourceEntityId?: string; sourceEntityType?: 'scout' | 'cruiser' | 'destroyer'; interior?: { slug: 'alien-frigate'; version: 1; checksum: string }; apiBaseUrl?: string; gameRunId?: string; levelVersion?: number; levelChecksum?: string; admittedServerRun?: BoardingRunRecord; shooterStateDigest?: string; onGameplayAnnouncement?: (announcement: string) => void } = {}): void {
     this.simulation = new BoardingSimulation(data.seed ?? 1, { lives: data.lives ?? 3, nukes: data.nukes ?? 2 });
     this.coordinator = new BoardingCoordinator();
     this.elapsed = 0;
@@ -116,7 +118,11 @@ export class BoardingScene extends Phaser.Scene {
       interior: data.interior ?? { slug: 'alien-frigate', version: 1, checksum: 'e9b1af65f0daef6725a7ddf4683b5f6d503e25dabc97aef1212102e6b1e994f3' },
       levelVersion: data.levelVersion ?? 1,
       levelChecksum: data.levelChecksum ?? '',
+      admittedServerRun: data.admittedServerRun,
+      shooterStateDigest: data.shooterStateDigest,
     };
+    this.serverRun = data.admittedServerRun ?? null;
+    this.shooterStateDigest = data.shooterStateDigest ?? '';
   }
 
   preload(): void {
@@ -183,7 +189,8 @@ export class BoardingScene extends Phaser.Scene {
     this.timer = this.add.text(24, 24, 'BOARDING 60', { fontFamily: 'GalacticGunnersHUD, monospace', fontSize: '28px', color: '#d9f8ff' }).setScrollFactor(0).setDepth(10);
     this.statusText = this.add.text(this.scale.width / 2, this.scale.height * 0.18, 'ALIEN FRIGATE BREACH\nESTABLISHING SECURE BOARDING LINK...', { align: 'center', fontFamily: 'GalacticGunnersGoldDisplay, monospace', fontSize: '30px', color: '#f5d15f' }).setOrigin(0.5).setScrollFactor(0).setDepth(20);
     this.cameras.main.startFollow(this.player, true, 0.12, 0.12);
-    void this.openServerRun();
+    if (this.serverRun) this.startActive();
+    else void this.openServerRun();
     if (this.registry.get('runtimeConfig')?.qaDiagnostics && typeof window !== 'undefined') {
       window.__GALACTIC_GUNNERS_BOARDING_QA__ = {
         state: () => ({
@@ -253,15 +260,11 @@ export class BoardingScene extends Phaser.Scene {
         }),
       };
     }
-    this.input.keyboard?.on('keydown-ESC', this.pauseBoarding, this);
-    this.input.keyboard?.on('keydown-P', this.pauseBoarding, this);
-    for (const key of ['A', 'D', 'LEFT', 'RIGHT', 'W', 'UP', 'SPACE', 'E']) this.keys[key] = this.input.keyboard!.addKey(key);
+    for (const key of ['A', 'D', 'LEFT', 'RIGHT', 'W', 'UP', 'SPACE', 'E', 'P', 'ESC']) this.keys[key] = this.input.keyboard!.addKey(key);
     this.createTouchControls();
     this.installGameplayCursor();
     this.events.on('resume', this.onResume, this);
     this.events.once('shutdown', () => {
-      this.input.keyboard?.off('keydown-P', this.pauseBoarding, this);
-      this.input.keyboard?.off('keydown-ESC', this.pauseBoarding, this);
       this.events.off('resume', this.onResume, this);
       this.cursorHideEvent?.remove(false);
       this.cursorHideEvent = undefined;
@@ -281,7 +284,8 @@ export class BoardingScene extends Phaser.Scene {
       return;
     }
     this.scene.launch('PauseScene', { targetScene: 'BoardingScene' });
-    this.scene.sleep();
+    // PauseScene owns pausing its target after it has created. Sleeping here
+    // races that launch and leaves Boarding visible with no usable overlay.
   }
 
   abortFromPause(): void {
@@ -315,6 +319,9 @@ export class BoardingScene extends Phaser.Scene {
     const jump = Phaser.Input.Keyboard.JustDown(this.keys.W) || Phaser.Input.Keyboard.JustDown(this.keys.UP) || this.touchInput.jump || Boolean(gamepad?.buttons[1]?.pressed);
     const fire = this.keys.SPACE.isDown || this.touchInput.fire || Boolean(gamepad?.buttons[0]?.pressed);
     const interact = Phaser.Input.Keyboard.JustDown(this.keys.E) || this.touchInput.interact || Boolean(gamepad?.buttons[2]?.pressed);
+    if (Phaser.Input.Keyboard.JustDown(this.keys.P) || Phaser.Input.Keyboard.JustDown(this.keys.ESC)) {
+      this.pauseBoarding();
+    }
     const pauseDown = Boolean(gamepad?.buttons[9]?.pressed);
     if (pauseDown && !this.pausePressed) this.pauseBoarding();
     this.pausePressed = pauseDown;
@@ -399,7 +406,18 @@ export class BoardingScene extends Phaser.Scene {
   }
 
   private fireAlienShot(): void {
-    const candidates = this.aliens.getChildren().filter((alien) => (alien as Phaser.Physics.Arcade.Sprite).active) as Phaser.Physics.Arcade.Sprite[];
+    const view = this.cameras.main.worldView;
+    const engagementWidth = this.cameras.main.width * 0.8;
+    const candidates = this.aliens.getChildren().filter((candidate) => {
+      const alien = candidate as Phaser.Physics.Arcade.Sprite;
+      if (!alien.active || alien.getData('dying')) return false;
+      const body = alien.body as Phaser.Physics.Arcade.Body;
+      const insideView = body.right >= view.x + 32 && body.left <= view.right - 32 && body.bottom >= view.y + 32 && body.top <= view.bottom - 32;
+      const distance = Phaser.Math.Distance.Between(alien.x, alien.y, this.player.x, this.player.y);
+      // Boarding weapons are directional and may only engage a player visibly
+      // in front of the alien within the settled camera engagement region.
+      return insideView && distance <= engagementWidth && this.player.x < alien.x;
+    }) as Phaser.Physics.Arcade.Sprite[];
     const alien = candidates.find((item) => item.x > this.player.x) ?? candidates[0];
     if (!alien) return;
     const shot = this.alienShots.get(alien.x - 36, alien.y, 'boarding.muzzle') as Phaser.Physics.Arcade.Sprite | null;
@@ -518,8 +536,15 @@ export class BoardingScene extends Phaser.Scene {
   private async finish(outcome: BoardingOutcome): Promise<void> {
     if (this.completed) return;
     this.completed = true;
-    if (this.coordinator.state === 'OFFERED') this.coordinator.reject();
-    if (this.coordinator.state === 'ACTIVE') this.coordinator.complete(outcome, this.simulation.snapshot().resources);
+    // A pre-admitted run has already crossed the authoritative Shooter
+    // boundary. Its fresh Phaser scene has no local offer, so it must not
+    // attempt to reject or complete one during return handling.
+    if (!this.launch.admittedServerRun) {
+      if (this.coordinator.state === 'OFFERED') this.coordinator.reject();
+      if (this.coordinator.state === 'ACTIVE') {
+        this.coordinator.complete(outcome, this.simulation.snapshot().resources);
+      }
+    }
     let returnState: BoardingRunRecord['return_state'] = null;
     if (this.serverRun && this.api) {
       try {
@@ -562,12 +587,16 @@ export class BoardingScene extends Phaser.Scene {
 
   private startActive(): void {
     if (this.active || this.completed || !this.serverRun) return;
-    this.coordinator.accept();
+    // Level1 obtains server admission before it pauses. That handoff has no
+    // local OFFERED state in this fresh scene, so accepting it again throws and
+    // prevents the real Boarding scene from becoming visible. The fallback
+    // launch path still owns a local offer and must complete that transition.
+    if (!this.launch.admittedServerRun) this.coordinator.accept();
     // Admission must begin from a playable state. A first hostile shot is
     // scheduled after the scene is visibly active rather than inherited from
     // pre-admission/update timing.
     this.lastAlienFireAt = this.time.now + 1_500;
-    this.playerHitEnabledAt = 5_000;
+    this.playerHitEnabledAt = 0;
     this.active = true;
     this.starting = false;
     this.statusText.destroy();

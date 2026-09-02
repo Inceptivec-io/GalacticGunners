@@ -11,7 +11,12 @@ import {
   hazardTravelVector,
   hazardVariantFrame,
   cometRotationForVelocity,
+  asteroidAngularVelocity,
 } from "../src/systems/HazardPolicy";
+import {
+  hostileWeaponHardpoints,
+  nextHostileIndex,
+} from "../src/systems/HostileWeaponPolicy";
 
 const document: LevelAuthoringDocument = {
   schema_version: "1.1",
@@ -205,10 +210,10 @@ test("hazard policy emits reproducible off-screen entries and inward trajectorie
   };
   const viewport = { width: 1280, height: 720 };
   const expected = [
-    { x: "lane", y: -64, direction: { x: 0, y: 1 } },
-    { x: 1344, y: "lane", direction: { x: -1, y: 0.4 } },
+    { x: "lane", y: -64, direction: { x: 0.65, y: 1 } },
+    { x: 1344, y: "lane", direction: { x: -1, y: 0.28 } },
     { x: "lane", y: 784, direction: { x: 0, y: -1 } },
-    { x: -64, y: "lane", direction: { x: 1, y: 0.4 } },
+    { x: -64, y: "lane", direction: { x: 1, y: 0.28 } },
   ];
 
   for (let ordinal = 0; ordinal < expected.length; ordinal += 1) {
@@ -221,10 +226,64 @@ test("hazard policy emits reproducible off-screen entries and inward trajectorie
     if (current.y === "lane") assert.ok(point.y >= 45 && point.y <= 675);
     else assert.equal(point.y, current.y);
     assert.deepEqual(
-      hazardTravelVector(emitter.entry_edges[ordinal]),
+      hazardTravelVector(
+        emitter.entry_edges[ordinal],
+        12004,
+        `hazard:${ordinal}`,
+      ),
       current.direction,
     );
   }
+});
+
+test("asteroid spin is deterministic, non-zero, and within the governed angular range", () => {
+  const first = asteroidAngularVelocity(12002, "asteroid:0");
+  assert.equal(first, asteroidAngularVelocity(12002, "asteroid:0"));
+  assert.ok(Math.abs(first) >= 40 && Math.abs(first) <= 80);
+  assert.notEqual(first, 0);
+});
+
+test("top-entry comets choose a deterministic lateral sign while retaining a downward path", () => {
+  const directions = Array.from({ length: 32 }, (_, ordinal) =>
+    hazardTravelVector("TOP", 12004 + ordinal, `comet:${ordinal}`),
+  );
+  assert.ok(directions.every((direction) => direction.y === 1));
+  assert.ok(directions.every((direction) => Math.abs(direction.x) === 0.65));
+  assert.ok(directions.some((direction) => direction.x < 0));
+  assert.ok(directions.some((direction) => direction.x > 0));
+});
+
+test("official campaign comet entries remain lateral-biased and never use bottom entry", () => {
+  const expected = new Map<number, readonly string[]>([
+    [1, []],
+    [2, ["LEFT", "RIGHT", "LEFT", "RIGHT", "TOP"]],
+    [4, ["LEFT", "RIGHT"]],
+    [5, ["LEFT", "RIGHT", "LEFT", "RIGHT", "TOP"]],
+    [6, ["LEFT", "RIGHT", "LEFT", "RIGHT", "TOP"]],
+  ]);
+  for (const definition of CAMPAIGN_DEFINITIONS) {
+    const entries = (definition.hazards ?? [])
+      .filter((hazard) => hazard.type === "comet")
+      .flatMap((hazard) =>
+        Array.from({ length: hazard.count }, () => hazard.entry_edge),
+      );
+    assert.deepEqual(entries, expected.get(definition.sequence) ?? []);
+    assert.equal(entries.includes("BOTTOM"), false);
+  }
+});
+
+test("hostile weapon hardpoints are simultaneous, authored, and starvation-free", () => {
+  assert.deepEqual(hostileWeaponHardpoints("scout"), [0]);
+  assert.deepEqual(hostileWeaponHardpoints("cruiser"), [-0.22, 0.22]);
+  assert.deepEqual(hostileWeaponHardpoints("destroyer"), [-0.28, 0.28]);
+  assert.deepEqual(hostileWeaponHardpoints("mothership"), [-0.3, 0, 0.3]);
+
+  assert.deepEqual(
+    Array.from({ length: 8 }, (_, ordinal) => nextHostileIndex(ordinal, 4)),
+    [0, 1, 2, 3, 0, 1, 2, 3],
+  );
+  assert.throws(() => nextHostileIndex(-1, 4), /non-negative/);
+  assert.throws(() => nextHostileIndex(0, 0), /At least one/);
 });
 
 test("a hazard-focused authored level retains a real hostile runtime contract", () => {
@@ -431,7 +490,10 @@ test("comet orientation keeps the authored south-facing tail behind travel on ev
     const rotation = cometRotationForVelocity(velocity);
     // A zero-rotation comet points south. Convert the transformed authored
     // heading back to a world vector and compare its normalized direction.
-    const heading = { x: Math.cos(rotation + Math.PI / 2), y: Math.sin(rotation + Math.PI / 2) };
+    const heading = {
+      x: Math.cos(rotation + Math.PI / 2),
+      y: Math.sin(rotation + Math.PI / 2),
+    };
     const magnitude = Math.hypot(velocity.x, velocity.y);
     assert.ok(Math.abs(heading.x - velocity.x / magnitude) < 0.000001, edge);
     assert.ok(Math.abs(heading.y - velocity.y / magnitude) < 0.000001, edge);

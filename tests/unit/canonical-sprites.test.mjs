@@ -29,6 +29,9 @@ test('canonical compiler emits all 27 declared portable RGBA derivatives', async
     assert.equal(metadata.hasAlpha, true, `${asset.asset_key}: derivative must retain alpha`);
     assert.ok(width <= 4096 && height <= 4096, `${asset.asset_key}: portability limit`);
     assert.equal(digest(output), asset.derivative_sha256, `${asset.asset_key}: derivative digest`);
+    assert.equal(asset.geometry.per_frame_refit, false, `${asset.asset_key}: per-frame refit is prohibited`);
+    assert.ok(asset.geometry.common_scale_factor > 0, `${asset.asset_key}: common family scale`);
+    assert.ok(asset.geometry.envelope_width > 0 && asset.geometry.envelope_height > 0, `${asset.asset_key}: family envelope`);
   }
 });
 

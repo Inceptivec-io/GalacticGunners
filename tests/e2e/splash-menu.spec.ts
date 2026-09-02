@@ -19,7 +19,7 @@ test("H015-LAUNCH-001__e2e_ordinary_user__fresh_play_shows_splash_before_menu", 
   );
   const remainingVisibleWindow = Math.max(
     0,
-    1_850 - (Date.now() - launchRequestedAt),
+    3_850 - (Date.now() - launchRequestedAt),
   );
   if (remainingVisibleWindow > 0) {
     await page.waitForTimeout(remainingVisibleWindow);
@@ -36,8 +36,8 @@ test("H015-LAUNCH-001__e2e_ordinary_user__fresh_play_shows_splash_before_menu", 
       .locator("[data-game-host]")
       .getAttribute("data-game-splash-duration-ms"),
   );
-  expect(splashDuration).toBeGreaterThanOrEqual(1_900);
-  expect(splashDuration).toBeLessThanOrEqual(3_000);
+  expect(splashDuration).toBeGreaterThanOrEqual(3_900);
+  expect(splashDuration).toBeLessThanOrEqual(5_000);
   await expect(page.locator("[data-game-splash-copy]")).toHaveCount(0);
   await expect(page.locator(".game-canvas-host canvas")).toBeFocused();
   expect(strictRuntime.unexpectedFailures).toEqual([]);

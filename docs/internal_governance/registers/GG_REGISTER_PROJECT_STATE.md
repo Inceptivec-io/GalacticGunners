@@ -7,15 +7,15 @@
 | Commercial Repository | `Inceptivec-io/GalacticGunners` |
 | Historical Repository | `michael-leese/GallacticGunners` READ-ONLY |
 | Current Programme | H015 PLATFORM FOUNDATION AND CAMPAIGN CONTINUITY |
-| Current Stage | H015A CORRECTION COMPLETE / FOUNDER REVIEW READY |
-| Active Handoff | GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015 |
+| Current Stage | H015 FINAL PRODUCT-CONFORMANCE AND GAMEPLAY-INTEGRITY CORRECTION / IN PROGRESS |
+| Active Handoff | GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015_FINAL |
 | Current Feature Branch | `feature/v1-platform-foundation-campaign-continuity` |
 | Base Branch | `dev` |
 | Entry/Base SHA | `3270be64c67863dc848ebad26e2a33daf8b70742` |
 | Branch Model | `feature/* -> dev -> stage -> prod` |
 | Default Branch Target | `prod` |
 | Exact Runtime Evidence SHA | `5d510e373abf2e65d7c84ac05c870ec9c89d39e4`; CI run `33541341033` SUCCESS, all 15 jobs. The branch tip may include only subsequent non-self-referential governance closeout records. |
-| Closure State | `FOUNDER_REVIEW_READY=YES`; exact-SHA browser artifact `9814967837`, closure-attestation artifact `9814968592`, manifest `e694bf5f942d3209ad26af97397c27a4e83ea9c5f297263c879989b7d978e906`, strict closure audit PASS; Founder acceptance pending |
+| Closure State | `FOUNDER_REVIEW_READY=NO`; H015 Final reopens 23 explicit product-conformance, runtime, documentation and evidence rows. Earlier H015A evidence remains historical only; Founder acceptance pending. |
 | Root Execution Contract | `AGENTS.md` |
 | External Boundary | `_EXTERNAL_GalacticGunners` |
 | Internal Governance Root | `docs/internal_governance` |

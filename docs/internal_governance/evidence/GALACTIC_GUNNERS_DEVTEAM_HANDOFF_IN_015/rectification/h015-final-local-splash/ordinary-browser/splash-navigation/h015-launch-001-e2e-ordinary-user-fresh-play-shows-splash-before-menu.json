@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "classification": "E2E_ORDINARY_USER",
+  "gate": "splash-navigation",
+  "route": "/ -> Play -> /play",
+  "tested_sha": null,
+  "test": "H015-LAUNCH-001__e2e_ordinary_user__fresh_play_shows_splash_before_menu",
+  "browser": "chromium-desktop",
+  "actions": [
+    "Opened the public root route.",
+    "Selected the visible Play link.",
+    "Waited for the governed splash and Main Menu."
+  ],
+  "assertions": [
+    "The splash remained visible for its governed duration.",
+    "The exact governed copyright and collaborator copy was rendered.",
+    "The canvas received usable Main Menu focus."
+  ]
+}

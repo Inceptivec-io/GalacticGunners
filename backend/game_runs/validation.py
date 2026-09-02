@@ -64,7 +64,10 @@ def validate_completion(run, payload):
     nuke_pickups = summary.get('nuke_pickups', 0)
     if not isinstance(nuke_uses, int) or not isinstance(nuke_pickups, int) or nuke_uses < 0 or nuke_pickups < 0 or nuke_uses > run.nukes_start + nuke_pickups:
         codes.append('NUKE_STATE_INVALID')
-    if payload['lives_end'] > run.lives_start:
+    life_pickups = summary.get('life_pickups', 0)
+    if not isinstance(life_pickups, int) or life_pickups < 0:
+        codes.append('LIFE_STATE_INVALID')
+    elif payload['lives_end'] > run.lives_start + life_pickups:
         codes.append('LIFE_STATE_INVALID')
     completed = summary.get('levels_completed', [])
     if not isinstance(completed, list) or completed != list(range(1, len(completed) + 1)):

@@ -1,7 +1,7 @@
 {
   "tested_sha": "UNSPECIFIED",
-  "base_url": "http://localhost:3002",
-  "generated_at": "2026-08-28T15:11:26.780Z",
+  "base_url": "http://localhost:3004",
+  "generated_at": "2026-09-02T15:14:27.694Z",
   "level_4_reached": true,
   "boarding_offer_to_active": true,
   "server_authoritative_run": true,

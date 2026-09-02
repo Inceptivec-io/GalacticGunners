@@ -48,6 +48,12 @@ test('boarding simulation has no implicit score award', () => {
   assert.equal(simulation.snapshot().events[0].type, 'ALIEN_KILLED');
 });
 
+test('boarding resources retain an unbounded campaign inventory on entry', () => {
+  const simulation = new BoardingSimulation(42, { lives: 7, nukes: 11 });
+  const resources = simulation.snapshot().resources;
+  assert.deepEqual(resources, { lives: 7, nukes: 11 });
+});
+
 test('boarding exit accepts the validated physical projection at the airlock', () => {
   const simulation = new BoardingSimulation(7, { lives: 2, nukes: 1 });
   simulation.synchronizePlayerProjection({ x: BOARDING_WORLD.width - 64, y: 530 });
@@ -73,7 +79,7 @@ test('boarding coordinator freezes score authority at the scene boundary', async
   assert.match(opened.shooterStateDigest, /^[0-9a-f]{64}$/);
   coordinator.accept();
   const result = coordinator.complete('SUCCESS', { lives: 4, nukes: -1 });
-  assert.deepEqual(result.resources, { lives: 3, nukes: 0 });
+  assert.deepEqual(result.resources, { lives: 4, nukes: 0 });
   assert.equal(result.offer.sourceEntityId, 'level-04:formation-0:r0:c14');
 });
 

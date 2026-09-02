@@ -159,18 +159,30 @@ async function compile(row) {
   const [cellWidth, cellHeight] = dimensions(row.cell_size);
   if (sheetWidth > 4096 || sheetHeight > 4096 || sheetWidth !== cellWidth * declared.length || sheetHeight !== cellHeight) throw new Error(`Portable derivative contract invalid: ${row.asset_key}`);
   const method = slices[row.asset_key]?.background_method ?? 'source alpha; alpha-trim';
-  const framesPng = [];
+  // Establish one invariant art envelope for the complete animation family.
+  // Individual frames retain their source-relative geometry; they are never
+  // independently fitted into their cells.
+  const sourceFrames = [];
   for (const area of declared) {
     const frame = sharp(await transparent(sharp(source).extract(area), method));
     let trimmed;
     try { trimmed = await frame.trim({ background: { r: 0, g: 0, b: 0, alpha: 0 } }).png().toBuffer(); }
     catch { trimmed = await frame.png().toBuffer(); }
-    const inset = row.asset_key.startsWith('boarding.') ? 32 : 24;
     const meta = await sharp(trimmed).metadata();
-    const ratio = Math.min((cellWidth - inset * 2) / meta.width, (cellHeight - inset * 2) / meta.height);
-    const art = await sharp(trimmed).resize(Math.max(1, Math.floor(meta.width * ratio)), Math.max(1, Math.floor(meta.height * ratio))).png().toBuffer();
+    if (!meta.width || !meta.height) throw new Error(`Transparent frame has no art bounds: ${row.asset_key}`);
+    sourceFrames.push({ input: trimmed, width: meta.width, height: meta.height });
+  }
+  const inset = row.asset_key.startsWith('boarding.') ? 24 : 24;
+  const envelopeWidth = Math.max(...sourceFrames.map((frame) => frame.width));
+  const envelopeHeight = Math.max(...sourceFrames.map((frame) => frame.height));
+  const ratio = Math.min((cellWidth - inset * 2) / envelopeWidth, (cellHeight - inset * 2) / envelopeHeight);
+  const framesPng = [];
+  for (const frame of sourceFrames) {
+    const art = await sharp(frame.input).resize(Math.max(1, Math.floor(frame.width * ratio)), Math.max(1, Math.floor(frame.height * ratio))).png().toBuffer();
     const artMeta = await sharp(art).metadata();
-    framesPng.push({ input: art, left: Math.floor((cellWidth - artMeta.width) / 2), top: row.asset_key.startsWith('boarding.') ? cellHeight - inset - artMeta.height : Math.floor((cellHeight - artMeta.height) / 2) });
+    // Shooter frames centre on their fixed vertical centreline. Boarding uses
+    // the common authored foot baseline, leaving the required bottom margin.
+    framesPng.push({ input: art, left: Math.floor((cellWidth - artMeta.width) / 2), top: row.asset_key.startsWith('boarding.') ? cellHeight - 24 - artMeta.height : Math.floor((cellHeight - artMeta.height) / 2) });
   }
   const derivative = await sharp({ create: { width: sheetWidth, height: sheetHeight, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } }).composite(framesPng.map((frame, index) => ({ ...frame, left: frame.left + index * cellWidth }))).png({ compressionLevel: 9, adaptiveFiltering: false }).toBuffer();
   const destination = path.join(root, row.derivative_path); mkdirSync(path.dirname(destination), { recursive: true }); writeFileSync(destination, derivative);
@@ -186,7 +198,24 @@ async function compile(row) {
       return { variant_id: `${label}_VARIANT_${String(index + 1).padStart(2, '0')}`, canonical_frame_index: index, thumbnail_path: `/gg-runtime-assets/generated/thumbnails/${path.basename(variantFile)}`, thumbnail_sha256: hash(readFileSync(variantFile)) };
     }))
     : [];
-  return { ...row, source_sha256: sourceHash, derivative_sha256: hash(derivative), thumbnail_path: `/gg-runtime-assets/generated/thumbnails/${path.basename(thumbnail)}`, thumbnail_sha256: hash(readFileSync(thumbnail)), frame_count: declared.length, background_method: method, max_texture_axis: 4096, variants };
+  return {
+    ...row,
+    source_sha256: sourceHash,
+    derivative_sha256: hash(derivative),
+    thumbnail_path: `/gg-runtime-assets/generated/thumbnails/${path.basename(thumbnail)}`,
+    thumbnail_sha256: hash(readFileSync(thumbnail)),
+    frame_count: declared.length,
+    background_method: method,
+    max_texture_axis: 4096,
+    geometry: {
+      common_scale_factor: ratio,
+      envelope_width: envelopeWidth,
+      envelope_height: envelopeHeight,
+      anchor: row.asset_key.startsWith('boarding.') ? 'FOOT_BASELINE_Y_360' : 'CENTRELINE',
+      per_frame_refit: false,
+    },
+    variants,
+  };
 }
 
 // Refuse invalid source authority before mutating the last known-good output.

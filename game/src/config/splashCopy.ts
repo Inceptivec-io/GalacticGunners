@@ -1,6 +1,6 @@
-export const SPLASH_DURATION_MS = 2_000;
+export const SPLASH_DURATION_MS = 4_000;
 
-/** The approved splash is a fixed, accessible two-second launch hold. */
+/** The approved splash is a fixed, readable four-second launch hold. */
 export function isGovernedSplashDuration(durationMs: number): boolean {
   return Number.isInteger(durationMs) && durationMs === SPLASH_DURATION_MS;
 }

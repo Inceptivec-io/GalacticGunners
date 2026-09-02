@@ -43,12 +43,12 @@ class StrictSerializer(serializers.Serializer):
 
 
 class ResourcesStartSerializer(StrictSerializer):
-    lives = serializers.IntegerField(min_value=1, max_value=3)
+    lives = serializers.IntegerField(min_value=1)
     nukes = serializers.IntegerField(min_value=0)
 
 
 class ResourcesSerializer(StrictSerializer):
-    lives = serializers.IntegerField(min_value=0, max_value=3)
+    lives = serializers.IntegerField(min_value=0)
     nukes = serializers.IntegerField(min_value=0)
 
 
@@ -165,7 +165,7 @@ class CompleteBoardingRunSerializer(StrictSerializer):
             if not any(event['type'] == 'EXIT_INTERACTED' and event['at_ms'] < 60000 for event in summary['events']):
                 raise serializers.ValidationError({'detail': 'SUCCESS_EXIT_REQUIRED'})
         resources_end = summary['resources_end']
-        expected_lives = min(3, run.lives_start + summary['lives_found'])
+        expected_lives = run.lives_start + summary['lives_found']
         expected_nukes = run.nukes_start + summary['nukes_found']
         if summary['outcome'] in (BoardingRun.Outcome.TIMEOUT, BoardingRun.Outcome.PLAYER_DEAD):
             expected_lives = max(0, expected_lives - 1)

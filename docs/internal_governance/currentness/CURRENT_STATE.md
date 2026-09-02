@@ -1,13 +1,13 @@
 # Current State
 
 Active Handoff:
-`GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015` including H015A correction authority.
+`GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015_FINAL` superseding the H015A closure state for final product-conformance correction.
 
 Programme:
 Platform Foundation and Campaign Continuity.
 
 Stage:
-H015A correction complete / Founder review ready.
+H015 final product-conformance, gameplay-integrity and closeout correction in progress.
 
 Branch:
 `feature/v1-platform-foundation-campaign-continuity`
@@ -43,10 +43,10 @@ review-evidence SHA.
 ## Current Controls
 
 ```text
-H015_STATUS=H015A_CORRECTION_COMPLETE_FOUNDER_REVIEW_READY
-FOUNDER_REVIEW_READY=YES
+H015_STATUS=IN_PROGRESS
+FOUNDER_REVIEW_READY=NO
 FOUNDER_ACCEPTANCE=PENDING
-FOUNDER_TESTING_AUTHORISED=YES
+FOUNDER_TESTING_AUTHORISED=NO
 MERGE_AUTHORISED=NO
 PR_12=DRAFT_OPEN_UNMERGED
 POST_BOX_PAYLOAD=0

@@ -1,5 +1,6 @@
 import * as Phaser from "phaser";
 import {
+  asteroidAngularVelocity,
   deterministicHazardRange,
   hazardEntryEdge,
   hazardEntryPoint,
@@ -14,12 +15,19 @@ import { RUNTIME_ASSETS } from "../config/assets";
 import { type GameRuntimeConfig } from "../config/gameConfig";
 import { LEVEL_ONE_SLICE } from "../config/levelOneSlice";
 import { GameApiClient } from "../services/GameApiClient";
+import type { BoardingRunRecord } from "../services/GameApiClient";
+import { BoardingCoordinator } from "../boarding/BoardingCoordinator";
+import { BoardingSimulation } from "../boarding/BoardingSimulation";
 import { AudioSystem } from "../systems/AudioSystem";
 import { GameSession } from "../systems/GameSession";
 import { CampaignSession } from "../systems/CampaignSession";
 import { InputSystem } from "../systems/InputSystem";
 import { LifeSystem } from "../systems/LifeSystem";
 import { PickupSystem, type PickupType } from "../systems/PickupSystem";
+import {
+  hostileWeaponHardpoints,
+  nextHostileIndex,
+} from "../systems/HostileWeaponPolicy";
 import { SeededRng } from "../systems/SeededRng";
 import {
   createPlayfieldLayout,
@@ -43,6 +51,15 @@ type CampaignRuntimeState = {
   score: number;
   lives: number;
   nukes: number;
+};
+type BoardingOfferState = {
+  scout: Phaser.Physics.Arcade.Sprite;
+  anchor: NonNullable<LevelDefinition["boarding_anchors"]>[number];
+  expiresAtMs: number;
+  controls: Phaser.GameObjects.GameObject[];
+  actionsVisible: boolean;
+  declined: boolean;
+  admitting: boolean;
 };
 type SweptHitTarget =
   | { kind: "player"; body: Phaser.Physics.Arcade.Body }
@@ -188,12 +205,7 @@ export class Level1Scene extends CombatLevelScene {
     | "BOARDING_OFFER"
     | "BOARDING_ACTIVE"
     | "BOARDING_RESOLVING" = "SHOOTER_ACTIVE";
-  #boardingOffer: {
-    scout: Phaser.Physics.Arcade.Sprite;
-    anchor: NonNullable<LevelDefinition["boarding_anchors"]>[number];
-    expiresAtMs: number;
-    controls: Phaser.GameObjects.GameObject[];
-  } | null = null;
+  #boardingOffer: BoardingOfferState | null = null;
   #boardingConfirmKey: Phaser.Input.Keyboard.Key | undefined;
   #boardingGamepadConfirmPressed = false;
   #campaignSession: CampaignSession | null = null;
@@ -429,8 +441,6 @@ export class Level1Scene extends CombatLevelScene {
 
     if (this.#boardingOffer) {
       this.updateBoardingOffer(time);
-      this.publishQaState();
-      return;
     }
 
     if (this.#playerState === "hit" && time >= this.#respawnAtMs) {
@@ -604,6 +614,7 @@ export class Level1Scene extends CombatLevelScene {
           point,
           emitter,
           index,
+          definition.entry_edge,
         );
       }
       if (emitter)
@@ -620,6 +631,7 @@ export class Level1Scene extends CombatLevelScene {
     origin: { x: number; y: number },
     emitter?: RuntimeHazardEmitter,
     ordinal = 0,
+    entryEdge?: "TOP" | "RIGHT" | "BOTTOM" | "LEFT",
   ): void {
     const asset =
       type === "asteroid"
@@ -641,9 +653,9 @@ export class Level1Scene extends CombatLevelScene {
       (hazard.displayHeight * 0.68) / hazard.scaleY,
       true,
     );
-    const edge = emitter?.entry_edges.length
-      ? hazardEntryEdge(emitter, ordinal)
-      : "TOP";
+    const edge =
+      entryEdge ??
+      (emitter?.entry_edges.length ? hazardEntryEdge(emitter, ordinal) : "TOP");
     const magnitude = emitter
       ? this.deterministicRange(
           emitter.speed_min,
@@ -651,18 +663,19 @@ export class Level1Scene extends CombatLevelScene {
           `${emitter.id}:speed:${ordinal}`,
         )
       : speed;
-    const travel = hazardTravelVector(edge);
+    const travel = hazardTravelVector(
+      edge,
+      this.#definition.seed,
+      `${emitter?.id ?? "legacy-hazard"}:${ordinal}`,
+    );
     const direction = new Phaser.Math.Vector2(travel.x, travel.y);
     direction.normalize().scale(magnitude);
     if (type === "asteroid") {
       hazard.setAngularVelocity(
-        emitter
-          ? this.deterministicRange(
-              emitter.angular_velocity_min,
-              emitter.angular_velocity_max,
-              `${emitter.id}:spin:${ordinal}`,
-            )
-          : 28,
+        asteroidAngularVelocity(
+          this.#definition.seed,
+          `${emitter?.id ?? "legacy-asteroid"}:${ordinal}`,
+        ),
       );
     } else {
       hazard.setRotation(cometRotationForVelocity(direction));
@@ -715,6 +728,7 @@ export class Level1Scene extends CombatLevelScene {
           point,
           emitter,
           state.emitted,
+          definition.entry_edge,
         );
         state.emitted += 1;
       }
@@ -901,12 +915,7 @@ export class Level1Scene extends CombatLevelScene {
       this.#audio.toggleMute();
       this.updateSoundHud();
     });
-    this.#lifeIcons = Array.from({ length: this.#lives.maxLives }, () =>
-      this.add
-        .image(0, 0, RUNTIME_ASSETS.ui.lifeIcon.key)
-        .setDisplaySize(39, 39)
-        .setDepth(10),
-    );
+    this.ensureLifeIcons(this.#lives.value);
     this.ensureNukeIcons(this.#currentNukes);
     this.#rearmText = this.add
       .text(0, 0, "ENERGISE", {
@@ -1075,10 +1084,7 @@ export class Level1Scene extends CombatLevelScene {
         const type = item.getData("pickupType") as PickupType;
         item.disableBody(true, true);
         if (type === "nuke") this.#currentNukes += 1;
-        if (type === "life")
-          this.#lives.restore(
-            Math.min(this.#lives.maxLives, this.#lives.value + 1),
-          );
+        if (type === "life") this.#lives.collect(1);
         this.updateLifeHud();
         this.updateNukeHud();
       },
@@ -1139,6 +1145,7 @@ export class Level1Scene extends CombatLevelScene {
       this.#formationDropY += LEVEL_ONE_SLICE.scoutDropDistance;
     }
     active.forEach((scout) => {
+      if (scout.getData("boarding-incapacitated")) return;
       const formation = Number(scout.getData("formation"));
       const row = Number(scout.getData("row"));
       const col = Number(scout.getData("col"));
@@ -1263,44 +1270,28 @@ export class Level1Scene extends CombatLevelScene {
   }
 
   private fireEnemyLaser(): Phaser.Physics.Arcade.Image | null {
-    const active = this.getActiveScouts();
+    const active = this.getActiveScouts().filter(
+      (scout) => !scout.getData("boarding-incapacitated"),
+    );
     if (active.length === 0 || this.#terminalState) {
       return null;
     }
-    const selection = Math.floor(
-      this.deterministicRange(
-        0,
-        active.length,
-        `enemy-fire:${this.#enemyFireOrdinal++}`,
-      ),
-    );
-    const scout = active[Math.min(active.length - 1, selection)];
+    // One global cadence selects one eligible source per event. Round-robin
+    // ordering is deterministic and prevents a visible ship class from being
+    // starved by random repetition while preserving the established pressure.
+    const scout =
+      active[nextHostileIndex(this.#enemyFireOrdinal++, active.length)];
     const type = scout.getData("enemyType") as
       "scout" | "cruiser" | "destroyer" | "mothership";
-    const laser = this.fireEnemyLaserFrom(scout);
-    if (!laser) return null;
-    // Cruiser, Destroyer, and Mothership fire pressure is governed by their
-    // profile, while all projectiles keep the accepted visual/speed contract.
-    const burstCount =
-      type === "mothership"
-        ? 3
-        : type === "destroyer"
-          ? 2
-          : type === "cruiser"
-            ? 2
-            : 1;
-    for (let index = 1; index < burstCount; index += 1) {
-      this.time.delayedCall(index * 90, () => {
-        if (scout.active && !this.#terminalState)
-          this.fireEnemyLaserFrom(
-            scout,
-            (index - (burstCount - 1) / 2) *
-              this.#layout.projectileSize.width *
-              1.6,
-          );
-      });
-    }
-    return laser;
+    const offsets = hostileWeaponHardpoints(type);
+    const lasers = offsets.map((offset) =>
+      this.fireEnemyLaserFrom(scout, scout.displayWidth * offset),
+    );
+    return (
+      lasers.find(
+        (laser): laser is Phaser.Physics.Arcade.Image => laser !== null,
+      ) ?? null
+    );
   }
 
   private fireEnemyLaserFrom(
@@ -1643,96 +1634,54 @@ export class Level1Scene extends CombatLevelScene {
   ): void {
     if (this.#boardingOffer || this.#boardingTransition !== "SHOOTER_ACTIVE")
       return;
-    // The offer is a deliberate checkpoint: no projectile or hostile may advance
-    // while the player chooses between the governed Boarding route and Shooter.
-    this.physics.world.pause();
     const expiresAtMs = this.time.now + anchor.offer_duration_ms;
-    const centreX = this.scale.width / 2;
-    const centreY = this.scale.height / 2;
-    const backdrop = this.add
-      .rectangle(
-        centreX,
-        centreY,
-        this.scale.width,
-        this.scale.height,
-        0x02050d,
-        0.58,
+    // A boarding target is incapacitated in the live Shooter world. It does not
+    // explode, fire, or move with the formation; the player must physically fly
+    // into its authored envelope before any choice controls are available.
+    scout.setData("boarding-incapacitated", true);
+    scout.setVelocity(0, 0);
+    const body = scout.body as Phaser.Physics.Arcade.Body;
+    body.enable = false;
+    const halo = this.add
+      .circle(
+        scout.x,
+        scout.y,
+        Math.max(scout.displayWidth, scout.displayHeight) * 0.7,
+        0xff9b25,
+        0.18,
       )
-      .setDepth(30);
-    const heading = this.add
-      .text(centreX, centreY - 82, "ALIEN FRIGATE BREACHED", {
-        color: "#f7d56a",
-        fontFamily: "GalacticGunnersGoldDisplay, Arial, sans-serif",
-        fontSize: `${Math.max(24, Math.min(38, this.scale.width * 0.035))}px`,
-        align: "center",
-      })
-      .setOrigin(0.5)
-      .setDepth(31);
-    const detail = this.add
+      .setStrokeStyle(3, 0xff9b25, 0.95)
+      .setDepth(3)
+      .setData("qa", "boardable-halo");
+    const countdown = this.add
       .text(
-        centreX,
-        centreY - 30,
-        "BOARD NOW OR CONTINUE THE SHOOTER ASSAULT\nOFFER EXPIRES IN 8 SECONDS",
+        scout.x,
+        scout.y + scout.displayHeight * 0.9,
+        "BOARDING WINDOW 8.0s",
         {
-          color: "#d7e9ff",
+          color: "#f7d56a",
           fontFamily: "GalacticGunnersHUD, monospace",
-          fontSize: `${Math.max(15, Math.min(22, this.scale.width * 0.021))}px`,
-          align: "center",
+          fontSize: "16px",
         },
       )
       .setOrigin(0.5)
-      .setDepth(31);
-    const board = this.add
-      .text(centreX - 130, centreY + 50, "BOARD", {
-        color: "#f7d56a",
-        fontFamily: "GalacticGunnersGoldDisplay, Arial, sans-serif",
-        fontSize: "30px",
-      })
-      .setOrigin(0.5)
-      .setDepth(32);
-    const continueShooter = this.add
-      .text(centreX + 130, centreY + 50, "CONTINUE", {
-        color: "#7ee8ff",
-        fontFamily: "GalacticGunnersSilverDisplay, Arial, sans-serif",
-        fontSize: "26px",
-      })
-      .setOrigin(0.5)
-      .setDepth(32);
-    // Phaser Text input bounds depend on font measurement, which made the two
-    // offer actions overlap on some browser rasterizers. Fixed logical hit
-    // zones retain the approved visual treatment while keeping actions distinct.
-    const boardHitArea = this.add
-      .rectangle(centreX - 130, centreY + 50, 180, 64, 0x000000, 0.001)
-      .setDepth(31)
-      .setInteractive({ useHandCursor: true });
-    const continueHitArea = this.add
-      .rectangle(centreX + 130, centreY + 50, 220, 64, 0x000000, 0.001)
-      .setDepth(31)
-      .setInteractive({ useHandCursor: true });
-    boardHitArea.on("pointerup", () => this.acceptBoardingOffer());
-    continueHitArea.on("pointerup", () => this.dismissBoardingOffer());
-    [
-      backdrop,
-      heading,
-      detail,
-      board,
-      continueShooter,
-      boardHitArea,
-      continueHitArea,
-    ].forEach((control) => control.setData("qa", "boarding-offer"));
+      .setDepth(4)
+      .setData("qa", "boarding-offer-countdown");
+    this.tweens.add({
+      targets: halo,
+      alpha: { from: 0.15, to: 0.65 },
+      duration: 450,
+      yoyo: true,
+      repeat: -1,
+    });
     this.#boardingOffer = {
       scout,
       anchor,
       expiresAtMs,
-      controls: [
-        backdrop,
-        heading,
-        detail,
-        board,
-        continueShooter,
-        boardHitArea,
-        continueHitArea,
-      ],
+      controls: [halo, countdown],
+      actionsVisible: false,
+      declined: false,
+      admitting: false,
     };
     this.#boardingTransition = "BOARDING_OFFER";
     // A held gamepad fire action must not become an implicit offer selection.
@@ -1740,19 +1689,43 @@ export class Level1Scene extends CombatLevelScene {
       this.input.gamepad?.getPad(0)?.buttons[0]?.pressed,
     );
     this.#runtimeConfig.onGameplayAnnouncement?.(
-      "Boarding offer available. Board or Continue the Shooter assault.",
+      "Boardable alien incapacitated. Fly within range to Board or Continue.",
     );
   }
 
   private updateBoardingOffer(time: number): void {
     if (!this.#boardingOffer) return;
+    if (this.#boardingOffer.admitting) return;
     if (
       time >= this.#boardingOffer.expiresAtMs ||
       this.#inputSystem.actions.back
     ) {
-      this.dismissBoardingOffer();
+      this.dismissBoardingOffer(true);
       return;
     }
+    const countdown = this.#boardingOffer
+      .controls[1] as Phaser.GameObjects.Text;
+    countdown.setPosition(
+      this.#boardingOffer.scout.x,
+      this.#boardingOffer.scout.y +
+        this.#boardingOffer.scout.displayHeight * 0.9,
+    );
+    countdown.setText(
+      `BOARDING WINDOW ${Math.max(0, (this.#boardingOffer.expiresAtMs - time) / 1000).toFixed(1)}s`,
+    );
+    const inEnvelope =
+      Math.abs(this.#player.sprite.x - this.#boardingOffer.scout.x) <=
+        this.#boardingOffer.anchor.entry_envelope.width_px / 2 &&
+      Math.abs(this.#player.sprite.y - this.#boardingOffer.scout.y) <=
+        this.#boardingOffer.anchor.entry_envelope.height_px / 2;
+    if (
+      !this.#boardingOffer.declined &&
+      inEnvelope &&
+      !this.#boardingOffer.actionsVisible
+    )
+      this.showBoardingOfferActions();
+    if (!inEnvelope && this.#boardingOffer.actionsVisible)
+      this.hideBoardingOfferActions();
     const gamepadConfirm = Boolean(
       this.input.gamepad?.getPad(0)?.buttons[0]?.pressed,
     );
@@ -1761,41 +1734,169 @@ export class Level1Scene extends CombatLevelScene {
       Phaser.Input.Keyboard.JustDown(this.#boardingConfirmKey),
     );
     if (
-      keyboardConfirm ||
-      (gamepadConfirm && !this.#boardingGamepadConfirmPressed)
+      inEnvelope &&
+      (keyboardConfirm ||
+        (gamepadConfirm && !this.#boardingGamepadConfirmPressed))
     ) {
       this.acceptBoardingOffer();
     }
     this.#boardingGamepadConfirmPressed = gamepadConfirm;
   }
 
-  private dismissBoardingOffer(): void {
+  private showBoardingOfferActions(): void {
+    const offer = this.#boardingOffer;
+    if (!offer || offer.actionsVisible) return;
+    const x = offer.scout.x;
+    const y = offer.scout.y - offer.scout.displayHeight * 0.9;
+    const board = this.add
+      .text(x - 72, y, "BOARD", {
+        color: "#f7d56a",
+        fontFamily: "GalacticGunnersGoldDisplay, Arial, sans-serif",
+        fontSize: "24px",
+      })
+      .setOrigin(0.5)
+      .setDepth(32);
+    const continueShooter = this.add
+      .text(x + 76, y, "CONTINUE", {
+        color: "#7ee8ff",
+        fontFamily: "GalacticGunnersSilverDisplay, Arial, sans-serif",
+        fontSize: "20px",
+      })
+      .setOrigin(0.5)
+      .setDepth(32);
+    const boardHitArea = this.add
+      .rectangle(x - 72, y, 128, 52, 0, 0.001)
+      .setDepth(31)
+      .setInteractive({ useHandCursor: true });
+    const continueHitArea = this.add
+      .rectangle(x + 76, y, 148, 52, 0, 0.001)
+      .setDepth(31)
+      .setInteractive({ useHandCursor: true });
+    boardHitArea.on("pointerup", () => this.acceptBoardingOffer());
+    continueHitArea.on("pointerup", () => this.dismissBoardingOffer());
+    [board, continueShooter, boardHitArea, continueHitArea].forEach((control) =>
+      control.setData("qa", "boarding-offer-action"),
+    );
+    offer.controls.push(board, continueShooter, boardHitArea, continueHitArea);
+    offer.actionsVisible = true;
+    this.#runtimeConfig.onGameplayAnnouncement?.(
+      "Boarding offer available. Board or Continue the Shooter assault.",
+    );
+  }
+
+  private hideBoardingOfferActions(): void {
+    const offer = this.#boardingOffer;
+    if (!offer || !offer.actionsVisible) return;
+    offer.controls.splice(2).forEach((control) => control.destroy());
+    offer.actionsVisible = false;
+  }
+
+  private dismissBoardingOffer(expired = false): void {
     const offer = this.#boardingOffer;
     if (!offer) return;
+    if (!expired) {
+      this.hideBoardingOfferActions();
+      offer.declined = true;
+      this.#inputSystem.syncOneShotState();
+      this.#runtimeConfig.onGameplayAnnouncement?.(
+        "Boarding declined. The incapacitated target will expire.",
+      );
+      return;
+    }
     offer.controls.forEach((control) => control.destroy());
     offer.scout.setData("boarding-offer-resolved", true);
+    offer.scout.setData("boarding-incapacitated", false);
+    // Expiry resolves exactly once through the normal governed kill path so
+    // score and authorised drops remain consistent with an ordinary defeat.
+    this.destroyScoutBody(offer.scout, true);
     this.#boardingOffer = null;
     this.#boardingTransition = "SHOOTER_ACTIVE";
     this.#boardingGamepadConfirmPressed = false;
-    this.physics.world.resume();
     this.#inputSystem.syncOneShotState();
     this.#runtimeConfig.onGameplayAnnouncement?.(
-      "Boarding offer declined. Shooter assault resumed.",
+      "Boarding opportunity expired. Shooter assault continued.",
     );
   }
 
   private acceptBoardingOffer(): void {
     const offer = this.#boardingOffer;
-    if (!offer || this.#boardingTransition !== "BOARDING_OFFER") return;
+    if (
+      !offer ||
+      offer.declined ||
+      this.#boardingTransition !== "BOARDING_OFFER" ||
+      !offer.actionsVisible
+    )
+      return;
+    offer.admitting = true;
     offer.controls.forEach((control) => control.destroy());
+    this.#boardingTransition = "BOARDING_RESOLVING";
+    void this.admitBoardingOffer(offer);
+  }
+
+  /**
+   * Server admission is deliberately completed before Shooter is paused. A
+   * network or validation failure therefore cannot strand the player in a
+   * non-interactive Boarding scene.
+   */
+  private async admitBoardingOffer(offer: BoardingOfferState): Promise<void> {
+    const apiBaseUrl = this.#runtimeConfig.apiBaseUrl;
+    const gameRunId = this.#session.runId;
+    const levelChecksum = this.levelRuntime?.checksum ?? "";
+    if (!apiBaseUrl || !gameRunId || !levelChecksum) {
+      this.settleBoardingAdmissionFailure(offer);
+      return;
+    }
+
+    try {
+      const simulation = new BoardingSimulation(this.#definition.seed, {
+        lives: this.#lives.value,
+        nukes: this.#currentNukes,
+      });
+      const coordinator = new BoardingCoordinator();
+      const snapshot = simulation.snapshot();
+      const { shooterStateDigest } = await coordinator.open({
+        anchorId: offer.anchor.id,
+        sourceEntityId: offer.anchor.source_entity_id,
+        resources: snapshot.resources,
+        snapshot,
+      });
+      const admittedServerRun = await new GameApiClient(
+        apiBaseUrl,
+      ).startBoardingRun(gameRunId, {
+        anchor_id: offer.anchor.id,
+        source_entity_id: offer.anchor.source_entity_id,
+        source_entity_type: offer.anchor.source_entity_type,
+        source_ship_type: "ALIEN_FRIGATE",
+        level_version: this.levelRuntime?.version ?? this.#definition.version,
+        level_checksum: levelChecksum,
+        interior_slug: offer.anchor.interior.slug,
+        interior_version: offer.anchor.interior.version,
+        interior_checksum: offer.anchor.interior.checksum,
+        shooter_state_digest: shooterStateDigest,
+        resources: snapshot.resources,
+      });
+      this.launchAdmittedBoarding(offer, admittedServerRun, shooterStateDigest);
+    } catch {
+      this.settleBoardingAdmissionFailure(offer);
+    }
+  }
+
+  private launchAdmittedBoarding(
+    offer: BoardingOfferState,
+    admittedServerRun: BoardingRunRecord,
+    shooterStateDigest: string,
+  ): void {
+    if (
+      this.#boardingOffer !== offer ||
+      this.#boardingTransition !== "BOARDING_RESOLVING"
+    )
+      return;
+    const { scout, anchor } = offer;
+    scout.setData("boarding-anchor", true);
     this.#boardingOffer = null;
     this.#boardingActive = true;
     this.#boardingTransition = "BOARDING_ACTIVE";
     this.#boardingGamepadConfirmPressed = false;
-    const { scout, anchor } = offer;
-    scout.setData("boarding-anchor", true);
-    this.physics.world.resume();
-    this.scene.pause();
     this.scene.launch("BoardingScene", {
       seed: this.#definition.seed,
       lives: this.#lives.value,
@@ -1808,8 +1909,31 @@ export class Level1Scene extends CombatLevelScene {
       gameRunId: this.#session.runId ?? undefined,
       levelVersion: this.levelRuntime?.version ?? this.#definition.version,
       levelChecksum: this.levelRuntime?.checksum ?? "",
+      admittedServerRun,
+      shooterStateDigest,
       onGameplayAnnouncement: this.#runtimeConfig.onGameplayAnnouncement,
     });
+    // Queue the new scene before pausing this one. Phaser ignores a launch
+    // queued from an already-paused scene in the production renderer.
+    this.scene.pause();
+  }
+
+  private settleBoardingAdmissionFailure(offer: BoardingOfferState): void {
+    if (this.#boardingOffer !== offer) return;
+    offer.controls.forEach((control) => control.destroy());
+    const body = offer.scout.body as Phaser.Physics.Arcade.Body;
+    body.enable = true;
+    body.reset(offer.scout.x, offer.scout.y);
+    offer.scout.setData("boarding-incapacitated", false);
+    offer.scout.setData("boarding-offer-resolved", true);
+    this.destroyScoutBody(offer.scout, true);
+    this.#boardingOffer = null;
+    this.#boardingTransition = "SHOOTER_ACTIVE";
+    this.#boardingGamepadConfirmPressed = false;
+    this.#inputSystem.syncOneShotState();
+    this.#runtimeConfig.onGameplayAnnouncement?.(
+      "Boarding admission failed. Target settled; Shooter assault continued.",
+    );
   }
 
   private spawnPickupForHost(host: Phaser.Physics.Arcade.Sprite): void {
@@ -1878,10 +2002,15 @@ export class Level1Scene extends CombatLevelScene {
       const anchoredScout = this.getActiveScouts().find((scout) =>
         scout.getData("boarding-anchor"),
       );
-      anchoredScout?.setData("boarding-anchor", false);
-      // A completed attempt may never recreate the same offer, even if the
-      // server rejects the return payload. The player remains in Shooter.
-      anchoredScout?.setData("boarding-offer-resolved", true);
+      if (anchoredScout) {
+        anchoredScout.setData("boarding-anchor", false);
+        anchoredScout.setData("boarding-incapacitated", false);
+        // A completed attempt may never recreate the same offer, even if the
+        // server rejects the return payload. Resolve its source normally so
+        // the player returns to a live Shooter state with no inert target.
+        anchoredScout.setData("boarding-offer-resolved", true);
+        this.destroyScoutBody(anchoredScout, true);
+      }
       this.#boardingActive = false;
       this.#boardingTransition = "SHOOTER_ACTIVE";
       return;
@@ -2072,9 +2201,22 @@ export class Level1Scene extends CombatLevelScene {
   }
 
   private updateLifeHud(): void {
+    this.ensureLifeIcons(this.#lives.value);
     this.#lifeIcons.forEach((icon, index) => {
       icon.setVisible(index < this.#lives.value);
     });
+    this.reflowHud();
+  }
+
+  private ensureLifeIcons(count: number): void {
+    while (this.#lifeIcons.length < count) {
+      this.#lifeIcons.push(
+        this.add
+          .image(0, 0, RUNTIME_ASSETS.ui.lifeIcon.key)
+          .setDisplaySize(39, 39)
+          .setDepth(10),
+      );
+    }
   }
 
   private updateSoundHud(): void {
@@ -2453,7 +2595,7 @@ export class Level1Scene extends CombatLevelScene {
     void this.#session
       .complete({
         score: this.#score.value,
-        livesUsed: this.#lives.maxLives - this.#lives.value,
+        livesUsed: Math.max(0, this.#lives.initialLives - this.#lives.value),
         livesEnd: this.#lives.value,
         nukesEnd: this.#currentNukes,
         levelReached: this.#campaignSequence,
@@ -2979,11 +3121,19 @@ export class Level1Scene extends CombatLevelScene {
         if (!scout)
           return { launched: false, reason: "boarding-anchor-not-available" };
         this.destroyScoutBody(scout, true);
-        const offerPresented = Boolean(this.#boardingOffer);
+        const offer = this.#boardingOffer;
+        if (!offer)
+          return { launched: false, reason: "boarding-offer-not-presented" };
+        // Diagnostic-only setup for the hostile verifier. Ordinary browser
+        // journeys must reach the envelope through normal player movement.
+        this.#player.sprite.setPosition(offer.scout.x, offer.scout.y);
+        const body = this.#player.sprite.body as Phaser.Physics.Arcade.Body;
+        body.reset(offer.scout.x, offer.scout.y);
+        this.showBoardingOfferActions();
         this.acceptBoardingOffer();
         return {
-          launched: this.#boardingActive,
-          offerPresented,
+          launched: false,
+          admissionRequested: true,
           transition: this.#boardingTransition,
           anchorId: anchor?.id ?? null,
           gameRunId: this.#session.runId,
@@ -3099,7 +3249,7 @@ export class Level1Scene extends CombatLevelScene {
       },
       score: this.#score.value,
       lives: this.#lives.value,
-      maxLives: this.#lives.maxLives,
+      initialLives: this.#lives.initialLives,
       activeScouts: this.getActiveScouts().length,
       activeShieldTiles: this.getActiveShieldTiles().length,
       bunkerCount: this.#definition.shields.reduce(

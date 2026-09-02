@@ -98,10 +98,10 @@ class BoardingRun(models.Model):
     completed_at = models.DateTimeField(null=True, blank=True)
     time_limit_ms = models.PositiveIntegerField(default=60000)
     duration_ms = models.PositiveIntegerField(null=True, blank=True)
-    lives_start = models.PositiveSmallIntegerField()
-    lives_end = models.PositiveSmallIntegerField(null=True, blank=True)
-    nukes_start = models.PositiveSmallIntegerField()
-    nukes_end = models.PositiveSmallIntegerField(null=True, blank=True)
+    lives_start = models.PositiveIntegerField()
+    lives_end = models.PositiveIntegerField(null=True, blank=True)
+    nukes_start = models.PositiveIntegerField()
+    nukes_end = models.PositiveIntegerField(null=True, blank=True)
     aliens_killed = models.PositiveSmallIntegerField(default=0)
     containers_opened = models.PositiveSmallIntegerField(default=0)
     lives_found = models.PositiveSmallIntegerField(default=0)
@@ -119,7 +119,7 @@ class BoardingRun(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['game_run', 'level_version', 'anchor_id', 'source_entity_id'], name='boarding_attempt_unique'),
-            models.CheckConstraint(condition=Q(lives_start__gte=0, lives_start__lte=3) & Q(nukes_start__gte=0), name='boarding_start_resources_non_negative'),
+            models.CheckConstraint(condition=Q(lives_start__gte=0) & Q(nukes_start__gte=0), name='boarding_start_resources_non_negative'),
             models.CheckConstraint(condition=Q(time_limit_ms=60000), name='boarding_time_limit_exact'),
         ]
 

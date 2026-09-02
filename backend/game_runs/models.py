@@ -30,8 +30,8 @@ class CampaignRun(models.Model):
     next_entry = models.ForeignKey('campaigns.CampaignEntry', null=True, blank=True, on_delete=models.PROTECT, related_name='+')
     completed_entry_count = models.PositiveIntegerField(default=0)
     score = models.PositiveIntegerField(default=0)
-    lives = models.PositiveSmallIntegerField(default=3)
-    nukes = models.PositiveSmallIntegerField(default=2)
+    lives = models.PositiveIntegerField(default=3)
+    nukes = models.PositiveIntegerField(default=2)
     seed_root = models.PositiveBigIntegerField()
     validation_state = models.CharField(max_length=16, choices=ValidationState.choices, default=ValidationState.PENDING)
     claim_expires_at = models.DateTimeField(null=True, blank=True)
@@ -43,7 +43,7 @@ class CampaignRun(models.Model):
     class Meta:
         constraints = [
             models.CheckConstraint(condition=(Q(player__isnull=False, anonymous_capability_hash__isnull=True) | Q(player__isnull=True, anonymous_capability_hash__isnull=False)), name='campaign_run_single_owner'),
-            models.CheckConstraint(condition=Q(lives__gte=0, lives__lte=3), name='campaign_run_lives_bounded'),
+            models.CheckConstraint(condition=Q(lives__gte=0), name='campaign_run_lives_non_negative'),
             models.CheckConstraint(condition=Q(nukes__gte=0), name='campaign_run_nukes_non_negative'),
         ]
 
@@ -121,12 +121,12 @@ class GameRun(models.Model):
     accepted_at = models.DateTimeField(null=True, blank=True)
     validation_code = models.CharField(max_length=64, blank=True)
     entry_score = models.PositiveIntegerField(default=0)
-    entry_lives = models.PositiveSmallIntegerField(default=3)
-    entry_nukes = models.PositiveSmallIntegerField(default=2)
+    entry_lives = models.PositiveIntegerField(default=3)
+    entry_nukes = models.PositiveIntegerField(default=2)
     score_delta = models.IntegerField(default=0)
     exit_score = models.PositiveIntegerField(default=0)
-    exit_lives = models.PositiveSmallIntegerField(null=True, blank=True)
-    exit_nukes = models.PositiveSmallIntegerField(null=True, blank=True)
+    exit_lives = models.PositiveIntegerField(null=True, blank=True)
+    exit_nukes = models.PositiveIntegerField(null=True, blank=True)
     entry_state_digest = models.CharField(max_length=64, blank=True)
     exit_state_digest = models.CharField(max_length=64, blank=True)
 

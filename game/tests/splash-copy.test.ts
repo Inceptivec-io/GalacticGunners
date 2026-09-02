@@ -8,14 +8,14 @@ import {
   SPLASH_DURATION_MS,
 } from "../src/config/splashCopy";
 
-test("H015-ENTRY-002 positive: holds the approved splash for exactly two seconds", () => {
-  assert.equal(SPLASH_DURATION_MS, 2_000);
+test("H015-ENTRY-002 positive: holds the approved splash for exactly four seconds", () => {
+  assert.equal(SPLASH_DURATION_MS, 4_000);
   assert.equal(isGovernedSplashDuration(SPLASH_DURATION_MS), true);
 });
 
 test("H015-ENTRY-002 negative: rejects a premature or excessive splash duration", () => {
-  assert.equal(isGovernedSplashDuration(1_999), false);
-  assert.equal(isGovernedSplashDuration(2_001), false);
+  assert.equal(isGovernedSplashDuration(3_999), false);
+  assert.equal(isGovernedSplashDuration(4_001), false);
 });
 
 test("H015-ENTRY-003 positive: uses the governed copyright and collaborator copy", () => {

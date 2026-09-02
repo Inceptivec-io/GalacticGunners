@@ -72,13 +72,18 @@ test('input capability model supports coexistence without manual mode selection'
   assert.deepEqual(normalizeGamepadAxes([0, 0.6]), { left: false, right: false, up: false, down: true });
 });
 
-test('life system preserves Level 1 denominator and clamps damage at zero', () => {
+test('life inventory starts at the Level 1 denominator, accumulates without a cap, and clamps damage at zero', () => {
   const lives = new LifeSystem(3);
   assert.equal(lives.value, 3);
   assert.equal(lives.damage(), 2);
   assert.equal(lives.damage(4), 0);
   assert.equal(lives.isDepleted, true);
   assert.equal(lives.damage(), 0);
+  assert.equal(lives.collect(), 1);
+  assert.equal(lives.collect(4), 5);
+  lives.restore(9);
+  assert.equal(lives.value, 9);
+  assert.throws(() => lives.collect(-1), /non-negative integer/);
   lives.reset();
   assert.equal(lives.value, 3);
 });

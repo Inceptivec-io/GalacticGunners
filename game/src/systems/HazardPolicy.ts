@@ -80,14 +80,29 @@ export function hazardEntryPoint(
   return { x: lane, y: -emitter.despawn_margin };
 }
 
-export function hazardTravelVector(edge: HazardEntryEdge): {
+export function hazardTravelVector(
+  edge: HazardEntryEdge,
+  seed = 0,
+  key = "hazard",
+): {
   x: number;
   y: number;
 } {
-  if (edge === "LEFT") return { x: 1, y: 0.4 };
-  if (edge === "RIGHT") return { x: -1, y: 0.4 };
+  if (edge === "LEFT") return { x: 1, y: 0.28 };
+  if (edge === "RIGHT") return { x: -1, y: 0.28 };
   if (edge === "BOTTOM") return { x: 0, y: -1 };
-  return { x: 0, y: 1 };
+  const topDirection =
+    deterministicHazardRange(seed, 0, 1, `${key}:top-direction`) < 0.5
+      ? -1
+      : 1;
+  return { x: 0.65 * topDirection, y: 1 };
+}
+
+/** Each asteroid must visibly rotate; the seed gives reproducible direction and speed. */
+export function asteroidAngularVelocity(seed: number, key: string): number {
+  const magnitude = deterministicHazardRange(seed, 40, 80, `${key}:magnitude`);
+  const sign = deterministicHazardRange(seed, 0, 1, `${key}:sign`) < 0.5 ? -1 : 1;
+  return sign * magnitude;
 }
 
 /**
