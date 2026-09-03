@@ -79,7 +79,7 @@ const playRoute = args['play-route'] ?? DEFAULT_PLAY_ROUTE;
 const levelApiRoute = args['level-api-route'] ?? DEFAULT_LEVEL_API_ROUTE;
 const adminLevelApiRoute = args['admin-level-api-route'] ?? DEFAULT_ADMIN_LEVEL_API_ROUTE;
 
-const webHealthUrl = args['web-health-url'] ?? joinUrl(appUrl, '/api/health');
+const webHealthUrl = args['web-health-url'] ?? joinUrl(appUrl, '/api/v1/health/');
 const apiHealthUrl = args['api-health-url'] ?? `${apiUrl}/health/`.replace('/api/v1/health/', '/api/v1/health/');
 
 const target = resolve(process.cwd(), `env.${environment}`);

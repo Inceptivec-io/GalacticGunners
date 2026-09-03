@@ -136,7 +136,7 @@ export async function waitStableReadiness({
   let prior = null;
   let consecutiveHealthy = 0;
   for (let index = 0; index < maxAttempts; index += 1) {
-    const web = await request("http://localhost:3002/api/health");
+    const web = await request("http://localhost:3002/api/v1/health/");
     const backend = await request("http://localhost:8010/api/v1/health/");
     const current = snapshot();
     const record = {
