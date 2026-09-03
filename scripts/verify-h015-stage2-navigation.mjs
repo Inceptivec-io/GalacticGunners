@@ -66,10 +66,10 @@ try {
     splash.startedAt,
   );
   assert(
-    splash.durationMs === 2_000 &&
-      splashDuration >= 1_700 &&
-      splashDuration <= 3_400,
-    `Splash duration ${splashDuration}ms is not a two-second launch hold.`,
+    splash.durationMs === 4_000 &&
+      splashDuration >= 3_700 &&
+      splashDuration <= 5_400,
+    `Splash duration ${splashDuration}ms is not a four-second launch hold.`,
   );
   const menu = await page.evaluate(() => window.__GALACTIC_GUNNERS_MENU_QA__);
   assert(

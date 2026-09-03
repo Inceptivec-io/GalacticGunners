@@ -91,6 +91,10 @@
       "classification": "UNIT"
     },
     {
+      "file": "tests/unit/h015-stage2-splash-contract.test.mjs",
+      "classification": "UNIT"
+    },
+    {
       "file": "tests/unit/canonical-sprites.test.mjs",
       "classification": "UNIT"
     },

@@ -136,7 +136,7 @@ export class BootScene extends Phaser.Scene {
 
       this.createRuntimeAnimations();
       // Hostile verification exercises gameplay state, not the separately tested
-      // launch presentation. Skipping the two-second splash here prevents
+      // launch presentation. Skipping the four-second splash here prevents
       // background-tab timer throttling from turning a condition wait into noise.
       this.scene.start(
         this.runtimeConfig.hostileQa ? "MainMenuScene" : "SplashScene",
