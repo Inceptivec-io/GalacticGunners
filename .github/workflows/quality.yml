@@ -368,7 +368,7 @@ jobs:
           docker compose exec -T backend python manage.py bootstrap_founder_review
           # These source/test gates complement the ordinary browser journeys
           # below. Their full output becomes immutable exact-SHA evidence.
-          GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR" npm run h015:run-catalogue
+          GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/assurance_catalogue" npm run h015:run-catalogue
           mkdir -p "$GG_EVIDENCE_DIR/ordinary-browser"
           GG_RUNTIME_URL=http://localhost:3002 npx playwright test tests/e2e/public-entry.spec.ts tests/e2e/splash-menu.spec.ts tests/e2e/main-menu.spec.ts tests/e2e/pause-controls.spec.ts tests/e2e/gameplay-cursor.spec.ts tests/e2e/auth-session.spec.ts tests/e2e/designer-pointer.spec.ts tests/e2e/tenant-isolation.spec.ts tests/accessibility/web-surfaces.spec.ts --project=chromium-desktop --workers=1
           cp test-results/playwright-junit.xml "$GG_EVIDENCE_DIR/ordinary-browser/chromium-desktop-junit.xml"
@@ -389,7 +389,7 @@ jobs:
            # deliberately excluded here: this artifact is ordinary-user and
            # exact-SHA closure evidence, not a diagnostic archive.
           GG_RUNTIME_URL=http://localhost:3002 GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/authentication-session" npm run runtime:authentication-session
-          GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR" npm run h015:build-catalogue-results
+          GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/assurance_catalogue" npm run h015:build-catalogue-results
           npm run h015:build-evidence-manifest
       - name: Upload immutable H015 browser evidence
         id: upload-evidence
