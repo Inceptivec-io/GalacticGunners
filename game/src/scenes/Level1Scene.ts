@@ -1744,8 +1744,10 @@ export class Level1Scene extends CombatLevelScene {
       !this.#boardingOffer.actionsVisible
     )
       this.showBoardingOfferActions();
-    if (!inEnvelope && this.#boardingOffer.actionsVisible)
-      this.hideBoardingOfferActions();
+    // Reaching the authored envelope is the physical admission gate. Once the
+    // player has reached it, retain the visible choice until it is resolved so
+    // a normal movement key release cannot make the rendered Board control
+    // disappear before keyboard, touch, or controller confirmation arrives.
     const gamepadConfirm = Boolean(
       this.input.gamepad?.getPad(0)?.buttons[0]?.pressed,
     );
@@ -1754,7 +1756,7 @@ export class Level1Scene extends CombatLevelScene {
       Phaser.Input.Keyboard.JustDown(this.#boardingConfirmKey),
     );
     if (
-      inEnvelope &&
+      this.#boardingOffer.actionsVisible &&
       (keyboardConfirm ||
         (gamepadConfirm && !this.#boardingGamepadConfirmPressed))
     ) {

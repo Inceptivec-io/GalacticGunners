@@ -387,6 +387,7 @@ test("GG-BOARDING-003__e2e_ordinary_user_negative__boarding_alien_is_not_elimina
   test.setTimeout(60_000);
   await startLevelFour(page);
   await fireAtBoardingTarget(page);
+  await approachBoardingTarget(page);
   const canvas = page.locator(".game-canvas-host canvas");
   const box = await canvas.boundingBox();
   if (!box) throw new Error("Gameplay canvas is unavailable.");

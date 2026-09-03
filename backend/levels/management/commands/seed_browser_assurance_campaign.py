@@ -89,9 +89,12 @@ class Command(BaseCommand):
             "speed_max": 90,
             "angular_velocity_min": 0,
             "angular_velocity_max": 0,
-            "entry_edges": ["TOP"],
+            "entry_edges": ["BOTTOM"],
             "spawn_pattern": "FIXED_POINTS",
-            "spawn_points": [{"x": 640, "y": 260}],
+            # The ordinary browser fixture uses the player's centre firing lane.
+            # The comet travels upward from ahead of the ship, so a normally
+            # fired upward laser must resolve the authored hazard collision.
+            "spawn_points": [{"x": 640, "y": 480}],
             "despawn_margin": 64,
             "collision_damage": 1,
         }]
