@@ -67,7 +67,7 @@ function buildManifest() {
   };
 }
 
-test("H015-EVID-002 positive: every evidence gate carries the exact full SHA", () => {
+test("GG-ASSURANCE-EVIDENCE-002 positive: every evidence gate carries the exact full SHA", () => {
   const { root, testedSha, manifest } = buildManifest();
   assert.deepEqual(
     auditManifest(manifest, { root, expectedSha: testedSha }),
@@ -75,7 +75,7 @@ test("H015-EVID-002 positive: every evidence gate carries the exact full SHA", (
   );
 });
 
-test("H015-EVID-002 negative: a shortened or different SHA fails evidence identity", () => {
+test("GG-ASSURANCE-EVIDENCE-002 negative: a shortened or different SHA fails evidence identity", () => {
   const { root, testedSha, manifest } = buildManifest();
   manifest.gates[0].tested_sha = "a".repeat(12);
   manifest.gates[1].tested_sha = "b".repeat(40);
@@ -86,7 +86,7 @@ test("H015-EVID-002 negative: a shortened or different SHA fails evidence identi
   );
 });
 
-test("H015-EVID-006 positive: ordinary browser evidence has its own explicit classification", () => {
+test("GG-ASSURANCE-EVIDENCE-006 positive: ordinary browser evidence has its own explicit classification", () => {
   const { root, testedSha, manifest } = buildManifest();
   manifest.gates[0].classification = "E2E_ORDINARY_USER";
   assert.deepEqual(
@@ -95,7 +95,7 @@ test("H015-EVID-006 positive: ordinary browser evidence has its own explicit cla
   );
 });
 
-test("H015-EVID-006 negative: an unclassified gate fails the closure audit", () => {
+test("GG-ASSURANCE-EVIDENCE-006 negative: an unclassified gate fails the closure audit", () => {
   const { root, testedSha, manifest } = buildManifest();
   manifest.gates[0].classification = "UNCLASSIFIED";
   assert.match(

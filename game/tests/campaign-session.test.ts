@@ -53,7 +53,7 @@ function client(overrides: Partial<GameRunClient> = {}): GameRunClient {
   };
 }
 
-test('H015-GAME-005 positive server-pinned completion preserves returned score lives and nukes', async () => {
+test('GG-CAMPAIGN-RUNTIME-005 positive server-pinned completion preserves returned score lives and nukes', async () => {
   const calls: Array<{ runId: string; entryId: string; score: number; lives: number; nukes: number; capability?: string | null }> = [];
   const session = new CampaignSession(client({
     completeCampaignEntry: async (runId, entryId, payload, capability) => {
@@ -70,7 +70,7 @@ test('H015-GAME-005 positive server-pinned completion preserves returned score l
   }]);
 });
 
-test('H015-GAME-005 negative rejected completion cannot replace the active campaign checkpoint', async () => {
+test('GG-CAMPAIGN-RUNTIME-005 negative rejected completion cannot replace the active campaign checkpoint', async () => {
   const session = new CampaignSession(client({
     completeCampaignEntry: async () => {
       throw new Error('CAMPAIGN_CAPABILITY_INVALID');

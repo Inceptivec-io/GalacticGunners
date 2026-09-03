@@ -81,7 +81,7 @@ def migrate_v1_to_v11(value):
         result['formations'].append({'id': f'formation-{formation_index}', 'name': f"Formation {formation_index + 1}", 'layout': 'GRID', 'bounds': {'x': formation['origin']['x'], 'y': formation['origin']['y'], 'width': max(1, formation['columns'] - 1) * formation['spacing']['x'], 'height': max(1, formation['rows'] - 1) * formation['spacing']['y']}, 'member_ids': members, 'motion_profile': 'formation.standard', 'entry_delay_ms': 0, 'repeat': 0})
     for index, hazard in enumerate(value.get('hazards', [])):
         hazard_type = hazard['type'].upper()
-        result['hazard_emitters'].append({'id': f"{hazard['type']}-emitter-{index + 1}", 'hazard_type': hazard_type, 'asset_id': f"hazard.{hazard['type']}", 'variant_mode': 'ORDERED', 'variant_ids': sorted(HAZARD_VARIANTS[hazard_type]), 'enabled': True, 'initial_count': hazard['count'], 'maximum_active': hazard['count'], 'spawn_interval_ms': 3500, 'spawn_jitter_ms': 0, 'speed_min': hazard['speed'], 'speed_max': hazard['speed'], 'angular_velocity_min': 0, 'angular_velocity_max': 0, 'entry_edges': ['TOP'], 'spawn_pattern': 'FIXED_POINTS', 'spawn_points': [{'x': hazard['origin']['x'] + item * hazard['spacing']['x'], 'y': hazard['origin']['y'] + item * hazard['spacing']['y']} for item in range(hazard['count'])], 'despawn_margin': 64, 'collision_damage': 1})
+        result['hazard_emitters'].append({'id': f"{hazard['type']}-emitter-{index + 1}", 'hazard_type': hazard_type, 'asset_id': f"hazard.{hazard['type']}", 'variant_mode': 'ORDERED', 'variant_ids': sorted(HAZARD_VARIANTS[hazard_type]), 'enabled': True, 'initial_count': hazard['count'], 'maximum_active': hazard['count'], 'spawn_interval_ms': 3500, 'spawn_jitter_ms': 0, 'speed_min': hazard['speed'], 'speed_max': hazard['speed'], 'angular_velocity_min': 40 if hazard_type == 'ASTEROID' else 0, 'angular_velocity_max': 80 if hazard_type == 'ASTEROID' else 0, 'spin_direction_policy': 'SEEDED_BIDIRECTIONAL' if hazard_type == 'ASTEROID' else 'NONE', 'entry_edges': ['TOP'], 'spawn_pattern': 'FIXED_POINTS', 'spawn_points': [{'x': hazard['origin']['x'] + item * hazard['spacing']['x'], 'y': hazard['origin']['y'] + item * hazard['spacing']['y']} for item in range(hazard['count'])], 'despawn_margin': 64, 'collision_damage': 1})
     for index, shield in enumerate(value.get('shields', [])):
         for bunker in range(shield['count']):
             # Matches the established eight-bunker Level 1 layout at the canonical 1280x720 canvas.
@@ -172,6 +172,17 @@ def validate_authoring_document(value):
         non_negative = ('initial_count', 'maximum_active', 'spawn_interval_ms', 'spawn_jitter_ms', 'speed_min', 'speed_max', 'despawn_margin', 'collision_damage')
         variant_ids = emitter.get('variant_ids', [])
         variant_mode = emitter.get('variant_mode', 'ORDERED')
+        asteroid_spin = emitter.get('hazard_type') == 'ASTEROID' and (
+            emitter.get('angular_velocity_min', 0) < 40
+            or emitter.get('angular_velocity_max', 0) > 80
+            or emitter.get('angular_velocity_max', 0) < emitter.get('angular_velocity_min', 0)
+            or emitter.get('spin_direction_policy') not in {'SEEDED_BIDIRECTIONAL', 'CLOCKWISE', 'COUNTERCLOCKWISE'}
+        )
+        non_asteroid_spin = emitter.get('hazard_type') == 'COMET' and (
+            emitter.get('angular_velocity_min') != 0
+            or emitter.get('angular_velocity_max') != 0
+            or emitter.get('spin_direction_policy', 'NONE') != 'NONE'
+        )
         if (
             emitter.get('hazard_type') not in HAZARD_TYPES
             or emitter.get('asset_id') != f"hazard.{str(emitter.get('hazard_type', '')).lower()}"
@@ -189,6 +200,8 @@ def validate_authoring_document(value):
             or len(variant_ids) != len(set(variant_ids))
             or any(variant not in HAZARD_VARIANTS[emitter.get('hazard_type', '')] for variant in variant_ids)
             or (variant_mode == 'FIXED' and len(variant_ids) != 1)
+            or asteroid_spin
+            or non_asteroid_spin
         ):
             issue(f'/hazard_emitters/{index}', 'INVALID_EMITTER')
     for index, rule in enumerate(value.get('drop_rules', [])):

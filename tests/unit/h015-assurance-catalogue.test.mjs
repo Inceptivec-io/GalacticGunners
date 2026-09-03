@@ -65,7 +65,7 @@ for (const entry of preAttestationCases) {
   );
 }
 const closurePositive = preAttestationCases.find(
-  (entry) => entry.test_case_id === "H015-QUAL-004 positive",
+  (entry) => entry.test_case_id === "GG-QUALITY-004 positive",
 );
 assert.ok(closurePositive);
 closurePositive.result = "DEFERRED";
@@ -96,7 +96,7 @@ assert.equal(preAttestationCatalogue.pending_requirement_count, 1);
 assert.equal(preAttestationCatalogue.pending_closure_audit_only, true);
 assert.equal(
   preAttestationCatalogue.rows.find(
-    (row) => row.requirement_id === "H015-QUAL-004",
+    (row) => row.requirement_id === "GG-QUALITY-004",
   ).result,
   "PENDING",
 );

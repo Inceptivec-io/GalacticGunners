@@ -25,7 +25,7 @@ async function registerPlayer(
   ).toBeVisible();
 }
 
-test("H015-AUTH-002__e2e_ordinary_user__registration_restores_session_and_logout_clears_it", async ({
+test("GG-AUTH-SESSION-002__e2e_ordinary_user__registration_restores_session_and_logout_clears_it", async ({
   page,
   strictRuntime,
 }) => {
@@ -57,7 +57,7 @@ test("H015-AUTH-002__e2e_ordinary_user__registration_restores_session_and_logout
   });
 });
 
-test("H015-AUTH-002__e2e_ordinary_user_negative__duplicate_username_is_rejected_without_replacing_session", async ({
+test("GG-AUTH-SESSION-002__e2e_ordinary_user_negative__duplicate_username_is_rejected_without_replacing_session", async ({
   page,
   strictRuntime,
 }) => {

@@ -5,7 +5,7 @@ import { chromium } from 'playwright';
 const baseUrl = process.env.GG_RUNTIME_URL ?? 'http://localhost:3002';
 const testedSha = process.env.GG_TESTED_SHA ?? 'UNSPECIFIED';
 const outputDir = path.resolve(process.env.GG_EVIDENCE_DIR
-  ?? 'docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/rectification/stage-3');
+  ?? 'docs/evidence/designer-pointer-interaction');
 mkdirSync(outputDir, { recursive: true });
 const access = Object.fromEntries(readFileSync('FOUNDER_REVIEW_ACCESS.local.txt', 'utf8').split(/\r?\n/).flatMap((line) => {
   const match = line.match(/^Inceptivec administrator: ([^/]+) \/ (.+)$/);

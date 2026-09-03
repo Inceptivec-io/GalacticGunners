@@ -1,6 +1,6 @@
 import { expect, test } from "./fixtures/strictRuntime";
 
-test("H015-PROD-001__e2e_ordinary_user_negative__qa_query_cannot_enable_diagnostic_globals", async ({
+test("GG-PRODUCT-MODEL-001__e2e_ordinary_user_negative__qa_query_cannot_enable_diagnostic_globals", async ({
   page,
   strictRuntime,
 }) => {

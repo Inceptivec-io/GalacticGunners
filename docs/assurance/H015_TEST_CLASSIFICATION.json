@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "purpose": "Exhaustive classification of executable test sources under H015-EVID-006.",
+  "purpose": "Exhaustive classification of executable test sources under GG-ASSURANCE-EVIDENCE-006.",
   "entries": [
     {
       "file": "tests/component/landing-entry.test.tsx",
@@ -91,7 +91,7 @@
       "classification": "UNIT"
     },
     {
-      "file": "tests/unit/h015-stage2-splash-contract.test.mjs",
+      "file": "tests/unit/navigation-and-pause-splash-contract.test.mjs",
       "classification": "UNIT"
     },
     {
@@ -99,7 +99,7 @@
       "classification": "UNIT"
     },
     {
-      "file": "tests/unit/runtime-verifier-lifecycle.test.mjs",
+      "file": "tests/unit/cross-browser-gameplay-lifecycle.test.mjs",
       "classification": "UNIT"
     },
     {

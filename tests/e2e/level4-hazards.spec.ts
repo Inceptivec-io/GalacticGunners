@@ -40,7 +40,7 @@ async function startLevelFour(page: import("@playwright/test").Page) {
   return { canvas, announcement };
 }
 
-test("H015-GAME-006__e2e_ordinary_user__player_laser_destroys_the_authored_level_four_comet", async ({
+test("GG-CAMPAIGN-RUNTIME-006__e2e_ordinary_user__player_laser_destroys_the_authored_level_four_comet", async ({
   page,
   strictRuntime,
 }) => {
@@ -72,7 +72,7 @@ test("H015-GAME-006__e2e_ordinary_user__player_laser_destroys_the_authored_level
   });
 });
 
-test("H015-GAME-006__e2e_ordinary_user_negative__level_four_hazard_does_not_destroy_without_player_fire", async ({
+test("GG-CAMPAIGN-RUNTIME-006__e2e_ordinary_user_negative__level_four_hazard_does_not_destroy_without_player_fire", async ({
   page,
   strictRuntime,
 }) => {

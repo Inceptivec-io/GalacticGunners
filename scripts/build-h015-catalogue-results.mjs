@@ -50,7 +50,7 @@ const rows = traceability.rows.map((row) => {
     (testCase) => testCase.polarity === "NEGATIVE",
   );
   const deferredClosureAudit =
-    row.requirement_id === "H015-QUAL-004" &&
+    row.requirement_id === "GG-QUALITY-004" &&
     positive.length === 1 &&
     negative.length === 1 &&
     byTestCase.get(positive[0].id)?.result === "DEFERRED" &&
@@ -75,7 +75,7 @@ const unresolvedRows = rows.filter((row) => row.result !== "PASS");
 const overall =
   unresolvedRows.length === 0 ||
   (unresolvedRows.length === 1 &&
-    unresolvedRows[0].requirement_id === "H015-QUAL-004" &&
+    unresolvedRows[0].requirement_id === "GG-QUALITY-004" &&
     unresolvedRows[0].result === "PENDING")
     ? "PASS"
     : "FAIL";
@@ -94,7 +94,7 @@ writeFileSync(
         .length,
       pending_closure_audit_only:
         unresolvedRows.length === 1 &&
-        unresolvedRows[0].requirement_id === "H015-QUAL-004" &&
+        unresolvedRows[0].requirement_id === "GG-QUALITY-004" &&
         unresolvedRows[0].result === "PENDING",
       rows,
     },

@@ -36,7 +36,7 @@ beforeEach(() => {
 
 afterEach(cleanup);
 
-test("H015-ENTRY-003 component positive: the governed splash copy is rendered exactly", async () => {
+test("GG-PRODUCT-ENTRY-003 component positive: the governed splash copy is rendered exactly", async () => {
   render(<GameHost />);
 
   await waitFor(() => {
@@ -52,7 +52,7 @@ test("H015-ENTRY-003 component positive: the governed splash copy is rendered ex
   );
 });
 
-test("H015-ENTRY-003 component negative: unapproved splash copy is not rendered", async () => {
+test("GG-PRODUCT-ENTRY-003 component negative: unapproved splash copy is not rendered", async () => {
   render(<GameHost />);
 
   await waitFor(() => expect(publishLaunchState).toBeTypeOf("function"));
@@ -62,7 +62,7 @@ test("H015-ENTRY-003 component negative: unapproved splash copy is not rendered"
   );
 });
 
-test("H015-ENTRY-004 component positive and negative: launch state exposes a usable status and removes splash copy on Main Menu", async () => {
+test("GG-PRODUCT-ENTRY-004 component positive and negative: launch state exposes a usable status and removes splash copy on Main Menu", async () => {
   render(<GameHost />);
 
   await waitFor(() => expect(publishLaunchState).toBeTypeOf("function"));

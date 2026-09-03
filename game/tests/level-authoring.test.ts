@@ -243,6 +243,22 @@ test("asteroid spin is deterministic, non-zero, and within the governed angular 
   assert.notEqual(first, 0);
 });
 
+test("asteroid spin honours magnitude-only authoring and seeded direction", () => {
+  const values = Array.from({ length: 24 }, (_, ordinal) =>
+    asteroidAngularVelocity(12002, `asteroid:${ordinal}`, 50, 60),
+  );
+  assert.ok(values.every((value) => Math.abs(value) >= 50 && Math.abs(value) <= 60));
+  assert.ok(values.every((value) => value !== 0));
+  assert.ok(values.some((value) => value < 0));
+  assert.ok(values.some((value) => value > 0));
+  values.forEach((value, ordinal) =>
+    assert.equal(
+      value,
+      asteroidAngularVelocity(12002, `asteroid:${ordinal}`, 50, 60),
+    ),
+  );
+});
+
 test("top-entry comets choose a deterministic lateral sign while retaining a downward path", () => {
   const directions = Array.from({ length: 32 }, (_, ordinal) =>
     hazardTravelVector("TOP", 12004 + ordinal, `comet:${ordinal}`),

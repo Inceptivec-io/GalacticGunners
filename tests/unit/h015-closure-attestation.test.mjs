@@ -19,7 +19,7 @@ const attestation = {
   required_gates: [{ id: "runtime-hostile", result: "PASS" }],
 };
 
-test("H015-EVID-002 positive: post-upload attestation binds the exact source and evidence artifact", () => {
+test("GG-ASSURANCE-EVIDENCE-002 positive: post-upload attestation binds the exact source and evidence artifact", () => {
   assert.deepEqual(
     verifyClosureAttestation(attestation, {
       testedSha: sha,
@@ -30,7 +30,7 @@ test("H015-EVID-002 positive: post-upload attestation binds the exact source and
   );
 });
 
-test("H015-EVID-002 negative: mismatched SHA and evidence digest fail closed", () => {
+test("GG-ASSURANCE-EVIDENCE-002 negative: mismatched SHA and evidence digest fail closed", () => {
   const altered = structuredClone(attestation);
   altered.tested_sha = "c".repeat(40);
   altered.evidence_artifact.digest = "d".repeat(64);
@@ -44,7 +44,7 @@ test("H015-EVID-002 negative: mismatched SHA and evidence digest fail closed", (
   );
 });
 
-test("H015-EVID-005 negative: an attestation without sealed audit evidence fails closed", () => {
+test("GG-ASSURANCE-EVIDENCE-005 negative: an attestation without sealed audit evidence fails closed", () => {
   const altered = structuredClone(attestation);
   delete altered.closure_audit_evidence;
   assert.match(

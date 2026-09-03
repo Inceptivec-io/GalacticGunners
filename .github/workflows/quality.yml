@@ -65,7 +65,7 @@ jobs:
       - name: Install cross-browser runtime dependencies (fail closed)
         run: timeout --signal=KILL 600s npx playwright install --with-deps chromium firefox webkit
       - name: Run locked cross-browser runtime verifier
-        run: npm run runtime:h015:cross-browser
+        run: npm run runtime:cross-browser-gameplay
       - run: docker compose config
       - run: docker compose up --build -d
       - run: |
@@ -342,7 +342,7 @@ jobs:
       - name: Install closure-browser dependencies (fail closed)
         run: timeout --signal=KILL 600s npx playwright install --with-deps chromium firefox webkit
       - name: Capture exact-SHA cross-browser runtime verification
-        run: GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/cross-browser" npm run runtime:h015:cross-browser
+        run: GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/cross-browser-gameplay" npm run runtime:cross-browser-gameplay
       - run: docker compose up --build -d
       - run: |
           web_ready=false
@@ -388,7 +388,7 @@ jobs:
            # QA diagnostics run in the dedicated runtime-hostile job. They are
            # deliberately excluded here: this artifact is ordinary-user and
            # exact-SHA closure evidence, not a diagnostic archive.
-          GG_RUNTIME_URL=http://localhost:3002 GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/rectification/stage-9" npm run runtime:h015:stage9
+          GG_RUNTIME_URL=http://localhost:3002 GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR/authentication-session" npm run runtime:authentication-session
           GG_EVIDENCE_DIR="$GG_EVIDENCE_DIR" npm run h015:build-catalogue-results
           npm run h015:build-evidence-manifest
       - name: Upload immutable H015 browser evidence

@@ -1,7 +1,7 @@
 import { expect, test } from "./fixtures/strictRuntime";
 import { captureOrdinaryJourney } from "./fixtures/ordinaryEvidence";
 
-test("H015A-010__e2e_ordinary_user__gameplay_cursor_hides_after_idle_and_reveals_on_pointer_motion", async ({
+test("GG-RESOURCE-INVENTORY-010__e2e_ordinary_user__gameplay_cursor_hides_after_idle_and_reveals_on_pointer_motion", async ({
   page,
   strictRuntime,
 }) => {

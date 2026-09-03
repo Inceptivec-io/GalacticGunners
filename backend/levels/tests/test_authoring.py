@@ -188,13 +188,14 @@ def test_authoring_document_rejects_out_of_bounds_objects_emitters_and_runtime_b
     assert 'RUNTIME_OBJECT_BUDGET_EXCEEDED' in codes
 
 
-def test_authoring_document_accepts_signed_asteroid_spin_range():
+def test_authoring_document_accepts_magnitude_only_seeded_asteroid_spin():
     document = blank_authoring_document(identifier='map-01', slug='map-01', name='Blank Map', sequence=1, seed=77)
     document['hazard_emitters'] = [{
         'id': 'asteroid-emitter', 'hazard_type': 'ASTEROID', 'asset_id': 'hazard.asteroid', 'enabled': True,
         'variant_mode': 'ORDERED', 'variant_ids': ['ASTEROID_VARIANT_01', 'ASTEROID_VARIANT_03'],
         'initial_count': 1, 'maximum_active': 2, 'spawn_interval_ms': 3000, 'spawn_jitter_ms': 250,
-        'speed_min': 90, 'speed_max': 140, 'angular_velocity_min': -80, 'angular_velocity_max': 80,
+        'speed_min': 90, 'speed_max': 140, 'angular_velocity_min': 40, 'angular_velocity_max': 80,
+        'spin_direction_policy': 'SEEDED_BIDIRECTIONAL',
         'entry_edges': ['LEFT', 'RIGHT'], 'spawn_pattern': 'ALTERNATING_EDGES', 'spawn_points': [],
         'despawn_margin': 64, 'collision_damage': 1,
     }]
@@ -207,7 +208,8 @@ def test_authoring_document_rejects_invalid_hazard_variant_pools():
         'id': 'asteroid-emitter', 'hazard_type': 'ASTEROID', 'asset_id': 'hazard.asteroid', 'enabled': True,
         'variant_mode': 'SEEDED_RANDOM', 'variant_ids': ['COMET_VARIANT_01'],
         'initial_count': 1, 'maximum_active': 2, 'spawn_interval_ms': 3000, 'spawn_jitter_ms': 0,
-        'speed_min': 90, 'speed_max': 140, 'angular_velocity_min': -80, 'angular_velocity_max': 80,
+        'speed_min': 90, 'speed_max': 140, 'angular_velocity_min': 40, 'angular_velocity_max': 80,
+        'spin_direction_policy': 'SEEDED_BIDIRECTIONAL',
         'entry_edges': ['LEFT', 'RIGHT'], 'spawn_pattern': 'ALTERNATING_EDGES', 'spawn_points': [],
         'despawn_margin': 64, 'collision_damage': 1,
     }]
@@ -215,6 +217,21 @@ def test_authoring_document_rejects_invalid_hazard_variant_pools():
     document['hazard_emitters'][0]['variant_ids'] = ['ASTEROID_VARIANT_01', 'ASTEROID_VARIANT_01']
     assert 'INVALID_EMITTER' in {error['code'] for error in validate_authoring_document(document)}
     document['hazard_emitters'][0].update({'variant_mode': 'FIXED', 'variant_ids': []})
+    assert 'INVALID_EMITTER' in {error['code'] for error in validate_authoring_document(document)}
+
+
+def test_authoring_document_rejects_cross_zero_or_zero_asteroid_spin_contracts():
+    document = blank_authoring_document(identifier='map-01', slug='map-01', name='Blank Map', sequence=1, seed=77)
+    document['hazard_emitters'] = [{
+        'id': 'asteroid-emitter', 'hazard_type': 'ASTEROID', 'asset_id': 'hazard.asteroid', 'enabled': True,
+        'variant_mode': 'ORDERED', 'variant_ids': ['ASTEROID_VARIANT_01'],
+        'initial_count': 1, 'maximum_active': 2, 'spawn_interval_ms': 3000, 'spawn_jitter_ms': 0,
+        'speed_min': 90, 'speed_max': 140, 'angular_velocity_min': -80, 'angular_velocity_max': 80,
+        'spin_direction_policy': 'SEEDED_BIDIRECTIONAL', 'entry_edges': ['LEFT', 'RIGHT'],
+        'spawn_pattern': 'ALTERNATING_EDGES', 'spawn_points': [], 'despawn_margin': 64, 'collision_damage': 1,
+    }]
+    assert 'INVALID_EMITTER' in {error['code'] for error in validate_authoring_document(document)}
+    document['hazard_emitters'][0].update({'angular_velocity_min': 0, 'angular_velocity_max': 80})
     assert 'INVALID_EMITTER' in {error['code'] for error in validate_authoring_document(document)}
 
 

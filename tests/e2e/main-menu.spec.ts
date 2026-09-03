@@ -17,7 +17,7 @@ async function clickStartControl(page: import("@playwright/test").Page) {
   });
 }
 
-test("H015-MENU-001__e2e_ordinary_user__keyboard_confirmation_starts_gameplay_once", async ({
+test("GG-NAVIGATION-001__e2e_ordinary_user__keyboard_confirmation_starts_gameplay_once", async ({
   page,
   strictRuntime,
 }) => {
@@ -29,7 +29,7 @@ test("H015-MENU-001__e2e_ordinary_user__keyboard_confirmation_starts_gameplay_on
   expect(strictRuntime.unexpectedFailures).toEqual([]);
 });
 
-test("H015-MENU-001__e2e_ordinary_user__mouse_selects_visible_start_control", async ({
+test("GG-NAVIGATION-001__e2e_ordinary_user__mouse_selects_visible_start_control", async ({
   page,
   strictRuntime,
 }) => {
@@ -41,7 +41,7 @@ test("H015-MENU-001__e2e_ordinary_user__mouse_selects_visible_start_control", as
   expect(strictRuntime.unexpectedFailures).toEqual([]);
 });
 
-test("H015-MENU-001__e2e_ordinary_user__touch_selects_visible_start_control", async ({
+test("GG-NAVIGATION-001__e2e_ordinary_user__touch_selects_visible_start_control", async ({
   page,
   strictRuntime,
 }) => {
@@ -58,7 +58,7 @@ test("H015-MENU-001__e2e_ordinary_user__touch_selects_visible_start_control", as
   expect(strictRuntime.unexpectedFailures).toEqual([]);
 });
 
-test("H015-MENU-001__e2e_ordinary_user_negative__duplicate_mouse_activation_does_not_restart_or_error", async ({
+test("GG-NAVIGATION-001__e2e_ordinary_user_negative__duplicate_mouse_activation_does_not_restart_or_error", async ({
   page,
   strictRuntime,
 }) => {

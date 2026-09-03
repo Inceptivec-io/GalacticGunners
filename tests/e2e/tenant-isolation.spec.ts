@@ -23,7 +23,7 @@ async function loginToCommandPost(page: import("@playwright/test").Page) {
   ).toBeVisible();
 }
 
-test("H015-PERM-002__e2e_ordinary_user__command_post_member_reads_only_its_authorised_workspace", async ({
+test("GG-AUTHORIZATION-002__e2e_ordinary_user__command_post_member_reads_only_its_authorised_workspace", async ({
   page,
   strictRuntime,
 }) => {
@@ -48,7 +48,7 @@ test("H015-PERM-002__e2e_ordinary_user__command_post_member_reads_only_its_autho
   expect(strictRuntime.unexpectedFailures).toEqual([]);
 });
 
-test("H015-PERM-002__e2e_ordinary_user_negative__command_post_member_cannot_open_an_unrelated_workspace", async ({
+test("GG-AUTHORIZATION-002__e2e_ordinary_user_negative__command_post_member_cannot_open_an_unrelated_workspace", async ({
   page,
   strictRuntime,
 }) => {

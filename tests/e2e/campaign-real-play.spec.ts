@@ -14,7 +14,7 @@ async function startCampaign(page: import("@playwright/test").Page) {
   );
 }
 
-test("H015-GAME-004__e2e_ordinary_user__published_release_continue_loads_the_next_entry", async ({
+test("GG-CAMPAIGN-RUNTIME-004__e2e_ordinary_user__published_release_continue_loads_the_next_entry", async ({
   page,
   strictRuntime,
 }) => {
@@ -52,7 +52,7 @@ test("H015-GAME-004__e2e_ordinary_user__published_release_continue_loads_the_nex
   });
 });
 
-test("H015-GAME-004__e2e_ordinary_user__continue_traverses_the_published_release_without_level_seven", async ({
+test("GG-CAMPAIGN-RUNTIME-004__e2e_ordinary_user__continue_traverses_the_published_release_without_level_seven", async ({
   page,
   strictRuntime,
 }) => {
@@ -103,7 +103,7 @@ test("H015-GAME-004__e2e_ordinary_user__continue_traverses_the_published_release
   });
 });
 
-test("H015-GAME-004__e2e_ordinary_user_negative__result_does_not_advance_without_continue_input", async ({
+test("GG-CAMPAIGN-RUNTIME-004__e2e_ordinary_user_negative__result_does_not_advance_without_continue_input", async ({
   page,
   strictRuntime,
 }) => {

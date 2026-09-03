@@ -1,7 +1,7 @@
 import { expect, test } from "./fixtures/strictRuntime";
 import { captureOrdinaryJourney } from "./fixtures/ordinaryEvidence";
 
-test("H015-ENTRY-001__e2e_ordinary_user__root_play_enters_governed_launch", async ({
+test("GG-PRODUCT-ENTRY-001__e2e_ordinary_user__root_play_enters_governed_launch", async ({
   page,
   strictRuntime,
 }) => {
@@ -28,7 +28,7 @@ test("H015-ENTRY-001__e2e_ordinary_user__root_play_enters_governed_launch", asyn
   });
 });
 
-test("H015-ENTRY-001__e2e_ordinary_user_negative__boot_request_failure_surfaces_a_safe_error", async ({
+test("GG-PRODUCT-ENTRY-001__e2e_ordinary_user_negative__boot_request_failure_surfaces_a_safe_error", async ({
   page,
   strictRuntime,
 }) => {

@@ -7,7 +7,7 @@ import LandingPage from "../../apps/web/app/page";
 
 afterEach(cleanup);
 
-test("H015-ENTRY-001 component positive: the public entry exposes the governed Play route", () => {
+test("GG-PRODUCT-ENTRY-001 component positive: the public entry exposes the governed Play route", () => {
   render(<LandingPage />);
 
   const play = screen.getByRole("link", { name: "Play" });
@@ -18,7 +18,7 @@ test("H015-ENTRY-001 component positive: the public entry exposes the governed P
   );
 });
 
-test("H015-ENTRY-001 component negative: the public entry has no external or diagnostic Play destination", () => {
+test("GG-PRODUCT-ENTRY-001 component negative: the public entry has no external or diagnostic Play destination", () => {
   render(<LandingPage />);
 
   const play = screen.getByRole("link", { name: "Play" });

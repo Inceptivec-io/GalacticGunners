@@ -91,6 +91,8 @@ type RuntimeHazardEmitter = {
   speed_max: number;
   angular_velocity_min: number;
   angular_velocity_max: number;
+  spin_direction_policy?:
+    "SEEDED_BIDIRECTIONAL" | "CLOCKWISE" | "COUNTERCLOCKWISE" | "NONE";
   entry_edges: Array<"TOP" | "RIGHT" | "BOTTOM" | "LEFT">;
   spawn_pattern: string;
   spawn_points: Array<{ x: number; y: number }>;
@@ -675,6 +677,12 @@ export class Level1Scene extends CombatLevelScene {
         asteroidAngularVelocity(
           this.#definition.seed,
           `${emitter?.id ?? "legacy-asteroid"}:${ordinal}`,
+          emitter?.angular_velocity_min ?? 40,
+          emitter?.angular_velocity_max ?? 80,
+          emitter?.spin_direction_policy === "CLOCKWISE" ||
+            emitter?.spin_direction_policy === "COUNTERCLOCKWISE"
+            ? emitter.spin_direction_policy
+            : "SEEDED_BIDIRECTIONAL",
         ),
       );
     } else {

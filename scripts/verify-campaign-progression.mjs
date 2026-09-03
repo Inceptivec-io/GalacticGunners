@@ -5,7 +5,7 @@ import { chromium } from 'playwright';
 const baseUrl = process.env.GG_RUNTIME_URL ?? 'http://localhost:3002';
 const testedSha = process.env.GG_TESTED_SHA ?? 'UNSPECIFIED';
 const outputDir = path.resolve(process.env.GG_EVIDENCE_DIR
-  ?? 'docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/campaign_runtime');
+  ?? 'docs/evidence/campaign-continuity');
 mkdirSync(outputDir, { recursive: true });
 
 function assert(value, message) {

@@ -6,7 +6,7 @@ const baseUrl = process.env.GG_RUNTIME_URL ?? "http://localhost:3002";
 const testedSha = process.env.GG_TESTED_SHA ?? "UNSPECIFIED";
 const outputDir = path.resolve(
   process.env.GG_EVIDENCE_DIR ??
-    "docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/rectification/stage-2",
+    "docs/evidence/navigation-and-pause",
 );
 mkdirSync(outputDir, { recursive: true });
 
@@ -200,7 +200,7 @@ try {
     tested_sha: testedSha,
     base_url: baseUrl,
     generated_at: new Date().toISOString(),
-    splash_two_seconds: true,
+    splash_four_seconds: true,
     splash_focus_restored: true,
     pause_freezes_gameplay: true,
     pause_touch_resume: true,
@@ -212,7 +212,7 @@ try {
     result: "PASS",
   };
   writeFileSync(
-    path.join(outputDir, "stage-2-navigation-verification.json"),
+    path.join(outputDir, "navigation-and-pause-verification.json"),
     `${JSON.stringify(result, null, 2)}\n`,
   );
   console.log(JSON.stringify(result, null, 2));

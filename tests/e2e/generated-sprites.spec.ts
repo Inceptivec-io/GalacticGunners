@@ -1,7 +1,7 @@
 import { expect, test } from "./fixtures/strictRuntime";
 import { captureOrdinaryJourney } from "./fixtures/ordinaryEvidence";
 
-test("H015-SPRITE-001__e2e_ordinary_user__root_launch_uses_portable_generated_shooter_derivatives", async ({
+test("GG-SPRITE-GEOMETRY-001__e2e_ordinary_user__root_launch_uses_portable_generated_shooter_derivatives", async ({
   page,
   strictRuntime,
 }) => {

@@ -64,4 +64,4 @@ const missingHostileEvidence = workflow.replace(
 );
 assert.throws(() => assertArtifactContract(missingHostileEvidence), /runtime-hostile diagnostic evidence/);
 
-console.log("H015-EVID-005 CI artifact contract positive and negative tests passed.");
+console.log("GG-ASSURANCE-EVIDENCE-005 CI artifact contract positive and negative tests passed.");

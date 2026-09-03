@@ -99,9 +99,24 @@ export function hazardTravelVector(
 }
 
 /** Each asteroid must visibly rotate; the seed gives reproducible direction and speed. */
-export function asteroidAngularVelocity(seed: number, key: string): number {
-  const magnitude = deterministicHazardRange(seed, 40, 80, `${key}:magnitude`);
-  const sign = deterministicHazardRange(seed, 0, 1, `${key}:sign`) < 0.5 ? -1 : 1;
+export function asteroidAngularVelocity(
+  seed: number,
+  key: string,
+  minimumMagnitude = 40,
+  maximumMagnitude = 80,
+  directionPolicy: "SEEDED_BIDIRECTIONAL" | "CLOCKWISE" | "COUNTERCLOCKWISE" = "SEEDED_BIDIRECTIONAL",
+): number {
+  const magnitude = deterministicHazardRange(
+    seed,
+    minimumMagnitude,
+    maximumMagnitude,
+    `${key}:magnitude`,
+  );
+  const sign = directionPolicy === "CLOCKWISE"
+    ? 1
+    : directionPolicy === "COUNTERCLOCKWISE"
+      ? -1
+      : deterministicHazardRange(seed, 0, 1, `${key}:sign`) < 0.5 ? -1 : 1;
   return sign * magnitude;
 }
 

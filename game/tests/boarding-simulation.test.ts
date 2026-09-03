@@ -14,7 +14,7 @@ test('boarding simulation is deterministic at 60Hz and bounds the player', () =>
   assert.ok(first.snapshot().player.x <= BOARDING_WORLD.width - 32);
 });
 
-test('H015-BOARD-002 positive ordinary horizontal input traverses away from the governed entry airlock', () => {
+test('GG-BOARDING-002 positive ordinary horizontal input traverses away from the governed entry airlock', () => {
   const simulation = new BoardingSimulation(42, { lives: 3, nukes: 2 });
   const entryX = simulation.snapshot().player.x;
 
@@ -28,7 +28,7 @@ test('H015-BOARD-002 positive ordinary horizontal input traverses away from the 
   assert.ok(snapshot.player.x < BOARDING_WORLD.width - 32);
 });
 
-test('H015-BOARD-002 negative projection cannot teleport outside the physical Boarding world or exit from entry', () => {
+test('GG-BOARDING-002 negative projection cannot teleport outside the physical Boarding world or exit from entry', () => {
   const simulation = new BoardingSimulation(42, { lives: 3, nukes: 2 });
   simulation.synchronizePlayerProjection({ x: -500, y: 10_000 });
   let snapshot = simulation.snapshot();
@@ -95,7 +95,7 @@ test('boarding coordinator rejects duplicate transitions and never creates a sec
   assert.equal(coordinator.state, 'RETURNED');
 });
 
-test('H015A-006 boarding pickups do not impose a two-nuke inventory cap', () => {
+test('GG-RESOURCE-INVENTORY-006 boarding pickups do not impose a two-nuke inventory cap', () => {
   const simulation = new BoardingSimulation(1, { lives: 3, nukes: 2 });
   const mutable = simulation as unknown as {
     rng: { next: () => number };

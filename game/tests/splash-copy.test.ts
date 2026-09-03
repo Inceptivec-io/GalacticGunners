@@ -8,17 +8,17 @@ import {
   SPLASH_DURATION_MS,
 } from "../src/config/splashCopy";
 
-test("H015-ENTRY-002 positive: holds the approved splash for exactly four seconds", () => {
+test("GG-PRODUCT-ENTRY-002 positive: holds the approved splash for exactly four seconds", () => {
   assert.equal(SPLASH_DURATION_MS, 4_000);
   assert.equal(isGovernedSplashDuration(SPLASH_DURATION_MS), true);
 });
 
-test("H015-ENTRY-002 negative: rejects a premature or excessive splash duration", () => {
+test("GG-PRODUCT-ENTRY-002 negative: rejects a premature or excessive splash duration", () => {
   assert.equal(isGovernedSplashDuration(3_999), false);
   assert.equal(isGovernedSplashDuration(4_001), false);
 });
 
-test("H015-ENTRY-003 positive: uses the governed copyright and collaborator copy", () => {
+test("GG-PRODUCT-ENTRY-003 positive: uses the governed copyright and collaborator copy", () => {
   assert.equal(
     SPLASH_COPY,
     "Copyright © 2026. Powered by Inceptivec. All rights reserved.\nCollaborators: Aurora Leonardi",
@@ -26,7 +26,7 @@ test("H015-ENTRY-003 positive: uses the governed copyright and collaborator copy
   assert.equal(isGovernedSplashCopy(SPLASH_COPY), true);
 });
 
-test("H015-ENTRY-003 negative: does not retain the misspelled collaborator copy", () => {
+test("GG-PRODUCT-ENTRY-003 negative: does not retain the misspelled collaborator copy", () => {
   assert.equal(
     isGovernedSplashCopy(
       "Copyright © 2026. Powered by Inceptivec. All rights reserved.\nCollaborators: Aroura Leonardi",

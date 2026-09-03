@@ -10,6 +10,24 @@ function catalogueIds(file) {
   return lines.slice(1).map((line) => line.split(",", 1)[0]);
 }
 
+// The received catalogue is immutable historical provenance. Active
+// traceability projects its process identifiers into CLOM-UOP semantic IDs.
+const SEMANTIC_ID_PREFIXES = [
+  ["H015-EVID-", "GG-ASSURANCE-EVIDENCE-"],
+  ["H015-ENTRY-", "GG-PRODUCT-ENTRY-"],
+  ["H015-GAME-", "GG-CAMPAIGN-RUNTIME-"],
+  ["H015-DES-", "GG-DESIGNER-"],
+  ["H015-PUB-", "GG-DESIGNER-PUBLICATION-"],
+  ["H015-BOARD-", "GG-BOARDING-"],
+  ["H015-AUTH-", "GG-AUTH-SESSION-"],
+  ["H015-QUAL-", "GG-QUALITY-"],
+];
+
+function semanticRequirementId(id) {
+  const pair = SEMANTIC_ID_PREFIXES.find(([former]) => id.startsWith(former));
+  return pair ? id.replace(pair[0], pair[1]) : id;
+}
+
 export function validateTraceability(register, expectedIds) {
   const failures = [];
   const rows = register?.rows;
@@ -91,7 +109,7 @@ function main() {
     "docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/11_ASSURANCE_RECOVERY_REPLACEMENT_TRANSPORT_MEMBERS/unpacked/GALACTIC_GUNNERS_H015_COMPLETE_RECOVERY_PACK_v1.0/REQUIREMENT_CATALOGUE.csv",
   );
   const register = YAML.parse(readFileSync(registerFile, "utf8"));
-  const expectedIds = catalogueIds(catalogueFile);
+  const expectedIds = catalogueIds(catalogueFile).map(semanticRequirementId);
   const failures = validateTraceability(register, expectedIds);
   const totals = (register.rows ?? []).reduce(
     (summary, row) => {

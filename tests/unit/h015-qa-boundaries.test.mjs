@@ -6,15 +6,15 @@ import {
   validateTestInventory,
 } from "../../scripts/validate-qa-hook-boundaries.mjs";
 
-test("H015-EVID-006 positive: ordinary browser evidence excludes diagnostics", () => {
+test("GG-ASSURANCE-EVIDENCE-006 positive: ordinary browser evidence excludes diagnostics", () => {
   assert.deepEqual(validateQaBoundaries({ rows: [] }), []);
 });
 
-test("H015-EVID-006 negative: a force hook cannot map to ordinary E2E proof", () => {
+test("GG-ASSURANCE-EVIDENCE-006 negative: a force hook cannot map to ordinary E2E proof", () => {
   const failures = validateQaBoundaries({
     rows: [
       {
-        requirement_id: "H015-GAME-001",
+        requirement_id: "GG-CAMPAIGN-RUNTIME-001",
         required_layers: ["E2E"],
         test_cases: [
           {
@@ -29,7 +29,7 @@ test("H015-EVID-006 negative: a force hook cannot map to ordinary E2E proof", ()
   assert.ok(failures.some((failure) => failure.includes("QA diagnostic")));
 });
 
-test("H015-EVID-006 positive: every discovered test has an allowed classification", () => {
+test("GG-ASSURANCE-EVIDENCE-006 positive: every discovered test has an allowed classification", () => {
   assert.deepEqual(
     validateTestInventory({
       discovered: ["tests/e2e/root.spec.ts", "backend/tests/test_api.py"],
@@ -43,7 +43,7 @@ test("H015-EVID-006 positive: every discovered test has an allowed classificatio
   );
 });
 
-test("H015-EVID-006 negative: a missing or diagnostic ordinary test fails closed", () => {
+test("GG-ASSURANCE-EVIDENCE-006 negative: a missing or diagnostic ordinary test fails closed", () => {
   const failures = validateTestInventory({
     discovered: ["tests/e2e/root.spec.ts", "tests/e2e/missing.spec.ts"],
     entries: [

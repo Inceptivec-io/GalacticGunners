@@ -19,13 +19,13 @@ const noShieldBoardingLevel: LevelAuthoringDocument = {
   performance_budget: { max_active_enemies: 58, max_active_hazards: 12, max_projectiles: 96, max_shield_tiles: 512, max_total_runtime_objects: 1024 },
 };
 
-test('H015-BOARD-001 positive a no-shield authored boarding level compiles to a valid runtime definition', () => {
+test('GG-BOARDING-001 positive a no-shield authored boarding level compiles to a valid runtime definition', () => {
   const compiled = compileLevelDocument(noShieldBoardingLevel);
   assert.deepEqual(compiled.shields, []);
   assert.doesNotThrow(() => validateLevelDefinition(compiled));
 });
 
-test('H015-BOARD-001 negative no-shield configuration is not replaced with an invented fallback bunker', () => {
+test('GG-BOARDING-001 negative no-shield configuration is not replaced with an invented fallback bunker', () => {
   const compiled = compileLevelDocument(noShieldBoardingLevel);
   assert.equal(compiled.shields.length, 0);
   assert.notDeepEqual(compiled.shields, [{ count: 8 }]);

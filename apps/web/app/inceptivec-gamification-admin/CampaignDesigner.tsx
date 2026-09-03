@@ -72,6 +72,7 @@ type Emitter = {
   speed_max: number;
   angular_velocity_min: number;
   angular_velocity_max: number;
+  spin_direction_policy?: "SEEDED_BIDIRECTIONAL" | "CLOCKWISE" | "COUNTERCLOCKWISE" | "NONE";
   entry_edges: Array<"TOP" | "RIGHT" | "BOTTOM" | "LEFT">;
   spawn_pattern: "RANDOM_EDGE" | "ALTERNATING_EDGES" | "LANE" | "FIXED_POINTS";
   spawn_points: Array<{ x: number; y: number }>;
@@ -444,8 +445,9 @@ function migrateLegacyDocument(
       spawn_jitter_ms: 0,
       speed_min: hazard.speed,
       speed_max: hazard.speed,
-      angular_velocity_min: hazard.type === "asteroid" ? -30 : 0,
-      angular_velocity_max: hazard.type === "asteroid" ? 30 : 0,
+      angular_velocity_min: hazard.type === "asteroid" ? 40 : 0,
+      angular_velocity_max: hazard.type === "asteroid" ? 80 : 0,
+      spin_direction_policy: hazard.type === "asteroid" ? "SEEDED_BIDIRECTIONAL" : "NONE",
       entry_edges: ["TOP"],
       spawn_pattern: "FIXED_POINTS",
       spawn_points: Array.from({ length: hazard.count }, (_, item) => ({
@@ -471,6 +473,19 @@ function asDocument(level: DesignerLevel): AuthoringDocument {
         variant_mode: emitter.variant_mode ?? "ORDERED",
         variant_ids:
           emitter.variant_ids ?? variantIds(emitter.hazard_type),
+        angular_velocity_min: emitter.hazard_type === "ASTEROID"
+          ? Math.min(80, Math.max(40, Math.abs(emitter.angular_velocity_min ?? 40)))
+          : 0,
+        angular_velocity_max: emitter.hazard_type === "ASTEROID"
+          ? Math.max(
+              Math.min(80, Math.max(40, Math.abs(emitter.angular_velocity_min ?? 40))),
+              Math.min(80, Math.max(40, Math.abs(emitter.angular_velocity_max ?? 80))),
+            )
+          : 0,
+        spin_direction_policy:
+          emitter.hazard_type === "ASTEROID"
+            ? emitter.spin_direction_policy ?? "SEEDED_BIDIRECTIONAL"
+            : "NONE",
       })),
     };
   }
@@ -778,8 +793,9 @@ export function CampaignDesigner({
       spawn_jitter_ms: 400,
       speed_min: type === "COMET" ? 180 : 90,
       speed_max: type === "COMET" ? 260 : 150,
-      angular_velocity_min: type === "ASTEROID" ? -90 : 0,
-      angular_velocity_max: type === "ASTEROID" ? 90 : 0,
+        angular_velocity_min: type === "ASTEROID" ? 40 : 0,
+        angular_velocity_max: type === "ASTEROID" ? 80 : 0,
+        spin_direction_policy: type === "ASTEROID" ? "SEEDED_BIDIRECTIONAL" : "NONE",
       entry_edges: ["TOP", "LEFT", "RIGHT"],
       spawn_pattern: "ALTERNATING_EDGES",
       spawn_points: [],
@@ -1989,8 +2005,11 @@ export function CampaignDesigner({
               Maximum speed
               <input type="number" min="0" value={selectedEmitter.speed_max} onChange={(event) => updateEmitter("speed_max", Number(event.target.value))} />
             </label>
-            <label>Minimum angular velocity<input type="number" value={selectedEmitter.angular_velocity_min} onChange={(event) => updateEmitter("angular_velocity_min", Number(event.target.value))} /></label>
-            <label>Maximum angular velocity<input type="number" value={selectedEmitter.angular_velocity_max} onChange={(event) => updateEmitter("angular_velocity_max", Number(event.target.value))} /></label>
+            {selectedEmitter.hazard_type === "ASTEROID" ? <>
+              <label>Minimum spin magnitude<input type="number" min="40" max="80" value={selectedEmitter.angular_velocity_min} onChange={(event) => updateEmitter("angular_velocity_min", Number(event.target.value))} /></label>
+              <label>Maximum spin magnitude<input type="number" min="40" max="80" value={selectedEmitter.angular_velocity_max} onChange={(event) => updateEmitter("angular_velocity_max", Number(event.target.value))} /></label>
+              <label>Spin direction<select value={selectedEmitter.spin_direction_policy ?? "SEEDED_BIDIRECTIONAL"} onChange={(event) => updateEmitter("spin_direction_policy", event.target.value as Emitter["spin_direction_policy"])}><option value="SEEDED_BIDIRECTIONAL">Seeded bidirectional</option><option value="CLOCKWISE">Clockwise</option><option value="COUNTERCLOCKWISE">Counterclockwise</option></select></label>
+            </> : null}
             <label>Entry edges<select multiple value={selectedEmitter.entry_edges} onChange={(event) => updateEmitter("entry_edges", Array.from(event.target.selectedOptions).map((option) => option.value) as Emitter["entry_edges"])}>{["TOP", "RIGHT", "BOTTOM", "LEFT"].map((edge) => <option key={edge}>{edge}</option>)}</select></label>
             <label>Spawn pattern<select value={selectedEmitter.spawn_pattern} onChange={(event) => updateEmitter("spawn_pattern", event.target.value as Emitter["spawn_pattern"])}>{["RANDOM_EDGE", "ALTERNATING_EDGES", "LANE", "FIXED_POINTS"].map((pattern) => <option key={pattern}>{pattern}</option>)}</select></label>
             <label>Fixed spawn points (x,y; x,y)<input value={selectedEmitter.spawn_points.map((point) => `${point.x},${point.y}`).join("; ")} onChange={(event) => updateEmitter("spawn_points", event.target.value.split(";").map((pair) => pair.trim().split(",").map(Number)).filter((pair) => pair.length === 2 && pair.every(Number.isFinite)).map(([x, y]) => ({ x, y })))} /></label>

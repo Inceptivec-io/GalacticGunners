@@ -24,7 +24,7 @@ async function holdKeyUntilStatus(
   }
 }
 
-test("H015-PAUSE-001__e2e_ordinary_user__keyboard_pause_and_resume_preserve_playable_runtime", async ({
+test("GG-NAVIGATION-PAUSE-001__e2e_ordinary_user__keyboard_pause_and_resume_preserve_playable_runtime", async ({
   page,
   strictRuntime,
 }) => {
@@ -51,7 +51,7 @@ test("H015-PAUSE-001__e2e_ordinary_user__keyboard_pause_and_resume_preserve_play
   });
 });
 
-test("H015-GAME-001__e2e_ordinary_user__pause_freezes_the_visible_simulation", async ({
+test("GG-CAMPAIGN-RUNTIME-001__e2e_ordinary_user__pause_freezes_the_visible_simulation", async ({
   page,
   strictRuntime,
 }) => {
@@ -91,7 +91,7 @@ test("H015-GAME-001__e2e_ordinary_user__pause_freezes_the_visible_simulation", a
   });
 });
 
-test("H015-GAME-002__e2e_ordinary_user__keyboard_restart_and_main_menu_actions_are_deliberate", async ({
+test("GG-CAMPAIGN-RUNTIME-002__e2e_ordinary_user__keyboard_restart_and_main_menu_actions_are_deliberate", async ({
   page,
   strictRuntime,
 }) => {
@@ -123,7 +123,7 @@ test("H015-GAME-002__e2e_ordinary_user__keyboard_restart_and_main_menu_actions_a
   });
 });
 
-test("H015-PAUSE-002__e2e_ordinary_user_negative__repeated_pause_resume_does_not_leave_a_black_or_lost_runtime", async ({
+test("GG-NAVIGATION-PAUSE-002__e2e_ordinary_user_negative__repeated_pause_resume_does_not_leave_a_black_or_lost_runtime", async ({
   page,
   strictRuntime,
 }) => {

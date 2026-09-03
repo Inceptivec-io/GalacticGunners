@@ -119,7 +119,7 @@ export function validateAssuranceRecoveryIntake({
 if (import.meta.url === `file:///${process.argv[1].replaceAll("\\", "/")}`) {
   const failures = validateAssuranceRecoveryIntake();
   const report = {
-    requirement_id: "H015-EVID-001",
+    requirement_id: "GG-ASSURANCE-EVIDENCE-001",
     result: failures.length === 0 ? "PASS" : "FAIL",
     source_members_verified: Object.keys(sourceMembers).length,
     failures,

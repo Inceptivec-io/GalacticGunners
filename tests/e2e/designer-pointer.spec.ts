@@ -76,7 +76,7 @@ async function reachableScout(page: import("@playwright/test").Page) {
   return page.locator(`[data-designer-placement-id="${placement.id}"]`);
 }
 
-test("H015-DES-POINTER-001__e2e_ordinary_user__native_mouse_drag_undo_redo_is_exact_at_supported_zoom", async ({
+test("GG-DESIGNER-POINTER-001__e2e_ordinary_user__native_mouse_drag_undo_redo_is_exact_at_supported_zoom", async ({
   page,
   strictRuntime,
 }) => {
@@ -147,7 +147,7 @@ test("H015-DES-POINTER-001__e2e_ordinary_user__native_mouse_drag_undo_redo_is_ex
   });
 });
 
-test("H015-DES-POINTER-001__e2e_ordinary_user_negative__outside_drag_is_clamped_and_undoable", async ({
+test("GG-DESIGNER-POINTER-001__e2e_ordinary_user_negative__outside_drag_is_clamped_and_undoable", async ({
   page,
   strictRuntime,
 }) => {
@@ -190,7 +190,7 @@ test("H015-DES-POINTER-001__e2e_ordinary_user_negative__outside_drag_is_clamped_
   });
 });
 
-test("H015-DES-THUMB-001__e2e_ordinary_user__palette_uses_loaded_canonical_single-frame_previews", async ({
+test("GG-DESIGNER-THUMB-001__e2e_ordinary_user__palette_uses_loaded_canonical_single-frame_previews", async ({
   page,
   strictRuntime,
 }) => {
@@ -238,7 +238,7 @@ test("H015-DES-THUMB-001__e2e_ordinary_user__palette_uses_loaded_canonical_singl
   });
 });
 
-test("H015-DES-THUMB-002__e2e_ordinary_user__hazard_chooser_exposes_six_canonical_asteroid_and_comet_variants", async ({
+test("GG-DESIGNER-THUMB-002__e2e_ordinary_user__hazard_chooser_exposes_six_canonical_asteroid_and_comet_variants", async ({
   page,
   strictRuntime,
 }) => {
@@ -310,7 +310,7 @@ test("H015-DES-THUMB-002__e2e_ordinary_user__hazard_chooser_exposes_six_canonica
   });
 });
 
-test("H015-DES-THUMB-002__e2e_ordinary_user__fixed_hazard_variant_persists_through_immutable_draft_save", async ({
+test("GG-DESIGNER-THUMB-002__e2e_ordinary_user__fixed_hazard_variant_persists_through_immutable_draft_save", async ({
   page,
   strictRuntime,
 }) => {
@@ -368,7 +368,7 @@ test("H015-DES-THUMB-002__e2e_ordinary_user__fixed_hazard_variant_persists_throu
   });
 });
 
-test("H015-DES-META-001__e2e_ordinary_user__valid_seed_save_reloads_from_immutable_draft", async ({
+test("GG-DESIGNER-META-001__e2e_ordinary_user__valid_seed_save_reloads_from_immutable_draft", async ({
   page,
   strictRuntime,
 }) => {
@@ -408,7 +408,7 @@ test("H015-DES-META-001__e2e_ordinary_user__valid_seed_save_reloads_from_immutab
   });
 });
 
-test("H015-DES-META-001__e2e_ordinary_user_negative__invalid_seed_is_rejected_by_the_server", async ({
+test("GG-DESIGNER-META-001__e2e_ordinary_user_negative__invalid_seed_is_rejected_by_the_server", async ({
   page,
   strictRuntime,
 }) => {
@@ -459,7 +459,7 @@ test("H015-DES-META-001__e2e_ordinary_user_negative__invalid_seed_is_rejected_by
   });
 });
 
-test("H015-DES-CANVAS-001__e2e_ordinary_user__governed_canvas_and_grid_save_reload", async ({
+test("GG-DESIGNER-CANVAS-001__e2e_ordinary_user__governed_canvas_and_grid_save_reload", async ({
   page,
   strictRuntime,
 }) => {
@@ -501,7 +501,7 @@ test("H015-DES-CANVAS-001__e2e_ordinary_user__governed_canvas_and_grid_save_relo
   });
 });
 
-test("H015-DES-POINTER-002__e2e_ordinary_user__touch_chooser_places_a_canonical_scout", async ({
+test("GG-DESIGNER-POINTER-002__e2e_ordinary_user__touch_chooser_places_a_canonical_scout", async ({
   page,
   strictRuntime,
 }) => {
@@ -553,7 +553,7 @@ test("H015-DES-POINTER-002__e2e_ordinary_user__touch_chooser_places_a_canonical_
   });
 });
 
-test("H015-DES-POINTER-002__e2e_ordinary_user_negative__touch_cancel_leaves_the_canvas_unchanged", async ({
+test("GG-DESIGNER-POINTER-002__e2e_ordinary_user_negative__touch_cancel_leaves_the_canvas_unchanged", async ({
   page,
   strictRuntime,
 }) => {

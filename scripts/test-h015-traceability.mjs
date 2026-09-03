@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import { validateTraceability } from "./validate-h015-traceability.mjs";
 
-const ids = ["H015-EVID-001"];
+const ids = ["GG-ASSURANCE-EVIDENCE-001"];
 const row = () => ({
-  requirement_id: "H015-EVID-001",
+  requirement_id: "GG-ASSURANCE-EVIDENCE-001",
   implementation_paths: ["docs/receipt.md"],
   required_layers: ["PROCESS"],
   positive_proof: "receipt matches",
@@ -63,4 +63,4 @@ assert.ok(
   ).some((failure) => failure.includes("invalid status")),
 );
 
-console.log("H015 traceability validator negative tests PASS");
+console.log("Semantic traceability validator negative tests PASS");

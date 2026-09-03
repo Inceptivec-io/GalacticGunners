@@ -100,7 +100,7 @@ async function selectContinueWithTouch(page: import("@playwright/test").Page) {
   });
 }
 
-test("H015-BOARD-001__e2e_ordinary_user__laser_hit_opens_visible_boarding_offer_and_escape_returns_to_shooter", async ({
+test("GG-BOARDING-001__e2e_ordinary_user__laser_hit_opens_visible_boarding_offer_and_escape_returns_to_shooter", async ({
   page,
   strictRuntime,
 }) => {
@@ -149,7 +149,7 @@ test("H015-BOARD-001__e2e_ordinary_user__laser_hit_opens_visible_boarding_offer_
   });
 });
 
-test("H015-BOARD-001__e2e_ordinary_user_negative__boarding_does_not_open_without_hitting_the_anchor", async ({
+test("GG-BOARDING-001__e2e_ordinary_user_negative__boarding_does_not_open_without_hitting_the_anchor", async ({
   page,
   strictRuntime,
 }) => {
@@ -174,7 +174,7 @@ test("H015-BOARD-001__e2e_ordinary_user_negative__boarding_does_not_open_without
   });
 });
 
-test("H015-BOARD-001__e2e_ordinary_user__continue_declines_the_offer_without_entering_boarding", async ({
+test("GG-BOARDING-001__e2e_ordinary_user__continue_declines_the_offer_without_entering_boarding", async ({
   page,
   strictRuntime,
 }) => {
@@ -211,7 +211,7 @@ test("H015-BOARD-001__e2e_ordinary_user__continue_declines_the_offer_without_ent
   });
 });
 
-test("H015-BOARD-005__e2e_ordinary_user__physical_boarding_combat_and_exit_return_to_the_shooter", async ({
+test("GG-BOARDING-005__e2e_ordinary_user__physical_boarding_combat_and_exit_return_to_the_shooter", async ({
   page,
   strictRuntime,
 }) => {
@@ -261,7 +261,7 @@ test("H015-BOARD-005__e2e_ordinary_user__physical_boarding_combat_and_exit_retur
   });
 });
 
-test("H015-BOARD-005__e2e_ordinary_user_negative__entry_airlock_cannot_complete_boarding_before_the_far_exit", async ({
+test("GG-BOARDING-005__e2e_ordinary_user_negative__entry_airlock_cannot_complete_boarding_before_the_far_exit", async ({
   page,
   strictRuntime,
 }) => {
@@ -295,7 +295,7 @@ test("H015-BOARD-005__e2e_ordinary_user_negative__entry_airlock_cannot_complete_
   });
 });
 
-test("H015-BOARD-006__e2e_ordinary_user__escape_pauses_resumes_and_requires_confirmed_abort", async ({
+test("GG-BOARDING-006__e2e_ordinary_user__escape_pauses_resumes_and_requires_confirmed_abort", async ({
   page,
   strictRuntime,
 }) => {
@@ -347,7 +347,7 @@ test("H015-BOARD-006__e2e_ordinary_user__escape_pauses_resumes_and_requires_conf
   });
 });
 
-test("H015-BOARD-003__e2e_ordinary_user__boarding_player_fire_collides_with_and_eliminates_a_live_alien", async ({
+test("GG-BOARDING-003__e2e_ordinary_user__boarding_player_fire_collides_with_and_eliminates_a_live_alien", async ({
   page,
   strictRuntime,
 }) => {
@@ -380,7 +380,7 @@ test("H015-BOARD-003__e2e_ordinary_user__boarding_player_fire_collides_with_and_
   });
 });
 
-test("H015-BOARD-003__e2e_ordinary_user_negative__boarding_alien_is_not_eliminated_without_player_fire", async ({
+test("GG-BOARDING-003__e2e_ordinary_user_negative__boarding_alien_is_not_eliminated_without_player_fire", async ({
   page,
   strictRuntime,
 }) => {

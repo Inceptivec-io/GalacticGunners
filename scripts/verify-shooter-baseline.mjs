@@ -3,7 +3,7 @@ import path from 'node:path';
 import { chromium } from 'playwright';
 
 const baseUrl = process.env.GG_RUNTIME_URL ?? 'http://localhost:3002';
-const outputDir = path.resolve(process.env.GG_EVIDENCE_DIR ?? 'docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/rectification/stage-1');
+const outputDir = path.resolve(process.env.GG_EVIDENCE_DIR ?? 'docs/evidence/shooter-baseline');
 mkdirSync(outputDir, { recursive: true });
 
 function assert(condition, message) {

@@ -6,7 +6,7 @@ const {
   runSerialProjects,
   sameGeneration,
   waitStableReadiness,
-} = await import("../../scripts/run-h015-cross-browser-verifier.mjs");
+} = await import("../../scripts/run-cross-browser-gameplay.mjs");
 
 const stable = {
   web: { id: "web-a", restart_count: 0, status: "running", health: "healthy" },

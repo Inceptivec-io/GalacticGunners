@@ -253,7 +253,7 @@ const gateDefinitions = {
     }),
   },
   "auth-redirect": {
-    directory: "rectification/stage-9",
+    directory: "authentication-session",
     verification: "auth-session-hostile.json",
     route: "/account/login",
     include: ["01-valid-player-redirect.png", "auth-session-hostile.json"],
