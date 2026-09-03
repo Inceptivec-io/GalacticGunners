@@ -437,6 +437,18 @@ export class Level1Scene extends CombatLevelScene {
     if (this.#terminalState) {
       return;
     }
+    // Boarding admission is asynchronous, but its server request already
+    // binds the player resources. Freeze the live Shooter projection until
+    // that request resolves so an incoming hit cannot create a second, local
+    // resource state between admission and the launched Boarding scene.
+    if (
+      this.#boardingTransition === "BOARDING_RESOLVING" &&
+      !this.#boardingActive
+    ) {
+      this.#player.stop();
+      this.publishQaState();
+      return;
+    }
     const deltaMs =
       this.#lastUpdateAtMs === 0 ? 0 : Math.max(time - this.#lastUpdateAtMs, 0);
     this.#lastUpdateAtMs = time;
@@ -1883,7 +1895,12 @@ export class Level1Scene extends CombatLevelScene {
         shooter_state_digest: shooterStateDigest,
         resources: snapshot.resources,
       });
-      this.launchAdmittedBoarding(offer, admittedServerRun, shooterStateDigest);
+      this.launchAdmittedBoarding(
+        offer,
+        admittedServerRun,
+        shooterStateDigest,
+        snapshot.resources,
+      );
     } catch {
       this.settleBoardingAdmissionFailure(offer);
     }
@@ -1893,6 +1910,7 @@ export class Level1Scene extends CombatLevelScene {
     offer: BoardingOfferState,
     admittedServerRun: BoardingRunRecord,
     shooterStateDigest: string,
+    admittedResources: { lives: number; nukes: number },
   ): void {
     if (
       this.#boardingOffer !== offer ||
@@ -1907,8 +1925,8 @@ export class Level1Scene extends CombatLevelScene {
     this.#boardingGamepadConfirmPressed = false;
     this.scene.launch("BoardingScene", {
       seed: this.#definition.seed,
-      lives: this.#lives.value,
-      nukes: this.#currentNukes,
+      lives: admittedResources.lives,
+      nukes: admittedResources.nukes,
       anchorId: anchor.id,
       sourceEntityId: anchor.source_entity_id,
       sourceEntityType: anchor.source_entity_type,

@@ -8,6 +8,7 @@ import { GENERATED_SPRITE_CATALOGUE } from '../config/generatedSpriteCatalogue';
 import { GameApiClient, type BoardingRunRecord } from '../services/GameApiClient';
 
 const ASSET_ROOT = '/gg-runtime-assets/boarding/';
+const BOARDING_ALIEN_ENGAGEMENT_RANGE_PX = 420;
 
 interface BoardingLaunch {
   anchorId: string;
@@ -23,6 +24,7 @@ interface BoardingLaunch {
 interface BoardingQaState {
   active: boolean;
   completed: boolean;
+  completionOutcome: BoardingOutcome | null;
   serverRunId: string | null;
   serverError: string | null;
   elapsedMs: number;
@@ -71,6 +73,7 @@ export class BoardingScene extends Phaser.Scene {
   private starting = true;
   private active = false;
   private completed = false;
+  private completionOutcome: BoardingOutcome | null = null;
   private pauseBlockedUntil = 0;
   private serverRun: BoardingRunRecord | null = null;
   private serverError: string | null = null;
@@ -101,6 +104,7 @@ export class BoardingScene extends Phaser.Scene {
     this.active = false;
     this.starting = true;
     this.completed = false;
+    this.completionOutcome = null;
     this.playerShotsFired = 0;
     this.playerShotAttempts = 0;
     this.playerShotPoolUnavailable = 0;
@@ -196,6 +200,7 @@ export class BoardingScene extends Phaser.Scene {
         state: () => ({
           active: this.active,
           completed: this.completed,
+          completionOutcome: this.completionOutcome,
           serverRunId: this.serverRun?.id ?? null,
           serverError: this.serverError,
           elapsedMs: this.simulation.elapsedMs(),
@@ -407,7 +412,7 @@ export class BoardingScene extends Phaser.Scene {
 
   private fireAlienShot(): void {
     const view = this.cameras.main.worldView;
-    const engagementWidth = this.cameras.main.width * 0.8;
+    const engagementWidth = Math.min(this.cameras.main.width * 0.8, BOARDING_ALIEN_ENGAGEMENT_RANGE_PX);
     const candidates = this.aliens.getChildren().filter((candidate) => {
       const alien = candidate as Phaser.Physics.Arcade.Sprite;
       if (!alien.active || alien.getData('dying')) return false;
@@ -536,6 +541,7 @@ export class BoardingScene extends Phaser.Scene {
   private async finish(outcome: BoardingOutcome): Promise<void> {
     if (this.completed) return;
     this.completed = true;
+    this.completionOutcome = outcome;
     // A pre-admitted run has already crossed the authoritative Shooter
     // boundary. Its fresh Phaser scene has no local offer, so it must not
     // attempt to reject or complete one during return handling.

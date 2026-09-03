@@ -148,19 +148,39 @@ await cdp.send("Emulation.setIdleOverride", {
 });
 const consoleErrors = [];
 const networkFailures = [];
+const failedResponses = [];
+const completionRequests = [];
 page.on("console", (message) => {
   if (message.type() === "error") consoleErrors.push(message.text());
 });
 page.on("pageerror", (error) =>
   consoleErrors.push(`PAGEERROR ${error.stack || error.message}`),
 );
-page.on("response", (response) => {
-  if (response.status() >= 400)
-    networkFailures.push(`${response.status()} ${response.url()}`);
+page.on("response", async (response) => {
+  if (response.status() >= 400) {
+    const body = await response.text().catch(() => "");
+    networkFailures.push(
+      `${response.status()} ${response.url()}${body ? ` ${body}` : ""}`,
+    );
+    failedResponses.push({
+      status: response.status(),
+      url: response.url(),
+      body,
+    });
+  }
 });
 page.on("requestfailed", (request) =>
   networkFailures.push(`FAILED ${request.url()}`),
 );
+page.on("request", (request) => {
+  if (
+    request.method() === "POST" &&
+    request.url().includes("/boarding-runs/") &&
+    request.url().endsWith("/complete/")
+  ) {
+    completionRequests.push({ url: request.url(), body: request.postData() });
+  }
+});
 try {
   await startLevelFour(page);
   const canvas = await page.locator("canvas").boundingBox();
@@ -168,6 +188,8 @@ try {
   await page.keyboard.down("d");
   await page.keyboard.down("Space");
   let reachedExit = false;
+  let lastProgress = null;
+  let boardingEndedBeforeExit = false;
   const deadline = Date.now() + 120_000;
   let sample = 0;
   while (Date.now() < deadline) {
@@ -183,6 +205,11 @@ try {
     const progress = await page.evaluate(
       () => window.__GALACTIC_GUNNERS_BOARDING_QA__?.state() ?? null,
     );
+    if (progress) lastProgress = progress;
+    else {
+      boardingEndedBeforeExit = true;
+      break;
+    }
     if (
       progress?.active &&
       progress.activeAliens === 0 &&
@@ -209,7 +236,7 @@ try {
   }
   assert(
     reachedExit,
-    "Boarding player did not reach the physical exit while holding right movement.",
+    `Boarding player did not reach the physical exit while holding right movement: ${JSON.stringify({ lastProgress, boardingEndedBeforeExit, shooter: await state(page) })}`,
   );
   await page.keyboard.up("Space");
   await page.keyboard.up("d");
@@ -265,7 +292,7 @@ try {
   );
   assert(
     consoleErrors.length === 0 && networkFailures.length === 0,
-    `Console errors: ${consoleErrors.join(" | ")}; network failures: ${networkFailures.join(" | ")}`,
+    `Console errors: ${consoleErrors.join(" | ")}; network failures: ${networkFailures.join(" | ")}; completion requests: ${JSON.stringify(completionRequests)}; failed responses: ${JSON.stringify(failedResponses)}`,
   );
   const result = {
     tested_sha: testedSha,
