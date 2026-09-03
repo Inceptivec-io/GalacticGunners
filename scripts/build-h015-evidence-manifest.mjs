@@ -65,8 +65,16 @@ function evidence(directory) {
 }
 
 function ordinaryJourneyEvidence(gate, { requireNegative = true } = {}) {
-  const directory = path.join(root, "ordinary-browser", gate);
-  const records = files(directory).filter((file) => file.endsWith(".json"));
+  // The standalone browser journeys write directly to the evidence root. The
+  // assurance catalogue intentionally runs in its own subdirectory so its
+  // ordinary Playwright evidence remains isolated from launcher diagnostics.
+  const directories = [
+    path.join("ordinary-browser", gate),
+    path.join("assurance_catalogue", "ordinary-browser", gate),
+  ];
+  const records = directories
+    .flatMap((directory) => files(path.join(root, directory)))
+    .filter((file) => file.endsWith(".json"));
   const valid = records.filter((file) => {
     try {
       const record = JSON.parse(readFileSync(file, "utf8"));
@@ -86,7 +94,13 @@ function ordinaryJourneyEvidence(gate, { requireNegative = true } = {}) {
     }
   });
   return {
-    items: evidence(path.join("ordinary-browser", gate)),
+    items: directories
+      .flatMap((directory) => evidence(directory))
+      .map((item) =>
+        item.mime_type === "image/png"
+          ? { ...item, distinct_state_group: gate }
+          : item,
+      ),
     result:
       valid.length > 0 &&
       (!requireNegative ||
@@ -291,7 +305,7 @@ const gateDefinitions = {
     }),
   },
   "assurance-catalogue": {
-    directory: "catalogue",
+    directory: "assurance_catalogue/catalogue",
     verification: "assurance-catalogue-results.json",
     route: "CI exact-SHA assurance catalogue",
     setup: [

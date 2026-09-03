@@ -129,6 +129,7 @@ try {
   # Readiness is prohibited until the complete traceability catalogue has
   # independently accepted every positive and hostile row for this exact SHA.
   Invoke-EvidenceRuntime 'assurance_catalogue' { npm run h015:run-catalogue } 'fail-closed H015 assurance catalogue verification'
+  Invoke-EvidenceRuntime 'assurance_catalogue' { npm run h015:build-catalogue-results } 'assurance catalogue result aggregation'
 } finally {
   $env:NEXT_PUBLIC_GG_QA_MODE = 'false'
   Invoke-ReviewCommand { docker compose --env-file $envFile up --build -d } 'production container restoration'

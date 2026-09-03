@@ -38,7 +38,7 @@
     "h015:run-catalogue": "node scripts/run-h015-assurance-catalogue.mjs",
     "h015:build-catalogue-results": "node scripts/build-h015-catalogue-results.mjs",
     "test:h015:intake": "node --test tests/unit/h015-assurance-intake.test.mjs && node scripts/verify-h015-assurance-intake.mjs",
-    "test:h015:evidence-integrity": "node --test tests/unit/h015-evidence-identity.test.mjs tests/unit/h015-closure-attestation.test.mjs tests/unit/h015-assurance-catalogue.test.mjs tests/unit/wait-for-http.test.mjs tests/unit/runtime-verifier-lifecycle.test.mjs && node scripts/test-h015-evidence-integrity.mjs && node scripts/test-h015-ci-artifacts.mjs",
+    "test:h015:evidence-integrity": "node --test tests/unit/h015-evidence-identity.test.mjs tests/unit/h015-closure-attestation.test.mjs tests/unit/h015-assurance-catalogue.test.mjs tests/unit/h015-evidence-manifest-layout.test.mjs tests/unit/wait-for-http.test.mjs tests/unit/runtime-verifier-lifecycle.test.mjs && node scripts/test-h015-evidence-integrity.mjs && node scripts/test-h015-ci-artifacts.mjs",
     "test:h015:traceability": "node scripts/test-h015-traceability.mjs && node --test tests/unit/h015-qa-boundaries.test.mjs && node scripts/validate-h015-traceability.mjs && node scripts/validate-qa-hook-boundaries.mjs",
     "lint": "eslint apps/web game scripts tests --max-warnings=0",
     "format:check": "prettier --check apps/web/game/GameHost.tsx apps/web/app/globals.css game/src/config/gameConfig.ts game/src/scenes/BootScene.ts game/src/scenes/SplashScene.ts game/src/scenes/MainMenuScene.ts game/src/scenes/Level1Scene.ts tests/e2e docs/assurance eslint.config.mjs playwright.config.ts package.json",
