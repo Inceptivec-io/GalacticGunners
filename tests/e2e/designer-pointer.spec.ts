@@ -577,7 +577,9 @@ test("GG-DESIGNER-POINTER-002__e2e_ordinary_user_negative__touch_cancel_leaves_t
     categoryBox.y + categoryBox.height / 2,
   );
   const chooser = page.getByRole("dialog", { name: "Alien Ships chooser" });
+  await expect(chooser).toBeVisible();
   const cancel = chooser.getByRole("button", { name: "Close chooser" });
+  await expect(cancel).toBeVisible();
   const cancelBox = await cancel.boundingBox();
   if (!cancelBox)
     throw new Error("The chooser cancel control is not touch reachable.");
