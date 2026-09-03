@@ -91,10 +91,14 @@ try {
   assert(savedResponse.status() === 201, `Designer immutable save failed with HTTP ${savedResponse.status()}.`);
   const savedDraft = await savedResponse.json();
   assert(savedDraft.checksum, 'Designer save did not return an immutable draft checksum.');
+  const levelId = new URL(savedResponse.url()).pathname.match(/\/levels\/([^/]+)\/drafts\/$/)?.[1];
+  assert(levelId, 'Designer immutable draft response did not identify its level authority.');
   await page.reload({ waitUntil: 'networkidle' });
   await page.waitForSelector('[data-designer-route="campaign"]');
-  const reloadedAuthority = await page.evaluate(async () => (await fetch('/api/v1/admin/levels/authority/', { credentials: 'same-origin' })).json());
-  const reloadedDraft = reloadedAuthority.results.flatMap((entry) => entry.versions ?? []).find((entry) => entry.checksum === savedDraft.checksum);
+  const reloadedAuthority = await page.evaluate(async (levelId) => (
+    await fetch(`/api/v1/admin/levels/authority/?level_id=${encodeURIComponent(levelId)}`, { credentials: 'same-origin' })
+  ).json(), levelId);
+  const reloadedDraft = reloadedAuthority.results.find((entry) => entry.id === levelId)?.authority_version;
   assert(reloadedDraft?.config?.entities?.some((entity) => String(entity.x) === authoredX && String(entity.y) === authoredY && entity.entity_type === replacementType), 'Designer reload did not retain the saved authored entity type.');
   await capture(page, '06-designer-saved-reloaded-draft', page.url(), 'Inceptivec administrator', 'Reload the page after immutable save and inspect the persisted draft.', `Reloaded immutable draft ${savedDraft.checksum} retains the authored ${replacementType} entity.`);
   const previewPopup = page.waitForEvent('popup');

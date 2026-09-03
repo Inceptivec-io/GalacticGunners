@@ -28,7 +28,11 @@ try {
   await page.waitForFunction(() => document.querySelectorAll('button.designer-placement').length > 1);
   const initial = await page.evaluate(async () => (await fetch('/api/v1/admin/levels/authority/', { credentials: 'same-origin' })).json());
   const level = initial.results[0];
-  const original = level.editable_version ?? level.versions?.[0] ?? level.active_version;
+  // The authority endpoint intentionally returns revision summaries in
+  // `editable_version` and `versions`; only `authority_version` carries the
+  // selected level's complete canonical document.
+  const original = level.authority_version;
+  assert(original?.config, 'Selected level did not return its complete authority_version document.');
   const targetEntity = original.config.entities.find((entity) => entity.entity_type === 'SCOUT') ?? original.config.entities[0];
   assert(targetEntity, 'The editable campaign definition has no entity available for the mixed-composition roundtrip.');
   const replacementType = targetEntity.entity_type === 'CRUISER' ? 'SCOUT' : 'CRUISER';
@@ -43,12 +47,18 @@ try {
     await layout.selectOption('WEDGE');
     assert(await layout.inputValue() === 'WEDGE', 'Designer formation layout edit did not retain before save.');
     await page.getByRole('button', { name: 'Hazards', exact: true }).click();
-    await page.getByRole('button', { name: 'Add recurring ASTEROID' }).click();
+    // Hazards are added through the visible canonical variant palette. Selecting
+    // a variant creates a recurring emitter with that variant as its source.
+    await page.getByRole('button', { name: 'ASTEROID_VARIANT_01', exact: true }).click();
     await page.locator('[aria-label^="ASTEROID emitter at"]').last().click();
     const minimumSpeed = page.locator('.designer-inspector').getByLabel('Minimum speed');
     await minimumSpeed.fill('173');
     await minimumSpeed.blur();
     assert(Number(await minimumSpeed.inputValue()) === 173, 'Designer hazard property edit did not retain before save.');
+    const maximumSpeed = page.locator('.designer-inspector').getByLabel('Maximum speed');
+    await maximumSpeed.fill('220');
+    await maximumSpeed.blur();
+    assert(Number(await maximumSpeed.inputValue()) === 220, 'Designer hazard maximum speed did not retain before save.');
     const draftResponse = page.waitForResponse((response) =>
       response.request().method() === 'POST' && /\/api\/v1\/admin\/levels\/[^/]+\/drafts\/$/.test(new URL(response.url()).pathname),
     );
@@ -73,8 +83,10 @@ try {
   }
   await page.reload({ waitUntil: 'networkidle' });
   await page.waitForSelector('[data-designer-route="campaign"]');
-  const afterSave = await page.evaluate(async () => (await fetch('/api/v1/admin/levels/authority/', { credentials: 'same-origin' })).json());
-  const saved = afterSave.results.find((item) => item.id === level.id).versions[0];
+  const afterSave = await page.evaluate(async (levelId) => (
+    await fetch(`/api/v1/admin/levels/authority/?level_id=${encodeURIComponent(levelId)}`, { credentials: 'same-origin' })
+  ).json(), level.id);
+  const saved = afterSave.results.find((item) => item.id === level.id)?.authority_version;
   console.log(JSON.stringify({ designer_save: {
     active: { version: original.version, checksum: original.checksum },
     latest: { version: saved?.version, checksum: saved?.checksum },
