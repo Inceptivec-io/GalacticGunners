@@ -8,6 +8,8 @@ RUN npm ci
 
 FROM node:22-alpine AS builder
 WORKDIR /workspace
+ARG NEXT_PUBLIC_GG_QA_MODE=false
+ENV NEXT_PUBLIC_GG_QA_MODE=$NEXT_PUBLIC_GG_QA_MODE
 COPY --from=deps /workspace/node_modules ./node_modules
 COPY package.json ./package.json
 COPY package-lock.json ./package-lock.json
@@ -15,7 +17,9 @@ COPY apps/web ./apps/web
 COPY game ./game
 COPY assets ./assets
 COPY scripts ./scripts
+COPY docs/assurance/H015_CANONICAL_SPRITE_SOURCE_INVENTORY.json ./docs/assurance/H015_CANONICAL_SPRITE_SOURCE_INVENTORY.json
 COPY docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_014 ./docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_014
+COPY docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/12_CANONICAL_SPRITESHEET_DEFINITION_AND_CORRECTION_PACK_v1.0 ./docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/12_CANONICAL_SPRITESHEET_DEFINITION_AND_CORRECTION_PACK_v1.0
 RUN npm run assets:sync
 WORKDIR /workspace/apps/web
 RUN npm run build

@@ -3,22 +3,30 @@ import uuid
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models.functions import Lower
 
 class PlayerProfile(models.Model):
+    class Status(models.TextChoices):
+        ACTIVE = 'ACTIVE', 'Active'
+        SUSPENDED = 'SUSPENDED', 'Suspended'
+        DELETED_PENDING = 'DELETED_PENDING', 'Deleted pending'
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='player_profile',
     )
-    display_name = models.CharField(max_length=64, unique=True, db_index=True)
+    display_name = models.CharField(max_length=20, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     leaderboard_enabled = models.BooleanField(default=True)
     moderation_state = models.CharField(max_length=32, default='VISIBLE')
+    status = models.CharField(max_length=24, choices=Status.choices, default=Status.ACTIVE)
 
     class Meta:
         ordering = ['display_name']
+        constraints = [models.UniqueConstraint(Lower('display_name'), name='player_display_name_ci_unique')]
 
     def clean(self):
         super().clean()

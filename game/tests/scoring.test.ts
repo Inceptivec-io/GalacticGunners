@@ -72,13 +72,18 @@ test('input capability model supports coexistence without manual mode selection'
   assert.deepEqual(normalizeGamepadAxes([0, 0.6]), { left: false, right: false, up: false, down: true });
 });
 
-test('life system preserves Level 1 denominator and clamps damage at zero', () => {
+test('life inventory starts at the Level 1 denominator, accumulates without a cap, and clamps damage at zero', () => {
   const lives = new LifeSystem(3);
   assert.equal(lives.value, 3);
   assert.equal(lives.damage(), 2);
   assert.equal(lives.damage(4), 0);
   assert.equal(lives.isDepleted, true);
   assert.equal(lives.damage(), 0);
+  assert.equal(lives.collect(), 1);
+  assert.equal(lives.collect(4), 5);
+  lives.restore(9);
+  assert.equal(lives.value, 9);
+  assert.throws(() => lives.collect(-1), /non-negative integer/);
   lives.reset();
   assert.equal(lives.value, 3);
 });
@@ -127,6 +132,32 @@ class FakeGameRunClient implements GameRunClient {
 
   getLeaderboard(): never {
     throw new Error('Leaderboard is out of scope for Sprint 001.');
+  }
+
+  startCampaign() {
+    return Promise.resolve({ id: 'campaign-001', score: 0, lives: 3, nukes: 2, ranked: false, capability: 'test-capability', entry: { id: 'entry-001', position: 1, level: { slug: 'level-01', version: 1, checksum: '0'.repeat(64), definition: {} } } });
+  }
+
+  completeCampaignEntry() {
+    return Promise.resolve({ id: 'campaign-001', status: 'ACTIVE' as const, score: 25, lives: 3, nukes: 2, ranked: false, capability: 'test-capability', entry: { id: 'entry-002', position: 2, level: { slug: 'level-02', version: 1, checksum: '1'.repeat(64), definition: {} } } });
+  }
+
+  startBoardingRun() {
+    return Promise.resolve({
+      id: 'boarding-001', status: 'ACTIVE' as const, validation_result: 'PENDING' as const,
+      validation_code: '', seed: 1, time_limit_ms: 60000, interior_slug: 'alien-frigate',
+      interior_version: 1, interior_checksum: '0'.repeat(64), shooter_state_digest: '0'.repeat(64),
+      resources_start: { lives: 3, nukes: 2 }, return_state: null,
+    });
+  }
+
+  completeBoardingRun() {
+    return Promise.resolve({
+      id: 'boarding-001', status: 'COMPLETED' as const, validation_result: 'VALID' as const,
+      validation_code: '', seed: 1, time_limit_ms: 60000, interior_slug: 'alien-frigate',
+      interior_version: 1, interior_checksum: '0'.repeat(64), shooter_state_digest: '0'.repeat(64),
+      resources_start: { lives: 3, nukes: 2 }, return_state: { lives: 3, nukes: 2, score_delta: 0, remove_source_entity_id: 'enemy-001' },
+    });
   }
 }
 

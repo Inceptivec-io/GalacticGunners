@@ -3,8 +3,9 @@ import path from 'node:path';
 import { chromium } from 'playwright';
 
 const baseUrl = process.env.GG_RUNTIME_URL ?? 'http://localhost:3002';
+const testedSha = process.env.GG_TESTED_SHA ?? 'UNSPECIFIED';
 const outputDir = path.resolve(process.env.GG_EVIDENCE_DIR
-  ?? 'docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_012_REV1/campaign_runtime');
+  ?? 'docs/evidence/campaign-continuity');
 mkdirSync(outputDir, { recursive: true });
 
 function assert(value, message) {
@@ -12,6 +13,7 @@ function assert(value, message) {
 }
 
 async function start(page) {
+  await page.bringToFront();
   await page.goto(`${baseUrl}/play?qa=hostile`, { waitUntil: 'networkidle' });
   await page.waitForSelector('canvas');
   await page.waitForFunction(() => window.__GALACTIC_GUNNERS_MENU_QA__?.scene === 'MainMenuScene');
@@ -49,7 +51,16 @@ const networkFailures = [];
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, hasTouch: true, isMobile: true });
   page.on('console', (message) => { if (message.type() === 'error') consoleErrors.push(message.text()); });
-  page.on('response', (response) => { if (response.status() >= 400) networkFailures.push(`${response.status()} ${response.url()}`); });
+  page.on('response', async (response) => {
+    if (response.status() < 400) return;
+    let body = '';
+    try {
+      body = await response.text();
+    } catch {
+      body = '<response body unavailable>';
+    }
+    networkFailures.push(`${response.status()} ${response.url()} ${body}`);
+  });
   page.on('requestfailed', (request) => networkFailures.push(`FAILED ${request.url()}`));
 
   await start(page);
@@ -76,6 +87,9 @@ try {
       const value = window.__GALACTIC_GUNNERS_HOSTILE__?.state();
       return value?.terminalState === null && value?.campaign?.sequence === nextSequence;
     }, sequence + 1);
+    if (sequence + 1 >= 3) {
+      await page.screenshot({ path: path.join(outputDir, `level-${sequence + 1}-running.png`), fullPage: true });
+    }
     progression.push(sequence + 1);
   }
   const final = await forceComplete(page);
@@ -99,6 +113,8 @@ try {
 
   const result = {
     url: baseUrl,
+    tested_sha: testedSha,
+    generated_at: new Date().toISOString(),
     progression,
     level_1_complete_panel: true,
     touch_continue_to_level_2: true,
@@ -109,12 +125,13 @@ try {
     game_over_try_again: true,
     game_over_menu: true,
     dynamic_runtime_values: true,
+    result: 'PASS',
     keyboard_confirm_contract: 'InputSystem maps Enter/Space and gamepad A/Start to confirm; existing game tests cover normalization.',
     console_errors: consoleErrors,
     network_failures: networkFailures,
   };
-  assert(consoleErrors.length === 0, `Console errors: ${consoleErrors.join('; ')}`);
   assert(networkFailures.length === 0, `Network failures: ${networkFailures.join('; ')}`);
+  assert(consoleErrors.length === 0, `Console errors: ${consoleErrors.join('; ')}`);
   writeFileSync(path.join(outputDir, 'campaign-progression-verification.json'), `${JSON.stringify(result, null, 2)}\n`);
   console.log(JSON.stringify(result, null, 2));
 } finally {

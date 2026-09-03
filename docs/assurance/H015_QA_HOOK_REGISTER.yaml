@@ -1,0 +1,29 @@
+schema_version: "1.0"
+policy: docs/assurance/H015_TEST_LEVEL_POLICY.md
+hooks:
+  - name: __GALACTIC_GUNNERS_HOSTILE__
+    location: game/src/scenes/Level1Scene.ts
+    mode: qa-diagnostic
+    prohibited_for: [E2E_ORDINARY_USER, closure]
+    capabilities:
+      [state-inspection, force-complete, force-fail, direct-hazard-fire]
+  - name: __GALACTIC_GUNNERS_SLICE_QA__
+    location: game/src/scenes/Level1Scene.ts
+    mode: qa-diagnostic
+    prohibited_for: [E2E_ORDINARY_USER, closure]
+    capabilities: [state-inspection]
+  - name: __GALACTIC_GUNNERS_BOARDING_QA__
+    location: game/src/scenes/BoardingScene.ts
+    mode: qa-diagnostic
+    prohibited_for: [E2E_ORDINARY_USER, closure]
+    capabilities: [state-inspection]
+  - name: __GALACTIC_GUNNERS_MENU_QA__
+    location: game/src/scenes/MainMenuScene.ts
+    mode: qa-diagnostic
+    prohibited_for: [E2E_ORDINARY_USER, closure]
+    capabilities: [state-inspection]
+  - name: __GALACTIC_GUNNERS_PAUSE_QA__
+    location: game/src/scenes/PauseScene.ts
+    mode: qa-diagnostic
+    prohibited_for: [E2E_ORDINARY_USER, closure]
+    capabilities: [state-inspection]

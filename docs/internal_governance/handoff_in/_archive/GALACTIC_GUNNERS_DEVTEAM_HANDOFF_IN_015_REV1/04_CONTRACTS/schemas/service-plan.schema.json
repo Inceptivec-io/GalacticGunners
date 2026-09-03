@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://galacticgunners.com/contracts/v1/service-plan.schema.json",
+  "title": "Galactic Gunners Service Plan",
+  "$defs": {
+    "PlanCode": {"enum": ["SPACE_CADET", "STAR_GUNNER", "FLEET_COMMANDER", "GALACTIC_LEGEND"]},
+    "PlanLimits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["active_map_limit"],
+      "properties": {
+        "active_map_limit": {"type": "integer", "minimum": 1, "maximum": 100000},
+        "member_limit": {"type": ["integer", "null"], "minimum": 1, "maximum": 100000},
+        "private_campaign_limit": {"type": ["integer", "null"], "minimum": 1, "maximum": 100000},
+        "storage_bytes": {"type": ["integer", "null"], "minimum": 0}
+      }
+    },
+    "CapabilityState": {"enum": ["ACTIVE", "RESERVED", "DISABLED"]},
+    "PlanCapabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["custom_maps", "dual_player", "connected_apps", "public_sharing"],
+      "properties": {
+        "custom_maps": {"const": "ACTIVE"},
+        "dual_player": {"const": "RESERVED"},
+        "connected_apps": {"$ref": "#/$defs/CapabilityState"},
+        "public_sharing": {"const": "RESERVED"}
+      }
+    },
+    "ServicePlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "display_name", "status", "sort_order", "limits", "capabilities"],
+      "properties": {
+        "code": {"$ref": "#/$defs/PlanCode"},
+        "display_name": {"type": "string", "minLength": 1, "maxLength": 64},
+        "status": {"enum": ["DRAFT", "ACTIVE", "RETIRED"]},
+        "sort_order": {"type": "integer", "minimum": 0, "maximum": 1000},
+        "limits": {"$ref": "#/$defs/PlanLimits"},
+        "capabilities": {"$ref": "#/$defs/PlanCapabilities"}
+      }
+    },
+    "OrganizationPlanAssignment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "organization_id", "plan_code", "status", "plan_snapshot", "starts_at"],
+      "properties": {
+        "id": {"type": "string", "format": "uuid"},
+        "organization_id": {"type": "string", "format": "uuid"},
+        "plan_code": {"$ref": "#/$defs/PlanCode"},
+        "status": {"enum": ["ACTIVE", "SUSPENDED", "ENDED"]},
+        "plan_snapshot": {"$ref": "#/$defs/ServicePlan"},
+        "starts_at": {"type": "string", "format": "date-time"},
+        "ends_at": {"type": ["string", "null"], "format": "date-time"}
+      }
+    }
+  },
+  "oneOf": [
+    {"$ref": "#/$defs/ServicePlan"},
+    {"$ref": "#/$defs/OrganizationPlanAssignment"}
+  ]
+}
+

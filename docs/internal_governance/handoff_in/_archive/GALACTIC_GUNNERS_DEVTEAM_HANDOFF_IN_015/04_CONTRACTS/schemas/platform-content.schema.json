@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://galacticgunners.com/contracts/v1/platform-content.schema.json",
+  "title": "Galactic Gunners Platform Content Contracts",
+  "$defs": {
+    "UUID": { "type": "string", "format": "uuid" },
+    "Hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "Slug": { "type": "string", "minLength": 3, "maxLength": 64, "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "OwnerScope": { "enum": ["CORE", "ORGANIZATION", "USER"] },
+    "Visibility": { "enum": ["PRIVATE", "ORGANIZATION", "UNLISTED", "PUBLIC"] },
+    "Lifecycle": { "enum": ["DRAFT", "VALIDATED", "PUBLISHED", "SUPERSEDED", "ARCHIVED"] },
+    "Ownership": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["scope"],
+          "properties": { "scope": { "const": "CORE" } }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["scope", "organization_id"],
+          "properties": {
+            "scope": { "const": "ORGANIZATION" },
+            "organization_id": { "$ref": "#/$defs/UUID" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["scope", "user_id"],
+          "properties": {
+            "scope": { "const": "USER" },
+            "user_id": { "$ref": "#/$defs/UUID" }
+          }
+        }
+      ]
+    },
+    "GameProject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "slug", "name", "ownership", "visibility", "status"],
+      "properties": {
+        "id": { "$ref": "#/$defs/UUID" },
+        "slug": { "$ref": "#/$defs/Slug" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "ownership": { "$ref": "#/$defs/Ownership" },
+        "visibility": { "$ref": "#/$defs/Visibility" },
+        "status": { "enum": ["ACTIVE", "ARCHIVED"] },
+        "base_release_id": { "oneOf": [{ "$ref": "#/$defs/UUID" }, { "type": "null" }] }
+      }
+    },
+    "VersionRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "slug", "version", "checksum"],
+      "properties": {
+        "id": { "$ref": "#/$defs/UUID" },
+        "slug": { "$ref": "#/$defs/Slug" },
+        "version": { "type": "integer", "minimum": 1 },
+        "checksum": { "$ref": "#/$defs/Hash" }
+      }
+    },
+    "GameReleaseManifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "levels", "interiors", "asset_manifest_checksum"],
+      "properties": {
+        "schema_version": { "const": "1.0" },
+        "levels": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 256,
+          "items": { "$ref": "#/$defs/VersionRef" }
+        },
+        "interiors": {
+          "type": "array",
+          "maxItems": 256,
+          "items": { "$ref": "#/$defs/VersionRef" }
+        },
+        "asset_manifest_checksum": { "$ref": "#/$defs/Hash" }
+      }
+    },
+    "Placement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "object_type", "asset_id", "x", "y", "layer", "properties"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 96, "pattern": "^[a-z][a-z0-9-]*$" },
+        "object_type": { "enum": ["PLAYER", "ENEMY", "FORMATION", "BUNKER", "SHIELD", "HAZARD", "PICKUP", "OBJECTIVE", "BOARDING_ANCHOR", "TILE", "PLATFORM", "DOOR", "CONTAINER", "EFFECT"] },
+        "asset_id": { "$ref": "#/$defs/UUID" },
+        "x": { "type": "number", "minimum": 0, "maximum": 4096 },
+        "y": { "type": "number", "minimum": 0, "maximum": 4096 },
+        "rotation": { "type": "number", "minimum": -360, "maximum": 360, "default": 0 },
+        "scale_x": { "type": "number", "exclusiveMinimum": 0, "maximum": 8, "default": 1 },
+        "scale_y": { "type": "number", "exclusiveMinimum": 0, "maximum": 8, "default": 1 },
+        "layer": { "type": "integer", "minimum": 0, "maximum": 64 },
+        "properties": { "type": "object", "maxProperties": 32 }
+      }
+    }
+  },
+  "oneOf": [
+    { "$ref": "#/$defs/GameProject" },
+    { "$ref": "#/$defs/GameReleaseManifest" },
+    { "$ref": "#/$defs/Placement" }
+  ]
+}
+

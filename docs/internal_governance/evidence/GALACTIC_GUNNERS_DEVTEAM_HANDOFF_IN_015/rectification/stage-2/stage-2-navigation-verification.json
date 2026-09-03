@@ -1,0 +1,15 @@
+{
+  "tested_sha": "c8ce0d8",
+  "base_url": "http://localhost:3002",
+  "generated_at": "2026-08-29T09:23:02.752Z",
+  "splash_two_seconds": true,
+  "splash_focus_restored": true,
+  "pause_freezes_gameplay": true,
+  "pause_touch_resume": true,
+  "pause_keyboard_resume": true,
+  "pause_main_menu_navigation": true,
+  "splash_not_repeated_on_internal_navigation": true,
+  "console_errors": [],
+  "network_failures": [],
+  "result": "PASS"
+}

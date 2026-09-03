@@ -1,0 +1,15 @@
+{
+  "tested_sha": "UNSPECIFIED",
+  "base_url": "http://localhost:3004",
+  "generated_at": "2026-09-02T15:14:27.694Z",
+  "level_4_reached": true,
+  "boarding_offer_to_active": true,
+  "server_authoritative_run": true,
+  "touch_controls_visible_and_fire": true,
+  "boarding_collision_envelopes": true,
+  "boarding_pause_resume": true,
+  "abort_returns_to_level_4_shooter": true,
+  "console_errors": [],
+  "network_failures": [],
+  "result": "PASS"
+}

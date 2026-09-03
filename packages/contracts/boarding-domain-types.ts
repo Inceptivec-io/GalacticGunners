@@ -11,7 +11,7 @@ export type PickupType = 'LIFE' | 'NUKE';
 export type DropType = PickupType | 'EMPTY';
 export type InputAction = 'JUMP' | 'FIRE' | 'INTERACT';
 
-export interface Resources { lives: 0 | 1 | 2 | 3; nukes: 0 | 1 | 2; }
+export interface Resources { lives: 0 | 1 | 2 | 3; nukes: number; }
 export interface SourceSelector { formation_index: 0; row: 0; column: 14; }
 export interface BoardingAnchor {
   id: 'level-04-alien-frigate-01';
@@ -113,7 +113,7 @@ export interface InteriorDefinition {
   enemies: readonly InteriorEnemy[];
   containers: readonly InteriorContainer[];
   hazards: readonly InteriorRect[];
-  pickups: { allowed_types: readonly ['LIFE', 'NUKE']; lives_cap: 3; nukes_cap: 2 };
+  pickups: { allowed_types: readonly ['LIFE', 'NUKE']; lives_cap: 3; nukes_cap?: number };
   assets: Record<'backgrounds' | 'tilekit' | 'props' | 'characters' | 'projectiles' | 'effects' | 'ui' | 'audio', readonly string[]>;
 }
 export interface InteriorPoint { id: string; room_id: string; x_px: number; y_px: number; }

@@ -10,6 +10,10 @@ const required = [
   'apps/web/public/gg-runtime-assets/boarding/boarding/backgrounds/gg_boarding_bg_corridor_v001.png',
   'apps/web/public/gg-runtime-assets/boarding/characters/player_001_v001.png',
   'apps/web/public/gg-runtime-assets/boarding/characters/alien_001_v001.png',
+  'apps/web/public/gg-runtime-assets/boarding/boarding/transit/gg_boarding_door_airlock_v001.png',
+  'apps/web/public/gg-runtime-assets/boarding/boarding/transit/gg_boarding_door_airlock_open_v001.png',
+  'apps/web/public/gg-runtime-assets/boarding/boarding/effects/gg_boarding_fx_muzzle_flash_v001.png',
+  'apps/web/public/gg-runtime-assets/boarding/boarding/effects/gg_boarding_fx_explosion_v001.png',
 ];
 const missing = required.filter((file) => !existsSync(file));
 if (missing.length) throw new Error(`Boarding runtime missing: ${missing.join(', ')}`);

@@ -7,11 +7,11 @@
     "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "resources": {
       "type": "object", "additionalProperties": false, "required": ["lives", "nukes"],
-      "properties": {"lives": {"type": "integer", "minimum": 0, "maximum": 3}, "nukes": {"type": "integer", "minimum": 0, "maximum": 2}}
+      "properties": {"lives": {"type": "integer", "minimum": 0, "maximum": 3}, "nukes": {"type": "integer", "minimum": 0}}
     },
     "resourcesStart": {
       "type": "object", "additionalProperties": false, "required": ["lives", "nukes"],
-      "properties": {"lives": {"type": "integer", "minimum": 1, "maximum": 3}, "nukes": {"type": "integer", "minimum": 0, "maximum": 2}}
+      "properties": {"lives": {"type": "integer", "minimum": 1, "maximum": 3}, "nukes": {"type": "integer", "minimum": 0}}
     },
     "event": {
       "type": "object", "additionalProperties": false, "required": ["sequence", "at_ms", "type", "entity_id"],

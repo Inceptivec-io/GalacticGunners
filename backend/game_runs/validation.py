@@ -49,14 +49,25 @@ def validate_completion(run, payload):
         elif version.checksum != run.level_checksum:
             codes.append('LEVEL_CHECKSUM_MISMATCH')
         else:
-            possible_scouts = sum(item.get('rows', 0) * item.get('columns', 0) for item in version.config.get('enemy_formations', []))
-            if counts['scout_kills'] > possible_scouts:
+            if version.config.get('schema_version') == '1.1':
+                entities = [entity for entity in version.config.get('entities', []) if entity.get('enabled')]
+                possible_scouts = sum(1 for entity in entities if entity.get('entity_type') == 'SCOUT')
+                possible_ships = sum(1 for entity in entities if entity.get('entity_type') in {'CRUISER', 'DESTROYER'})
+                possible_motherships = sum(1 for entity in entities if entity.get('entity_type') == 'MOTHERSHIP')
+            else:
+                possible_scouts = sum(item.get('rows', 0) * item.get('columns', 0) for item in version.config.get('enemy_formations', []))
+                possible_ships = sum(item.get('rows', 0) * item.get('columns', 0) for item in version.config.get('enemy_formations', []) if item.get('type') in {'cruiser', 'destroyer'})
+                possible_motherships = sum(item.get('rows', 0) * item.get('columns', 0) for item in version.config.get('enemy_formations', []) if item.get('type') == 'mothership')
+            if counts['scout_kills'] > possible_scouts or counts['ship_kills'] > possible_ships or counts['mothership_kills'] > possible_motherships:
                 codes.append('IMPOSSIBLE_EVENT_COUNT')
     nuke_uses = summary.get('nuke_uses', 0)
     nuke_pickups = summary.get('nuke_pickups', 0)
     if not isinstance(nuke_uses, int) or not isinstance(nuke_pickups, int) or nuke_uses < 0 or nuke_pickups < 0 or nuke_uses > run.nukes_start + nuke_pickups:
         codes.append('NUKE_STATE_INVALID')
-    if payload['lives_end'] > run.lives_start:
+    life_pickups = summary.get('life_pickups', 0)
+    if not isinstance(life_pickups, int) or life_pickups < 0:
+        codes.append('LIFE_STATE_INVALID')
+    elif payload['lives_end'] > run.lives_start + life_pickups:
         codes.append('LIFE_STATE_INVALID')
     completed = summary.get('levels_completed', [])
     if not isinstance(completed, list) or completed != list(range(1, len(completed) + 1)):

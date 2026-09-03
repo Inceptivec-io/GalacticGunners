@@ -1,0 +1,582 @@
+openapi: 3.1.0
+info:
+  title: Galactic Gunners H015 API
+  version: 1.1.0
+  description: >-
+    Required v1 API additions/reconciliations for identity, protected platform
+    administration, organisations, content, assets, campaigns, validated claims,
+    leaderboard and Boarding. Unknown mutation fields are rejected.
+servers:
+  - url: /api/v1
+security:
+  - sessionCookie: []
+paths:
+  /auth/csrf/:
+    get:
+      security: []
+      operationId: bootstrapCsrf
+      responses:
+        '204': {description: CSRF cookie issued or refreshed}
+  /auth/register/:
+    post:
+      security: []
+      operationId: register
+      requestBody:
+        required: true
+        content:
+          application/json: {schema: {$ref: '#/components/schemas/RegisterRequest'}}
+      responses:
+        '201': {description: Account and session created, content: {application/json: {schema: {$ref: '#/components/schemas/SessionResponse'}}}}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '429': {$ref: '#/components/responses/TooManyRequests'}
+  /auth/login/:
+    post:
+      security: []
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json: {schema: {$ref: '#/components/schemas/LoginRequest'}}
+      responses:
+        '200': {description: Session established, content: {application/json: {schema: {$ref: '#/components/schemas/SessionResponse'}}}}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '429': {$ref: '#/components/responses/TooManyRequests'}
+  /auth/logout/:
+    post:
+      operationId: logout
+      responses:
+        '204': {description: Session terminated}
+        '403': {$ref: '#/components/responses/Forbidden'}
+  /auth/me/:
+    get:
+      operationId: getSession
+      responses:
+        '200': {description: Current authenticated user, content: {application/json: {schema: {$ref: '#/components/schemas/SessionResponse'}}}}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+
+  /game-projects/:
+    get:
+      security: []
+      operationId: listAvailableGameProjects
+      parameters: [{$ref: '#/components/parameters/Limit'}, {$ref: '#/components/parameters/Cursor'}]
+      responses:
+        '200': {description: Published public and caller-authorised projects, content: {application/json: {schema: {$ref: '#/components/schemas/PagedGameProjects'}}}}
+    post:
+      operationId: createGameProject
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/GameProjectCreate'}}}
+      responses:
+        '201': {description: Project created, content: {application/json: {schema: {$ref: '#/components/schemas/GameProject'}}}}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '409': {$ref: '#/components/responses/Conflict'}
+  /game-projects/{project_id}/:
+    get:
+      operationId: getGameProject
+      parameters: [{$ref: '#/components/parameters/ProjectId'}]
+      responses:
+        '200': {description: Authorised project, content: {application/json: {schema: {$ref: '#/components/schemas/GameProject'}}}}
+        '404': {$ref: '#/components/responses/NotFound'}
+  /game-projects/{project_id}/releases/:
+    get:
+      operationId: listGameReleases
+      parameters: [{$ref: '#/components/parameters/ProjectId'}]
+      responses:
+        '200': {description: Authorised releases}
+    post:
+      operationId: createGameReleaseDraft
+      parameters: [{$ref: '#/components/parameters/ProjectId'}]
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/GameReleaseCreate'}}}
+      responses:
+        '201': {description: Draft release created}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+  /game-projects/{project_id}/releases/active/:
+    get:
+      security: []
+      operationId: getActiveGameRelease
+      parameters: [{$ref: '#/components/parameters/ProjectId'}]
+      responses:
+        '200': {description: Active published release manifest and exact content references}
+        '404': {$ref: '#/components/responses/NotFound'}
+  /game-projects/{project_id}/levels/:
+    get:
+      security: []
+      operationId: listPublishedProjectLevels
+      parameters: [{$ref: '#/components/parameters/ProjectId'}]
+      responses:
+        '200': {description: Public/caller-authorised active published level catalogue}
+        '404': {$ref: '#/components/responses/NotFound'}
+
+  /assets/:
+    get:
+      operationId: listAvailableAssets
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - {name: category, in: query, schema: {type: string}}
+        - {name: q, in: query, schema: {type: string, maxLength: 80}}
+        - {name: project_id, in: query, schema: {type: string, format: uuid}}
+      responses:
+        '200': {description: Core and caller-authorised asset records, content: {application/json: {schema: {$ref: '#/components/schemas/PagedAssets'}}}}
+
+  /campaign-runs/:
+    post:
+      security: []
+      operationId: startCampaign
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/CampaignStartRequest'}}}
+      responses:
+        '201':
+          description: Campaign created. Anonymous response includes one claim capability.
+          headers: {Cache-Control: {$ref: '#/components/headers/NoStore'}}
+          content: {application/json: {schema: {$ref: '#/components/schemas/CampaignStartResponse'}}}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '429': {$ref: '#/components/responses/TooManyRequests'}
+  /campaign-runs/{campaign_id}/:
+    get:
+      security:
+        - sessionCookie: []
+        - campaignToken: []
+      operationId: getCampaign
+      parameters: [{$ref: '#/components/parameters/CampaignId'}, {$ref: '#/components/parameters/CampaignToken'}]
+      responses:
+        '200': {description: Owned/capability-authorised campaign, content: {application/json: {schema: {$ref: '#/components/schemas/CampaignRun'}}}}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+  /campaign-runs/{campaign_id}/attempts/:
+    post:
+      security:
+        - sessionCookie: []
+        - campaignToken: []
+      operationId: startLevelAttempt
+      parameters: [{$ref: '#/components/parameters/CampaignId'}, {$ref: '#/components/parameters/CampaignToken'}, {$ref: '#/components/parameters/IdempotencyKey'}]
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/LevelAttemptStartRequest'}}}
+      responses:
+        '201': {description: Exact level attempt and entry checkpoint, content: {application/json: {schema: {$ref: '#/components/schemas/LevelAttemptStartResponse'}}}}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '409': {$ref: '#/components/responses/Conflict'}
+  /game-runs/{run_id}/complete/:
+    post:
+      security:
+        - sessionCookie: []
+        - campaignToken: []
+      operationId: completeLevelAttempt
+      parameters: [{$ref: '#/components/parameters/RunId'}, {$ref: '#/components/parameters/CampaignToken'}, {$ref: '#/components/parameters/IdempotencyKey'}]
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/LevelCompletionRequest'}}}
+      responses:
+        '200': {description: Server-derived completion/checkpoint, content: {application/json: {schema: {$ref: '#/components/schemas/LevelCompletionResponse'}}}}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+  /campaign-runs/mine/:
+    get:
+      operationId: listMyCampaigns
+      parameters: [{$ref: '#/components/parameters/Limit'}, {$ref: '#/components/parameters/Cursor'}]
+      responses:
+        '200': {description: Authenticated player's resumable and historical campaigns}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+  /campaign-runs/{campaign_id}/claim/:
+    post:
+      operationId: claimCampaign
+      parameters: [{$ref: '#/components/parameters/CampaignId'}, {$ref: '#/components/parameters/IdempotencyKey'}]
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/ClaimRequest'}}}
+      responses:
+        '200': {description: Campaign assigned and eligible result published exactly once, content: {application/json: {schema: {$ref: '#/components/schemas/ClaimResponse'}}}}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+
+  /leaderboard/:
+    get:
+      security: []
+      operationId: listLeaderboard
+      parameters: [{$ref: '#/components/parameters/Limit'}, {$ref: '#/components/parameters/Cursor'}]
+      responses:
+        '200': {description: Deterministically ordered visible player bests}
+  /leaderboard/top-ten/:
+    get:
+      security: []
+      operationId: topTenLeaderboard
+      responses:
+        '200': {description: Ten highest eligible visible player bests}
+  /leaderboard/me/:
+    get:
+      operationId: getMyLeaderboardPosition
+      responses:
+        '200': {description: Authenticated player rank and best}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+  /player/profile/:
+    get:
+      operationId: getPlayerProfile
+      responses:
+        '200': {description: Authenticated public profile and leaderboard preference}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+    patch:
+      operationId: updatePlayerProfile
+      responses:
+        '200': {description: Validated profile update}
+        '409': {$ref: '#/components/responses/Conflict'}
+
+  /admin/organizations/:
+    get:
+      operationId: adminListOrganizations
+      responses:
+        '200': {description: Platform-authorised organisation list}
+        '403': {$ref: '#/components/responses/Forbidden'}
+    post:
+      operationId: adminCreateOrganization
+      responses:
+        '201': {description: Organisation created}
+        '403': {$ref: '#/components/responses/Forbidden'}
+  /admin/organizations/{organization_id}/memberships/:
+    get:
+      operationId: listOrganizationMemberships
+      parameters: [{$ref: '#/components/parameters/OrganizationId'}]
+      responses:
+        '200': {description: Scoped membership list}
+        '404': {$ref: '#/components/responses/NotFound'}
+    post:
+      operationId: createOrganizationMembership
+      parameters: [{$ref: '#/components/parameters/OrganizationId'}]
+      responses:
+        '201': {description: Membership created and audited}
+        '403': {$ref: '#/components/responses/Forbidden'}
+  /admin/organizations/{organization_id}/entitlements/:
+    get:
+      operationId: listOrganizationEntitlements
+      parameters: [{$ref: '#/components/parameters/OrganizationId'}]
+      responses:
+        '200': {description: Owner-authorised entitlement list}
+        '403': {$ref: '#/components/responses/Forbidden'}
+    post:
+      operationId: grantOrganizationEntitlement
+      parameters: [{$ref: '#/components/parameters/OrganizationId'}]
+      responses:
+        '201': {description: Entitlement granted and audited}
+        '403': {$ref: '#/components/responses/Forbidden'}
+  /admin/users/:
+    get:
+      operationId: adminListUsers
+      parameters: [{$ref: '#/components/parameters/Limit'}, {$ref: '#/components/parameters/Cursor'}]
+      responses:
+        '200': {description: Permission-filtered user list without password/secrets}
+        '403': {$ref: '#/components/responses/Forbidden'}
+  /admin/audit-events/:
+    get:
+      operationId: adminListAuditEvents
+      parameters: [{$ref: '#/components/parameters/Limit'}, {$ref: '#/components/parameters/Cursor'}]
+      responses:
+        '200': {description: Permission/scoped append-only audit feed}
+        '403': {$ref: '#/components/responses/Forbidden'}
+
+  /admin/game-projects/{project_id}/levels/:
+    get:
+      operationId: adminListProjectLevels
+      parameters: [{$ref: '#/components/parameters/ProjectId'}]
+      responses:
+        '200': {description: Authorised level catalogue including drafts/versions}
+        '404': {$ref: '#/components/responses/NotFound'}
+    post:
+      operationId: adminCreateLevelDraft
+      parameters: [{$ref: '#/components/parameters/ProjectId'}]
+      responses:
+        '201': {description: Draft created}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+  /admin/game-projects/{project_id}/interiors/:
+    get:
+      operationId: adminListProjectInteriors
+      parameters: [{$ref: '#/components/parameters/ProjectId'}]
+      responses:
+        '200': {description: Authorised Boarding interior catalogue including drafts/versions}
+        '404': {$ref: '#/components/responses/NotFound'}
+    post:
+      operationId: adminCreateInteriorDraft
+      parameters: [{$ref: '#/components/parameters/ProjectId'}]
+      responses:
+        '201': {description: Boarding interior draft created}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+  /admin/levels/{level_id}/versions/{version}/{action}/:
+    post:
+      operationId: transitionLevelVersion
+      parameters:
+        - $ref: '#/components/parameters/LevelId'
+        - {name: version, in: path, required: true, schema: {type: integer, minimum: 1}}
+        - {name: action, in: path, required: true, schema: {enum: [validate, publish, rollback, archive]}}
+      responses:
+        '200': {description: Lifecycle transition completed and audited}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+  /admin/interiors/{interior_id}/versions/{version}/{action}/:
+    post:
+      operationId: transitionInteriorVersion
+      parameters:
+        - {name: interior_id, in: path, required: true, schema: {type: string, format: uuid}}
+        - {name: version, in: path, required: true, schema: {type: integer, minimum: 1}}
+        - {name: action, in: path, required: true, schema: {enum: [validate, publish, rollback, archive]}}
+      responses:
+        '200': {description: Interior lifecycle transition completed and audited}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+
+  /game-runs/{game_run_id}/boarding-runs/start/:
+    post:
+      security:
+        - sessionCookie: []
+        - campaignToken: []
+      operationId: startBoardingRun
+      parameters: [{$ref: '#/components/parameters/RunId'}, {$ref: '#/components/parameters/CampaignToken'}, {$ref: '#/components/parameters/IdempotencyKey'}]
+      responses:
+        '201': {description: Exact authorised Boarding run/interior/capability}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+  /boarding-runs/{boarding_run_id}/complete/:
+    post:
+      security:
+        - sessionCookie: []
+        - boardingToken: []
+      operationId: completeBoardingRun
+      parameters:
+        - {name: boarding_run_id, in: path, required: true, schema: {type: string, format: uuid}}
+        - {name: X-Boarding-Token, in: header, required: false, schema: {type: string, minLength: 43, maxLength: 128}}
+        - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '200': {description: Server-replayed terminal result and exact return state}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+
+components:
+  securitySchemes:
+    sessionCookie: {type: apiKey, in: cookie, name: sessionid}
+    campaignToken: {type: apiKey, in: header, name: X-Campaign-Token}
+    boardingToken: {type: apiKey, in: header, name: X-Boarding-Token}
+  headers:
+    NoStore: {schema: {type: string, const: no-store}}
+  parameters:
+    Limit: {name: limit, in: query, required: false, schema: {type: integer, minimum: 1, maximum: 100, default: 20}}
+    Cursor: {name: cursor, in: query, required: false, schema: {type: string, maxLength: 256}}
+    ProjectId: {name: project_id, in: path, required: true, schema: {type: string, format: uuid}}
+    OrganizationId: {name: organization_id, in: path, required: true, schema: {type: string, format: uuid}}
+    CampaignId: {name: campaign_id, in: path, required: true, schema: {type: string, format: uuid}}
+    RunId: {name: run_id, in: path, required: true, schema: {type: string, format: uuid}}
+    LevelId: {name: level_id, in: path, required: true, schema: {type: string, format: uuid}}
+    CampaignToken: {name: X-Campaign-Token, in: header, required: false, schema: {type: string, minLength: 43, maxLength: 128}}
+    IdempotencyKey: {name: Idempotency-Key, in: header, required: true, schema: {type: string, minLength: 1, maxLength: 128, pattern: '^[A-Za-z0-9._:-]+$'}}
+  schemas:
+    RegisterRequest:
+      type: object
+      additionalProperties: false
+      required: [username, display_name, password]
+      properties:
+        username: {type: string, minLength: 3, maxLength: 30, pattern: '^[A-Za-z0-9][A-Za-z0-9_-]{2,29}$'}
+        display_name: {type: string, minLength: 3, maxLength: 20}
+        password: {type: string, minLength: 12, maxLength: 128}
+        campaign_claim_token: {type: string, minLength: 43, maxLength: 128}
+    LoginRequest:
+      type: object
+      additionalProperties: false
+      required: [username, password]
+      properties:
+        username: {type: string, minLength: 3, maxLength: 30}
+        password: {type: string, minLength: 1, maxLength: 128}
+        campaign_claim_token: {type: string, minLength: 43, maxLength: 128}
+    SessionResponse:
+      type: object
+      additionalProperties: false
+      required: [authenticated, user]
+      properties:
+        authenticated: {const: true}
+        user:
+          type: object
+          additionalProperties: false
+          required: [id, username, display_name, platform_permissions, memberships]
+          properties:
+            id: {type: string, format: uuid}
+            username: {type: string}
+            display_name: {type: string}
+            platform_permissions: {type: array, uniqueItems: true, items: {type: string}}
+            memberships: {type: array, items: {type: object}}
+        claim_result: {enum: [CLAIMED, NOT_REQUESTED]}
+    GameProject:
+      type: object
+      additionalProperties: false
+      required: [id, slug, name, owner_scope, visibility, status]
+      properties:
+        id: {type: string, format: uuid}
+        slug: {type: string}
+        name: {type: string}
+        owner_scope: {enum: [CORE, ORGANIZATION, USER]}
+        organization_id: {type: [string, 'null'], format: uuid}
+        owner_user_id: {type: [string, 'null'], format: uuid}
+        visibility: {enum: [PRIVATE, ORGANIZATION, UNLISTED, PUBLIC]}
+        status: {enum: [ACTIVE, ARCHIVED]}
+        base_release_id: {type: [string, 'null'], format: uuid}
+    GameProjectCreate:
+      type: object
+      additionalProperties: false
+      required: [slug, name, owner_scope, visibility]
+      properties:
+        slug: {type: string, minLength: 3, maxLength: 64}
+        name: {type: string, minLength: 1, maxLength: 128}
+        owner_scope: {enum: [ORGANIZATION, USER]}
+        organization_id: {type: string, format: uuid}
+        visibility: {enum: [PRIVATE, ORGANIZATION, UNLISTED, PUBLIC]}
+        base_release_id: {type: string, format: uuid}
+    GameReleaseCreate:
+      type: object
+      additionalProperties: false
+      required: [version, manifest]
+      properties:
+        version: {type: string, minLength: 1, maxLength: 32}
+        manifest: {type: object}
+    Asset:
+      type: object
+      additionalProperties: false
+      required: [id, key, category, runtime_path, thumbnail_path, checksum]
+      properties:
+        id: {type: string, format: uuid}
+        key: {type: string}
+        category: {type: string}
+        runtime_path: {type: string}
+        thumbnail_path: {type: string}
+        checksum: {type: string, pattern: '^[0-9a-f]{64}$'}
+        width: {type: integer, minimum: 1}
+        height: {type: integer, minimum: 1}
+    CampaignStartRequest:
+      type: object
+      additionalProperties: false
+      required: [game_project_slug, client_type]
+      properties:
+        game_project_slug: {type: string, const: galactic-gunners-final-assault}
+        client_type: {enum: [web, windows, macos, android, ios, unknown]}
+    CampaignRun:
+      type: object
+      additionalProperties: false
+      required: [id, game_release_id, status, next_sequence, score, lives, nukes, ranked]
+      properties:
+        id: {type: string, format: uuid}
+        game_release_id: {type: string, format: uuid}
+        status: {enum: [ACTIVE, COMPLETED, FAILED, ABANDONED, REJECTED]}
+        next_sequence: {type: integer, minimum: 1, maximum: 7}
+        score: {type: integer, minimum: 0}
+        lives: {type: integer, minimum: 0, maximum: 3}
+        nukes: {type: integer, minimum: 0, maximum: 2}
+        ranked: {type: boolean}
+    CampaignStartResponse:
+      type: object
+      additionalProperties: false
+      required: [campaign, level]
+      properties:
+        campaign: {$ref: '#/components/schemas/CampaignRun'}
+        campaign_token: {type: string, minLength: 43, maxLength: 128}
+        level: {type: object}
+    LevelAttemptStartRequest:
+      type: object
+      additionalProperties: false
+      required: [sequence, mode]
+      properties:
+        sequence: {type: integer, minimum: 1, maximum: 6}
+        mode: {enum: [CONTINUE, REPLAY_LEVEL]}
+    LevelAttemptStartResponse:
+      type: object
+      additionalProperties: false
+      required: [run_id, campaign_id, sequence, attempt, seed, level, entry]
+      properties:
+        run_id: {type: string, format: uuid}
+        campaign_id: {type: string, format: uuid}
+        sequence: {type: integer, minimum: 1, maximum: 6}
+        attempt: {type: integer, minimum: 1}
+        seed: {type: integer, minimum: 0, maximum: 4294967295}
+        level: {type: object}
+        entry: {type: object}
+    LevelCompletionRequest:
+      type: object
+      additionalProperties: false
+      required: [duration_ms, outcome, event_summary, event_trace, entry_state_digest]
+      properties:
+        duration_ms: {type: integer, minimum: 0, maximum: 7200000}
+        outcome: {enum: [LEVEL_COMPLETE, PLAYER_DEAD, ABORTED]}
+        event_summary: {type: object}
+        event_trace: {type: array, maxItems: 20000, items: {type: object}}
+        entry_state_digest: {type: string, pattern: '^[0-9a-f]{64}$'}
+    LevelCompletionResponse:
+      type: object
+      additionalProperties: false
+      required: [run_id, validation_state, level_score, campaign_score, lives, nukes, level_completed, next_sequence, next_action, ranked, rejection_codes]
+      properties:
+        run_id: {type: string, format: uuid}
+        validation_state: {enum: [VALIDATED, REJECTED]}
+        level_score: {type: [integer, 'null'], minimum: 0}
+        campaign_score: {type: integer, minimum: 0}
+        lives: {type: integer, minimum: 0, maximum: 3}
+        nukes: {type: integer, minimum: 0, maximum: 2}
+        level_completed: {type: integer, minimum: 1, maximum: 6}
+        next_sequence: {type: integer, minimum: 1, maximum: 7}
+        next_action: {enum: [CONTINUE, CAMPAIGN_COMPLETE, GAME_OVER, REJECTED]}
+        ranked: {type: boolean}
+        rejection_codes: {type: array, items: {type: string}}
+    ClaimRequest:
+      type: object
+      additionalProperties: false
+      required: [campaign_claim_token]
+      properties: {campaign_claim_token: {type: string, minLength: 43, maxLength: 128}}
+    ClaimResponse:
+      type: object
+      additionalProperties: false
+      required: [campaign_id, owner_user_id, claimed, leaderboard_published]
+      properties:
+        campaign_id: {type: string, format: uuid}
+        owner_user_id: {type: string, format: uuid}
+        claimed: {const: true}
+        leaderboard_published: {type: boolean}
+    PagedGameProjects:
+      type: object
+      additionalProperties: false
+      required: [results, next_cursor]
+      properties:
+        results: {type: array, items: {$ref: '#/components/schemas/GameProject'}}
+        next_cursor: {type: [string, 'null']}
+    PagedAssets:
+      type: object
+      additionalProperties: false
+      required: [results, next_cursor]
+      properties:
+        results: {type: array, items: {$ref: '#/components/schemas/Asset'}}
+        next_cursor: {type: [string, 'null']}
+    Error:
+      type: object
+      additionalProperties: false
+      required: [code, message, correlation_id, field_errors]
+      properties:
+        code: {type: string, pattern: '^[A-Z0-9_]+$', maxLength: 64}
+        message: {type: string, maxLength: 240}
+        correlation_id: {type: string, maxLength: 64}
+        field_errors: {type: object}
+  responses:
+    BadRequest: {description: Malformed request, content: {application/json: {schema: {$ref: '#/components/schemas/Error'}}}}
+    Unauthorized: {description: Authentication required or invalid, content: {application/json: {schema: {$ref: '#/components/schemas/Error'}}}}
+    Forbidden: {description: CSRF, permission, membership, entitlement or ownership denied, content: {application/json: {schema: {$ref: '#/components/schemas/Error'}}}}
+    NotFound: {description: Resource absent or intentionally undisclosed, content: {application/json: {schema: {$ref: '#/components/schemas/Error'}}}}
+    Conflict: {description: Lifecycle/idempotency/uniqueness conflict, content: {application/json: {schema: {$ref: '#/components/schemas/Error'}}}}
+    PayloadTooLarge: {description: Body exceeds endpoint limit, content: {application/json: {schema: {$ref: '#/components/schemas/Error'}}}}
+    Unprocessable: {description: Schema-valid but semantically impossible/hostile, content: {application/json: {schema: {$ref: '#/components/schemas/Error'}}}}
+    TooManyRequests:
+      description: Throttle exceeded
+      headers: {Retry-After: {schema: {type: integer, minimum: 1}}}
+      content: {application/json: {schema: {$ref: '#/components/schemas/Error'}}}

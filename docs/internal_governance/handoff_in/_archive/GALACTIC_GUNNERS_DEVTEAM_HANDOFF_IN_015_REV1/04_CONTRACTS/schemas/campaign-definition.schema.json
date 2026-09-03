@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://galacticgunners.com/contracts/v1/campaign-definition.schema.json",
+  "title": "Galactic Gunners Expandable Campaign Definition",
+  "$defs": {
+    "Hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "VersionRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "checksum"],
+      "properties": {
+        "id": {"type": "string", "format": "uuid"},
+        "version": {"type": "integer", "minimum": 1},
+        "checksum": {"$ref": "#/$defs/Hash"}
+      }
+    },
+    "Transition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["on_complete", "on_failure"],
+      "properties": {
+        "on_complete": {"enum": ["NEXT_ENTRY", "CAMPAIGN_COMPLETE"]},
+        "on_failure": {"enum": ["REPLAY_ENTRY", "GAME_OVER"]}
+      }
+    },
+    "CampaignEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "position", "entry_kind", "level_version", "required", "transition"],
+      "properties": {
+        "id": {"type": "string", "format": "uuid"},
+        "position": {"type": "integer", "minimum": 1, "maximum": 10000},
+        "entry_kind": {"enum": ["SHOOTER", "BOARDING_ONLY"]},
+        "level_version": {"$ref": "#/$defs/VersionRef"},
+        "required": {"type": "boolean"},
+        "transition": {"$ref": "#/$defs/Transition"}
+      }
+    },
+    "CampaignVersion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "campaign_id", "version", "schema_version", "lifecycle", "entries", "checksum"],
+      "properties": {
+        "id": {"type": "string", "format": "uuid"},
+        "campaign_id": {"type": "string", "format": "uuid"},
+        "version": {"type": "integer", "minimum": 1},
+        "schema_version": {"const": "1.0"},
+        "lifecycle": {"enum": ["DRAFT", "VALIDATED", "PUBLISHED", "SUPERSEDED", "ARCHIVED"]},
+        "entries": {"type": "array", "minItems": 1, "maxItems": 10000, "items": {"$ref": "#/$defs/CampaignEntry"}},
+        "checksum": {"$ref": "#/$defs/Hash"}
+      }
+    },
+    "CampaignCheckpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["campaign_run_id", "campaign_version_id", "status", "completed_entry_count", "score", "lives", "nukes", "ranked", "next_entry"],
+      "properties": {
+        "campaign_run_id": {"type": "string", "format": "uuid"},
+        "campaign_version_id": {"type": "string", "format": "uuid"},
+        "status": {"enum": ["ACTIVE", "COMPLETED", "FAILED", "ABANDONED", "REJECTED"]},
+        "completed_entry_count": {"type": "integer", "minimum": 0},
+        "score": {"type": "integer", "minimum": 0},
+        "lives": {"type": "integer", "minimum": 0, "maximum": 3},
+        "nukes": {"type": "integer", "minimum": 0, "maximum": 2},
+        "ranked": {"type": "boolean"},
+        "current_entry": {"oneOf": [{"$ref": "#/$defs/CampaignEntry"}, {"type": "null"}]},
+        "next_entry": {"oneOf": [{"$ref": "#/$defs/CampaignEntry"}, {"type": "null"}]}
+      }
+    }
+  },
+  "oneOf": [
+    {"$ref": "#/$defs/CampaignVersion"},
+    {"$ref": "#/$defs/CampaignCheckpoint"}
+  ]
+}
+

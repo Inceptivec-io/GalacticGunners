@@ -12,9 +12,11 @@ export interface MovementVector {
 export class Player {
   readonly sprite: Phaser.Physics.Arcade.Sprite;
   #lastFireAtMs = Number.NEGATIVE_INFINITY;
+  #spawn: { x: number; y: number };
 
-  constructor(scene: Phaser.Scene, layout: PlayfieldLayout) {
-    this.sprite = scene.physics.add.sprite(layout.playerSpawn.x, layout.playerSpawn.y, RUNTIME_ASSETS.player.ship.key, 'stable-0');
+  constructor(scene: Phaser.Scene, layout: PlayfieldLayout, spawn = layout.playerSpawn) {
+    this.#spawn = spawn;
+    this.sprite = scene.physics.add.sprite(spawn.x, spawn.y, RUNTIME_ASSETS.player.ship.key, 0);
     this.sprite.setName('player');
     this.applyLayout(layout);
     this.sprite.setCollideWorldBounds(false);
@@ -27,6 +29,14 @@ export class Player {
     const body = this.sprite.body as Phaser.Physics.Arcade.Body;
     body.setSize(layout.playerBodySize.width / this.sprite.scaleX, layout.playerBodySize.height / this.sprite.scaleY, true);
     this.clampToPlayfield(layout);
+  }
+
+  setSpawn(spawn: { x: number; y: number }): void {
+    this.#spawn = spawn;
+  }
+
+  get spawn(): { x: number; y: number } {
+    return { ...this.#spawn };
   }
 
   move(vector: MovementVector, layout: PlayfieldLayout): void {
@@ -51,7 +61,7 @@ export class Player {
   }
 
   respawn(layout: PlayfieldLayout): void {
-    this.sprite.enableBody(true, layout.playerSpawn.x, layout.playerSpawn.y, true, true);
+    this.sprite.enableBody(true, this.#spawn.x, this.#spawn.y, true, true);
     this.sprite.setAlpha(1);
     this.stop();
     this.applyLayout(layout);

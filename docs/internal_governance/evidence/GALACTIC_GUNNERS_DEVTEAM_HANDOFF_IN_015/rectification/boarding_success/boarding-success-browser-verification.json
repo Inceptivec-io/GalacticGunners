@@ -1,0 +1,13 @@
+{
+  "tested_sha": "fa194d146133b70393609c933a02ed382b2bb862",
+  "generated_at": "2026-08-30T12:14:29.017Z",
+  "result": "PASS",
+  "combat_cleared": true,
+  "physical_exit": true,
+  "server_return": true,
+  "exit_unlocked_before_traversal": true,
+  "exit_unlocked_capture_sha256": "474ac93aac33a651fc275636aeb4ae9830151fba2df7096446df451ad29e9e29",
+  "shooter_return_capture_sha256": "ba1b39612a7dc3caac3269e3808f07f64be1531b5f5b1e667137c711ae29ce28",
+  "consoleErrors": [],
+  "networkFailures": []
+}

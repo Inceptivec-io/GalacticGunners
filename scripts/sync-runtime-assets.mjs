@@ -8,6 +8,13 @@ const outputRoot = path.join(root, 'apps', 'web', 'public', 'gg-runtime-assets')
 
 const runtimeAssets = [
   {
+    key: 'keyArt.launch',
+    assetId: 'GG-BI-079',
+    source: 'assets/key_art/marketing_v1.0/gg_key_art_primary_v001.png',
+    runtime: 'key_art/marketing_v1.0/gg_key_art_primary_v001.png',
+    sha256: '819E2F0C372A03913166282EDCC68F19207DC50A7FE45D71BAA98375B57CCFBC',
+  },
+  {
     key: 'background.starfield',
     assetId: 'GG-BACKGROUND-BACKGROUNDS-OWNED-GG-BG-STARFIELD-V002',
     source: 'assets/backgrounds/owned/gg_bg_starfield_v002.png',
@@ -43,6 +50,34 @@ const runtimeAssets = [
     sha256: 'FBB60A9EB52346CB57CDF22FA1B6088DD24B08F9132540B05DFD0F1612405A7F',
   },
   {
+    key: 'enemy.cruiser',
+    assetId: 'GG-SPRITE-SPRITES-SHIPS-GG-ENEMY-CRUISER-V002-SHEET',
+    source: 'assets/sprites/ships/gg_enemy_cruiser_v002_sheet.png',
+    runtime: 'sprites/ships/gg_enemy_cruiser_v002_sheet.png',
+    sha256: '05DA611A926239711E2310EDCDC1D3C4AF06497D5B96E70761D5102B9D402AE3',
+  },
+  {
+    key: 'enemy.destroyer',
+    assetId: 'GG-SPRITE-SPRITES-SHIPS-GG-ENEMY-DESTROYER-V002-SHEET',
+    source: 'assets/sprites/ships/gg_enemy_destroyer_v002_sheet.png',
+    runtime: 'sprites/ships/gg_enemy_destroyer_v002_sheet.png',
+    sha256: '7E0BA8F3763EE030E6BB23B6D7999E28E8F23A86A73564A1580FBD74D538D88C',
+  },
+  {
+    key: 'enemy.mothership',
+    assetId: 'GG-SPRITE-SPRITES-SHIPS-GG-BOSS-MOTHERSHIP-NORMAL-V002-SHEET',
+    source: 'assets/sprites/ships/gg_boss_mothership_normal_v002_sheet.png',
+    runtime: 'sprites/ships/gg_boss_mothership_normal_v002_sheet.png',
+    sha256: '5B49D62BE022A2633388BF0F8465CCEDA9A215D678AFBFC5A26E82931DF2974A',
+  },
+  {
+    key: 'enemy.mothership.hit',
+    assetId: 'GG-SPRITE-SPRITES-SHIPS-GG-BOSS-MOTHERSHIP-HIT-V002-SHEET',
+    source: 'assets/sprites/ships/gg_boss_mothership_HIT_v002_sheet.png',
+    runtime: 'sprites/ships/gg_boss_mothership_HIT_v002_sheet.png',
+    sha256: 'E829B094078363F051F41929F48E92C3288B98E2CD43425E8A0309B52B989088',
+  },
+  {
     key: 'projectile.playerLaser',
     assetId: 'GG-SPRITE-SPRITES-OBJECTS-GG-PLAYER-LASER-V002',
     source: 'assets/sprites/objects/gg_player_laser_v002.png',
@@ -62,6 +97,20 @@ const runtimeAssets = [
     source: 'assets/sprites/objects/gg_nuke_projectile_v002_horizontal_upright.png',
     runtime: 'sprites/objects/gg_nuke_projectile_v002_horizontal_upright.png',
     sha256: '3B826087AD38EB6963046260EC384B9507C80E450DFAA3B302B923875B8B21AA',
+  },
+  {
+    key: 'fx.asteroid',
+    assetId: 'GG-SPRITE-SPRITES-OBJECTS-GG-ASTEROID-V002-SHEET',
+    source: 'assets/sprites/objects/gg_asteroid_v002_sheet.png',
+    runtime: 'sprites/objects/gg_asteroid_v002_sheet.png',
+    sha256: '0421BFD58EA30608ADF8E0E684B22419F63F6C57DFCC06B59594BE6947625D01',
+  },
+  {
+    key: 'fx.comet',
+    assetId: 'GG-SPRITE-SPRITES-OBJECTS-GG-COMET-V002-HORIZONTAL-VERTICAL-FACING',
+    source: 'assets/sprites/objects/gg_comet_v002_horizontal_vertical_facing.png',
+    runtime: 'sprites/objects/gg_comet_v002_horizontal_vertical_facing.png',
+    sha256: 'B9EB2BD211F9A922707CCEEA4E1EB4EAA5B1205249E38D6BBECB76DFBA33978F',
   },
   {
     key: 'shield.tile',
@@ -312,6 +361,8 @@ for (const asset of runtimeAssets) {
   if (runtimeSha !== asset.sha256) {
     throw new Error(`Runtime copy hash mismatch for ${asset.runtime}: expected ${asset.sha256}, got ${runtimeSha}`);
   }
+  let thumbnailPath = `/gg-runtime-assets/${asset.runtime.replaceAll(path.sep, '/')}`;
+  let thumbnailSha = runtimeSha;
   manifest.push({
     key: asset.key,
     asset_id: asset.assetId,
@@ -319,6 +370,8 @@ for (const asset of runtimeAssets) {
     canonical_sha256: asset.sha256,
     runtime_path: `/gg-runtime-assets/${asset.runtime.replaceAll(path.sep, '/')}`,
     runtime_sha256: runtimeSha,
+    thumbnail_path: thumbnailPath,
+    thumbnail_sha256: thumbnailSha,
   });
 }
 

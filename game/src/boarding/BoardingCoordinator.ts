@@ -41,7 +41,7 @@ export class BoardingCoordinator {
     this.machine.transition('COMPLETING');
     this.machine.transition('RETURNED');
     this.offer = null;
-    return { offer, outcome, resources: { lives: Math.min(3, Math.max(0, resources.lives)), nukes: Math.min(2, Math.max(0, resources.nukes)) } };
+    return { offer, outcome, resources: { lives: Math.max(0, resources.lives), nukes: Math.max(0, resources.nukes) } };
   }
 
   get state(): string { return this.machine.state; }

@@ -1,0 +1,9 @@
+{
+  "tested_sha": "4049dd1ff79b720c44a55937388c8c2824652ca0",
+  "generated_at": "2026-08-28T15:06:03.255Z",
+  "result": "PASS",
+  "draft_checksum": "41f41bbf9c30adb515672dc67e01d9194dd37142a19fa7b1dfc5a4ae8cf2b715",
+  "gameplay_checksum": "41f41bbf9c30adb515672dc67e01d9194dd37142a19fa7b1dfc5a4ae8cf2b715",
+  "rollback_source_version": 49,
+  "console_errors": []
+}

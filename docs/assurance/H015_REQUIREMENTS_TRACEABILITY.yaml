@@ -1,0 +1,1419 @@
+schema_version: "1.0"
+handoff: GALACTIC_GUNNERS_DEVTEAM_HANDOFF_OUT_015
+authority_source: docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/11_ASSURANCE_RECOVERY_REPLACEMENT_TRANSPORT_MEMBERS/unpacked/GALACTIC_GUNNERS_H015_COMPLETE_RECOVERY_PACK_v1.0/REQUIREMENT_CATALOGUE.csv
+expected_requirement_count: 50
+tested_sha: null
+derivation_rule: PASS requires executable positive and negative evidence. All
+  other rows remain FAIL until independently proven; no manual PASS is allowed.
+rows:
+  - requirement_id: GG-ASSURANCE-EVIDENCE-001
+    area: Evidence
+    requirement:
+      All four recovery transports are received, hash-verified and read
+      before mutation
+    implementation_paths: &a1
+      - docs/internal_governance/evidence/
+      - scripts/verify-h015-evidence-integrity.mjs
+      - .github/workflows/quality.yml
+    required_layers:
+      - PROCESS
+    positive_proof: Exact filenames and SHA-256 values match the delivery register
+    negative_or_hostile_proof: Missing or altered transport fails intake closed
+    test_cases:
+      - id: GG-ASSURANCE-EVIDENCE-001 positive
+        classification: PROCESS
+        polarity: POSITIVE
+        command: npm run test:h015:intake
+        assertion:
+          The receipt records all four required hashes and all 26 admitted
+          source members match their supplied SHA-256 values.
+      - id: GG-ASSURANCE-EVIDENCE-001 negative
+        classification: PROCESS
+        polarity: NEGATIVE
+        command: node --test tests/unit/h015-assurance-intake.test.mjs
+        assertion: An altered required transport hash causes the intake verifier to fail.
+    evidence_gate: h015-closure-audit
+    evidence_paths:
+      - docs/internal_governance/evidence/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/assurance_recovery_intake/REPLACEMENT_RECEIVING_RECORD.md
+      - docs/internal_governance/handoff_in/_archive/GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015/11_ASSURANCE_RECOVERY_REPLACEMENT_TRANSPORT_MEMBERS/
+    status: PASS
+    derived: true
+    reason:
+      Derived from the replacement transport inventory, hash-bound receiving
+      record, and fail-closed intake tests; no runtime or closure claim is implied.
+  - requirement_id: GG-ASSURANCE-EVIDENCE-002
+    area: Evidence
+    requirement: Every closure claim identifies one full exact tested SHA
+    implementation_paths: *a1
+    required_layers:
+      - CI
+      - E2E
+    positive_proof: Manifest, runtime, CI and evidence record the same 40-character SHA
+    negative_or_hostile_proof: Missing, shortened, alias or different SHA fails closure
+    test_cases:
+      - id: GG-ASSURANCE-EVIDENCE-002 positive
+        classification: CI
+        polarity: POSITIVE
+        command: npm run test:h015:evidence-integrity
+        assertion: Manifest, runtime, CI and evidence record the same 40-character SHA
+      - id: GG-ASSURANCE-EVIDENCE-002 negative
+        classification: CI
+        polarity: NEGATIVE
+        command: npm run test:h015:evidence-integrity
+        assertion: Missing, shortened, alias or different SHA fails closure
+    evidence_gate: h015-closure-audit
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason:
+      Unit characterization now independently verifies both manifest identity and
+      post-upload attestation/artifact identity. A new exact-SHA CI artifact is
+      still required before this derived row can pass.
+  - requirement_id: GG-ASSURANCE-EVIDENCE-003
+    area: Evidence
+    requirement: Every catalogue row maps to implementation, tests and evidence
+    implementation_paths: *a1
+    required_layers:
+      - CI
+    positive_proof: Machine-readable traceability validates all 50 unique IDs
+    negative_or_hostile_proof: Missing, duplicate or manually overridden row fails audit
+    test_cases:
+      - id: GG-ASSURANCE-EVIDENCE-003 positive
+        classification: CI
+        polarity: POSITIVE
+        command: npm run test:h015:traceability
+        assertion: Machine-readable traceability validates all 50 unique IDs
+      - id: GG-ASSURANCE-EVIDENCE-003 negative
+        classification: CI
+        polarity: NEGATIVE
+        command: node scripts/test-h015-traceability.mjs
+        assertion: Missing, duplicate or manually overridden row fails audit
+    evidence_gate: h015-closure-audit
+    evidence_paths:
+      - docs/assurance/H015_REQUIREMENTS_TRACEABILITY.yaml
+      - scripts/validate-h015-traceability.mjs
+      - scripts/test-h015-traceability.mjs
+    status: PASS
+    derived: true
+    reason:
+      Derived from a source-catalogue validator that enforces all 50 supplied
+      IDs, unique mapping, both polarities, and rejects manual PASS using unproven
+      command mappings.
+  - requirement_id: GG-ASSURANCE-EVIDENCE-004
+    area: Evidence
+    requirement: Distinct journeys have distinct action traces and evidence
+    implementation_paths: *a1
+    required_layers:
+      - E2E
+      - CI
+    positive_proof: Required captures and traces exist with purpose-specific hashes
+    negative_or_hostile_proof: Duplicate screenshots or generic observations fail
+    test_cases:
+      - id: GG-ASSURANCE-EVIDENCE-004 positive
+        classification: E2E_ORDINARY_USER
+        polarity: POSITIVE
+        command: npm run test:h015:evidence-integrity
+        assertion: Required captures and traces exist with purpose-specific hashes
+      - id: GG-ASSURANCE-EVIDENCE-004 negative
+        classification: E2E_ORDINARY_USER
+        polarity: NEGATIVE
+        command: npm run test:h015:evidence-integrity
+        assertion: Duplicate screenshots or generic observations fail
+    evidence_gate: h015-closure-audit
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason:
+      The auditor has executable duplicate-image and generic-observation fault
+      injection tests, but a new exact-SHA CI artifact with real ordinary journey
+      captures and action traces is still required.
+  - requirement_id: GG-ASSURANCE-EVIDENCE-005
+    area: Evidence
+    requirement: CI retains exact-SHA browser evidence and closure attestation
+    implementation_paths: *a1
+    required_layers:
+      - CI
+    positive_proof: Downloadable artifacts contain manifest, traces, logs and checksums
+    negative_or_hostile_proof: Absent or unverifiable artifacts fail closure
+    test_cases:
+      - id: GG-ASSURANCE-EVIDENCE-005 positive
+        classification: CI
+        polarity: POSITIVE
+        command: npm run test:h015:evidence-integrity
+        assertion: Downloadable artifacts contain manifest, traces, logs and checksums
+      - id: GG-ASSURANCE-EVIDENCE-005 negative
+        classification: CI
+        polarity: NEGATIVE
+        command: npm run test:h015:evidence-integrity
+        assertion: Absent or unverifiable artifacts fail closure
+    evidence_gate: h015-closure-audit
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: The workflow contract now proves the required ordered upload and
+      artifact-ID/digest binding and proves omission/reordering fails. This row
+      remains FAIL until a new exact-SHA CI run produces downloadable evidence
+      and closure-attestation artifacts that independently reconcile those values.
+  - requirement_id: GG-ASSURANCE-EVIDENCE-006
+    area: Evidence
+    requirement: Ordinary acceptance is separated from QA diagnostics
+    implementation_paths: *a1
+    required_layers:
+      - CI
+      - E2E
+    positive_proof: Every test is classified and ordinary gates use ordinary interaction
+    negative_or_hostile_proof: Force hooks or direct state mutation cannot satisfy ordinary gates
+    test_cases:
+      - id: GG-ASSURANCE-EVIDENCE-006 positive
+        classification: CI
+        polarity: POSITIVE
+        command: node scripts/validate-qa-hook-boundaries.mjs
+        assertion: Every test is classified and ordinary gates use ordinary interaction
+      - id: GG-ASSURANCE-EVIDENCE-006 negative
+        classification: CI
+        polarity: NEGATIVE
+        command: node --test tests/unit/h015-qa-boundaries.test.mjs
+        assertion: Force hooks or direct state mutation cannot satisfy ordinary gates
+    evidence_gate: h015-closure-audit
+    evidence_paths:
+      - docs/assurance/H015_TEST_CLASSIFICATION.json
+      - scripts/validate-qa-hook-boundaries.mjs
+      - tests/unit/h015-qa-boundaries.test.mjs
+    status: PASS
+    derived: true
+    reason: The inventory fails closed for an unclassified source, an invalid
+      classification, or an ordinary-user source that uses a force hook or direct
+      runtime diagnostic; runner-native unit tests prove both positive and negative paths.
+  - requirement_id: GG-PRODUCT-ENTRY-001
+    area: Entry
+    requirement: Customer journey starts at root and Play enters the game
+    implementation_paths: &a2
+      - apps/web/app/page.tsx
+      - apps/web/game/GameHost.tsx
+      - game/src/scenes/SplashScene.ts
+      - game/src/scenes/MainMenuScene.ts
+    required_layers:
+      - COMPONENT
+      - E2E
+    positive_proof: Real browser follows / to Play to splash to Phaser Main Menu
+    negative_or_hostile_proof: Direct /play navigation alone cannot pass
+    test_cases:
+      - id: GG-PRODUCT-ENTRY-001 positive
+        classification: E2E_ORDINARY_USER
+        polarity: POSITIVE
+        command: npx playwright test tests/e2e/public-entry.spec.ts --project=chromium-desktop --workers=1
+        assertion: Real browser follows / to Play to splash to Phaser Main Menu
+      - id: GG-PRODUCT-ENTRY-001 negative
+        classification: E2E_ORDINARY_USER
+        polarity: NEGATIVE
+        command: npx playwright test tests/e2e/public-entry.spec.ts --project=chromium-desktop --workers=1
+        assertion: Direct /play navigation alone cannot pass
+    evidence_gate: ordinary-entry
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason:
+      The root-to-Play browser journey and the direct-entry negative journey are
+      executable ordinary-user proofs. This row remains FAIL until the exact-SHA
+      CI artifact captures both journeys under the shared entry evidence gate.
+  - requirement_id: GG-PRODUCT-ENTRY-002
+    area: Entry
+    requirement: Approved splash image is visible for two seconds
+    implementation_paths: *a2
+    required_layers:
+      - UNIT
+      - COMPONENT
+      - E2E
+    positive_proof: Clock-bounded assertion proves image and duration
+    negative_or_hostile_proof: Missing image, premature dismissal and excessive duration fail
+    test_cases:
+      - id: GG-PRODUCT-ENTRY-002 positive
+        classification: E2E_ORDINARY_USER
+        polarity: POSITIVE
+        command: npx playwright test tests/e2e/splash-menu.spec.ts --project=chromium-desktop --workers=1
+        assertion: Clock-bounded assertion proves image and duration
+      - id: GG-PRODUCT-ENTRY-002 negative
+        classification: E2E_ORDINARY_USER
+        polarity: NEGATIVE
+        command: npx playwright test tests/e2e/splash-menu.spec.ts --project=chromium-desktop --workers=1
+        assertion: Missing image, premature dismissal and excessive duration fail
+    evidence_gate: ordinary-entry
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason:
+      Browser evidence proves the governed splash remains visible after 1.85
+      seconds and does not replay on internal navigation; explicit missing-image and
+      excessive-duration fault paths remain unproven.
+  - requirement_id: GG-PRODUCT-ENTRY-003
+    area: Entry
+    requirement: Splash displays exact approved copyright and collaborator copy
+    implementation_paths: *a2
+    required_layers:
+      - COMPONENT
+      - E2E
+    positive_proof: Rendered text matches the governed string exactly
+    negative_or_hostile_proof: Misspelling, omission or unapproved substitution fails
+    test_cases:
+      - id: GG-PRODUCT-ENTRY-003 positive
+        classification: COMPONENT
+        polarity: POSITIVE
+        command: npm run test:component
+        assertion: Rendered text matches the governed string exactly
+      - id: GG-PRODUCT-ENTRY-003 negative
+        classification: COMPONENT
+        polarity: NEGATIVE
+        command: npm run test:component
+        assertion: Misspelling, omission or unapproved substitution fails
+    evidence_gate: ordinary-entry
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: GG-PRODUCT-ENTRY-004
+    area: Entry
+    requirement: Keyboard focus returns to a usable Main Menu action
+    implementation_paths: *a2
+    required_layers:
+      - COMPONENT
+      - E2E
+    positive_proof: Focused element is visible and operable after splash
+    negative_or_hostile_proof: Lost, hidden or body-only focus fails
+    test_cases:
+      - id: GG-PRODUCT-ENTRY-004 positive
+        classification: COMPONENT
+        polarity: POSITIVE
+        command: npm run test:component
+        assertion: Focused element is visible and operable after splash
+      - id: GG-PRODUCT-ENTRY-004 negative
+        classification: COMPONENT
+        polarity: NEGATIVE
+        command: npm run test:component
+        assertion: Lost, hidden or body-only focus fails
+    evidence_gate: ordinary-entry
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: No independently executable positive and negative proof has yet been
+      admitted under the replacement assurance authority.
+  - requirement_id: GG-PRODUCT-ENTRY-005
+    area: Entry
+    requirement: Splash does not replay during ordinary internal navigation
+    implementation_paths: *a2
+    required_layers:
+      - E2E
+    positive_proof: Navigate away and back without another splash
+    negative_or_hostile_proof: New independent game entry remains capable of showing splash
+    test_cases:
+      - id: GG-PRODUCT-ENTRY-005 positive
+        classification: E2E_ORDINARY_USER
+        polarity: POSITIVE
+        command: npx playwright test tests/e2e/splash-menu.spec.ts --project=chromium-desktop --grep internal_navigation_does_not_replay_splash --workers=1
+        assertion: Navigate away and back without another splash
+      - id: GG-PRODUCT-ENTRY-005 negative
+        classification: E2E_ORDINARY_USER
+        polarity: NEGATIVE
+        command: npx playwright test tests/e2e/splash-menu.spec.ts --project=chromium-desktop --grep internal_navigation_does_not_replay_splash --workers=1
+        assertion: New independent game entry remains capable of showing splash
+    evidence_gate: ordinary-entry
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: >
+      The single ordinary browser journey proves both lifecycle boundaries:
+      a fresh direct entry shows one splash, while Main Menu return in that same
+      launch does not replay it. Exact-SHA CI evidence remains required.
+  - requirement_id: GG-CAMPAIGN-RUNTIME-001
+    area: Gameplay
+    requirement: Pause freezes the complete simulation
+    implementation_paths: &a3
+      - game/src/scenes/Level1Scene.ts
+      - game/src/systems/CampaignSession.ts
+      - backend/campaigns/
+    required_layers:
+      - UNIT
+      - E2E
+    positive_proof: Entity positions, timers, hazards and score remain unchanged while paused
+    negative_or_hostile_proof: Background simulation or input mutation during pause fails
+    test_cases:
+      - id: GG-CAMPAIGN-RUNTIME-001 positive
+        classification: E2E_ORDINARY_USER
+        polarity: POSITIVE
+        command: npx playwright test tests/e2e/pause-controls.spec.ts --project=chromium-desktop --grep GG-CAMPAIGN-RUNTIME-001 --workers=1
+        assertion: Paused canvas remains pixel-stable across elapsed time following ordinary keyboard pause input.
+      - id: GG-CAMPAIGN-RUNTIME-001 negative
+        classification: E2E_ORDINARY_USER
+        polarity: NEGATIVE
+        command: npx playwright test tests/e2e/pause-controls.spec.ts --project=chromium-desktop --grep GG-CAMPAIGN-RUNTIME-001 --workers=1
+        assertion: Resumed ordinary held movement changes the canvas, preventing a false static-runtime pass.
+    evidence_gate: ordinary-gameplay
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: Ordinary input proof now demonstrates paused visual stability and resumed movement divergence locally. This row remains FAIL until the required unit-layer state contract and exact-SHA CI evidence are admitted.
+  - requirement_id: GG-CAMPAIGN-RUNTIME-002
+    area: Gameplay
+    requirement:
+      Pause provides Resume, Restart and Main Menu for keyboard, touch
+      and controller
+    implementation_paths: *a3
+    required_layers:
+      - COMPONENT
+      - E2E
+    positive_proof: Each input route performs the selected action exactly once
+    negative_or_hostile_proof: Hidden, duplicate or unintended action fails
+    test_cases:
+      - id: GG-CAMPAIGN-RUNTIME-002 positive
+        classification: E2E_ORDINARY_USER
+        polarity: POSITIVE
+        command: npx playwright test tests/e2e/pause-controls.spec.ts --project=chromium-desktop --grep GG-CAMPAIGN-RUNTIME-002 --workers=1
+        assertion: Visible keyboard Restart and Main Menu actions each transition exactly once.
+      - id: GG-CAMPAIGN-RUNTIME-002 negative
+        classification: E2E_ORDINARY_USER
+        polarity: NEGATIVE
+        command: npx playwright test tests/e2e/pause-controls.spec.ts --project=chromium-desktop --grep GG-CAMPAIGN-RUNTIME-002 --workers=1
+        assertion: A delayed post-action assertion rejects duplicate or unintended state transitions.
+    evidence_gate: ordinary-gameplay
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: Ordinary keyboard Restart and Main Menu coverage now exists locally. This row remains FAIL until touch and controller action routes, component semantics, and exact-SHA CI evidence are admitted.
+  - requirement_id: GG-CAMPAIGN-RUNTIME-003
+    area: Gameplay
+    requirement: Results information is readable above and unobscured by the panel
+    implementation_paths: *a3
+    required_layers:
+      - COMPONENT
+      - E2E
+    positive_proof: Visual and DOM/canvas assertions prove all governed result values
+    negative_or_hostile_proof: Overlap, clipping or absent values fail
+    test_cases:
+      - id: GG-CAMPAIGN-RUNTIME-003 positive
+        classification: E2E_ORDINARY_USER
+        polarity: POSITIVE
+        command: npx playwright test tests/e2e/campaign-real-play.spec.ts --project=chromium-desktop --grep published_release_continue --workers=1
+        assertion: Ordinary level completion announces an available Continue state before the visible result action is selected.
+      - id: GG-CAMPAIGN-RUNTIME-003 negative
+        classification: E2E_ORDINARY_USER
+        polarity: NEGATIVE
+        command: npx playwright test tests/e2e/campaign-real-play.spec.ts --project=chromium-desktop --grep result_does_not_advance --workers=1
+        assertion: Result state remains visible and does not advance without the discrete Continue action.
+    evidence_gate: ordinary-gameplay
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: Ordinary result-state browser coverage now proves the available Continue state and rejects automatic progression. This row remains FAIL until visual value/layout assertions and exact-SHA evidence are added.
+  - requirement_id: GG-CAMPAIGN-RUNTIME-004
+    area: Gameplay
+    requirement: Continue exists only when the pinned release has a next entry
+    implementation_paths: *a3
+    required_layers:
+      - API
+      - UNIT
+      - E2E
+    positive_proof: Six- and seven-level releases resolve ordered next entries
+    negative_or_hostile_proof: No-next, gap or duplicate sequence must not offer Continue
+    test_cases:
+      - id: GG-CAMPAIGN-RUNTIME-004 positive
+        classification: E2E_ORDINARY_USER
+        polarity: POSITIVE
+        command: npx playwright test tests/e2e/campaign-real-play.spec.ts --project=chromium-desktop --workers=1
+        assertion: Six- and seven-level releases resolve ordered next entries
+      - id: GG-CAMPAIGN-RUNTIME-004 negative
+        classification: E2E_ORDINARY_USER
+        polarity: NEGATIVE
+        command: npx playwright test tests/e2e/campaign-real-play.spec.ts --project=chromium-desktop --workers=1
+        assertion: No-next, gap or duplicate sequence must not offer Continue
+    evidence_gate: ordinary-gameplay
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason:
+      Ordinary browser coverage proves a six-entry release shows Continue and
+      does not advance without an explicit action. Seven-entry, gap, duplicate and
+      no-next release cases remain unproven, so this row remains FAIL.
+  - requirement_id: GG-CAMPAIGN-RUNTIME-005
+    area: Gameplay
+    requirement: Scores, lives and nukes persist correctly through campaign transitions
+    implementation_paths: *a3
+    required_layers:
+      - UNIT
+      - API
+      - E2E
+    positive_proof: Ordinary play transition retains governed cumulative state
+    negative_or_hostile_proof: Restart, abort or new campaign cannot leak invalid state
+    test_cases:
+      - id: GG-CAMPAIGN-RUNTIME-005 positive
+        classification: UNIT
+        polarity: POSITIVE
+        command: npm run game:test -- tests/campaign-session.test.ts
+        assertion: Server-pinned completion returns the next entry with its authoritative score, lives and nukes.
+      - id: GG-CAMPAIGN-RUNTIME-005 negative
+        classification: UNIT
+        polarity: NEGATIVE
+        command: npm run game:test -- tests/campaign-session.test.ts
+        assertion: A rejected completion cannot replace the active campaign checkpoint or leak invalid score, lives or nukes.
+    evidence_gate: ordinary-gameplay
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: Unit-level server-return and rejection-preservation contracts are executable. API and ordinary browser continuity proof remain required, so this row remains FAIL.
+  - requirement_id: GG-CAMPAIGN-RUNTIME-006
+    area: Gameplay
+    requirement: Recurring asteroids and comets are visible and governed in ordinary play
+    implementation_paths: *a3
+    required_layers:
+      - UNIT
+      - E2E
+    positive_proof: Normal play proves varied direction, speed, collision,
+      destruction and despawn
+    negative_or_hostile_proof: Invisible bodies, max-active breach or QA-only targeting fails
+    test_cases:
+      - id: GG-CAMPAIGN-RUNTIME-006 positive
+        classification: E2E_ORDINARY_USER
+        polarity: POSITIVE
+        command: npx playwright test tests/e2e/level4-hazards.spec.ts --project=chromium-desktop --grep GG-CAMPAIGN-RUNTIME-006 --workers=1
+        assertion:
+          Normal play proves varied direction, speed, collision, destruction
+          and despawn
+      - id: GG-CAMPAIGN-RUNTIME-006 negative
+        classification: E2E_ORDINARY_USER
+        polarity: NEGATIVE
+        command: npx playwright test tests/e2e/level4-hazards.spec.ts --project=chromium-desktop --grep GG-CAMPAIGN-RUNTIME-006 --workers=1
+        assertion: Invisible bodies, max-active breach or QA-only targeting fails
+    evidence_gate: ordinary-gameplay
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason:
+      Ordinary browser positive and negative journeys are executable. Exact-SHA
+      CI evidence remains required before this derived row can pass.
+  - requirement_id: GG-CAMPAIGN-RUNTIME-007
+    area: Gameplay
+    requirement: Levels 1 through 6 are independently configured and playable
+    implementation_paths: *a3
+    required_layers:
+      - API
+      - E2E
+    positive_proof: Each level loads its pinned checksum and completes by ordinary input
+    negative_or_hostile_proof: Missing, duplicated fallback or hard-coded seed use fails
+    test_cases:
+      - id: GG-CAMPAIGN-RUNTIME-007 positive
+        classification: API
+        polarity: POSITIVE
+        command: docker compose --env-file .founder-review.env exec -T backend pytest tests/test_campaign_service.py -q && npx playwright test tests/e2e/campaign-real-play.spec.ts --project=chromium-desktop --grep continue_traverses --workers=1
+        assertion: Each level loads its pinned checksum and completes by ordinary input
+      - id: GG-CAMPAIGN-RUNTIME-007 negative
+        classification: API
+        polarity: NEGATIVE
+        command: docker compose --env-file .founder-review.env exec -T backend pytest tests/test_campaign_service.py -q && npx playwright test tests/e2e/campaign-real-play.spec.ts --project=chromium-desktop --grep result_does_not_advance --workers=1
+        assertion: Missing, duplicated fallback or hard-coded seed use fails
+    evidence_gate: ordinary-gameplay
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason:
+      API campaign identity checks and ordinary browser traversal are executable.
+      Exact-SHA CI evidence remains required before this derived row can pass.
+  - requirement_id: GG-CAMPAIGN-RUNTIME-008
+    area: Gameplay
+    requirement: Final campaign victory occurs only after the last pinned release entry
+    implementation_paths: *a3
+    required_layers:
+      - UNIT
+      - E2E
+    positive_proof: Ordinary completion of final entry renders victory without Continue
+    negative_or_hostile_proof: Premature victory or post-final Continue fails
+    test_cases:
+      - id: GG-CAMPAIGN-RUNTIME-008 positive
+        classification: E2E_ORDINARY_USER
+        polarity: POSITIVE
+        command: npx playwright test tests/e2e/campaign-real-play.spec.ts --project=chromium-desktop --grep continue_traverses --workers=1
+        assertion: Ordinary completion of final entry renders victory without Continue
+      - id: GG-CAMPAIGN-RUNTIME-008 negative
+        classification: E2E_ORDINARY_USER
+        polarity: NEGATIVE
+        command: npm run game:test -- tests/terminal-actions.test.ts && npx playwright test tests/e2e/campaign-real-play.spec.ts --project=chromium-desktop --grep continue_traverses --workers=1
+        assertion: Premature victory or post-final Continue fails
+    evidence_gate: ordinary-gameplay
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason:
+      Final-entry terminal behavior has executable unit and ordinary browser
+      coverage. Exact-SHA CI evidence remains required before this derived row can pass.
+  - requirement_id: GG-DESIGNER-001
+    area: Designer
+    requirement: All existing CORE Levels 1 through 6 open directly in the product Designer
+    implementation_paths: &a4
+      - apps/web/app/inceptivec-gamification-admin/CampaignDesigner.tsx
+      - backend/levels/
+    required_layers:
+      - API
+      - E2E
+    positive_proof: Authorised admin can inspect complete draft, published and release identity
+    negative_or_hostile_proof: Customer, anonymous or cross-owner access fails server-side
+    test_cases:
+      - id: GG-DESIGNER-001 positive
+        classification: API
+        polarity: POSITIVE
+        command: docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q && npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-desktop --grep GG-DESIGNER-META-001 --workers=1
+        assertion:
+          Authorised admin can inspect complete draft, published and release
+          identity
+      - id: GG-DESIGNER-001 negative
+        classification: API
+        polarity: NEGATIVE
+        command: docker compose --env-file .founder-review.env exec -T backend pytest organizations/tests/test_portal_api.py -q
+        assertion: Customer, anonymous or cross-owner access fails server-side
+    evidence_gate: ordinary-designer
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: Authorised product Designer and tenant-denial checks are executable.
+      Exact-SHA CI evidence remains required before this derived row can pass.
+  - requirement_id: GG-DESIGNER-002
+    area: Designer
+    requirement: Pointer mapping is accurate at 50, 75, 100, 125 and 150 percent zoom
+    implementation_paths: *a4
+    required_layers:
+      - UNIT
+      - COMPONENT
+      - E2E
+    positive_proof:
+      Real pointer drag from centre and edges saves expected canonical
+      coordinates
+    negative_or_hostile_proof: Wrapper coordinates, pointer loss and out-of-bounds values fail
+    test_cases:
+      - id: GG-DESIGNER-002 positive
+        classification: E2E_ORDINARY_USER
+        polarity: POSITIVE
+        command: npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-desktop --grep GG-DESIGNER-POINTER-001 --workers=1
+        assertion:
+          Real pointer drag from centre and edges saves expected canonical
+          coordinates
+      - id: GG-DESIGNER-002 negative
+        classification: E2E_ORDINARY_USER
+        polarity: NEGATIVE
+        command: npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-desktop --grep outside_drag --workers=1
+        assertion: Wrapper coordinates, pointer loss and out-of-bounds values fail
+    evidence_gate: ordinary-designer
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason:
+      Native multi-zoom drag and boundary-clamp browser journeys are executable.
+      Exact-SHA CI evidence remains required before this derived row can pass.
+  - requirement_id: GG-DESIGNER-003
+    area: Designer
+    requirement:
+      Mouse, pen and touch dragging uses pointer capture and preserves
+      grab offset
+    implementation_paths: *a4
+    required_layers:
+      - COMPONENT
+      - E2E
+    positive_proof: Real browser input leaves/re-enters playfield and completes one transaction
+    negative_or_hostile_proof: Mouse-only handlers, centre jump or multiple undo entries fail
+    test_cases:
+      - id: GG-DESIGNER-003 positive
+        classification: E2E_ORDINARY_USER
+        polarity: POSITIVE
+        command: npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-desktop --grep GG-DESIGNER-POINTER-001 --workers=1 && npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-mobile-touch --grep GG-DESIGNER-POINTER-002 --workers=1
+        assertion:
+          Real browser input leaves/re-enters playfield and completes one
+          transaction
+      - id: GG-DESIGNER-003 negative
+        classification: E2E_ORDINARY_USER
+        polarity: NEGATIVE
+        command: npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-desktop --grep outside_drag --workers=1 && npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-mobile-touch --grep touch_cancel --workers=1
+        assertion: Mouse-only handlers, centre jump or multiple undo entries fail
+    evidence_gate: ordinary-designer
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: Desktop pointer and touch ordinary browser journeys are executable.
+      Exact-SHA CI evidence remains required before this derived row can pass.
+  - requirement_id: GG-DESIGNER-004
+    area: Designer
+    requirement: Animated assets use one canonical representative preview frame
+    implementation_paths: *a4
+    required_layers:
+      - UNIT
+      - COMPONENT
+      - E2E
+    positive_proof: Palette, layers and inspector show governed frame and aspect ratio
+    negative_or_hostile_proof: Full sprite-sheet thumbnails or unexplained UI crop constants fail
+    test_cases:
+      - id: GG-DESIGNER-004 positive
+        classification: E2E_ORDINARY_USER
+        polarity: POSITIVE
+        command: npm run test:sprites && npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-desktop --grep GG-DESIGNER-THUMB-001 --workers=1
+        assertion: Palette, layers and inspector show governed frame and aspect ratio
+      - id: GG-DESIGNER-004 negative
+        classification: E2E_ORDINARY_USER
+        polarity: NEGATIVE
+        command: npm run test:sprites && npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-desktop --grep GG-DESIGNER-THUMB-001 --workers=1
+        assertion: Full sprite-sheet thumbnails or unexplained UI crop constants fail
+    evidence_gate: ordinary-designer
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason:
+      Compiler hostile checks and ordinary generated-thumbnail verification are executable.
+      Exact-SHA CI evidence remains required before this derived row can pass.
+  - requirement_id: GG-DESIGNER-005
+    area: Designer
+    requirement:
+      Level metadata, canvas, grid, background, seed and player spawn are
+      editable
+    implementation_paths: *a4
+    required_layers:
+      - API
+      - COMPONENT
+      - E2E
+    positive_proof: Save, reload and preview prove typed values persist and execute
+    negative_or_hostile_proof: Invalid bounds, duplicate enabled spawn and immutable-field edits fail
+    test_cases:
+      - id: GG-DESIGNER-005 positive
+        classification: API
+        polarity: POSITIVE
+        command: docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_authoring.py -q && npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-desktop --grep "GG-DESIGNER-META-001|GG-DESIGNER-CANVAS-001" --workers=1
+        assertion: Save, reload and preview prove typed values persist and execute
+      - id: GG-DESIGNER-005 negative
+        classification: API
+        polarity: NEGATIVE
+        command: docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_authoring.py -q && npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-desktop --grep invalid_seed --workers=1
+        assertion: Invalid bounds, duplicate enabled spawn and immutable-field edits fail
+    evidence_gate: ordinary-designer
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason:
+      Typed authoring validation and ordinary save/reload journeys are executable.
+      Exact-SHA CI evidence remains required before this derived row can pass.
+  - requirement_id: GG-DESIGNER-006
+    area: Designer
+    requirement: Entities and mixed formations expose complete governed configuration
+    implementation_paths: *a4
+    required_layers:
+      - API
+      - COMPONENT
+      - E2E
+    positive_proof: Membership, layout, bounds, spacing, motion, timing and repeat round-trip
+    negative_or_hostile_proof: Invalid member, unsafe profile, overlap rule or
+      missing field fails validation
+    test_cases:
+      - id: GG-DESIGNER-006 positive
+        classification: API
+        polarity: POSITIVE
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_authoring.py -q && npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-desktop --grep 'POINTER-001|CANVAS-001' --workers=1"
+        assertion:
+          Membership, layout, bounds, spacing, motion, timing and repeat
+          round-trip
+      - id: GG-DESIGNER-006 negative
+        classification: API
+        polarity: NEGATIVE
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_authoring.py -q"
+        assertion:
+          Invalid member, unsafe profile, overlap rule or missing field fails
+          validation
+    evidence_gate: ordinary-designer
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: Typed authoring contracts and ordinary pointer/grid journeys provide executable positive and hostile proof. Exact-SHA CI evidence remains required before this derived row can pass.
+  - requirement_id: GG-DESIGNER-007
+    area: Designer
+    requirement: Hazards, placed hazards, shields and destructible matrices are
+      fully editable
+    implementation_paths: *a4
+    required_layers:
+      - API
+      - COMPONENT
+      - E2E
+    positive_proof: Every runtime field round-trips and changes exact-checksum preview
+    negative_or_hostile_proof: Invalid ranges, missing assets or budget overflow fail
+    test_cases:
+      - id: GG-DESIGNER-007 positive
+        classification: API
+        polarity: POSITIVE
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_authoring.py -q && npx playwright test tests/e2e/level4-hazards.spec.ts --project=chromium-desktop --workers=1"
+        assertion: Every runtime field round-trips and changes exact-checksum preview
+      - id: GG-DESIGNER-007 negative
+        classification: API
+        polarity: NEGATIVE
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_authoring.py -q && npx playwright test tests/e2e/level4-hazards.spec.ts --project=chromium-desktop --grep negative --workers=1"
+        assertion: Invalid ranges, missing assets or budget overflow fail
+    evidence_gate: ordinary-designer
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: Typed hazard validation and ordinary Level 4 hazard journeys are executable. Exact-SHA CI evidence remains required before this derived row can pass.
+  - requirement_id: GG-DESIGNER-008
+    area: Designer
+    requirement:
+      Drops, objectives, Boarding anchors, gameplay, scoring and budgets
+      are editable
+    implementation_paths: *a4
+    required_layers:
+      - API
+      - COMPONENT
+      - E2E
+    positive_proof:
+      Every Level 1-6 differing value has a usable typed control or
+      governed exception
+    negative_or_hostile_proof: Source-only, seed-only or UI-shadow configuration fails
+    test_cases:
+      - id: GG-DESIGNER-008 positive
+        classification: API
+        polarity: POSITIVE
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_authoring.py levels/tests/test_browser_assurance_campaign.py -q && npx playwright test tests/e2e/campaign-real-play.spec.ts --project=chromium-desktop --workers=1"
+        assertion: Every Level 1-6 differing value has a usable typed control or
+          governed exception
+      - id: GG-DESIGNER-008 negative
+        classification: API
+        polarity: NEGATIVE
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_authoring.py -q"
+        assertion: Source-only, seed-only or UI-shadow configuration fails
+    evidence_gate: ordinary-designer
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: Authoring validation and complete ordinary campaign traversal are executable. Exact-SHA CI evidence remains required before this derived row can pass.
+  - requirement_id: GG-DESIGNER-009
+    area: Designer
+    requirement: Draft save is immutable, refresh-safe and checksum-addressable
+    implementation_paths: *a4
+    required_layers:
+      - API
+      - E2E
+    positive_proof: Material edits save a new version and survive full refresh/relogin
+    negative_or_hostile_proof: In-place historical mutation, stale checksum or lost edit fails
+    test_cases:
+      - id: GG-DESIGNER-009 positive
+        classification: API
+        polarity: POSITIVE
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q && npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-desktop --grep valid_seed_save_reloads --workers=1"
+        assertion: Material edits save a new version and survive full refresh/relogin
+      - id: GG-DESIGNER-009 negative
+        classification: API
+        polarity: NEGATIVE
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q && npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-desktop --grep invalid_seed --workers=1"
+        assertion: In-place historical mutation, stale checksum or lost edit fails
+    evidence_gate: ordinary-designer
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: Immutable revision API coverage and ordinary save/refresh plus invalid-save browser journeys are executable. Exact-SHA CI evidence remains required before this derived row can pass.
+  - requirement_id: GG-DESIGNER-010
+    area: Designer
+    requirement: Exact-checksum preview uses the same configuration authority as runtime
+    implementation_paths: *a4
+    required_layers:
+      - API
+      - E2E
+    positive_proof: Moved object, formation, composition and hazard changes appear in preview
+    negative_or_hostile_proof: Seed fallback, source constant or checksum mismatch fails
+    test_cases:
+      - id: GG-DESIGNER-010 positive
+        classification: API
+        polarity: POSITIVE
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q && npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-desktop --grep 'POINTER-001|THUMB-001' --workers=1"
+        assertion:
+          Moved object, formation, composition and hazard changes appear in
+          preview
+      - id: GG-DESIGNER-010 negative
+        classification: API
+        polarity: NEGATIVE
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q"
+        assertion: Seed fallback, source constant or checksum mismatch fails
+    evidence_gate: ordinary-designer
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: Exact-checksum preview API coverage and canonical Designer pointer/thumbnail journeys are executable. Exact-SHA CI evidence remains required before this derived row can pass.
+  - requirement_id: GG-DESIGNER-PUBLICATION-001
+    area: Publication
+    requirement: Only authorised internal administrators publish CORE content
+    implementation_paths: &a5
+      - backend/campaigns/
+      - backend/levels/
+      - game/src/scenes/Level1Scene.ts
+    required_layers:
+      - API
+      - E2E
+    positive_proof: Authorised publication creates immutable version and audit record
+    negative_or_hostile_proof: Anonymous, customer and organisation attempts fail server-side
+    test_cases:
+      - id: GG-DESIGNER-PUBLICATION-001 positive
+        classification: API
+        polarity: POSITIVE
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q"
+        assertion: Authorised publication creates immutable version and audit record
+      - id: GG-DESIGNER-PUBLICATION-001 negative
+        classification: API
+        polarity: NEGATIVE
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py organizations/tests/test_portal_api.py -q"
+        assertion: Anonymous, customer and organisation attempts fail server-side
+    evidence_gate: publication-runtime
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: Privileged publish/audit and cross-surface authority rejection coverage are executable. Exact-SHA CI evidence remains required before this derived row can pass.
+  - requirement_id: GG-DESIGNER-PUBLICATION-002
+    area: Publication
+    requirement: Published Designer changes appear in a newly started ordinary campaign
+    implementation_paths: *a5
+    required_layers:
+      - API
+      - E2E
+    positive_proof: New campaign resolves new release and visibly plays all material changes
+    negative_or_hostile_proof: Old seed, cached release or hard-coded runtime fallback fails
+    test_cases:
+      - id: GG-DESIGNER-PUBLICATION-002 positive
+        classification: API
+        polarity: POSITIVE
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q && npx playwright test tests/e2e/campaign-real-play.spec.ts --project=chromium-desktop --grep published_release_continue --workers=1"
+        assertion:
+          New campaign resolves new release and visibly plays all material
+          changes
+      - id: GG-DESIGNER-PUBLICATION-002 negative
+        classification: API
+        polarity: NEGATIVE
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q"
+        assertion: Old seed, cached release or hard-coded runtime fallback fails
+    evidence_gate: publication-runtime
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: Fresh-release API and ordinary Continue runtime coverage are executable. Exact-SHA CI evidence remains required before this derived row can pass.
+  - requirement_id: GG-DESIGNER-PUBLICATION-003
+    area: Publication
+    requirement: Existing active campaigns remain pinned to their original release
+    implementation_paths: *a5
+    required_layers:
+      - API
+      - E2E
+    positive_proof: Campaign created before publication continues on old checksums
+    negative_or_hostile_proof: Silent mutation to the new release fails
+    test_cases:
+      - id: GG-DESIGNER-PUBLICATION-003 positive
+        classification: API
+        polarity: POSITIVE
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q"
+        assertion: Campaign created before publication continues on old checksums
+      - id: GG-DESIGNER-PUBLICATION-003 negative
+        classification: API
+        polarity: NEGATIVE
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q"
+        assertion: Silent mutation to the new release fails
+    evidence_gate: publication-runtime
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: API coverage proves release pinning and rejects silent historical mutation. Exact-SHA CI evidence remains required before this derived row can pass.
+  - requirement_id: GG-DESIGNER-PUBLICATION-004
+    area: Publication
+    requirement: Rollback publishes a new version derived from selected history
+    implementation_paths: *a5
+    required_layers:
+      - API
+      - E2E
+    positive_proof: Restored baseline appears in a new campaign with complete audit lineage
+    negative_or_hostile_proof: Destructive rewrite or deletion of history fails
+    test_cases:
+      - id: GG-DESIGNER-PUBLICATION-004 positive
+        classification: API
+        polarity: POSITIVE
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q"
+        assertion: Restored baseline appears in a new campaign with complete audit lineage
+      - id: GG-DESIGNER-PUBLICATION-004 negative
+        classification: API
+        polarity: NEGATIVE
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q"
+        assertion: Destructive rewrite or deletion of history fails
+    evidence_gate: publication-runtime
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: API coverage proves rollback creates a new immutable revision and preserves history. Exact-SHA CI evidence remains required before this derived row can pass.
+  - requirement_id: GG-DESIGNER-PUBLICATION-005
+    area: Publication
+    requirement:
+      Campaign publication accepts ordered gap-free campaigns of six or
+      more entries
+    implementation_paths: *a5
+    required_layers:
+      - UNIT
+      - API
+      - E2E
+    positive_proof: Six- and seven-level publications succeed and Continue follows pinned order
+    negative_or_hostile_proof: Gaps, duplicate/non-positive sequence or unpublished entry fails
+    test_cases:
+      - id: GG-DESIGNER-PUBLICATION-005 positive
+        classification: UNIT
+        polarity: POSITIVE
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest tests/test_campaign_service.py -q && npx playwright test tests/e2e/campaign-real-play.spec.ts --project=chromium-desktop --grep continue_traverses --workers=1"
+        assertion:
+          Six- and seven-level publications succeed and Continue follows pinned
+          order
+      - id: GG-DESIGNER-PUBLICATION-005 negative
+        classification: UNIT
+        polarity: NEGATIVE
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest tests/test_campaign_service.py -q"
+        assertion: Gaps, duplicate/non-positive sequence or unpublished entry fails
+    evidence_gate: publication-runtime
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: Campaign service sequence validation and ordinary six-entry traversal are executable. Exact-SHA CI evidence remains required before this derived row can pass.
+  - requirement_id: GG-DESIGNER-PUBLICATION-006
+    area: Publication
+    requirement: Administration identifies current draft, published version and
+      containing release
+    implementation_paths: *a5
+    required_layers:
+      - API
+      - E2E
+    positive_proof: Every Level 1-6 view exposes unambiguous identities and preview status
+    negative_or_hostile_proof: Ambiguous, stale or ranked-preview labelling fails
+    test_cases:
+      - id: GG-DESIGNER-PUBLICATION-006 positive
+        classification: API
+        polarity: POSITIVE
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q && npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-desktop --grep valid_seed_save_reloads --workers=1"
+        assertion: Every Level 1-6 view exposes unambiguous identities and preview status
+      - id: GG-DESIGNER-PUBLICATION-006 negative
+        classification: API
+        polarity: NEGATIVE
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q"
+        assertion: Ambiguous, stale or ranked-preview labelling fails
+    evidence_gate: publication-runtime
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: Authority API and ordinary Designer revision display coverage are executable. Exact-SHA CI evidence remains required before this derived row can pass.
+  - requirement_id: GG-BOARDING-001
+    area: Boarding
+    requirement: Board and Continue are distinct governed actions
+    implementation_paths: &a6
+      - game/src/scenes/BoardingScene.ts
+      - backend/campaigns/
+    required_layers:
+      - UNIT
+      - E2E
+    positive_proof: Board enters interior; Continue resumes Shooter/campaign according to state
+    negative_or_hostile_proof: Either action entering the wrong scene or loop fails
+    test_cases:
+      - id: GG-BOARDING-001 positive
+        classification: E2E_ORDINARY_USER
+        polarity: POSITIVE
+        command: npx playwright test tests/e2e/boarding-ordinary.spec.ts --project=chromium-desktop --grep laser_hit_opens_visible_boarding_offer --workers=1
+        assertion: Real player-laser input opens the visible offer; Board enters the interior and Continue resumes Shooter without entering it.
+      - id: GG-BOARDING-001 negative
+        classification: E2E_ORDINARY_USER
+        polarity: NEGATIVE
+        command: npx playwright test tests/e2e/boarding-ordinary.spec.ts --project=chromium-desktop --grep boarding_does_not_open_without_hitting_the_anchor --workers=1
+        assertion: Boarding does not open without the physical laser hit on its authored anchor.
+    evidence_gate: ordinary-boarding
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: Ordinary browser evidence now proves separate Board, Continue and abort paths. Required unit coverage and exact-SHA CI evidence are still pending, so this row remains FAIL.
+  - requirement_id: GG-BOARDING-002
+    area: Boarding
+    requirement: A visible entry airlock begins a physical interior journey
+    implementation_paths: *a6
+    required_layers:
+      - UNIT
+      - E2E
+    positive_proof: Ordinary input enters at the governed entry and traverses away from it
+    negative_or_hostile_proof: Teleport-only entry, missing airlock or incorrect anchor fails
+    test_cases:
+      - id: GG-BOARDING-002 positive
+        classification: UNIT
+        polarity: POSITIVE
+        command: npm run game:test -- tests/boarding-simulation.test.ts
+        assertion: Ordinary input enters at the governed entry and traverses away from it
+      - id: GG-BOARDING-002 negative
+        classification: UNIT
+        polarity: NEGATIVE
+        command: npm run game:test -- tests/boarding-simulation.test.ts
+        assertion: Teleport-only entry, missing airlock or incorrect anchor fails
+    evidence_gate: ordinary-boarding
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: Deterministic entry and world-boundary contracts are now executable.
+      Ordinary browser traversal and exact-SHA CI evidence remain required.
+  - requirement_id: GG-BOARDING-003
+    area: Boarding
+    requirement:
+      Platform combat includes movement, jump, fire, enemies, health and
+      collisions
+    implementation_paths: *a6
+    required_layers:
+      - UNIT
+      - E2E
+    positive_proof:
+      Ordinary input demonstrates patrol/engage, projectiles, hits and
+      elimination
+    negative_or_hostile_proof: Static enemies, non-colliding shots or invulnerable states fail
+    test_cases:
+      - id: GG-BOARDING-003 positive
+        classification: E2E_ORDINARY_USER
+        polarity: POSITIVE
+        command: npx playwright test tests/e2e/boarding-ordinary.spec.ts --project=chromium-desktop --grep boarding_player_fire_collides --workers=1
+        assertion:
+          Ordinary input demonstrates patrol/engage, projectiles, hits and
+          elimination
+      - id: GG-BOARDING-003 negative
+        classification: E2E_ORDINARY_USER
+        polarity: NEGATIVE
+        command: npx playwright test tests/e2e/boarding-ordinary.spec.ts --project=chromium-desktop --grep alien_is_not_eliminated_without_player_fire --workers=1
+        assertion: Static enemies, non-colliding shots or invulnerable states fail
+    evidence_gate: ordinary-boarding
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: Ordinary browser combat journeys now assert real projectile-driven
+      elimination and its no-fire negative. Unit and exact-SHA CI layers remain required.
+  - requirement_id: GG-BOARDING-004
+    area: Boarding
+    requirement: Player and alien governed animation states are visible
+    implementation_paths: *a6
+    required_layers:
+      - UNIT
+      - E2E
+    positive_proof: Idle, move, jump/fall, fire, hit and death states use admitted metadata
+    negative_or_hostile_proof: Static crop, unexplained frame constants or missing required state fails
+    test_cases:
+      - id: GG-BOARDING-004 positive
+        classification: UNIT
+        polarity: POSITIVE
+        command: npm run test:sprites
+        assertion: Idle, move, jump/fall, fire, hit and death states use admitted metadata
+      - id: GG-BOARDING-004 negative
+        classification: UNIT
+        polarity: NEGATIVE
+        command: npm run test:sprites
+        assertion:
+          Static crop, unexplained frame constants or missing required state
+          fails
+    evidence_gate: ordinary-boarding
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: The generated catalogue contract now proves all thirteen Boarding
+      state sheets exist and that BoardScene contains neither source-sheet loads
+      nor legacy crop authority. Gameplay-state and exact-SHA browser evidence
+      remain required before this row can pass.
+  - requirement_id: GG-BOARDING-005
+    area: Boarding
+    requirement: Visible far exit succeeds only after the interior objective
+    implementation_paths: *a6
+    required_layers:
+      - UNIT
+      - API
+      - E2E
+    positive_proof: Physical arrival after completion synchronises position then
+      completes server-side
+    negative_or_hostile_proof: Early exit, stale-position rejection or hidden completion fails
+    test_cases:
+      - id: GG-BOARDING-005 positive
+        classification: E2E_ORDINARY_USER
+        polarity: POSITIVE
+        command: npx playwright test tests/e2e/boarding-ordinary.spec.ts --project=chromium-desktop --grep physical_boarding_combat_and_exit --workers=1
+        assertion: Physical arrival after completion synchronises position then
+          completes server-side
+      - id: GG-BOARDING-005 negative
+        classification: E2E_ORDINARY_USER
+        polarity: NEGATIVE
+        command: npx playwright test tests/e2e/boarding-ordinary.spec.ts --project=chromium-desktop --grep entry_airlock_cannot_complete --workers=1
+        assertion: Early exit, stale-position rejection or hidden completion fails
+    evidence_gate: ordinary-boarding
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: Ordinary positive and negative browser journeys are implemented.
+      They require stable local and exact-SHA CI execution before this row can pass.
+  - requirement_id: GG-BOARDING-006
+    area: Boarding
+    requirement: Pause and ESC present Resume, confirmed Abort and authorised Main Menu
+    implementation_paths: *a6
+    required_layers:
+      - UNIT
+      - E2E
+    positive_proof: Resume continues; confirmed abort returns to exact Shooter checkpoint
+    negative_or_hostile_proof: Immediate abort, loop, duplicate offer or state loss fails
+    test_cases:
+      - id: GG-BOARDING-006 positive
+        classification: E2E_ORDINARY_USER
+        polarity: POSITIVE
+        command: npx playwright test tests/e2e/boarding-ordinary.spec.ts --project=chromium-desktop --grep escape_pauses_resumes --workers=1
+        assertion: Resume continues; confirmed abort returns to exact Shooter checkpoint
+      - id: GG-BOARDING-006 negative
+        classification: E2E_ORDINARY_USER
+        polarity: NEGATIVE
+        command: npx playwright test tests/e2e/boarding-ordinary.spec.ts --project=chromium-desktop --grep escape_pauses_resumes --workers=1
+        assertion: Immediate abort, loop, duplicate offer or state loss fails
+    evidence_gate: ordinary-boarding
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: An ordinary browser journey now covers pause, resume, and explicit
+      confirmation-gated abort. Unit and exact-SHA CI layers remain required.
+  - requirement_id: GG-BOARDING-007
+    area: Boarding
+    requirement: Success, death and API failure have safe deterministic outcomes
+    implementation_paths: *a6
+    required_layers:
+      - UNIT
+      - API
+      - E2E
+    positive_proof: Each path preserves or changes campaign resources according to contract
+    negative_or_hostile_proof: Double completion, stuck session or ungoverned fallback fails
+    test_cases:
+      - id: GG-BOARDING-007 positive
+        classification: API
+        polarity: POSITIVE
+        command: cd backend && python manage.py test boarding.tests.test_boarding_api.BoardingApiTests.test_timeout_loses_one_life_and_applies_parent_return_once boarding.tests.test_boarding_api.BoardingApiTests.test_player_death_loses_one_life_and_applies_parent_return_once --settings=config.settings.local
+        assertion: Each path preserves or changes campaign resources according to contract
+      - id: GG-BOARDING-007 negative
+        classification: API
+        polarity: NEGATIVE
+        command: cd backend && python manage.py test boarding.tests.test_boarding_api.BoardingApiTests.test_complete_requires_matching_digest_and_is_idempotent boarding.tests.test_boarding_api.BoardingApiTests.test_rejects_unknown_fields_and_bad_capability --settings=config.settings.local
+        assertion: Double completion, stuck session or ungoverned fallback fails
+    evidence_gate: ordinary-boarding
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: Existing API contracts prove deterministic resource outcomes,
+      idempotency, and capability rejection. Unit and ordinary-browser layers remain required.
+  - requirement_id: GG-AUTH-SESSION-001
+    area: Security
+    requirement:
+      Admin, Command Post and player surfaces enforce server-side roles
+      and ownership
+    implementation_paths: &a7
+      - backend/accounts/
+      - backend/organizations/
+      - apps/web/app/account/
+    required_layers:
+      - UNIT
+      - API
+      - E2E
+    positive_proof: Authorised role succeeds only for owned scope
+    negative_or_hostile_proof: Anonymous, wrong-role and cross-organisation access fails
+    test_cases:
+      - id: GG-AUTH-SESSION-001 positive
+        classification: API
+        polarity: POSITIVE
+        command: cd backend && python manage.py test organizations.tests.test_portal_api.PortalOrganizationScopeTests.test_business_admin_receives_scoped_member_inventory --settings=config.settings.local
+        assertion: Authorised role succeeds only for owned scope
+      - id: GG-AUTH-SESSION-001 negative
+        classification: API
+        polarity: NEGATIVE
+        command: cd backend && python manage.py test organizations.tests.test_portal_api.PortalOrganizationScopeTests.test_other_tenant_cannot_create_edit_or_preview_a_foreign_map tests.test_auth_surfaces.AuthenticationSurfaceTests.test_platform_audience_requires_platform_permission --settings=config.settings.local
+        assertion: Anonymous, wrong-role and cross-organisation access fails
+    evidence_gate: ordinary-security
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: Existing API contracts prove scoped permitted access and deny wrong-role and cross-tenant operations. Unit and ordinary browser layers remain required.
+  - requirement_id: GG-AUTH-SESSION-002
+    area: Security
+    requirement: Login redirects use one same-origin internal-path validator
+    implementation_paths: *a7
+    required_layers:
+      - UNIT
+      - COMPONENT
+      - E2E
+    positive_proof: Valid internal next succeeds
+    negative_or_hostile_proof:
+      External, protocol-relative, backslash, encoded and
+      active-protocol forms fail
+    test_cases:
+      - id: GG-AUTH-SESSION-002 positive
+        classification: E2E_ORDINARY_USER
+        polarity: POSITIVE
+        command: npx playwright test tests/e2e/auth-session.spec.ts --project=chromium-desktop --grep registration_restores_session --workers=1
+        assertion: Valid internal next succeeds
+      - id: GG-AUTH-SESSION-002 negative
+        classification: API
+        polarity: NEGATIVE
+        command: cd backend && python manage.py test tests.test_auth_surfaces.AuthenticationSurfaceTests.test_login_requires_explicit_audience --settings=config.settings.local
+        assertion:
+          External, protocol-relative, backslash, encoded and active-protocol
+          forms fail
+    evidence_gate: ordinary-security
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: Existing product registration and API audience controls are mapped. Dedicated redirect-validator unit and hostile-route coverage remain required.
+  - requirement_id: GG-AUTH-SESSION-003
+    area: Security
+    requirement: Player account provides visible CSRF-protected logout
+    implementation_paths: *a7
+    required_layers:
+      - API
+      - COMPONENT
+      - E2E
+    positive_proof: Logout clears session and returns to public route
+    negative_or_hostile_proof: Missing/invalid CSRF and post-logout API access fail
+    test_cases:
+      - id: GG-AUTH-SESSION-003 positive
+        classification: API
+        polarity: POSITIVE
+        command: cd backend && python manage.py test tests.test_auth_surfaces.AuthenticationSurfaceTests.test_logout_requires_csrf_and_clears_the_authenticated_session --settings=config.settings.local
+        assertion: Logout clears session and returns to public route
+      - id: GG-AUTH-SESSION-003 negative
+        classification: API
+        polarity: NEGATIVE
+        command: cd backend && python manage.py test tests.test_auth_surfaces.AuthenticationSurfaceTests.test_logout_requires_csrf_and_clears_the_authenticated_session --settings=config.settings.local
+        assertion: Missing/invalid CSRF and post-logout API access fail
+    evidence_gate: ordinary-security
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: Existing API contract proves CSRF rejection and session clearing; ordinary visible logout coverage is present but exact-SHA evidence remains required.
+  - requirement_id: GG-AUTH-SESSION-004
+    area: Security
+    requirement: Django Admin remains diagnostic and is not the product authoring authority
+    implementation_paths: *a7
+    required_layers:
+      - API
+      - E2E
+    positive_proof: Product administration performs all governed CORE workflows
+    negative_or_hostile_proof: Production/public Django Admin and product-control substitution fail
+    test_cases:
+      - id: GG-AUTH-SESSION-004 positive
+        classification: API
+        polarity: POSITIVE
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q && npx playwright test tests/e2e/designer-pointer.spec.ts --project=chromium-desktop --grep valid_seed_save_reloads --workers=1"
+        assertion: Product administration performs all governed CORE workflows
+      - id: GG-AUTH-SESSION-004 negative
+        classification: API
+        polarity: NEGATIVE
+        command: "docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_levels_api.py -q"
+        assertion: Production/public Django Admin and product-control substitution fail
+    evidence_gate: ordinary-security
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: Product administration and Django Admin exclusion are covered by executable API and ordinary browser tests. Exact-SHA CI evidence remains required before this derived row can pass.
+  - requirement_id: GG-QUALITY-001
+    area: Quality
+    requirement:
+      Formatting, lint, type checking and test commands are deterministic
+      and enforced
+    implementation_paths: &a8
+      - package.json
+      - .github/workflows/quality.yml
+      - scripts/
+    required_layers:
+      - CI
+    positive_proof: Clean checkout executes documented commands successfully
+    negative_or_hostile_proof: Introduced violation fails CI
+    test_cases:
+      - id: GG-QUALITY-001 positive
+        classification: CI
+        polarity: POSITIVE
+        command: "npm run quality && npm run test:h015:evidence-integrity"
+        assertion: Clean checkout executes documented commands successfully
+      - id: GG-QUALITY-001 negative
+        classification: CI
+        polarity: NEGATIVE
+        command: "node scripts/test-h015-ci-artifacts.mjs"
+        assertion: Introduced violation fails CI
+    evidence_gate: quality-gates
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: The documented quality command and CI workflow contract are executable; the workflow contract has a controlled missing-required-journey negative test. Exact-SHA CI evidence remains required before this derived row can pass.
+  - requirement_id: GG-QUALITY-002
+    area: Quality
+    requirement: Changed high-risk code has maintainable test seams and
+      human-readable structure
+    implementation_paths: *a8
+    required_layers:
+      - UNIT
+      - REVIEW
+    positive_proof: Review confirms cohesive modules, typed contracts and decision comments
+    negative_or_hostile_proof: God-file growth, duplicate logic or unexplained constants fails review
+    test_cases:
+      - id: GG-QUALITY-002 positive
+        classification: UNIT
+        polarity: POSITIVE
+        command: "npm run game:typecheck && npm run game:test && docker compose --env-file .founder-review.env exec -T backend pytest levels/tests/test_authoring.py tests/test_campaign_service.py -q"
+        assertion: Review confirms cohesive modules, typed contracts and decision comments
+      - id: GG-QUALITY-002 negative
+        classification: UNIT
+        polarity: NEGATIVE
+        command: "npm run test:h015:traceability"
+        assertion: God-file growth, duplicate logic or unexplained constants fails review
+    evidence_gate: quality-gates
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: Typed game/backend seams and fail-closed traceability boundary tests are executable. Exact-SHA CI evidence remains required before this derived row can pass.
+  - requirement_id: GG-QUALITY-003
+    area: Quality
+    requirement: Coverage and test-effectiveness gates prevent assertion-free success
+    implementation_paths: *a8
+    required_layers:
+      - CI
+    positive_proof: Thresholds pass and a controlled fault is detected by relevant tests
+    negative_or_hostile_proof: Empty test, removed assertion or deliberate mutation surviving fails
+    test_cases:
+      - id: GG-QUALITY-003 positive
+        classification: CI
+        polarity: POSITIVE
+        command: "npm run test:coverage && npm run test:h015:evidence-integrity"
+        assertion: Thresholds pass and a controlled fault is detected by relevant tests
+      - id: GG-QUALITY-003 negative
+        classification: CI
+        polarity: NEGATIVE
+        command: "npm run test:h015:evidence-integrity"
+        assertion: Empty test, removed assertion or deliberate mutation surviving fails
+    evidence_gate: quality-gates
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: Coverage and evidence-integrity tests are executable; controlled mutation cases reject missing artifact bindings, missing gate evidence, and assertion-free evidence claims. Exact-SHA CI evidence remains required before this derived row can pass.
+  - requirement_id: GG-QUALITY-004
+    area: Quality
+    requirement: Final exact-SHA closure is independently reproducible and fail-closed
+    implementation_paths: *a8
+    required_layers:
+      - CI
+      - E2E
+      - REVIEW
+    positive_proof:
+      Clean launcher, CI artifacts and closure audit agree with zero
+      failed/pending rows
+    negative_or_hostile_proof:
+      Dirty tree, provenance mismatch, manual PASS, missing
+      artifact or injected defect fails
+    test_cases:
+      - id: GG-QUALITY-004 positive
+        classification: CI
+        polarity: POSITIVE
+        command: "npm run h015:closure-audit"
+        assertion:
+          Clean launcher, CI artifacts and closure audit agree with zero
+          failed/pending rows
+      - id: GG-QUALITY-004 negative
+        classification: CI
+        polarity: NEGATIVE
+        command: "npm run test:h015:evidence-integrity && node scripts/test-h015-ci-artifacts.mjs"
+        assertion:
+          Dirty tree, provenance mismatch, manual PASS, missing artifact or
+          injected defect fails
+    evidence_gate: quality-gates
+    evidence_paths: []
+    status: FAIL
+    derived: true
+    reason: The closure auditor and controlled evidence/CI artifact negative cases are executable. A final exact-SHA artifact must still prove this row before it can pass.

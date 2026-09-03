@@ -25,6 +25,10 @@ media/
 .env
 .env.*
 env.*
+FOUNDER_REVIEW_ACCESS.local.txt
+.founder-review.env
+.dev.env
+FOUNDER_REVIEW_EVIDENCE.local/
 !.env.example
 
 # Editors / OS

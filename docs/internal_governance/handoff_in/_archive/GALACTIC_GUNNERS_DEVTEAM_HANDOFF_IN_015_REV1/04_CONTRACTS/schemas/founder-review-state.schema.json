@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://galacticgunners.com/contracts/v1/founder-review-state.schema.json",
+  "title": "Galactic Gunners Founder Review Build State",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["application", "source_sha", "build_id", "environment", "api_version", "schema_state"],
+  "properties": {
+    "application": {"const": "galactic-gunners"},
+    "source_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "build_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "environment": {"enum": ["local", "dev", "stage", "production"]},
+    "api_version": {"const": "v1"},
+    "schema_state": {"enum": ["CURRENT", "MIGRATIONS_PENDING", "UNKNOWN"]}
+  }
+}
+

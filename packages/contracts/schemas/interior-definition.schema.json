@@ -37,10 +37,10 @@
     "hazards": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"$ref": "#/$defs/rect"}},
     "pickups": {
       "type": "object", "additionalProperties": false,
-      "required": ["allowed_types", "lives_cap", "nukes_cap"],
+      "required": ["allowed_types", "lives_cap"],
       "properties": {
         "allowed_types": {"type": "array", "prefixItems": [{"const": "LIFE"}, {"const": "NUKE"}], "items": false},
-        "lives_cap": {"const": 3}, "nukes_cap": {"const": 2}
+        "lives_cap": {"const": 3}, "nukes_cap": {"type": "integer", "minimum": 0}
       }
     },
     "assets": {

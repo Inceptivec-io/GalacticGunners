@@ -23,7 +23,7 @@
       "type": "object", "additionalProperties": false, "required": ["x_milli_px", "y_milli_px", "velocity_x_milli_px_s", "velocity_y_milli_px_s", "lives", "nukes", "invulnerable_until_ms"],
       "properties": {
         "x_milli_px": {"type": "integer"}, "y_milli_px": {"type": "integer"}, "velocity_x_milli_px_s": {"type": "integer"}, "velocity_y_milli_px_s": {"type": "integer"},
-        "lives": {"type": "integer", "minimum": 1, "maximum": 3}, "nukes": {"type": "integer", "minimum": 0, "maximum": 2}, "invulnerable_until_ms": {"type": "integer", "minimum": 0}
+        "lives": {"type": "integer", "minimum": 1, "maximum": 3}, "nukes": {"type": "integer", "minimum": 0}, "invulnerable_until_ms": {"type": "integer", "minimum": 0}
       }
     },
     "score": {

@@ -1,0 +1,18 @@
+schema_version: "1.0"
+handoff: GALACTIC_GUNNERS_DEVTEAM_HANDOFF_OUT_015
+expected_requirement_count: 50
+tested_sha: "<full-40-character-sha>"
+rows:
+  - requirement_id: "H015-EVID-001"
+    implementation_paths: []
+    test_cases:
+      - id: "<stable-test-id>"
+        classification: "PROCESS"
+        polarity: "POSITIVE"
+        command: "<executable-command>"
+        assertion: "<observable-assertion>"
+    evidence_gate: "<stable-gate-id>"
+    evidence_paths: []
+    status: "FAIL"
+    derived: true
+    reason: "Mandatory four-pack intake not yet verified"

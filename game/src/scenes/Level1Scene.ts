@@ -1,30 +1,103 @@
-import * as Phaser from 'phaser';
+import * as Phaser from "phaser";
+import {
+  asteroidAngularVelocity,
+  deterministicHazardRange,
+  hazardEntryEdge,
+  hazardEntryPoint,
+  hazardTravelVector,
+  hazardVariantFrame,
+  cometRotationForVelocity,
+} from "../systems/HazardPolicy";
 
-import { Player, type MovementVector } from '../entities/Player';
-import { Scout } from '../entities/Scout';
-import { RUNTIME_ASSETS } from '../config/assets';
-import { type GameRuntimeConfig } from '../config/gameConfig';
-import { LEVEL_ONE_SLICE } from '../config/levelOneSlice';
-import { GameApiClient } from '../services/GameApiClient';
-import { AudioSystem } from '../systems/AudioSystem';
-import { GameSession } from '../systems/GameSession';
-import { InputSystem } from '../systems/InputSystem';
-import { LifeSystem } from '../systems/LifeSystem';
-import { createPlayfieldLayout, type PlayfieldLayout } from '../systems/PlayfieldLayout';
-import { ScoreSystem } from '../systems/ScoreSystem';
-import { CombatLevelScene } from './CombatLevelScene';
-import type { LevelDefinition } from '../levels/LevelDefinition';
-import type { LevelRuntimeConfig } from '../levels/LevelRuntimeConfig';
-import { CAMPAIGN_DEFINITIONS } from '../levels/campaignDefinitions';
-import { validateLevelDefinition } from '../levels/LevelValidator';
+import { Player, type MovementVector } from "../entities/Player";
+import { hostileDisplaySize, Scout } from "../entities/Scout";
+import { RUNTIME_ASSETS } from "../config/assets";
+import { type GameRuntimeConfig } from "../config/gameConfig";
+import { LEVEL_ONE_SLICE } from "../config/levelOneSlice";
+import { GameApiClient } from "../services/GameApiClient";
+import type { BoardingRunRecord } from "../services/GameApiClient";
+import { BoardingCoordinator } from "../boarding/BoardingCoordinator";
+import { BoardingSimulation } from "../boarding/BoardingSimulation";
+import { AudioSystem } from "../systems/AudioSystem";
+import { GameSession } from "../systems/GameSession";
+import { CampaignSession } from "../systems/CampaignSession";
+import { InputSystem } from "../systems/InputSystem";
+import { LifeSystem } from "../systems/LifeSystem";
+import { PickupSystem, type PickupType } from "../systems/PickupSystem";
+import {
+  hostileWeaponHardpoints,
+  nextHostileIndex,
+} from "../systems/HostileWeaponPolicy";
+import { SeededRng } from "../systems/SeededRng";
+import {
+  createPlayfieldLayout,
+  type PlayfieldLayout,
+} from "../systems/PlayfieldLayout";
+import { ScoreSystem } from "../systems/ScoreSystem";
+import { primaryTerminalAction } from "../systems/TerminalActions";
+import { CombatLevelScene } from "./CombatLevelScene";
+import type { LevelDefinition } from "../levels/LevelDefinition";
+import type { LevelAuthoringDocument } from "../levels/LevelAuthoringDocument";
+import type { LevelRuntimeConfig } from "../levels/LevelRuntimeConfig";
+import { CAMPAIGN_DEFINITIONS } from "../levels/campaignDefinitions";
+import { validateLevelDefinition } from "../levels/LevelValidator";
+import { compileLevelDocument } from "../levels/LevelCompiler";
 
-type TerminalState = 'complete' | 'failed';
-type PlayerState = 'active' | 'hit' | 'regenerating';
-type TerminalAction = 'continue' | 'replay' | 'try-again' | 'menu';
+type TerminalState = "complete" | "failed";
+type PlayerState = "active" | "hit" | "regenerating";
+type TerminalAction = "continue" | "replay" | "try-again" | "menu";
+type CampaignRuntimeState = {
+  sequence: number;
+  score: number;
+  lives: number;
+  nukes: number;
+};
+type BoardingOfferState = {
+  scout: Phaser.Physics.Arcade.Sprite;
+  anchor: NonNullable<LevelDefinition["boarding_anchors"]>[number];
+  expiresAtMs: number;
+  controls: Phaser.GameObjects.GameObject[];
+  actionsVisible: boolean;
+  declined: boolean;
+  admitting: boolean;
+};
 type SweptHitTarget =
-  | { kind: 'player'; body: Phaser.Physics.Arcade.Body }
-  | { kind: 'scout'; body: Phaser.Physics.Arcade.Body; scout: Phaser.Physics.Arcade.Sprite }
-  | { kind: 'shield'; body: Phaser.Physics.Arcade.Body; tile: Phaser.Physics.Arcade.Image };
+  | { kind: "player"; body: Phaser.Physics.Arcade.Body }
+  | {
+      kind: "scout";
+      body: Phaser.Physics.Arcade.Body;
+      scout: Phaser.Physics.Arcade.Sprite;
+    }
+  | {
+      kind: "shield";
+      body: Phaser.Physics.Arcade.Body;
+      tile: Phaser.Physics.Arcade.Image;
+    }
+  | {
+      kind: "hazard";
+      body: Phaser.Physics.Arcade.Body;
+      hazard: Phaser.Physics.Arcade.Sprite;
+    };
+type RuntimeHazardEmitter = {
+  id: string;
+  hazard_type: "ASTEROID" | "COMET";
+  variant_mode?: "FIXED" | "ORDERED" | "SEEDED_RANDOM";
+  variant_ids?: string[];
+  initial_count: number;
+  maximum_active: number;
+  spawn_interval_ms: number;
+  spawn_jitter_ms: number;
+  speed_min: number;
+  speed_max: number;
+  angular_velocity_min: number;
+  angular_velocity_max: number;
+  spin_direction_policy?:
+    "SEEDED_BIDIRECTIONAL" | "CLOCKWISE" | "COUNTERCLOCKWISE" | "NONE";
+  entry_edges: Array<"TOP" | "RIGHT" | "BOTTOM" | "LEFT">;
+  spawn_pattern: string;
+  spawn_points: Array<{ x: number; y: number }>;
+  despawn_margin: number;
+};
 
 const SHIELD_MATRIX = [
   [1, 1, 1, 1, 1, 1, 1, 1],
@@ -35,9 +108,13 @@ const SHIELD_MATRIX = [
 ] as const;
 
 interface HostileQaApi {
-  firePlayerLaserAtScout: (index?: number, offsetX?: number) => Record<string, unknown>;
+  firePlayerLaserAtScout: (
+    index?: number,
+    offsetX?: number,
+  ) => Record<string, unknown>;
   firePlayerLaserForVisual: (offsetX?: number) => Record<string, unknown>;
   fireEnemyLaserAtPlayer: (offsetX?: number) => Record<string, unknown>;
+  fireEnemyLaserForVisual: () => Record<string, unknown>;
   fireEnemyLaserAtShield: (index?: number) => Record<string, unknown>;
   firePlayerLaserAtShield: (index?: number) => Record<string, unknown>;
   fireNukeAtScout: (index?: number) => Record<string, unknown>;
@@ -45,13 +122,19 @@ interface HostileQaApi {
   verifyNukePool: () => Record<string, unknown>[];
   verifyNukeAmmoGuard: () => Record<string, unknown>;
   verifyNukeRearmLifecycle: () => Record<string, unknown>;
-  setPlayerUnderScout: (index?: number, offsetX?: number) => Record<string, unknown>;
+  setPlayerUnderScout: (
+    index?: number,
+    offsetX?: number,
+  ) => Record<string, unknown>;
+  prepareMovementBoundsProbe: () => Record<string, unknown>;
   gamepadY: () => Record<string, unknown>;
   forceComplete: () => void;
   forceFail: () => void;
   continueCampaign: () => void;
   replay: () => void;
   menu: () => void;
+  triggerBoarding: () => Record<string, unknown>;
+  firePlayerLaserAtHazard: (index?: number) => Record<string, unknown>;
   state: () => Record<string, unknown>;
 }
 
@@ -76,6 +159,10 @@ export class Level1Scene extends CombatLevelScene {
   #playerLasers!: Phaser.Physics.Arcade.Group;
   #enemyLasers!: Phaser.Physics.Arcade.Group;
   #nukes!: Phaser.Physics.Arcade.Group;
+  #hazards!: Phaser.Physics.Arcade.Group;
+  #pickups!: Phaser.Physics.Arcade.Group;
+  #pickupSystem!: PickupSystem;
+  #pickupCounts = new Map<PickupType, number>();
   #lifeIcons: Phaser.GameObjects.Image[] = [];
   #soundIcon!: Phaser.GameObjects.Image;
   #scoreText!: Phaser.GameObjects.Text;
@@ -88,23 +175,53 @@ export class Level1Scene extends CombatLevelScene {
   #formationDirection: 1 | -1 = 1;
   #formationOffsetX = 0;
   #formationDropY = 0;
-  #currentNukes: number = LEVEL_ONE_SLICE.maxNukes;
+  #currentNukes: number = LEVEL_ONE_SLICE.initialNukes;
   #rearmProgress: number = LEVEL_ONE_SLICE.nukeRearmMax;
   #nukesFired = 0;
   #lastUpdateAtMs = 0;
   #pauseInputBlockedUntilMs = 0;
+  #pauseKey?: Phaser.Input.Keyboard.Key;
+  #windowPauseHandler?: (event: KeyboardEvent) => void;
   #terminalState: TerminalState | null = null;
-  #playerState: PlayerState = 'active';
+  #playerState: PlayerState = "active";
   #invulnerableUntilMs = Number.NEGATIVE_INFINITY;
   #runtimeConfig: GameRuntimeConfig = {};
   #definition!: LevelDefinition;
   #campaignSequence = 1;
-  #terminalActions: Array<{ action: TerminalAction; x: number; y: number; width: number; height: number; source: 'production-asset' | 'production-derived' }> = [];
+  #terminalActions: Array<{
+    action: TerminalAction;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    source: "production-asset" | "production-derived";
+  }> = [];
   #terminalActionHandled = false;
+  #terminalInputArmed = false;
+  #terminalAwaitKeyRelease = false;
+  #cursorHideEvent?: Phaser.Time.TimerEvent;
+  #cursorMoveHandler?: () => void;
   #boardingActive = false;
+  #boardingTransition:
+    | "SHOOTER_ACTIVE"
+    | "BOARDING_OFFER"
+    | "BOARDING_ACTIVE"
+    | "BOARDING_RESOLVING" = "SHOOTER_ACTIVE";
+  #boardingOffer: BoardingOfferState | null = null;
+  #boardingConfirmKey: Phaser.Input.Keyboard.Key | undefined;
+  #boardingGamepadConfirmPressed = false;
+  #campaignSession: CampaignSession | null = null;
+  #hazardEmitterState = new Map<
+    string,
+    { emitted: number; nextAtMs: number }
+  >();
+  #lastMothershipDeployAtMs = Number.NEGATIVE_INFINITY;
+  #enemyFireOrdinal = 0;
+  #levelStartedAtMs = 0;
+  #entryScore = 0;
 
   constructor() {
-    super('Level1Scene');
+    super("Level1Scene");
   }
 
   init(data: { sequence?: number } = {}): void {
@@ -112,26 +229,52 @@ export class Level1Scene extends CombatLevelScene {
   }
 
   create(): void {
-    this.#runtimeConfig = this.registry.get('runtimeConfig') as GameRuntimeConfig | undefined ?? {};
-    const campaignRuntime = this.registry.get('campaignRuntime') as LevelRuntimeConfig[] | undefined ?? [];
-    const packagedDefinition = CAMPAIGN_DEFINITIONS.find((definition) => definition.sequence === this.#campaignSequence);
-    if (!packagedDefinition) {
-      throw new Error(`Campaign sequence ${this.#campaignSequence} is not defined.`);
+    this.#runtimeConfig =
+      (this.registry.get("runtimeConfig") as GameRuntimeConfig | undefined) ??
+      {};
+    this.#runtimeConfig.onLaunchStateChange?.("gameplay");
+    this.#levelStartedAtMs = this.time.now;
+    this.#campaignSession =
+      (this.registry.get("campaignSession") as CampaignSession | undefined) ??
+      null;
+    const campaignRuntime =
+      (this.registry.get("campaignRuntime") as
+        LevelRuntimeConfig[] | undefined) ?? [];
+    const packagedDefinition = CAMPAIGN_DEFINITIONS.find(
+      (definition) => definition.sequence === this.#campaignSequence,
+    );
+    const configuredRuntime = campaignRuntime.find(
+      (runtime) => runtime.definition.sequence === this.#campaignSequence,
+    );
+    if (!packagedDefinition && !configuredRuntime) {
+      throw new Error(
+        `Campaign sequence ${this.#campaignSequence} is not defined.`,
+      );
     }
-    this.levelRuntime = campaignRuntime.find((runtime) => runtime.definition.sequence === this.#campaignSequence)
-      ?? (this.#campaignSequence === 1 ? this.registry.get('levelRuntime') as LevelRuntimeConfig | undefined ?? null : null);
-    this.#definition = this.levelRuntime?.definition ?? packagedDefinition;
+    this.levelRuntime =
+      configuredRuntime ??
+      (this.#campaignSequence === 1
+        ? ((this.registry.get("levelRuntime") as
+            LevelRuntimeConfig | undefined) ?? null)
+        : null);
+    this.#definition = this.levelRuntime?.definition ?? packagedDefinition!;
     validateLevelDefinition(this.#definition);
     this.#layout = createPlayfieldLayout(this.scale.width, this.scale.height);
     this.#terminalState = null;
-    this.#playerState = 'active';
+    this.#playerState = "active";
     this.#lastDamageAtMs = Number.NEGATIVE_INFINITY;
     this.#invulnerableUntilMs = Number.NEGATIVE_INFINITY;
     this.#respawnAtMs = Number.POSITIVE_INFINITY;
     this.#formationDirection = 1;
     this.#formationOffsetX = 0;
     this.#formationDropY = 0;
-    this.#currentNukes = LEVEL_ONE_SLICE.maxNukes;
+    this.#enemyFireOrdinal = 0;
+    const campaignState = this.registry.get("campaignState") as
+      CampaignRuntimeState | undefined;
+    this.#currentNukes =
+      campaignState?.sequence === this.#campaignSequence
+        ? campaignState.nukes
+        : LEVEL_ONE_SLICE.initialNukes;
     this.#rearmProgress = LEVEL_ONE_SLICE.nukeRearmMax;
     this.#nukesFired = 0;
     this.#lastUpdateAtMs = 0;
@@ -142,72 +285,188 @@ export class Level1Scene extends CombatLevelScene {
 
     this.#score = new ScoreSystem();
     this.#lives = new LifeSystem(LEVEL_ONE_SLICE.initialLives);
-    this.#audio = new AudioSystem((cue) => this.sound.play(RUNTIME_ASSETS.audio[cue].key));
-    this.#session = new GameSession(this.#runtimeConfig.apiBaseUrl ? new GameApiClient(this.#runtimeConfig.apiBaseUrl) : null, {
-      slug: this.#definition.slug,
-      version: this.#definition.version,
-      checksum: this.levelRuntime?.checksum ?? '',
-      seed: this.#definition.seed,
+    if (campaignState?.sequence === this.#campaignSequence) {
+      this.#score.restore(campaignState.score);
+      this.#lives.restore(campaignState.lives);
+    }
+    this.#entryScore = this.#score.value;
+    this.#audio = new AudioSystem((cue) => {
+      const key = RUNTIME_ASSETS.audio[cue].key;
+      if (this.cache.audio.exists(key)) this.sound.play(key);
     });
+    const isCampaignPreview = Boolean(this.registry.get("campaignPreview"));
+    const campaignRun = isCampaignPreview ? null : this.#campaignSession?.run;
+    // A checksum-bound Designer preview must render the exact authored content
+    // without creating a score-bearing run or mutating campaign continuity.
+    this.#session = new GameSession(
+      !isCampaignPreview && this.#runtimeConfig.apiBaseUrl
+        ? new GameApiClient(this.#runtimeConfig.apiBaseUrl)
+        : null,
+      {
+        slug: this.#definition.slug,
+        version: this.levelRuntime?.version ?? this.#definition.version,
+        checksum: this.levelRuntime?.checksum ?? "",
+        seed: this.#definition.seed,
+      },
+      campaignRun?.entry
+        ? {
+            runId: campaignRun.id,
+            entryId: campaignRun.entry.id,
+            capability: campaignRun.capability,
+          }
+        : null,
+    );
     this.#inputSystem = new InputSystem(this);
     void this.#session.start().finally(() => this.publishQaState());
 
-    this.#background = this.add.image(this.scale.width / 2, this.scale.height / 2, RUNTIME_ASSETS.background.starfield.key)
+    this.#background = this.add
+      .image(
+        this.scale.width / 2,
+        this.scale.height / 2,
+        RUNTIME_ASSETS.background.starfield.key,
+      )
       .setDisplaySize(this.scale.width, this.scale.height)
       .setDepth(0);
 
-    this.#player = new Player(this, this.#layout);
+    this.#player = new Player(this, this.#layout, {
+      x: (this.#definition.player.x / 1280) * this.scale.width,
+      y: (this.#definition.player.y / 720) * this.scale.height,
+    });
     this.#playerLasers = this.physics.add.group({ maxSize: 48 });
     this.#enemyLasers = this.physics.add.group({ maxSize: 48 });
-    this.#nukes = this.physics.add.group({ maxSize: LEVEL_ONE_SLICE.maxNukes });
+    this.#nukes = this.physics.add.group({
+      maxSize: LEVEL_ONE_SLICE.nukeProjectilePoolSize,
+    });
     this.#scouts = this.physics.add.group();
+    this.#hazards = this.physics.add.group();
+    this.#pickups = this.physics.add.group({ maxSize: 12 });
+    this.#pickupSystem = new PickupSystem(new SeededRng(this.#definition.seed));
+    this.#pickupCounts.clear();
     this.#shieldTiles = this.physics.add.group();
     this.createScoutWave();
+    this.createHazards();
     this.createShieldZone();
     this.createHud();
-      this.createCollisions();
-      this.events.on('resume', this.handleBoardingReturn, this);
-      this.installHostileQa();
+    this.createLevelEntryNotice();
+    this.createCollisions();
+    this.events.on("resume", this.handleBoardingReturn, this);
+    this.installHostileQa();
 
     this.time.addEvent({
       delay: LEVEL_ONE_SLICE.scoutFireIntervalMs,
       loop: true,
-      callback: () => this.fireEnemyLaser(),
+      // Hostile cases place their own projectile deterministically. Ambient fire
+      // would otherwise mutate the initial golden shield topology before capture.
+      callback: () => {
+        if (!this.#runtimeConfig.hostileQa) this.fireEnemyLaser();
+      },
     });
 
-    this.scale.on('resize', this.handleResize, this);
-    this.input.keyboard?.on('keydown-P', this.handlePauseKeyDown, this);
-    this.events.on('resume', this.handleResume, this);
-    this.events.once('shutdown', () => {
-      this.scale.off('resize', this.handleResize, this);
-      this.input.keyboard?.off('keydown-P', this.handlePauseKeyDown, this);
-      this.events.off('resume', this.handleResume, this);
-      if (typeof window !== 'undefined') {
+    this.scale.on("resize", this.handleResize, this);
+    this.#pauseKey = this.input.keyboard?.addKey(
+      Phaser.Input.Keyboard.KeyCodes.P,
+    );
+    this.#boardingConfirmKey = this.input.keyboard?.addKey(
+      Phaser.Input.Keyboard.KeyCodes.ENTER,
+    );
+    this.#pauseKey?.on("down", this.handlePauseKeyDown, this);
+    this.input.keyboard?.on("keydown-ENTER", this.handleTerminalConfirm, this);
+    this.input.keyboard?.on("keydown-SPACE", this.handleTerminalConfirm, this);
+    this.input.keyboard?.on("keyup-ENTER", this.armTerminalInput, this);
+    this.input.keyboard?.on("keyup-SPACE", this.armTerminalInput, this);
+    this.installGameplayCursor();
+    if (typeof window !== "undefined") {
+      this.#windowPauseHandler = (event) => {
+        if (event.code !== "KeyP" || event.repeat) return;
+        // The capture fallback is only for entering pause. Once the overlay is
+        // active, it owns P so the same physical key can resume the game.
+        if (
+          this.scene.isPaused("Level1Scene") ||
+          this.scene.isActive("PauseScene")
+        ) {
+          return;
+        }
+        event.preventDefault();
+        this.handlePauseKeyDown();
+      };
+      window.addEventListener("keydown", this.#windowPauseHandler, true);
+    }
+    this.events.on("resume", this.handleResume, this);
+    this.events.once("shutdown", () => {
+      this.scale.off("resize", this.handleResize, this);
+      this.#pauseKey?.off("down", this.handlePauseKeyDown, this);
+      this.input.keyboard?.off(
+        "keydown-ENTER",
+        this.handleTerminalConfirm,
+        this,
+      );
+      this.input.keyboard?.off(
+        "keydown-SPACE",
+        this.handleTerminalConfirm,
+        this,
+      );
+      this.input.keyboard?.off("keyup-ENTER", this.armTerminalInput, this);
+      this.input.keyboard?.off("keyup-SPACE", this.armTerminalInput, this);
+      this.#cursorHideEvent?.remove(false);
+      this.#cursorHideEvent = undefined;
+      if (this.#cursorMoveHandler)
+        this.game.canvas.removeEventListener(
+          "pointermove",
+          this.#cursorMoveHandler,
+        );
+      this.game.canvas.style.cursor = "";
+      this.#pauseKey = undefined;
+      this.#boardingConfirmKey = undefined;
+      if (this.#windowPauseHandler) {
+        window.removeEventListener("keydown", this.#windowPauseHandler, true);
+        this.#windowPauseHandler = undefined;
+      }
+      this.events.off("resume", this.handleResume, this);
+      if (typeof window !== "undefined") {
         delete window.__GALACTIC_GUNNERS_HOSTILE__;
       }
     });
+    // The host's gameplay-ready announcement is the browser input contract:
+    // emit it only after every keyboard handler is registered.
+    this.#runtimeConfig.onGameplayAnnouncement?.(
+      `Level ${this.#campaignSequence}: ${this.#definition.name} started.`,
+    );
   }
 
   update(time: number): void {
     if (this.#terminalState) {
-      const actions = this.#inputSystem.actions;
-      if (actions.confirm) {
-        this.runTerminalAction(this.primaryTerminalAction());
-      } else if (actions.back) {
-        this.runTerminalAction('menu');
-      }
       return;
     }
-    const deltaMs = this.#lastUpdateAtMs === 0 ? 0 : Math.max(time - this.#lastUpdateAtMs, 0);
+    // Boarding admission is asynchronous, but its server request already
+    // binds the player resources. Freeze the live Shooter projection until
+    // that request resolves so an incoming hit cannot create a second, local
+    // resource state between admission and the launched Boarding scene.
+    if (
+      this.#boardingTransition === "BOARDING_RESOLVING" &&
+      !this.#boardingActive
+    ) {
+      this.#player.stop();
+      this.publishQaState();
+      return;
+    }
+    const deltaMs =
+      this.#lastUpdateAtMs === 0 ? 0 : Math.max(time - this.#lastUpdateAtMs, 0);
     this.#lastUpdateAtMs = time;
 
-    if (this.#playerState === 'hit' && time >= this.#respawnAtMs) {
+    if (this.#boardingOffer) {
+      this.updateBoardingOffer(time);
+    }
+
+    if (this.#playerState === "hit" && time >= this.#respawnAtMs) {
       this.respawnPlayer();
     }
-    if (this.#playerState === 'regenerating' && time >= this.#invulnerableUntilMs) {
-      this.#playerState = 'active';
+    if (
+      this.#playerState === "regenerating" &&
+      time >= this.#invulnerableUntilMs
+    ) {
+      this.#playerState = "active";
       this.#player.sprite.setAlpha(1);
-    } else if (this.#playerState === 'regenerating') {
+    } else if (this.#playerState === "regenerating") {
       this.#player.sprite.setAlpha(Math.floor(time / 120) % 2 === 0 ? 0.52 : 1);
     }
 
@@ -225,7 +484,13 @@ export class Level1Scene extends CombatLevelScene {
   private handleResize(gameSize: Phaser.Structs.Size): void {
     this.#layout = createPlayfieldLayout(gameSize.width, gameSize.height);
     this.physics.world.setBounds(0, 0, gameSize.width, gameSize.height);
-    this.#background.setPosition(gameSize.width / 2, gameSize.height / 2).setDisplaySize(gameSize.width, gameSize.height);
+    this.#background
+      .setPosition(gameSize.width / 2, gameSize.height / 2)
+      .setDisplaySize(gameSize.width, gameSize.height);
+    this.#player.setSpawn({
+      x: (this.#definition.player.x / 1280) * gameSize.width,
+      y: (this.#definition.player.y / 720) * gameSize.height,
+    });
     this.#player.applyLayout(this.#layout);
     this.#player.clampToPlayfield(this.#layout);
     this.reflowHud();
@@ -236,16 +501,42 @@ export class Level1Scene extends CombatLevelScene {
   }
 
   private createScoutWave(): void {
-    const formation = this.#definition.enemy_formations[0];
-    for (let row = 0; row < formation.rows; row += 1) {
-      for (let col = 0; col < formation.columns; col += 1) {
-        const position = this.scoutPosition(row, col);
-        const scout = new Scout(this, position.x, position.y, this.#layout);
-        scout.sprite.setData('row', row);
-        scout.sprite.setData('col', col);
-        this.#scouts.add(scout.sprite);
+    this.#definition.enemy_formations.forEach((formation, formationIndex) => {
+      for (let row = 0; row < formation.rows; row += 1) {
+        for (let col = 0; col < formation.columns; col += 1) {
+          const position = this.scoutPosition(formationIndex, row, col);
+          const scout = new Scout(
+            this,
+            position.x,
+            position.y,
+            this.#layout,
+            formation.type,
+            { width: formation.width, height: formation.height },
+          );
+          scout.sprite.setData("formation", formationIndex);
+          scout.sprite.setData("row", row);
+          scout.sprite.setData("col", col);
+          scout.sprite.setData(
+            "entityId",
+            formation.entity_id ??
+              `${this.#definition.slug}:formation-${formationIndex}:r${row}:c${col}`,
+          );
+          scout.sprite.setData(
+            "formationId",
+            formation.id ?? `formation-${formationIndex}`,
+          );
+          scout.sprite.setData(
+            "behaviourProfile",
+            formation.behaviour_profile ?? `enemy.${formation.type}.standard`,
+          );
+          scout.sprite.setData(
+            "motionProfile",
+            formation.motion_profile ?? "formation.standard",
+          );
+          this.#scouts.add(scout.sprite);
+        }
       }
-    }
+    });
   }
 
   private reflowScoutWave(): void {
@@ -253,157 +544,571 @@ export class Level1Scene extends CombatLevelScene {
       if (!scout.active) {
         continue;
       }
-      const row = Number(scout.getData('row'));
-      const col = Number(scout.getData('col'));
-      const position = this.scoutPosition(row, col);
+      const formationIndex = Number(scout.getData("formation"));
+      if (formationIndex < 0) {
+        const size = hostileDisplaySize(this.#layout, "scout");
+        scout.setDisplaySize(size.width, size.height);
+        const body = scout.body as Phaser.Physics.Arcade.Body;
+        body.setSize(
+          (size.width * 0.72) / scout.scaleX,
+          (size.height * 0.7) / scout.scaleY,
+          true,
+        );
+        continue;
+      }
+      const row = Number(scout.getData("row"));
+      const col = Number(scout.getData("col"));
+      const position = this.scoutPosition(formationIndex, row, col);
       scout.setPosition(position.x, position.y);
-      scout.setDisplaySize(this.#layout.scoutSize.width, this.#layout.scoutSize.height);
+      const formation = this.#definition.enemy_formations[formationIndex];
+      const type = scout.getData("enemyType") as
+        "scout" | "cruiser" | "destroyer" | "mothership";
+      const size = hostileDisplaySize(this.#layout, type, {
+        width: formation.width,
+        height: formation.height,
+      });
+      scout.setDisplaySize(size.width, size.height);
       const body = scout.body as Phaser.Physics.Arcade.Body;
-      body.setSize(this.#layout.scoutBodySize.width / scout.scaleX, this.#layout.scoutBodySize.height / scout.scaleY, true);
+      body.setSize(
+        (size.width * 0.72) / scout.scaleX,
+        (size.height * 0.7) / scout.scaleY,
+        true,
+      );
     }
   }
 
-  private scoutPosition(row: number, col: number): Phaser.Math.Vector2 {
+  private scoutPosition(
+    formationIndex: number,
+    row: number,
+    col: number,
+  ): Phaser.Math.Vector2 {
+    const formation = this.#definition.enemy_formations[formationIndex];
+    if (formation.fixed_position) {
+      return new Phaser.Math.Vector2(
+        (formation.origin.x / 1280) * this.scale.width + this.#formationOffsetX,
+        (formation.origin.y / 720) * this.scale.height + this.#formationDropY,
+      );
+    }
     const travelMargin = this.formationTravelMargin();
     const usableWidth = Math.max(
       this.#layout.formationBounds.width - travelMargin * 2,
-      this.#layout.scoutSize.width * (this.#definition.enemy_formations[0].columns - 1),
+      this.#layout.scoutSize.width * Math.max(formation.columns - 1, 1),
     );
-    const gapX = usableWidth / (this.#definition.enemy_formations[0].columns - 1);
+    const gapX =
+      formation.columns === 1 ? 0 : usableWidth / (formation.columns - 1);
     const gapY = Math.max(this.#layout.scoutSize.height * 1.8, 30);
     return new Phaser.Math.Vector2(
-      this.#layout.formationBounds.x + travelMargin + col * gapX + this.#formationOffsetX,
-      this.#layout.formationBounds.y + row * gapY + this.#formationDropY,
+      this.#layout.formationBounds.x +
+        travelMargin +
+        col * gapX +
+        this.#formationOffsetX,
+      (this.#campaignSequence === 1 && formationIndex === 0
+        ? this.#layout.formationBounds.y
+        : formation.origin.y) +
+        row * gapY +
+        this.#formationDropY,
     );
+  }
+
+  private createHazards(): void {
+    for (const definition of this.#definition.hazards ?? []) {
+      const emitter = definition.emitter as RuntimeHazardEmitter | undefined;
+      for (let index = 0; index < definition.count; index += 1) {
+        const point = emitter?.spawn_points.length
+          ? emitter.spawn_points[index % emitter.spawn_points.length]
+          : emitter
+            ? this.hazardEntryPoint(emitter, index)
+            : {
+                x: definition.origin.x + definition.spacing.x * index,
+                y: definition.origin.y + definition.spacing.y * index,
+              };
+        this.spawnHazard(
+          definition.type,
+          definition.speed,
+          point,
+          emitter,
+          index,
+          definition.entry_edge,
+        );
+      }
+      if (emitter)
+        this.#hazardEmitterState.set(emitter.id, {
+          emitted: definition.count,
+          nextAtMs: this.time.now + emitter.spawn_interval_ms,
+        });
+    }
+  }
+
+  private spawnHazard(
+    type: "asteroid" | "comet",
+    speed: number,
+    origin: { x: number; y: number },
+    emitter?: RuntimeHazardEmitter,
+    ordinal = 0,
+    entryEdge?: "TOP" | "RIGHT" | "BOTTOM" | "LEFT",
+  ): void {
+    const asset =
+      type === "asteroid"
+        ? RUNTIME_ASSETS.fx.asteroid
+        : RUNTIME_ASSETS.fx.comet;
+    const frame = this.hazardFrame(emitter, type, ordinal);
+    const hazard = this.physics.add
+      .sprite(origin.x, origin.y, asset.key, frame)
+      .setDisplaySize(type === "asteroid" ? 54 : 72, 54)
+      .setDepth(3);
+    hazard
+      .setName(`${type}-hazard`)
+      .setData("hazardType", type)
+      .setData("emitterId", emitter?.id ?? null)
+      .setData("variantFrame", frame);
+    const body = hazard.body as Phaser.Physics.Arcade.Body;
+    body.setSize(
+      (hazard.displayWidth * 0.68) / hazard.scaleX,
+      (hazard.displayHeight * 0.68) / hazard.scaleY,
+      true,
+    );
+    const edge =
+      entryEdge ??
+      (emitter?.entry_edges.length ? hazardEntryEdge(emitter, ordinal) : "TOP");
+    const magnitude = emitter
+      ? this.deterministicRange(
+          emitter.speed_min,
+          emitter.speed_max,
+          `${emitter.id}:speed:${ordinal}`,
+        )
+      : speed;
+    const travel = hazardTravelVector(
+      edge,
+      this.#definition.seed,
+      `${emitter?.id ?? "legacy-hazard"}:${ordinal}`,
+    );
+    const direction = new Phaser.Math.Vector2(travel.x, travel.y);
+    direction.normalize().scale(magnitude);
+    if (type === "asteroid") {
+      hazard.setAngularVelocity(
+        asteroidAngularVelocity(
+          this.#definition.seed,
+          `${emitter?.id ?? "legacy-asteroid"}:${ordinal}`,
+          emitter?.angular_velocity_min ?? 40,
+          emitter?.angular_velocity_max ?? 80,
+          emitter?.spin_direction_policy === "CLOCKWISE" ||
+            emitter?.spin_direction_policy === "COUNTERCLOCKWISE"
+            ? emitter.spin_direction_policy
+            : "SEEDED_BIDIRECTIONAL",
+        ),
+      );
+    } else {
+      hazard.setRotation(cometRotationForVelocity(direction));
+    }
+    this.#hazards.add(hazard);
+    // Arcade group admission applies its defaults to a child. Set the motion
+    // afterwards so edge-emitted hazards retain their authored trajectory.
+    body.setVelocity(direction.x, direction.y);
+  }
+
+  private hazardFrame(
+    emitter: RuntimeHazardEmitter | undefined,
+    type: "asteroid" | "comet",
+    ordinal: number,
+  ): number {
+    return hazardVariantFrame(emitter, type, ordinal, this.#definition.seed);
+  }
+
+  private deterministicRange(
+    minimum: number,
+    maximum: number,
+    key: string,
+  ): number {
+    return deterministicHazardRange(
+      this.#definition.seed,
+      minimum,
+      maximum,
+      key,
+    );
+  }
+
+  private updateHazardEmitters(time: number): void {
+    for (const definition of this.#definition.hazards ?? []) {
+      const emitter = definition.emitter as RuntimeHazardEmitter | undefined;
+      if (!emitter) continue;
+      const state = this.#hazardEmitterState.get(emitter.id);
+      if (!state || time < state.nextAtMs) continue;
+      const active = (
+        this.#hazards.getChildren() as Phaser.Physics.Arcade.Sprite[]
+      ).filter(
+        (hazard) => hazard.active && hazard.getData("emitterId") === emitter.id,
+      ).length;
+      if (active < emitter.maximum_active) {
+        const point = emitter.spawn_points.length
+          ? emitter.spawn_points[state.emitted % emitter.spawn_points.length]
+          : this.hazardEntryPoint(emitter, state.emitted);
+        this.spawnHazard(
+          definition.type,
+          definition.speed,
+          point,
+          emitter,
+          state.emitted,
+          definition.entry_edge,
+        );
+        state.emitted += 1;
+      }
+      const jitter =
+        emitter.spawn_jitter_ms > 0
+          ? this.deterministicRange(
+              -emitter.spawn_jitter_ms,
+              emitter.spawn_jitter_ms,
+              `${emitter.id}:jitter:${state.emitted}`,
+            )
+          : 0;
+      state.nextAtMs = time + Math.max(1, emitter.spawn_interval_ms + jitter);
+    }
+  }
+
+  private hazardEntryPoint(
+    emitter: RuntimeHazardEmitter,
+    ordinal: number,
+  ): { x: number; y: number } {
+    return hazardEntryPoint(emitter, ordinal, this.#definition.seed, {
+      width: this.scale.width,
+      height: this.scale.height,
+    });
   }
 
   private formationTravelMargin(): number {
-    return Math.max(this.#layout.scoutSize.width * 2.2, this.#layout.formationBounds.width * 0.055);
+    return Math.max(
+      this.#layout.scoutSize.width * 2.2,
+      this.#layout.formationBounds.width * 0.055,
+    );
   }
 
   private createShieldZone(): void {
+    if (this.#definition.shields.length === 0) {
+      return;
+    }
+    if (this.#definition.shields.some((shield) => shield.origin)) {
+      this.createAuthoredShieldStructures();
+      return;
+    }
     const bunkerCount = this.#definition.shields[0].count;
     const tileW = this.#layout.shieldTileSize.width;
     const tileH = this.#layout.shieldTileSize.height;
     for (let bunker = 0; bunker < bunkerCount; bunker += 1) {
-      const bunkerCenterX = this.#layout.shieldZone.x + (this.#layout.shieldZone.width * (bunker + 0.5)) / bunkerCount;
+      const bunkerCenterX =
+        this.#layout.shieldZone.x +
+        (this.#layout.shieldZone.width * (bunker + 0.5)) / bunkerCount;
       const startX = bunkerCenterX - tileW * 4;
       for (let row = 0; row < SHIELD_MATRIX.length; row += 1) {
         for (let col = 0; col < SHIELD_MATRIX[row].length; col += 1) {
           if (SHIELD_MATRIX[row][col] !== 1) {
             continue;
           }
-          const tile = this.physics.add.image(startX + col * tileW + tileW / 2, this.#layout.shieldZone.y + row * tileH + tileH / 2, RUNTIME_ASSETS.shield.tile.key);
-          tile.setName('shield-tile');
-          tile.setData('bunker', bunker);
-          tile.setData('row', row);
-          tile.setData('col', col);
+          const tile = this.physics.add.image(
+            startX + col * tileW + tileW / 2,
+            this.#layout.shieldZone.y + row * tileH + tileH / 2,
+            RUNTIME_ASSETS.shield.tile.key,
+          );
+          tile.setName("shield-tile");
+          tile.setData("bunker", bunker);
+          tile.setData("row", row);
+          tile.setData("col", col);
           tile.setDisplaySize(tileW, tileH);
           tile.setDepth(4);
           const body = tile.body as Phaser.Physics.Arcade.Body;
-          body.setSize(this.#layout.shieldBodySize.width / tile.scaleX, this.#layout.shieldBodySize.height / tile.scaleY, true);
+          body.setSize(
+            this.#layout.shieldBodySize.width / tile.scaleX,
+            this.#layout.shieldBodySize.height / tile.scaleY,
+            true,
+          );
           this.#shieldTiles.add(tile);
         }
       }
     }
   }
 
+  private createAuthoredShieldStructures(): void {
+    this.#definition.shields.forEach((structure, bunker) => {
+      const tileW = structure.tile_width ?? this.#layout.shieldTileSize.width;
+      const tileH = structure.tile_height ?? this.#layout.shieldTileSize.height;
+      const origin = structure.origin ?? {
+        x: this.#layout.shieldZone.x,
+        y: this.#layout.shieldZone.y,
+      };
+      structure.matrix.forEach((row, rowIndex) =>
+        row.forEach((cell, colIndex) => {
+          if (cell !== 1) return;
+          const tile = this.physics.add.image(
+            (origin.x / 1280) * this.scale.width + (colIndex + 0.5) * tileW,
+            (origin.y / 720) * this.scale.height + (rowIndex + 0.5) * tileH,
+            RUNTIME_ASSETS.shield.tile.key,
+          );
+          tile
+            .setName("shield-tile")
+            .setData("bunker", bunker)
+            .setData("row", rowIndex)
+            .setData("col", colIndex)
+            .setDepth(4);
+          tile.setDisplaySize(tileW, tileH);
+          const body = tile.body as Phaser.Physics.Arcade.Body;
+          body.setSize(
+            (tileW * 0.92) / tile.scaleX,
+            (tileH * 0.92) / tile.scaleY,
+            true,
+          );
+          this.#shieldTiles.add(tile);
+        }),
+      );
+    });
+  }
+
   private reflowShieldZone(): void {
+    if (this.#definition.shields.length === 0) {
+      return;
+    }
+    if (this.#definition.shields.some((shield) => shield.origin)) {
+      for (const tile of this.#shieldTiles.getChildren() as Phaser.Physics.Arcade.Image[]) {
+        if (!tile.active) continue;
+        const structure =
+          this.#definition.shields[Number(tile.getData("bunker"))];
+        const tileW = structure.tile_width ?? this.#layout.shieldTileSize.width;
+        const tileH =
+          structure.tile_height ?? this.#layout.shieldTileSize.height;
+        const origin = structure.origin ?? { x: 0, y: 0 };
+        tile
+          .setPosition(
+            (origin.x / 1280) * this.scale.width +
+              (Number(tile.getData("col")) + 0.5) * tileW,
+            (origin.y / 720) * this.scale.height +
+              (Number(tile.getData("row")) + 0.5) * tileH,
+          )
+          .setDisplaySize(tileW, tileH);
+        const body = tile.body as Phaser.Physics.Arcade.Body;
+        body.setSize(
+          (tileW * 0.92) / tile.scaleX,
+          (tileH * 0.92) / tile.scaleY,
+          true,
+        );
+      }
+      return;
+    }
     const tileW = this.#layout.shieldTileSize.width;
     const tileH = this.#layout.shieldTileSize.height;
     for (const tile of this.#shieldTiles.getChildren() as Phaser.Physics.Arcade.Image[]) {
       if (!tile.active) {
         continue;
       }
-      const bunker = Number(tile.getData('bunker'));
-      const row = Number(tile.getData('row'));
-      const col = Number(tile.getData('col'));
-      const bunkerCenterX = this.#layout.shieldZone.x + (this.#layout.shieldZone.width * (bunker + 0.5)) / this.#definition.shields[0].count;
+      const bunker = Number(tile.getData("bunker"));
+      const row = Number(tile.getData("row"));
+      const col = Number(tile.getData("col"));
+      const bunkerCenterX =
+        this.#layout.shieldZone.x +
+        (this.#layout.shieldZone.width * (bunker + 0.5)) /
+          this.#definition.shields[0].count;
       const startX = bunkerCenterX - tileW * 4;
-      tile.setPosition(startX + col * tileW + tileW / 2, this.#layout.shieldZone.y + row * tileH + tileH / 2);
+      tile.setPosition(
+        startX + col * tileW + tileW / 2,
+        this.#layout.shieldZone.y + row * tileH + tileH / 2,
+      );
       tile.setDisplaySize(tileW, tileH);
       const body = tile.body as Phaser.Physics.Arcade.Body;
-      body.setSize(this.#layout.shieldBodySize.width / tile.scaleX, this.#layout.shieldBodySize.height / tile.scaleY, true);
+      body.setSize(
+        this.#layout.shieldBodySize.width / tile.scaleX,
+        this.#layout.shieldBodySize.height / tile.scaleY,
+        true,
+      );
     }
   }
 
   private createHud(): void {
-    this.#scoreText = this.add.text(0, 0, 'SCORE 0', {
-      color: '#d7e9ff',
-      fontFamily: 'GalacticGunnersHUD, monospace',
-      fontSize: '24px',
-    }).setDepth(10);
-    this.#soundIcon = this.add.image(0, 0, RUNTIME_ASSETS.ui.soundOn.key)
+    this.#scoreText = this.add
+      .text(0, 0, "SCORE 0", {
+        color: "#d7e9ff",
+        fontFamily: "GalacticGunnersHUD, monospace",
+        fontSize: "24px",
+      })
+      .setDepth(10);
+    this.#soundIcon = this.add
+      .image(0, 0, RUNTIME_ASSETS.ui.soundOn.key)
       .setDisplaySize(42, 28)
       .setDepth(10)
       .setInteractive({ useHandCursor: true });
-    this.#soundIcon.on('pointerdown', () => {
+    this.#soundIcon.on("pointerdown", () => {
       this.#audio.toggleMute();
       this.updateSoundHud();
     });
-    this.#lifeIcons = Array.from({ length: this.#lives.maxLives }, () => this.add.image(0, 0, RUNTIME_ASSETS.ui.lifeIcon.key)
-      .setDisplaySize(39, 39)
-      .setDepth(10));
-    this.#nukeIcons = Array.from({ length: LEVEL_ONE_SLICE.maxNukes }, () => this.add.image(0, 0, RUNTIME_ASSETS.ui.nukeIcon.key)
-      .setDisplaySize(35, 35)
-      .setDepth(10));
-    this.#rearmText = this.add.text(0, 0, 'ENERGISE', {
-      color: '#d7e9ff',
-      fontFamily: 'GalacticGunnersHUD, monospace',
-      fontSize: '18px',
-    }).setOrigin(0, 0.5).setDepth(10);
-    this.#rearmBarBack = this.add.rectangle(0, 0, 150, 10, 0x142744, 0.86)
+    this.ensureLifeIcons(this.#lives.value);
+    this.ensureNukeIcons(this.#currentNukes);
+    this.#rearmText = this.add
+      .text(0, 0, "ENERGISE", {
+        color: "#d7e9ff",
+        fontFamily: "GalacticGunnersHUD, monospace",
+        fontSize: "18px",
+      })
+      .setOrigin(0, 0.5)
+      .setDepth(10);
+    this.#rearmBarBack = this.add
+      .rectangle(0, 0, 150, 10, 0x142744, 0.86)
       .setOrigin(0, 0.5)
       .setStrokeStyle(1, 0xd7e9ff, 0.82)
       .setDepth(10);
-    this.#rearmBarFill = this.add.rectangle(0, 0, 150, 8, 0x7ee8ff, 0.95)
+    this.#rearmBarFill = this.add
+      .rectangle(0, 0, 150, 8, 0x7ee8ff, 0.95)
       .setOrigin(0, 0.5)
       .setDepth(11);
+    if (this.registry.get("campaignPreview")) {
+      this.add
+        .text(
+          this.scale.width / 2,
+          this.#layout.hudSafeRect.y + 22,
+          "PREVIEW - UNRANKED",
+          {
+            color: "#f7d56a",
+            fontFamily: "GalacticGunnersGoldDisplay, Arial, sans-serif",
+            fontSize: "20px",
+          },
+        )
+        .setOrigin(0.5)
+        .setDepth(12)
+        .setData("qa", "preview-unranked");
+    }
     this.reflowHud();
+  }
+
+  private createLevelEntryNotice(): void {
+    const notice = this.add
+      .text(
+        this.scale.width / 2,
+        this.#layout.hudSafeRect.y + 72,
+        `LEVEL ${this.#campaignSequence}: ${this.#definition.name.toUpperCase()}`,
+        {
+          color: "#d7e9ff",
+          fontFamily: "GalacticGunnersSilverDisplay, Arial, sans-serif",
+          fontSize: `${Math.max(16, Math.min(26, this.scale.width * 0.022))}px`,
+          align: "center",
+        },
+      )
+      .setOrigin(0.5)
+      .setDepth(12);
+    this.tweens.add({
+      targets: notice,
+      alpha: 0,
+      delay: 1500,
+      duration: 650,
+      onComplete: () => notice.destroy(),
+    });
   }
 
   private reflowHud(): void {
     const left = Math.max(24, this.#layout.viewport.width * 0.028);
-    const right = this.#layout.viewport.width - Math.max(30, this.#layout.viewport.width * 0.028);
+    const right =
+      this.#layout.viewport.width -
+      Math.max(30, this.#layout.viewport.width * 0.028);
     const bottom = this.#layout.viewport.height - 50;
-    const barWidth = Phaser.Math.Clamp(this.#layout.viewport.width * 0.1, 72, 170);
+    const barWidth = Phaser.Math.Clamp(
+      this.#layout.viewport.width * 0.1,
+      72,
+      170,
+    );
     const lifeSpacing = 34;
-    const nukeSpacing = 36;
     const nukeBarX = right - barWidth;
     this.#scoreText.setPosition(left, this.#layout.hudSafeRect.y + 12);
     this.#soundIcon.setPosition(right - 4, this.#layout.hudSafeRect.y + 28);
     this.#lifeIcons.forEach((icon, index) => {
       icon.setPosition(left + 20 + index * lifeSpacing, bottom + 12);
     });
-    this.#nukeIcons.forEach((icon, index) => {
-      icon.setPosition(nukeBarX - (LEVEL_ONE_SLICE.maxNukes - index) * nukeSpacing, bottom + 12);
-    });
+    this.reflowNukeIcons(left, nukeBarX, bottom);
     this.#rearmText.setPosition(nukeBarX, bottom + 20);
-    this.#rearmBarBack.setPosition(nukeBarX, bottom + 38).setDisplaySize(barWidth, 10);
+    this.#rearmBarBack
+      .setPosition(nukeBarX, bottom + 38)
+      .setDisplaySize(barWidth, 10);
     this.#rearmBarFill.setPosition(nukeBarX, bottom + 38);
     this.updateNukeHud();
   }
 
   private createCollisions(): void {
-    this.physics.add.overlap(this.#playerLasers, this.#scouts, (laser, scout) => {
-      this.handlePlayerLaserScoutOverlap(laser as Phaser.Physics.Arcade.Image, scout as Phaser.Physics.Arcade.Sprite);
-    });
-    this.physics.add.overlap(this.#enemyLasers, this.#player.sprite, (laser) => {
-      this.handleEnemyLaserPlayerOverlap(laser as Phaser.Physics.Arcade.Image);
-    });
-    this.physics.add.overlap(this.#player.sprite, this.#scouts, (_player, scout) => {
-      this.destroyScoutBody(scout as Phaser.Physics.Arcade.Sprite, false);
-      this.damagePlayer(true);
-    });
-    this.physics.add.overlap(this.#enemyLasers, this.#shieldTiles, (laser, tile) => {
-      this.handleEnemyLaserShieldOverlap(laser as Phaser.Physics.Arcade.Image, tile as Phaser.Physics.Arcade.Image);
-    });
-    this.physics.add.overlap(this.#playerLasers, this.#shieldTiles, (laser, tile) => {
-      this.handlePlayerLaserShieldOverlap(laser as Phaser.Physics.Arcade.Image, tile as Phaser.Physics.Arcade.Image);
-    });
+    this.physics.add.overlap(
+      this.#playerLasers,
+      this.#scouts,
+      (laser, scout) => {
+        this.handlePlayerLaserScoutOverlap(
+          laser as Phaser.Physics.Arcade.Image,
+          scout as Phaser.Physics.Arcade.Sprite,
+        );
+      },
+    );
+    this.physics.add.overlap(
+      this.#enemyLasers,
+      this.#player.sprite,
+      (laser) => {
+        this.handleEnemyLaserPlayerOverlap(
+          laser as Phaser.Physics.Arcade.Image,
+        );
+      },
+    );
+    this.physics.add.overlap(
+      this.#player.sprite,
+      this.#scouts,
+      (_player, scout) => {
+        this.destroyScoutBody(scout as Phaser.Physics.Arcade.Sprite, false);
+        this.damagePlayer(true);
+      },
+    );
+    this.physics.add.overlap(
+      this.#enemyLasers,
+      this.#shieldTiles,
+      (laser, tile) => {
+        this.handleEnemyLaserShieldOverlap(
+          laser as Phaser.Physics.Arcade.Image,
+          tile as Phaser.Physics.Arcade.Image,
+        );
+      },
+    );
+    this.physics.add.overlap(
+      this.#playerLasers,
+      this.#shieldTiles,
+      (laser, tile) => {
+        this.handlePlayerLaserShieldOverlap(
+          laser as Phaser.Physics.Arcade.Image,
+          tile as Phaser.Physics.Arcade.Image,
+        );
+      },
+    );
     this.physics.add.overlap(this.#nukes, this.#scouts, (nuke, scout) => {
-      this.handleNukeScoutOverlap(nuke as Phaser.Physics.Arcade.Sprite, scout as Phaser.Physics.Arcade.Sprite);
+      this.handleNukeScoutOverlap(
+        nuke as Phaser.Physics.Arcade.Sprite,
+        scout as Phaser.Physics.Arcade.Sprite,
+      );
     });
+    this.physics.add.overlap(
+      this.#playerLasers,
+      this.#hazards,
+      (laser, hazard) => {
+        this.handlePlayerLaserHazardOverlap(
+          laser as Phaser.Physics.Arcade.Image,
+          hazard as Phaser.Physics.Arcade.Sprite,
+        );
+      },
+    );
+    this.physics.add.overlap(
+      this.#player.sprite,
+      this.#hazards,
+      (_player, hazard) => {
+        (hazard as Phaser.Physics.Arcade.Sprite).disableBody(true, true);
+        this.damagePlayer(true);
+      },
+    );
+    this.physics.add.overlap(
+      this.#player.sprite,
+      this.#pickups,
+      (_player, pickup) => {
+        const item = pickup as Phaser.Physics.Arcade.Image;
+        const type = item.getData("pickupType") as PickupType;
+        item.disableBody(true, true);
+        if (type === "nuke") this.#currentNukes += 1;
+        if (type === "life") this.#lives.collect(1);
+        this.updateLifeHud();
+        this.updateNukeHud();
+      },
+    );
   }
 
   private handleInput(time: number): void {
@@ -412,15 +1117,19 @@ export class Level1Scene extends CombatLevelScene {
       x: actions.left ? -1 : actions.right ? 1 : 0,
       y: actions.up ? -1 : actions.down ? 1 : 0,
     };
-    if (this.#playerState === 'hit') {
+    if (this.#playerState === "hit") {
       this.#player.stop();
     } else {
       this.#player.move(vector, this.#layout);
     }
-    if (actions.fire && this.#playerState !== 'hit' && this.#player.canFire(time)) {
+    if (
+      actions.fire &&
+      this.#playerState !== "hit" &&
+      this.#player.canFire(time)
+    ) {
       this.firePlayerLaser(time);
     }
-    if (this.#inputSystem.consumeNuke() && this.#playerState !== 'hit') {
+    if (this.#inputSystem.consumeNuke() && this.#playerState !== "hit") {
       this.fireNuke();
     }
     if (time < this.#pauseInputBlockedUntilMs) {
@@ -441,33 +1150,125 @@ export class Level1Scene extends CombatLevelScene {
     }
     const maxTravel = this.formationTravelMargin();
     const deltaSeconds = Math.max(this.game.loop.delta, 0) / 1000;
-    this.#formationOffsetX += LEVEL_ONE_SLICE.scoutHorizontalSpeed * this.#formationDirection * deltaSeconds;
+    this.#formationOffsetX +=
+      LEVEL_ONE_SLICE.scoutHorizontalSpeed *
+      this.#formationDirection *
+      deltaSeconds;
     const hitEdge = Math.abs(this.#formationOffsetX) >= maxTravel;
     if (hitEdge) {
-      this.#formationOffsetX = Phaser.Math.Clamp(this.#formationOffsetX, -maxTravel, maxTravel);
+      this.#formationOffsetX = Phaser.Math.Clamp(
+        this.#formationOffsetX,
+        -maxTravel,
+        maxTravel,
+      );
       this.#formationDirection *= -1;
       this.#formationDropY += LEVEL_ONE_SLICE.scoutDropDistance;
     }
     active.forEach((scout) => {
-      const row = Number(scout.getData('row'));
-      const col = Number(scout.getData('col'));
-      const position = this.scoutPosition(row, col);
+      if (scout.getData("boarding-incapacitated")) return;
+      const formation = Number(scout.getData("formation"));
+      const row = Number(scout.getData("row"));
+      const col = Number(scout.getData("col"));
+      if (formation < 0) {
+        if (scout.y > this.#layout.movementBounds.bottom)
+          this.showTerminal("failed");
+        return;
+      }
+      const position = this.scoutPosition(formation, row, col);
+      const profile = String(scout.getData("behaviourProfile") ?? "");
+      const type = scout.getData("enemyType") as
+        "scout" | "cruiser" | "destroyer" | "mothership";
+      if (profile === "enemy.scout.diver") {
+        const phaseSeed = String(scout.getData("entityId"))
+          .split("")
+          .reduce((sum, character) => sum + character.charCodeAt(0), 0);
+        const cycle = ((time + phaseSeed * 31) % 5400) / 5400;
+        const arc = Math.sin(cycle * Math.PI);
+        position.x +=
+          Math.sin(cycle * Math.PI * 2) * this.#layout.scoutSize.width * 3.2;
+        position.y += arc * Math.min(this.#layout.viewport.height * 0.42, 290);
+      }
+      if (type === "mothership") {
+        // The authored boss remains centred in its formation envelope while
+        // moving independently; it is not a static large Scout texture.
+        const phase = (time + this.#definition.seed * 17) / 1200;
+        position.x += Math.sin(phase) * Math.min(this.scale.width * 0.22, 240);
+        position.y +=
+          Math.sin(phase * 0.63) * Math.min(this.scale.height * 0.035, 28);
+      }
       scout.setPosition(position.x, position.y);
       scout.setVelocity(0, 0);
       if (scout.y > this.#layout.movementBounds.bottom) {
-        this.showTerminal('failed');
+        this.showTerminal("failed");
       }
     });
+    this.deployMothershipScout(time);
+    for (const hazard of this.#hazards.getChildren() as Phaser.Physics.Arcade.Sprite[]) {
+      if (
+        hazard.active &&
+        (hazard.x < -100 ||
+          hazard.x > this.scale.width + 100 ||
+          hazard.y < -100 ||
+          hazard.y > this.scale.height + 100)
+      )
+        hazard.disableBody(true, true);
+    }
+    for (const pickup of this.#pickups.getChildren() as Phaser.Physics.Arcade.Image[]) {
+      if (pickup.active && pickup.y > this.scale.height + 48)
+        pickup.disableBody(true, true);
+    }
+    this.updateHazardEmitters(time);
     if (time % 250 < this.game.loop.delta) {
       this.publishQaState();
     }
   }
 
-  private firePlayerLaser(nowMs = this.time.now, x = this.#player.sprite.x, y = this.#player.sprite.y - this.#layout.playerSize.height * 0.52): Phaser.Physics.Arcade.Image | null {
+  private deployMothershipScout(time: number): void {
+    const mothership = this.getActiveScouts().find(
+      (scout) => scout.getData("enemyType") === "mothership",
+    );
+    if (!mothership || time - this.#lastMothershipDeployAtMs < 4200) return;
+    if (
+      this.getActiveScouts().length >=
+      this.#definition.performance_budget.max_enemies
+    )
+      return;
+    const scout = new Scout(
+      this,
+      mothership.x,
+      mothership.y + mothership.displayHeight * 0.45,
+      this.#layout,
+      "scout",
+    );
+    scout.sprite.setData("formation", -1);
+    scout.sprite.setData("row", 0);
+    scout.sprite.setData("col", 0);
+    scout.sprite.setData(
+      "entityId",
+      `${mothership.getData("entityId")}:deployed:${Math.floor(time / 4200)}`,
+    );
+    scout.sprite.setData("formationId", "mothership-deployment");
+    scout.sprite.setData("behaviourProfile", "enemy.scout.diver");
+    scout.sprite.setVelocityY(
+      Math.max(38, this.#layout.viewport.height * 0.075),
+    );
+    this.#scouts.add(scout.sprite);
+    this.#lastMothershipDeployAtMs = time;
+  }
+
+  private firePlayerLaser(
+    nowMs = this.time.now,
+    x = this.#player.sprite.x,
+    y = this.#player.sprite.y - this.#layout.playerSize.height * 0.52,
+  ): Phaser.Physics.Arcade.Image | null {
     if (!this.#player.canFire(nowMs)) {
       return null;
     }
-    const laser = this.#playerLasers.get(x, y, RUNTIME_ASSETS.projectile.playerLaser.key) as Phaser.Physics.Arcade.Image | null;
+    const laser = this.#playerLasers.get(
+      x,
+      y,
+      RUNTIME_ASSETS.projectile.playerLaser.key,
+    ) as Phaser.Physics.Arcade.Image | null;
     if (!laser) {
       return null;
     }
@@ -475,8 +1276,8 @@ export class Level1Scene extends CombatLevelScene {
     if (Number.isFinite(nowMs)) {
       this.#player.markFired(nowMs);
     }
-    this.configureLaser(laser, 'player-laser', -90, -this.playerLaserSpeed());
-    this.#audio.play('playerLaser');
+    this.configureLaser(laser, "player-laser", -90, -this.playerLaserSpeed());
+    this.#audio.play("playerLaser");
     return laser;
   }
 
@@ -489,18 +1290,46 @@ export class Level1Scene extends CombatLevelScene {
   }
 
   private fireEnemyLaser(): Phaser.Physics.Arcade.Image | null {
-    const active = this.getActiveScouts();
+    const active = this.getActiveScouts().filter(
+      (scout) => !scout.getData("boarding-incapacitated"),
+    );
     if (active.length === 0 || this.#terminalState) {
       return null;
     }
-    const scout = active[Math.floor(Math.random() * active.length)];
-    const laser = this.#enemyLasers.get(scout.x, scout.y + this.#layout.scoutSize.height * 0.55, RUNTIME_ASSETS.projectile.enemyLaser.key) as Phaser.Physics.Arcade.Image | null;
+    // One global cadence selects one eligible source per event. Round-robin
+    // ordering is deterministic and prevents a visible ship class from being
+    // starved by random repetition while preserving the established pressure.
+    const scout =
+      active[nextHostileIndex(this.#enemyFireOrdinal++, active.length)];
+    const type = scout.getData("enemyType") as
+      "scout" | "cruiser" | "destroyer" | "mothership";
+    const offsets = hostileWeaponHardpoints(type);
+    const lasers = offsets.map((offset) =>
+      this.fireEnemyLaserFrom(scout, scout.displayWidth * offset),
+    );
+    return (
+      lasers.find(
+        (laser): laser is Phaser.Physics.Arcade.Image => laser !== null,
+      ) ?? null
+    );
+  }
+
+  private fireEnemyLaserFrom(
+    scout: Phaser.Physics.Arcade.Sprite,
+    offsetX = 0,
+  ): Phaser.Physics.Arcade.Image | null {
+    const spawnY = scout.y + scout.displayHeight * 0.55;
+    const laser = this.#enemyLasers.get(
+      scout.x + offsetX,
+      spawnY,
+      RUNTIME_ASSETS.projectile.enemyLaser.key,
+    ) as Phaser.Physics.Arcade.Image | null;
     if (!laser) {
       return null;
     }
-    laser.setPosition(scout.x, scout.y + this.#layout.scoutSize.height * 0.55);
-    this.configureLaser(laser, 'enemy-laser', 90, this.enemyLaserSpeed());
-    this.#audio.play('enemyLaser');
+    laser.setPosition(scout.x + offsetX, spawnY);
+    this.configureLaser(laser, "enemy-laser", 90, this.enemyLaserSpeed());
+    this.#audio.play("enemyLaser");
     return laser;
   }
 
@@ -513,30 +1342,47 @@ export class Level1Scene extends CombatLevelScene {
     laser.setActive(true).setVisible(true);
     laser.setName(name);
     laser.setAngle(angle);
-    laser.setDisplaySize(this.#layout.projectileSize.width, this.#layout.projectileSize.height);
+    laser.setDisplaySize(
+      this.#layout.projectileSize.width,
+      this.#layout.projectileSize.height,
+    );
     laser.setDepth(3);
-    laser.setData('spent', false);
+    laser.setData("spent", false);
     const body = laser.body as Phaser.Physics.Arcade.Body;
-    body.enable = true;
-    body.setSize(this.#layout.projectileBodySize.width / laser.scaleX, this.#layout.projectileBodySize.height / laser.scaleY, true);
+    laser.enableBody(true, laser.x, laser.y, true, true);
+    body.setSize(
+      this.#layout.projectileBodySize.width / laser.scaleX,
+      this.#layout.projectileBodySize.height / laser.scaleY,
+      true,
+    );
     body.reset(laser.x, laser.y);
     body.position.set(laser.x - body.width / 2, laser.y - body.height / 2);
     body.prev.set(body.x, body.y);
-    laser.setData('previousBodyCenterX', body.x + body.width / 2);
-    laser.setData('previousBodyCenterY', body.y + body.height / 2);
+    laser.setData("previousBodyCenterX", body.x + body.width / 2);
+    laser.setData("previousBodyCenterY", body.y + body.height / 2);
     laser.setVelocity(0, velocityY);
   }
 
   private reflowActiveProjectiles(): void {
-    for (const laser of [...this.#playerLasers.getChildren(), ...this.#enemyLasers.getChildren()] as Phaser.Physics.Arcade.Image[]) {
+    for (const laser of [
+      ...this.#playerLasers.getChildren(),
+      ...this.#enemyLasers.getChildren(),
+    ] as Phaser.Physics.Arcade.Image[]) {
       if (!laser.active) {
         continue;
       }
-      laser.setDisplaySize(this.#layout.projectileSize.width, this.#layout.projectileSize.height);
+      laser.setDisplaySize(
+        this.#layout.projectileSize.width,
+        this.#layout.projectileSize.height,
+      );
       const body = laser.body as Phaser.Physics.Arcade.Body;
-      body.setSize(this.#layout.projectileBodySize.width / laser.scaleX, this.#layout.projectileBodySize.height / laser.scaleY, true);
-      laser.setData('previousBodyCenterX', body.x + body.width / 2);
-      laser.setData('previousBodyCenterY', body.y + body.height / 2);
+      body.setSize(
+        this.#layout.projectileBodySize.width / laser.scaleX,
+        this.#layout.projectileBodySize.height / laser.scaleY,
+        true,
+      );
+      laser.setData("previousBodyCenterX", body.x + body.width / 2);
+      laser.setData("previousBodyCenterY", body.y + body.height / 2);
     }
     for (const nuke of this.#nukes.getChildren() as Phaser.Physics.Arcade.Sprite[]) {
       if (!nuke.active) {
@@ -546,72 +1392,159 @@ export class Level1Scene extends CombatLevelScene {
     }
   }
 
-  private handlePlayerLaserScoutOverlap(laser: Phaser.Physics.Arcade.Image, scout: Phaser.Physics.Arcade.Sprite): void {
-    if (laser.getData('spent') || scout.getData('destroyed')) {
+  private handlePlayerLaserScoutOverlap(
+    laser: Phaser.Physics.Arcade.Image,
+    scout: Phaser.Physics.Arcade.Sprite,
+  ): void {
+    if (laser.getData("spent") || scout.getData("destroyed")) {
       return;
     }
-    laser.setData('spent', true);
+    laser.setData("spent", true);
     this.destroyProjectile(laser);
+    this.damageHostile(scout);
+  }
+
+  private damageHostile(scout: Phaser.Physics.Arcade.Sprite): void {
+    const type = scout.getData("enemyType") as
+      "scout" | "cruiser" | "destroyer" | "mothership";
+    const health = Number(scout.getData("health") ?? 1);
+    if (type === "mothership" && health > 1) {
+      scout.setData("health", health - 1);
+      scout.setTexture(RUNTIME_ASSETS.enemy.mothershipHit.key);
+      this.time.delayedCall(110, () => {
+        if (scout.active && !scout.getData("destroyed"))
+          scout.setTexture(RUNTIME_ASSETS.enemy.mothership.key, 0);
+      });
+      this.#score.apply("mothership_hit", this.time.now, {
+        source: "player_laser",
+        entity_id: scout.getData("entityId"),
+      });
+      this.#scoreText.setText(`SCORE ${this.#score.value}`);
+      return;
+    }
+    if (health > 1) {
+      scout.setData("health", health - 1);
+      return;
+    }
     this.destroyScoutBody(scout, true);
   }
 
-  private handleEnemyLaserPlayerOverlap(laser: Phaser.Physics.Arcade.Image): void {
-    if (laser.getData('spent')) {
+  private handleEnemyLaserPlayerOverlap(
+    laser: Phaser.Physics.Arcade.Image,
+  ): void {
+    if (laser.getData("spent")) {
       return;
     }
-    laser.setData('spent', true);
+    laser.setData("spent", true);
     this.destroyProjectile(laser);
     this.damagePlayer();
   }
 
-  private handleEnemyLaserShieldOverlap(laser: Phaser.Physics.Arcade.Image, tile: Phaser.Physics.Arcade.Image): void {
-    if (laser.getData('spent')) {
+  private handleEnemyLaserShieldOverlap(
+    laser: Phaser.Physics.Arcade.Image,
+    tile: Phaser.Physics.Arcade.Image,
+  ): void {
+    if (laser.getData("spent")) {
       return;
     }
-    laser.setData('spent', true);
+    laser.setData("spent", true);
     this.destroyProjectile(laser);
     this.destroyShieldTile(tile, true);
   }
 
-  private handlePlayerLaserShieldOverlap(laser: Phaser.Physics.Arcade.Image, tile: Phaser.Physics.Arcade.Image): void {
-    if (laser.getData('spent')) {
+  private destroyHazard(hazard: Phaser.Physics.Arcade.Sprite): void {
+    if (!hazard.active) return;
+    const type = hazard.getData("hazardType") as "asteroid" | "comet";
+    hazard.disableBody(true, true);
+    this.#runtimeConfig.onGameplayAnnouncement?.(
+      `${type === "comet" ? "Comet" : "Asteroid"} destroyed.`,
+    );
+    this.#score.apply(
+      type === "comet" ? "comet_destroyed" : "asteroid_destroyed",
+      this.time.now,
+      { source: "player_laser" },
+    );
+    this.#scoreText.setText(`SCORE ${this.#score.value}`);
+    this.createExplosion(hazard.x, hazard.y, 60);
+  }
+
+  private handlePlayerLaserHazardOverlap(
+    laser: Phaser.Physics.Arcade.Image,
+    hazard: Phaser.Physics.Arcade.Sprite,
+  ): void {
+    if (laser.getData("spent")) {
       return;
     }
-    laser.setData('spent', true);
+    laser.setData("spent", true);
+    this.destroyProjectile(laser);
+    this.destroyHazard(hazard);
+  }
+
+  private handlePlayerLaserShieldOverlap(
+    laser: Phaser.Physics.Arcade.Image,
+    tile: Phaser.Physics.Arcade.Image,
+  ): void {
+    if (laser.getData("spent")) {
+      return;
+    }
+    laser.setData("spent", true);
     this.destroyProjectile(laser);
     this.destroyShieldTile(tile, false);
   }
 
   private resolveSweptProjectileCollisions(): void {
     for (const laser of this.#playerLasers.getChildren() as Phaser.Physics.Arcade.Image[]) {
-      if (!laser.active || laser.getData('spent')) {
+      if (!laser.active || laser.getData("spent")) {
         continue;
       }
       const candidates: SweptHitTarget[] = [
-        ...this.getActiveShieldTiles().map((tile) => ({ kind: 'shield' as const, tile, body: tile.body as Phaser.Physics.Arcade.Body })),
-        ...this.getActiveScouts().map((scout) => ({ kind: 'scout' as const, scout, body: scout.body as Phaser.Physics.Arcade.Body })),
+        ...this.getActiveShieldTiles().map((tile) => ({
+          kind: "shield" as const,
+          tile,
+          body: tile.body as Phaser.Physics.Arcade.Body,
+        })),
+        ...this.getActiveScouts().map((scout) => ({
+          kind: "scout" as const,
+          scout,
+          body: scout.body as Phaser.Physics.Arcade.Body,
+        })),
+        ...(
+          this.#hazards
+            .getChildren()
+            .filter((hazard) => hazard.active) as Phaser.Physics.Arcade.Sprite[]
+        ).map((hazard) => ({
+          kind: "hazard" as const,
+          hazard,
+          body: hazard.body as Phaser.Physics.Arcade.Body,
+        })),
       ];
       const hit = this.findSweptHit(laser, -1, candidates);
-      if (hit?.kind === 'shield') {
+      if (hit?.kind === "shield") {
         this.handlePlayerLaserShieldOverlap(laser, hit.tile);
-      } else if (hit?.kind === 'scout') {
+      } else if (hit?.kind === "scout") {
         this.handlePlayerLaserScoutOverlap(laser, hit.scout);
+      } else if (hit?.kind === "hazard") {
+        this.handlePlayerLaserHazardOverlap(laser, hit.hazard);
       }
     }
 
     for (const laser of this.#enemyLasers.getChildren() as Phaser.Physics.Arcade.Image[]) {
-      if (!laser.active || laser.getData('spent')) {
+      if (!laser.active || laser.getData("spent")) {
         continue;
       }
       const playerBody = this.#player.sprite.body as Phaser.Physics.Arcade.Body;
       const candidates: SweptHitTarget[] = [
-        ...this.getActiveShieldTiles().map((tile) => ({ kind: 'shield' as const, tile, body: tile.body as Phaser.Physics.Arcade.Body })),
-        { kind: 'player', body: playerBody },
+        ...this.getActiveShieldTiles().map((tile) => ({
+          kind: "shield" as const,
+          tile,
+          body: tile.body as Phaser.Physics.Arcade.Body,
+        })),
+        { kind: "player", body: playerBody },
       ];
       const hit = this.findSweptHit(laser, 1, candidates);
-      if (hit?.kind === 'shield') {
+      if (hit?.kind === "shield") {
         this.handleEnemyLaserShieldOverlap(laser, hit.tile);
-      } else if (hit?.kind === 'player') {
+      } else if (hit?.kind === "player") {
         this.handleEnemyLaserPlayerOverlap(laser);
       }
     }
@@ -625,8 +1558,12 @@ export class Level1Scene extends CombatLevelScene {
     const projectileBody = projectile.body as Phaser.Physics.Arcade.Body;
     const currentX = projectileBody.x + projectileBody.width / 2;
     const currentY = projectileBody.y + projectileBody.height / 2;
-    const previousX = Number(projectile.getData('previousBodyCenterX') ?? currentX);
-    const previousY = Number(projectile.getData('previousBodyCenterY') ?? currentY);
+    const previousX = Number(
+      projectile.getData("previousBodyCenterX") ?? currentX,
+    );
+    const previousY = Number(
+      projectile.getData("previousBodyCenterY") ?? currentY,
+    );
     const minY = Math.min(previousY, currentY) - projectileBody.height / 2;
     const maxY = Math.max(previousY, currentY) + projectileBody.height / 2;
     const centerX = (previousX + currentX) / 2;
@@ -640,7 +1577,8 @@ export class Level1Scene extends CombatLevelScene {
       const left = target.body.x - halfWidth;
       const right = target.body.x + target.body.width + halfWidth;
       const top = target.body.y - projectileBody.height / 2;
-      const bottom = target.body.y + target.body.height + projectileBody.height / 2;
+      const bottom =
+        target.body.y + target.body.height + projectileBody.height / 2;
       if (centerX < left || centerX > right || maxY < top || minY > bottom) {
         continue;
       }
@@ -654,77 +1592,507 @@ export class Level1Scene extends CombatLevelScene {
   }
 
   private recordProjectilePreviousPositions(): void {
-    for (const laser of [...this.#playerLasers.getChildren(), ...this.#enemyLasers.getChildren()] as Phaser.Physics.Arcade.Image[]) {
+    for (const laser of [
+      ...this.#playerLasers.getChildren(),
+      ...this.#enemyLasers.getChildren(),
+    ] as Phaser.Physics.Arcade.Image[]) {
       if (!laser.active) {
         continue;
       }
       const body = laser.body as Phaser.Physics.Arcade.Body;
-      laser.setData('previousBodyCenterX', body.x + body.width / 2);
-      laser.setData('previousBodyCenterY', body.y + body.height / 2);
+      laser.setData("previousBodyCenterX", body.x + body.width / 2);
+      laser.setData("previousBodyCenterY", body.y + body.height / 2);
     }
   }
 
-  private destroyScoutBody(scout: Phaser.Physics.Arcade.Sprite, awardScore: boolean): void {
-    if (scout.getData('destroyed')) {
+  private destroyScoutBody(
+    scout: Phaser.Physics.Arcade.Sprite,
+    awardScore: boolean,
+  ): void {
+    if (scout.getData("destroyed")) {
       return;
     }
     const anchor = this.#definition.boarding_anchors?.[0];
-    if (awardScore && anchor && !this.#boardingActive
-      && !scout.getData('boarding-resolved')
-      && Number(scout.getData('row')) === anchor.source_selector.row
-      && Number(scout.getData('col')) === anchor.source_selector.column) {
-      this.#boardingActive = true;
-      scout.setData('boarding-anchor', true);
-      this.scene.pause();
-      this.scene.launch('BoardingScene', {
-        seed: this.#definition.seed,
-        lives: this.#lives.value,
-        nukes: this.#currentNukes,
-        anchorId: anchor.id,
-        sourceEntityId: anchor.source_entity_id,
-      });
+    if (
+      awardScore &&
+      anchor &&
+      !this.#boardingActive &&
+      !scout.getData("boarding-resolved") &&
+      !scout.getData("boarding-offer-resolved") &&
+      (scout.getData("entityId") === anchor.source_entity_id ||
+        (Number(scout.getData("row")) === anchor.source_selector.row &&
+          Number(scout.getData("col")) === anchor.source_selector.column))
+    ) {
+      this.presentBoardingOffer(scout, anchor);
       return;
     }
-    scout.setData('destroyed', true);
+    scout.setData("destroyed", true);
     scout.disableBody(true, true);
     if (awardScore) {
-      this.#score.apply('scout_destroyed', this.time.now, { source: 'player_laser' });
+      const enemyType = scout.getData("enemyType") as
+        "scout" | "cruiser" | "destroyer" | "mothership";
+      const event =
+        enemyType === "mothership"
+          ? "mothership_destroyed"
+          : enemyType === "scout"
+            ? "scout_destroyed"
+            : "ship_destroyed";
+      this.#score.apply(event, this.time.now, {
+        source: "player_laser",
+        entity_id: scout.getData("entityId"),
+      });
       this.#scoreText.setText(`SCORE ${this.#score.value}`);
+      this.spawnPickupForHost(scout);
     }
-    this.#audio.play('explosionSmall');
+    this.#audio.play("explosionSmall");
     this.createExplosion(scout.x, scout.y, 70);
   }
 
-  private handleBoardingReturn(_system: unknown, data?: { boardingOutcome?: string }): void {
-    if (!this.#boardingActive) return;
-    const anchoredScout = this.getActiveScouts().find((scout) => scout.getData('boarding-anchor'));
+  private presentBoardingOffer(
+    scout: Phaser.Physics.Arcade.Sprite,
+    anchor: NonNullable<LevelDefinition["boarding_anchors"]>[number],
+  ): void {
+    if (this.#boardingOffer || this.#boardingTransition !== "SHOOTER_ACTIVE")
+      return;
+    const expiresAtMs = this.time.now + anchor.offer_duration_ms;
+    // A boarding target is incapacitated in the live Shooter world. It does not
+    // explode, fire, or move with the formation; the player must physically fly
+    // into its authored envelope before any choice controls are available.
+    scout.setData("boarding-incapacitated", true);
+    scout.setVelocity(0, 0);
+    const body = scout.body as Phaser.Physics.Arcade.Body;
+    body.enable = false;
+    const halo = this.add
+      .circle(
+        scout.x,
+        scout.y,
+        Math.max(scout.displayWidth, scout.displayHeight) * 0.7,
+        0xff9b25,
+        0.18,
+      )
+      .setStrokeStyle(3, 0xff9b25, 0.95)
+      .setDepth(3)
+      .setData("qa", "boardable-halo");
+    const countdown = this.add
+      .text(
+        scout.x,
+        scout.y + scout.displayHeight * 0.9,
+        "BOARDING WINDOW 8.0s",
+        {
+          color: "#f7d56a",
+          fontFamily: "GalacticGunnersHUD, monospace",
+          fontSize: "16px",
+        },
+      )
+      .setOrigin(0.5)
+      .setDepth(4)
+      .setData("qa", "boarding-offer-countdown");
+    this.tweens.add({
+      targets: halo,
+      alpha: { from: 0.15, to: 0.65 },
+      duration: 450,
+      yoyo: true,
+      repeat: -1,
+    });
+    this.#boardingOffer = {
+      scout,
+      anchor,
+      expiresAtMs,
+      controls: [halo, countdown],
+      actionsVisible: false,
+      declined: false,
+      admitting: false,
+    };
+    this.#boardingTransition = "BOARDING_OFFER";
+    // A held gamepad fire action must not become an implicit offer selection.
+    this.#boardingGamepadConfirmPressed = Boolean(
+      this.input.gamepad?.getPad(0)?.buttons[0]?.pressed,
+    );
+    this.#runtimeConfig.onGameplayAnnouncement?.(
+      "Boardable alien incapacitated. Fly within range to Board or Continue.",
+    );
+  }
+
+  private updateBoardingOffer(time: number): void {
+    if (!this.#boardingOffer) return;
+    if (this.#boardingOffer.admitting) return;
+    if (
+      time >= this.#boardingOffer.expiresAtMs ||
+      this.#inputSystem.actions.back
+    ) {
+      this.dismissBoardingOffer(true);
+      return;
+    }
+    const countdown = this.#boardingOffer
+      .controls[1] as Phaser.GameObjects.Text;
+    countdown.setPosition(
+      this.#boardingOffer.scout.x,
+      this.#boardingOffer.scout.y +
+        this.#boardingOffer.scout.displayHeight * 0.9,
+    );
+    countdown.setText(
+      `BOARDING WINDOW ${Math.max(0, (this.#boardingOffer.expiresAtMs - time) / 1000).toFixed(1)}s`,
+    );
+    const inEnvelope =
+      Math.abs(this.#player.sprite.x - this.#boardingOffer.scout.x) <=
+        this.#boardingOffer.anchor.entry_envelope.width_px / 2 &&
+      Math.abs(this.#player.sprite.y - this.#boardingOffer.scout.y) <=
+        this.#boardingOffer.anchor.entry_envelope.height_px / 2;
+    if (
+      !this.#boardingOffer.declined &&
+      inEnvelope &&
+      !this.#boardingOffer.actionsVisible
+    )
+      this.showBoardingOfferActions();
+    // Reaching the authored envelope is the physical admission gate. Once the
+    // player has reached it, retain the visible choice until it is resolved so
+    // a normal movement key release cannot make the rendered Board control
+    // disappear before keyboard, touch, or controller confirmation arrives.
+    const gamepadConfirm = Boolean(
+      this.input.gamepad?.getPad(0)?.buttons[0]?.pressed,
+    );
+    const keyboardConfirm = Boolean(
+      this.#boardingConfirmKey &&
+      Phaser.Input.Keyboard.JustDown(this.#boardingConfirmKey),
+    );
+    if (
+      this.#boardingOffer.actionsVisible &&
+      (keyboardConfirm ||
+        (gamepadConfirm && !this.#boardingGamepadConfirmPressed))
+    ) {
+      this.acceptBoardingOffer();
+    }
+    this.#boardingGamepadConfirmPressed = gamepadConfirm;
+  }
+
+  private showBoardingOfferActions(): void {
+    const offer = this.#boardingOffer;
+    if (!offer || offer.actionsVisible) return;
+    const x = offer.scout.x;
+    const y = offer.scout.y - offer.scout.displayHeight * 0.9;
+    const board = this.add
+      .text(x - 72, y, "BOARD", {
+        color: "#f7d56a",
+        fontFamily: "GalacticGunnersGoldDisplay, Arial, sans-serif",
+        fontSize: "24px",
+      })
+      .setOrigin(0.5)
+      .setDepth(32);
+    const continueShooter = this.add
+      .text(x + 76, y, "CONTINUE", {
+        color: "#7ee8ff",
+        fontFamily: "GalacticGunnersSilverDisplay, Arial, sans-serif",
+        fontSize: "20px",
+      })
+      .setOrigin(0.5)
+      .setDepth(32);
+    const boardHitArea = this.add
+      .rectangle(x - 72, y, 128, 52, 0, 0.001)
+      .setDepth(31)
+      .setInteractive({ useHandCursor: true });
+    const continueHitArea = this.add
+      .rectangle(x + 76, y, 148, 52, 0, 0.001)
+      .setDepth(31)
+      .setInteractive({ useHandCursor: true });
+    boardHitArea.on("pointerup", () => this.acceptBoardingOffer());
+    continueHitArea.on("pointerup", () => this.dismissBoardingOffer());
+    [board, continueShooter, boardHitArea, continueHitArea].forEach((control) =>
+      control.setData("qa", "boarding-offer-action"),
+    );
+    offer.controls.push(board, continueShooter, boardHitArea, continueHitArea);
+    offer.actionsVisible = true;
+    this.#runtimeConfig.onGameplayAnnouncement?.(
+      "Boarding offer available. Board or Continue the Shooter assault.",
+    );
+  }
+
+  private hideBoardingOfferActions(): void {
+    const offer = this.#boardingOffer;
+    if (!offer || !offer.actionsVisible) return;
+    offer.controls.splice(2).forEach((control) => control.destroy());
+    offer.actionsVisible = false;
+  }
+
+  private dismissBoardingOffer(expired = false): void {
+    const offer = this.#boardingOffer;
+    if (!offer) return;
+    if (!expired) {
+      this.hideBoardingOfferActions();
+      offer.declined = true;
+      this.#inputSystem.syncOneShotState();
+      this.#runtimeConfig.onGameplayAnnouncement?.(
+        "Boarding declined. The incapacitated target will expire.",
+      );
+      return;
+    }
+    offer.controls.forEach((control) => control.destroy());
+    offer.scout.setData("boarding-offer-resolved", true);
+    offer.scout.setData("boarding-incapacitated", false);
+    // Expiry resolves exactly once through the normal governed kill path so
+    // score and authorised drops remain consistent with an ordinary defeat.
+    this.destroyScoutBody(offer.scout, true);
+    this.#boardingOffer = null;
+    this.#boardingTransition = "SHOOTER_ACTIVE";
+    this.#boardingGamepadConfirmPressed = false;
+    this.#inputSystem.syncOneShotState();
+    this.#runtimeConfig.onGameplayAnnouncement?.(
+      "Boarding opportunity expired. Shooter assault continued.",
+    );
+  }
+
+  private acceptBoardingOffer(): void {
+    const offer = this.#boardingOffer;
+    if (
+      !offer ||
+      offer.declined ||
+      this.#boardingTransition !== "BOARDING_OFFER" ||
+      !offer.actionsVisible
+    )
+      return;
+    offer.admitting = true;
+    offer.controls.forEach((control) => control.destroy());
+    this.#boardingTransition = "BOARDING_RESOLVING";
+    void this.admitBoardingOffer(offer);
+  }
+
+  /**
+   * Server admission is deliberately completed before Shooter is paused. A
+   * network or validation failure therefore cannot strand the player in a
+   * non-interactive Boarding scene.
+   */
+  private async admitBoardingOffer(offer: BoardingOfferState): Promise<void> {
+    const apiBaseUrl = this.#runtimeConfig.apiBaseUrl;
+    const gameRunId = this.#session.runId;
+    const levelChecksum = this.levelRuntime?.checksum ?? "";
+    if (!apiBaseUrl || !gameRunId || !levelChecksum) {
+      this.settleBoardingAdmissionFailure(offer);
+      return;
+    }
+
+    try {
+      const simulation = new BoardingSimulation(this.#definition.seed, {
+        lives: this.#lives.value,
+        nukes: this.#currentNukes,
+      });
+      const coordinator = new BoardingCoordinator();
+      const snapshot = simulation.snapshot();
+      const { shooterStateDigest } = await coordinator.open({
+        anchorId: offer.anchor.id,
+        sourceEntityId: offer.anchor.source_entity_id,
+        resources: snapshot.resources,
+        snapshot,
+      });
+      const admittedServerRun = await new GameApiClient(
+        apiBaseUrl,
+      ).startBoardingRun(gameRunId, {
+        anchor_id: offer.anchor.id,
+        source_entity_id: offer.anchor.source_entity_id,
+        source_entity_type: offer.anchor.source_entity_type,
+        source_ship_type: "ALIEN_FRIGATE",
+        level_version: this.levelRuntime?.version ?? this.#definition.version,
+        level_checksum: levelChecksum,
+        interior_slug: offer.anchor.interior.slug,
+        interior_version: offer.anchor.interior.version,
+        interior_checksum: offer.anchor.interior.checksum,
+        shooter_state_digest: shooterStateDigest,
+        resources: snapshot.resources,
+      });
+      this.launchAdmittedBoarding(
+        offer,
+        admittedServerRun,
+        shooterStateDigest,
+        snapshot.resources,
+      );
+    } catch {
+      this.settleBoardingAdmissionFailure(offer);
+    }
+  }
+
+  private launchAdmittedBoarding(
+    offer: BoardingOfferState,
+    admittedServerRun: BoardingRunRecord,
+    shooterStateDigest: string,
+    admittedResources: { lives: number; nukes: number },
+  ): void {
+    if (
+      this.#boardingOffer !== offer ||
+      this.#boardingTransition !== "BOARDING_RESOLVING"
+    )
+      return;
+    const { scout, anchor } = offer;
+    scout.setData("boarding-anchor", true);
+    this.#boardingOffer = null;
+    this.#boardingActive = true;
+    this.#boardingTransition = "BOARDING_ACTIVE";
+    this.#boardingGamepadConfirmPressed = false;
+    this.scene.launch("BoardingScene", {
+      seed: this.#definition.seed,
+      lives: admittedResources.lives,
+      nukes: admittedResources.nukes,
+      anchorId: anchor.id,
+      sourceEntityId: anchor.source_entity_id,
+      sourceEntityType: anchor.source_entity_type,
+      interior: anchor.interior,
+      apiBaseUrl: this.#runtimeConfig.apiBaseUrl,
+      gameRunId: this.#session.runId ?? undefined,
+      levelVersion: this.levelRuntime?.version ?? this.#definition.version,
+      levelChecksum: this.levelRuntime?.checksum ?? "",
+      admittedServerRun,
+      shooterStateDigest,
+      onGameplayAnnouncement: this.#runtimeConfig.onGameplayAnnouncement,
+    });
+    // Queue the new scene before pausing this one. Phaser ignores a launch
+    // queued from an already-paused scene in the production renderer.
+    this.scene.pause();
+  }
+
+  private settleBoardingAdmissionFailure(offer: BoardingOfferState): void {
+    if (this.#boardingOffer !== offer) return;
+    offer.controls.forEach((control) => control.destroy());
+    const body = offer.scout.body as Phaser.Physics.Arcade.Body;
+    body.enable = true;
+    body.reset(offer.scout.x, offer.scout.y);
+    offer.scout.setData("boarding-incapacitated", false);
+    offer.scout.setData("boarding-offer-resolved", true);
+    this.destroyScoutBody(offer.scout, true);
+    this.#boardingOffer = null;
+    this.#boardingTransition = "SHOOTER_ACTIVE";
+    this.#boardingGamepadConfirmPressed = false;
+    this.#inputSystem.syncOneShotState();
+    this.#runtimeConfig.onGameplayAnnouncement?.(
+      "Boarding admission failed. Target settled; Shooter assault continued.",
+    );
+  }
+
+  private spawnPickupForHost(host: Phaser.Physics.Arcade.Sprite): void {
+    const type = host.getData("enemyType") as
+      "scout" | "cruiser" | "destroyer" | "mothership";
+    if (type === "mothership") return;
+    const table = this.#definition.drop_tables?.find(
+      (candidate) => candidate.host === type,
+    );
+    // LevelLoader rejects malformed remote definitions. Retain this narrow
+    // runtime boundary for an older cached definition from a prior release.
+    if (!table || !Array.isArray(table.entries) || table.entries.length === 0)
+      return;
+    const pickup = this.#pickupSystem.choose(
+      String(host.getData("entityId")),
+      table.entries,
+    );
+    if (!pickup) return;
+    const limit = table.entries.find(
+      (entry) => entry.pickup === pickup,
+    )?.maximum_per_level;
+    if (limit !== undefined && (this.#pickupCounts.get(pickup) ?? 0) >= limit)
+      return;
+    const asset =
+      pickup === "nuke"
+        ? RUNTIME_ASSETS.ui.nukeIcon
+        : RUNTIME_ASSETS.ui.lifeIcon;
+    const item = this.#pickups.get(
+      host.x,
+      host.y,
+      asset.key,
+    ) as Phaser.Physics.Arcade.Image | null;
+    if (!item) return;
+    item
+      .setPosition(host.x, host.y)
+      .setActive(true)
+      .setVisible(true)
+      .setDisplaySize(34, 34)
+      .setDepth(5)
+      .setData("pickupType", pickup);
+    const body = item.body as Phaser.Physics.Arcade.Body;
+    body.enable = true;
+    body.reset(item.x, item.y);
+    item.setVelocityY(80);
+    this.#pickupCounts.set(pickup, (this.#pickupCounts.get(pickup) ?? 0) + 1);
+  }
+
+  private handleBoardingReturn(
+    _system: unknown,
+    data?: {
+      boardingOutcome?: string;
+      boardingReturnState?: {
+        lives: number;
+        nukes: number;
+        score_delta: number;
+        remove_source_entity_id: string;
+      } | null;
+      boardingValidated?: boolean;
+    },
+  ): void {
+    if (!this.#boardingActive || this.#boardingTransition !== "BOARDING_ACTIVE")
+      return;
+    this.#boardingTransition = "BOARDING_RESOLVING";
+    this.physics.world.resume();
+    if (!data?.boardingValidated || !data.boardingReturnState) {
+      const anchoredScout = this.getActiveScouts().find((scout) =>
+        scout.getData("boarding-anchor"),
+      );
+      if (anchoredScout) {
+        anchoredScout.setData("boarding-anchor", false);
+        anchoredScout.setData("boarding-incapacitated", false);
+        // A completed attempt may never recreate the same offer, even if the
+        // server rejects the return payload. Resolve its source normally so
+        // the player returns to a live Shooter state with no inert target.
+        anchoredScout.setData("boarding-offer-resolved", true);
+        this.destroyScoutBody(anchoredScout, true);
+      }
+      this.#boardingActive = false;
+      this.#boardingTransition = "SHOOTER_ACTIVE";
+      return;
+    }
+    const anchoredScout = this.getActiveScouts().find((scout) =>
+      scout.getData("boarding-anchor"),
+    );
     if (anchoredScout) {
-      anchoredScout.setData('boarding-anchor', false);
-      anchoredScout.setData('boarding-resolved', true);
+      anchoredScout.setData("boarding-anchor", false);
+      anchoredScout.setData("boarding-resolved", true);
       this.destroyScoutBody(anchoredScout, true);
     }
     this.#boardingActive = false;
-    if (data?.boardingOutcome === 'PLAYER_DEAD') this.damagePlayer(true);
+    this.#boardingTransition = "SHOOTER_ACTIVE";
+    this.#lives.restore(data.boardingReturnState.lives);
+    this.#currentNukes = data.boardingReturnState.nukes;
+    this.updateLifeHud();
+    this.updateNukeHud();
   }
 
-  private destroyShieldTile(tile: Phaser.Physics.Arcade.Image, scorePenalty: boolean): void {
-    if (tile.getData('destroyed')) {
+  private destroyShieldTile(
+    tile: Phaser.Physics.Arcade.Image,
+    scorePenalty: boolean,
+  ): void {
+    if (tile.getData("destroyed")) {
       return;
     }
-    tile.setData('destroyed', true);
+    tile.setData("destroyed", true);
     tile.disableBody(true, true);
     if (scorePenalty) {
-      this.#score.apply('shield_tile_hit', this.time.now, { source: 'enemy_laser' });
+      this.#score.apply("shield_tile_hit", this.time.now, {
+        source: "enemy_laser",
+      });
       this.#scoreText.setText(`SCORE ${this.#score.value}`);
     }
     this.createShieldImpact(tile.x, tile.y);
   }
 
-  private fireNuke(x = this.#player.sprite.x, y = this.#player.sprite.y - this.#layout.playerSize.height * 0.62): Phaser.Physics.Arcade.Sprite | null {
-    if (this.#currentNukes <= 0 || this.#rearmProgress < LEVEL_ONE_SLICE.nukeRearmMax || this.#terminalState) {
+  private fireNuke(
+    x = this.#player.sprite.x,
+    y = this.#player.sprite.y - this.#layout.playerSize.height * 0.62,
+  ): Phaser.Physics.Arcade.Sprite | null {
+    if (
+      this.#currentNukes <= 0 ||
+      this.#rearmProgress < LEVEL_ONE_SLICE.nukeRearmMax ||
+      this.#terminalState
+    ) {
       return null;
     }
-    const nuke = this.#nukes.get(x, y, RUNTIME_ASSETS.projectile.nuke.key) as Phaser.Physics.Arcade.Sprite | null;
+    const nuke = this.#nukes.get(
+      x,
+      y,
+      RUNTIME_ASSETS.projectile.nuke.key,
+    ) as Phaser.Physics.Arcade.Sprite | null;
     if (!nuke) {
       return null;
     }
@@ -734,53 +2102,72 @@ export class Level1Scene extends CombatLevelScene {
     this.#nukesFired += 1;
     this.updateNukeHud();
     nuke.setActive(true).setVisible(true);
-    nuke.setName('nuke-projectile');
+    nuke.setName("nuke-projectile");
     nuke.setAngle(0);
-    nuke.setDisplaySize(this.#layout.nukeProjectileSize.width, this.#layout.nukeProjectileSize.height);
+    nuke.setDisplaySize(
+      this.#layout.nukeProjectileSize.width,
+      this.#layout.nukeProjectileSize.height,
+    );
     nuke.setDepth(4);
-    nuke.setData('spent', false);
-    if (this.anims.exists('projectile.nuke.fly')) {
-      nuke.play('projectile.nuke.fly');
+    nuke.setData("spent", false);
+    if (this.anims.exists("projectile.nuke.fly")) {
+      nuke.play("projectile.nuke.fly");
     }
     this.configureNukeBody(nuke);
     nuke.setVelocity(0, -LEVEL_ONE_SLICE.nukeProjectileSpeed);
-    this.#audio.play('nukeFire');
+    this.#audio.play("nukeFire");
     return nuke;
   }
 
   private configureNukeBody(nuke: Phaser.Physics.Arcade.Sprite): void {
-    nuke.setDisplaySize(this.#layout.nukeProjectileSize.width, this.#layout.nukeProjectileSize.height);
+    nuke.setDisplaySize(
+      this.#layout.nukeProjectileSize.width,
+      this.#layout.nukeProjectileSize.height,
+    );
     const body = nuke.body as Phaser.Physics.Arcade.Body;
-    body.enable = true;
-    body.setSize(this.#layout.nukeProjectileBodySize.width / nuke.scaleX, this.#layout.nukeProjectileBodySize.height / nuke.scaleY, true);
+    nuke.enableBody(true, nuke.x, nuke.y, true, true);
+    body.setSize(
+      this.#layout.nukeProjectileBodySize.width / nuke.scaleX,
+      this.#layout.nukeProjectileBodySize.height / nuke.scaleY,
+      true,
+    );
     body.reset(nuke.x, nuke.y);
     body.position.set(nuke.x - body.width / 2, nuke.y - body.height / 2);
     body.prev.set(body.x, body.y);
-    nuke.setData('previousBodyCenterX', body.x + body.width / 2);
-    nuke.setData('previousBodyCenterY', body.y + body.height / 2);
+    nuke.setData("previousBodyCenterX", body.x + body.width / 2);
+    nuke.setData("previousBodyCenterY", body.y + body.height / 2);
   }
 
-  private handleNukeScoutOverlap(nuke: Phaser.Physics.Arcade.Sprite, scout: Phaser.Physics.Arcade.Sprite): void {
-    if (nuke.getData('spent')) {
+  private handleNukeScoutOverlap(
+    nuke: Phaser.Physics.Arcade.Sprite,
+    scout: Phaser.Physics.Arcade.Sprite,
+  ): void {
+    if (nuke.getData("spent")) {
       return;
     }
-    nuke.setData('spent', true);
+    nuke.setData("spent", true);
     this.detonateNuke(nuke.x, nuke.y);
     this.destroyProjectile(nuke);
     this.destroyScoutsInNukeBurst(scout.x, scout.y);
   }
 
   private detonateNuke(x: number, y: number): void {
-    const burst = this.add.sprite(x, y, RUNTIME_ASSETS.fx.nukeBurst.key)
-      .setDisplaySize(this.#layout.nukeBurstSize.width, this.#layout.nukeBurstSize.height)
+    const burst = this.add
+      .sprite(x, y, RUNTIME_ASSETS.fx.nukeBurst.key)
+      .setDisplaySize(
+        this.#layout.nukeBurstSize.width,
+        this.#layout.nukeBurstSize.height,
+      )
       .setDepth(7);
-    if (this.anims.exists('fx.nukeBurst.play')) {
-      burst.play('fx.nukeBurst.play');
-      burst.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => burst.destroy());
+    if (this.anims.exists("fx.nukeBurst.play")) {
+      burst.play("fx.nukeBurst.play");
+      burst.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () =>
+        burst.destroy(),
+      );
     } else {
       this.time.delayedCall(260, () => burst.destroy());
     }
-    this.#audio.play('nukeBurst');
+    this.#audio.play("nukeBurst");
   }
 
   private destroyScoutsInNukeBurst(x: number, y: number): number {
@@ -788,8 +2175,14 @@ export class Level1Scene extends CombatLevelScene {
     let destroyed = 0;
     for (const scout of this.getActiveScouts()) {
       if (Phaser.Math.Distance.Between(x, y, scout.x, scout.y) <= radius) {
-        this.destroyScoutBody(scout, true);
-        destroyed += 1;
+        if (scout.getData("enemyType") === "mothership") {
+          // The boss must retain its governed 30-health, hit-image, and score
+          // lifecycle. A burst cannot silently bypass that authored contract.
+          this.damageHostile(scout);
+        } else {
+          this.destroyScoutBody(scout, true);
+          destroyed += 1;
+        }
       }
     }
     return destroyed;
@@ -800,37 +2193,79 @@ export class Level1Scene extends CombatLevelScene {
       this.updateNukeHud();
       return;
     }
-    this.#rearmProgress = Math.min(LEVEL_ONE_SLICE.nukeRearmMax, this.#rearmProgress + deltaMs / 50);
+    this.#rearmProgress = Math.min(
+      LEVEL_ONE_SLICE.nukeRearmMax,
+      this.#rearmProgress + deltaMs / 50,
+    );
     this.updateNukeHud();
   }
 
   private updateNukeHud(): void {
-    this.#rearmText?.setText('ENERGISE');
+    this.#rearmText?.setText("ENERGISE");
+    this.ensureNukeIcons(this.#currentNukes);
+    const left = Math.max(24, this.#layout.viewport.width * 0.028);
+    const right =
+      this.#layout.viewport.width -
+      Math.max(30, this.#layout.viewport.width * 0.028);
+    const barWidth = Phaser.Math.Clamp(
+      this.#layout.viewport.width * 0.1,
+      72,
+      170,
+    );
+    this.reflowNukeIcons(
+      left,
+      right - barWidth,
+      this.#layout.viewport.height - 50,
+    );
     this.#nukeIcons.forEach((icon, index) => {
       icon.setVisible(index < this.#currentNukes);
     });
-    const progress = Phaser.Math.Clamp(this.#rearmProgress / LEVEL_ONE_SLICE.nukeRearmMax, 0, 1);
-    const barWidth = Phaser.Math.Clamp(this.#layout.viewport.width * 0.1, 72, 170);
+    const progress = Phaser.Math.Clamp(
+      this.#rearmProgress / LEVEL_ONE_SLICE.nukeRearmMax,
+      0,
+      1,
+    );
     this.#rearmBarFill?.setDisplaySize(Math.max(2, barWidth * progress), 8);
   }
 
   private updateLifeHud(): void {
+    this.ensureLifeIcons(this.#lives.value);
     this.#lifeIcons.forEach((icon, index) => {
       icon.setVisible(index < this.#lives.value);
     });
+    this.reflowHud();
+  }
+
+  private ensureLifeIcons(count: number): void {
+    while (this.#lifeIcons.length < count) {
+      this.#lifeIcons.push(
+        this.add
+          .image(0, 0, RUNTIME_ASSETS.ui.lifeIcon.key)
+          .setDisplaySize(39, 39)
+          .setDepth(10),
+      );
+    }
   }
 
   private updateSoundHud(): void {
-    this.#soundIcon?.setTexture(this.#audio.muted ? RUNTIME_ASSETS.ui.soundOff.key : RUNTIME_ASSETS.ui.soundOn.key);
+    this.#soundIcon?.setTexture(
+      this.#audio.muted
+        ? RUNTIME_ASSETS.ui.soundOff.key
+        : RUNTIME_ASSETS.ui.soundOn.key,
+    );
   }
 
   private pauseLevel(): void {
-    if (this.scene.isSleeping()) {
+    if (
+      this.scene.isSleeping() ||
+      this.scene.isPaused() ||
+      this.#boardingActive
+    ) {
       return;
     }
     this.#player.stop();
-    this.scene.launch('PauseScene');
-    this.scene.sleep();
+    this.physics.world.pause();
+    this.scene.launch("PauseScene", { sequence: this.#campaignSequence });
   }
 
   private handlePauseKeyDown(): void {
@@ -841,22 +2276,84 @@ export class Level1Scene extends CombatLevelScene {
     this.pauseLevel();
   }
 
+  private handleTerminalConfirm(event?: KeyboardEvent): void {
+    if (this.#terminalState && this.#terminalInputArmed && !event?.repeat) {
+      this.runTerminalAction(this.primaryTerminalAction());
+    }
+  }
+
+  private armTerminalInput(): void {
+    if (this.#terminalState && this.#terminalAwaitKeyRelease) {
+      this.#terminalInputArmed = true;
+      this.#terminalAwaitKeyRelease = false;
+    }
+  }
+
+  private installGameplayCursor(): void {
+    const reveal = () => {
+      this.game.canvas.style.cursor = "";
+      this.#cursorHideEvent?.remove(false);
+      this.#cursorHideEvent = this.time.delayedCall(5_000, () => {
+        this.game.canvas.style.cursor = "none";
+      });
+    };
+    this.#cursorMoveHandler = reveal;
+    this.game.canvas.addEventListener("pointermove", reveal);
+    reveal();
+  }
+
+  private ensureNukeIcons(count: number): void {
+    while (this.#nukeIcons.length < count) {
+      this.#nukeIcons.push(
+        this.add
+          .image(0, 0, RUNTIME_ASSETS.ui.nukeIcon.key)
+          .setDisplaySize(35, 35)
+          .setDepth(10),
+      );
+    }
+  }
+
+  private reflowNukeIcons(
+    left: number,
+    nukeBarX: number,
+    bottom: number,
+  ): void {
+    const spacing = 36;
+    const columns = Math.max(1, Math.floor((nukeBarX - left - 12) / spacing));
+    this.#nukeIcons.forEach((icon, index) => {
+      const column = index % columns;
+      const row = Math.floor(index / columns);
+      icon.setPosition(
+        nukeBarX - (column + 1) * spacing,
+        bottom + 12 - row * spacing,
+      );
+    });
+  }
+
   private handleResume(): void {
+    this.physics.world.resume();
     this.input.keyboard?.resetKeys();
     this.#inputSystem.syncOneShotState();
     this.#lastUpdateAtMs = 0;
-    this.#pauseInputBlockedUntilMs = this.time.now + 250;
+    // PauseScene resets the held keys before resuming us, so a new deliberate
+    // pause input must be accepted immediately rather than dropped in a blind
+    // debounce window.
+    this.#pauseInputBlockedUntilMs = 0;
   }
 
   private damagePlayer(force = false): void {
-    if (this.#playerState !== 'active') {
+    if (this.#playerState !== "active") {
       return;
     }
-    if (!force && this.time.now - this.#lastDamageAtMs < LEVEL_ONE_SLICE.playerDamageCooldownMs) {
+    if (
+      !force &&
+      this.time.now - this.#lastDamageAtMs <
+        LEVEL_ONE_SLICE.playerDamageCooldownMs
+    ) {
       return;
     }
     this.#lastDamageAtMs = this.time.now;
-    this.#playerState = 'hit';
+    this.#playerState = "hit";
     this.#lives.damage(1);
     this.updateLifeHud();
     for (const laser of this.#enemyLasers.getChildren() as Phaser.Physics.Arcade.Image[]) {
@@ -864,14 +2361,18 @@ export class Level1Scene extends CombatLevelScene {
         this.destroyProjectile(laser);
       }
     }
-    this.#audio.play('playerHit');
-    this.createExplosion(this.#player.sprite.x, this.#player.sprite.y, this.#layout.playerSize.height * 0.78);
+    this.#audio.play("playerHit");
+    this.createExplosion(
+      this.#player.sprite.x,
+      this.#player.sprite.y,
+      this.#layout.playerSize.height * 0.78,
+    );
     this.cameras.main.shake(120, 0.006);
     this.#player.sprite.disableBody(true, false);
     this.#player.stop();
     this.#inputSystem.resetPointerState();
     if (this.#lives.isDepleted) {
-      this.showTerminal('failed');
+      this.showTerminal("failed");
       return;
     }
     this.#respawnAtMs = this.time.now + 420;
@@ -881,7 +2382,7 @@ export class Level1Scene extends CombatLevelScene {
     if (this.#terminalState) {
       return;
     }
-    this.#playerState = 'regenerating';
+    this.#playerState = "regenerating";
     this.#respawnAtMs = Number.POSITIVE_INFINITY;
     this.#player.respawn(this.#layout);
     this.#inputSystem.resetPointerState();
@@ -890,27 +2391,45 @@ export class Level1Scene extends CombatLevelScene {
   }
 
   private createExplosion(x: number, y: number, size: number): void {
-    const explosion = this.add.sprite(x, y, RUNTIME_ASSETS.fx.explosionSmall.key)
+    const explosion = this.add
+      .sprite(x, y, RUNTIME_ASSETS.fx.explosionSmall.key)
       .setDisplaySize(size, size)
       .setDepth(6);
-    if (this.anims.exists('fx.explosionSmall.play')) {
-      explosion.play('fx.explosionSmall.play');
-      explosion.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => explosion.destroy());
+    if (this.anims.exists("fx.explosionSmall.play")) {
+      explosion.play("fx.explosionSmall.play");
+      explosion.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () =>
+        explosion.destroy(),
+      );
     } else {
       this.time.delayedCall(220, () => explosion.destroy());
     }
   }
 
   private createShieldImpact(x: number, y: number): void {
-    this.add.rectangle(x, y, this.#layout.shieldTileSize.width * 1.15, this.#layout.shieldTileSize.height * 1.15, 0x020406, 0.72)
+    this.add
+      .rectangle(
+        x,
+        y,
+        this.#layout.shieldTileSize.width * 1.15,
+        this.#layout.shieldTileSize.height * 1.15,
+        0x020406,
+        0.72,
+      )
       .setDepth(3.5);
-    this.createExplosion(x, y, Math.max(26, this.#layout.shieldTileSize.width * 3.8));
+    this.createExplosion(
+      x,
+      y,
+      Math.max(26, this.#layout.shieldTileSize.width * 3.8),
+    );
   }
 
   private cleanupProjectiles(): void {
     for (const group of [this.#playerLasers, this.#enemyLasers]) {
       for (const child of group.getChildren() as Phaser.Physics.Arcade.Image[]) {
-        if (child.active && (child.y < -100 || child.y > this.scale.height + 100)) {
+        if (
+          child.active &&
+          (child.y < -100 || child.y > this.scale.height + 100)
+        ) {
           this.destroyProjectile(child);
         }
       }
@@ -928,10 +2447,49 @@ export class Level1Scene extends CombatLevelScene {
   }
 
   private checkTerminalConditions(): void {
-    const activeScouts = this.getActiveScouts().length;
-    if (activeScouts === 0) {
-      this.showTerminal('complete');
+    const objectives = this.#definition.objectives ?? [
+      {
+        type: "DESTROY_ALL_HOSTILES",
+        required: true,
+        target_entity_ids: [],
+        duration_ms: null,
+      },
+    ];
+    const requiredObjectives = objectives.filter(
+      (objective) => objective.required,
+    );
+    const completed = requiredObjectives.every((objective) =>
+      this.isObjectiveComplete(objective),
+    );
+    if (completed) {
+      this.showTerminal("complete");
     }
+  }
+
+  private isObjectiveComplete(objective: {
+    type: string;
+    target_entity_ids?: string[];
+    duration_ms?: number | null;
+  }): boolean {
+    const active = this.getActiveScouts();
+    if (objective.type === "SURVIVE_DURATION") {
+      return (
+        this.time.now - this.#levelStartedAtMs >=
+        (objective.duration_ms ?? Number.POSITIVE_INFINITY)
+      );
+    }
+    if (objective.type === "DESTROY_MOTHERSHIP") {
+      return !active.some(
+        (scout) => scout.getData("enemyType") === "mothership",
+      );
+    }
+    if (objective.type === "BOARD_TARGET") {
+      const targets = new Set(objective.target_entity_ids ?? []);
+      return [...targets].every(
+        (id) => !active.some((scout) => scout.getData("entityId") === id),
+      );
+    }
+    return active.length === 0;
   }
 
   private showTerminal(state: TerminalState): void {
@@ -941,111 +2499,231 @@ export class Level1Scene extends CombatLevelScene {
     this.#terminalState = state;
     this.#terminalActions = [];
     this.#terminalActionHandled = false;
+    const keyboard = this.input.keyboard;
+    const spaceHeld = Boolean(
+      keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).isDown,
+    );
+    const enterHeld = Boolean(
+      keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER).isDown,
+    );
+    this.#terminalAwaitKeyRelease = spaceHeld || enterHeld;
+    this.#terminalInputArmed = !this.#terminalAwaitKeyRelease;
     this.#player.stop();
     this.#playerLasers.clear(true, true);
     this.#enemyLasers.clear(true, true);
-    const isComplete = state === 'complete';
-    const isFinalLevel = this.#campaignSequence === CAMPAIGN_DEFINITIONS.length;
+    const isComplete = state === "complete";
+    const isFinalLevel = this.#campaignSession?.run
+      ? !this.#campaignSession.run.has_next_entry
+      : this.#campaignSequence >= this.campaignLength();
     const centreX = this.scale.width / 2;
     const centreY = this.scale.height / 2;
-    const panelAsset = isComplete ? RUNTIME_ASSETS.ui.victoryPanel : RUNTIME_ASSETS.ui.gameOverPanel;
+    const panelAsset = isComplete
+      ? RUNTIME_ASSETS.ui.victoryPanel
+      : RUNTIME_ASSETS.ui.gameOverPanel;
     const panelAspect = isComplete ? 1448 / 1086 : 1672 / 941;
     const panelWidth = Math.min(this.scale.width * 0.8, 920);
     const panelHeight = panelWidth / panelAspect;
-    const panel = this.add.image(centreX, centreY - 16, panelAsset.key)
+    const panel = this.add
+      .image(centreX, centreY + panelHeight * 0.12, panelAsset.key)
       .setDisplaySize(panelWidth, panelHeight)
       .setDepth(20);
     const bonus = isComplete ? this.#lives.value * 100 : 0;
+    const levelScoreDelta = Math.max(0, this.#score.value - this.#entryScore);
+    const rankedState = this.#campaignSession?.run?.ranked
+      ? "RANKED"
+      : "UNRANKED";
     const heading = isComplete
-      ? (isFinalLevel ? 'CAMPAIGN VICTORY' : 'MISSION CLEARED')
-      : 'GAME OVER';
+      ? isFinalLevel
+        ? "CAMPAIGN VICTORY"
+        : "MISSION CLEARED"
+      : "GAME OVER";
+    this.#runtimeConfig.onGameplayAnnouncement?.(
+      isComplete
+        ? isFinalLevel
+          ? `Campaign victory. Level ${this.#campaignSequence} complete.`
+          : `Level ${this.#campaignSequence} complete. Continue available.`
+        : `Game over on Level ${this.#campaignSequence}. Try Again and Main Menu available.`,
+    );
     const values = isComplete
-      ? `${heading}\nSCORE ${this.#score.value}\nWAVE ${this.#campaignSequence}\nBONUS ${bonus}`
-      : `${heading}\nSCORE ${this.#score.value}\nWAVE ${this.#campaignSequence}\nLIVES ${this.#lives.value}`;
-    const text = this.add.text(centreX, centreY - panelHeight * 0.12, values, {
-      color: isComplete ? '#f7d56a' : '#ff8b6e',
-      fontFamily: isComplete ? 'GalacticGunnersGoldDisplay, Arial, sans-serif' : 'GalacticGunnersSilverDisplay, Arial, sans-serif',
-      fontSize: `${Math.max(20, Math.min(34, panelWidth * 0.042))}px`,
-      align: 'center',
-    }).setOrigin(0.5).setDepth(21);
-    const actionY = centreY + panelHeight * 0.24;
+      ? `${heading}\nLEVEL ${this.#campaignSequence}: ${this.#definition.name.toUpperCase()}\nLEVEL SCORE ${levelScoreDelta}\nCAMPAIGN SCORE ${this.#score.value}\nLIVES ${this.#lives.value}  NUKES ${this.#currentNukes}\nBONUS ${bonus}  ${rankedState}`
+      : `${heading}\nLEVEL ${this.#campaignSequence}: ${this.#definition.name.toUpperCase()}\nCAMPAIGN SCORE ${this.#score.value}\nLIVES ${this.#lives.value}  NUKES ${this.#currentNukes}\n${rankedState}`;
+    const text = this.add
+      .text(centreX, Math.max(96, centreY - panelHeight * 0.68), values, {
+        color: isComplete ? "#f7d56a" : "#ff8b6e",
+        fontFamily: isComplete
+          ? "GalacticGunnersGoldDisplay, Arial, sans-serif"
+          : "GalacticGunnersSilverDisplay, Arial, sans-serif",
+        fontSize: `${Math.max(20, Math.min(34, panelWidth * 0.042))}px`,
+        align: "center",
+      })
+      .setOrigin(0.5)
+      .setDepth(21);
+    const actionY = centreY + panelHeight * 0.35;
     if (isComplete && !isFinalLevel) {
       this.createContinueControl(centreX, actionY - 8);
-      this.createProductionTerminalButton(centreX - panelWidth * 0.18, actionY + 74, 'replay');
-      this.createProductionTerminalButton(centreX + panelWidth * 0.18, actionY + 74, 'menu');
+      this.createProductionTerminalButton(
+        centreX - panelWidth * 0.18,
+        actionY + 74,
+        "replay",
+      );
+      this.createProductionTerminalButton(
+        centreX + panelWidth * 0.18,
+        actionY + 74,
+        "menu",
+      );
     } else if (isComplete) {
-      this.createProductionTerminalButton(centreX - panelWidth * 0.18, actionY + 34, 'replay');
-      this.createProductionTerminalButton(centreX + panelWidth * 0.18, actionY + 34, 'menu');
+      this.createProductionTerminalButton(
+        centreX - panelWidth * 0.18,
+        actionY + 34,
+        "replay",
+      );
+      this.createProductionTerminalButton(
+        centreX + panelWidth * 0.18,
+        actionY + 34,
+        "menu",
+      );
+      if (
+        !this.#campaignSession?.run?.ranked &&
+        typeof window !== "undefined"
+      ) {
+        const claim = this.add
+          .text(
+            centreX,
+            actionY + 92,
+            "CREATE PILOT ACCOUNT TO CLAIM ELIGIBLE SCORE",
+            {
+              color: "#7ee8ff",
+              fontFamily: "GalacticGunnersHUD, monospace",
+              fontSize: `${Math.max(14, Math.min(20, panelWidth * 0.024))}px`,
+              align: "center",
+            },
+          )
+          .setOrigin(0.5)
+          .setDepth(23)
+          .setInteractive({ useHandCursor: true });
+        claim.on("pointerup", () =>
+          window.location.assign("/account/register?claim=eligible"),
+        );
+        claim.setData("qa", "anonymous-score-claim-cta");
+      }
     } else {
-      this.createProductionTerminalButton(centreX - panelWidth * 0.18, actionY + 34, 'try-again');
-      this.createProductionTerminalButton(centreX + panelWidth * 0.18, actionY + 34, 'menu');
+      this.createProductionTerminalButton(
+        centreX - panelWidth * 0.18,
+        actionY + 34,
+        "try-again",
+      );
+      this.createProductionTerminalButton(
+        centreX + panelWidth * 0.18,
+        actionY + 34,
+        "menu",
+      );
     }
-    panel.setData('qa', 'terminal-panel');
-    text.setData('qa', 'terminal-text');
-    void this.#session.complete({
-      score: this.#score.value,
-      livesUsed: this.#lives.maxLives - this.#lives.value,
-      livesEnd: this.#lives.value,
-      nukesEnd: this.#currentNukes,
-      levelReached: this.#campaignSequence,
-      victory: isComplete && isFinalLevel,
-      eventSummary: this.#score.eventSummary(),
-    }).catch(() => undefined).finally(() => this.publishQaState());
+    panel.setData("qa", "terminal-panel");
+    text.setData("qa", "terminal-text");
+    void this.#session
+      .complete({
+        score: this.#score.value,
+        livesUsed: Math.max(0, this.#lives.initialLives - this.#lives.value),
+        livesEnd: this.#lives.value,
+        nukesEnd: this.#currentNukes,
+        levelReached: this.#campaignSequence,
+        victory: isComplete && isFinalLevel,
+        eventSummary: this.#score.eventSummary(),
+      })
+      .catch(() => undefined)
+      .finally(() => this.publishQaState());
     this.publishQaState();
   }
 
   private primaryTerminalAction(): TerminalAction {
-    if (this.#terminalState === 'failed') {
-      return 'try-again';
-    }
-    return this.#campaignSequence < CAMPAIGN_DEFINITIONS.length ? 'continue' : 'replay';
+    return primaryTerminalAction({
+      terminalState: this.#terminalState ?? "failed",
+      hasNextEntry: Boolean(this.#campaignSession?.run?.has_next_entry),
+      offline: Boolean(this.#campaignSession?.offline),
+      sequence: this.#campaignSequence,
+      campaignLength: this.campaignLength(),
+    });
   }
 
   private createContinueControl(x: number, y: number): void {
     const width = Phaser.Math.Clamp(this.scale.width * 0.19, 174, 250);
     const height = Phaser.Math.Clamp(this.scale.height * 0.065, 48, 64);
-    const surface = this.add.rectangle(x, y, width, height, 0x123763, 0.96)
+    const surface = this.add
+      .rectangle(x, y, width, height, 0x123763, 0.96)
       .setStrokeStyle(2, 0xf7d56a, 0.96)
       .setDepth(22)
       .setInteractive({ useHandCursor: true });
-    const label = this.add.text(x, y, 'CONTINUE', {
-      color: '#f7d56a',
-      fontFamily: 'GalacticGunnersGoldDisplay, Arial, sans-serif',
-      fontSize: `${Math.max(22, Math.round(height * 0.48))}px`,
-    }).setOrigin(0.5).setDepth(23);
-    surface.on('pointerover', () => surface.setFillStyle(0x24538b, 1));
-    surface.on('pointerout', () => surface.setFillStyle(0x123763, 0.96));
-    surface.on('pointerup', () => this.runTerminalAction('continue'));
-    surface.setData('qa', 'terminal-continue');
-    label.setData('qa', 'terminal-continue-label');
-    this.#terminalActions.push({ action: 'continue', x, y, width, height, source: 'production-derived' });
+    const label = this.add
+      .text(x, y, "CONTINUE", {
+        color: "#f7d56a",
+        fontFamily: "GalacticGunnersGoldDisplay, Arial, sans-serif",
+        fontSize: `${Math.max(22, Math.round(height * 0.48))}px`,
+      })
+      .setOrigin(0.5)
+      .setDepth(23);
+    surface.on("pointerover", () => surface.setFillStyle(0x24538b, 1));
+    surface.on("pointerout", () => surface.setFillStyle(0x123763, 0.96));
+    surface.on("pointerup", () => this.runTerminalAction("continue"));
+    surface.setData("qa", "terminal-continue");
+    label.setData("qa", "terminal-continue-label");
+    this.#terminalActions.push({
+      action: "continue",
+      x,
+      y,
+      width,
+      height,
+      source: "production-derived",
+    });
   }
 
-  private createProductionTerminalButton(x: number, y: number, action: Exclude<TerminalAction, 'continue'>): void {
-    const textures = action === 'menu'
-      ? { off: RUNTIME_ASSETS.ui.mainMenuOff.key, on: RUNTIME_ASSETS.ui.mainMenuOnclick.key }
-      : action === 'replay'
-        ? { off: RUNTIME_ASSETS.ui.replayOff.key, on: RUNTIME_ASSETS.ui.replayOnclick.key }
-        : { off: RUNTIME_ASSETS.ui.tryAgainOff.key, on: RUNTIME_ASSETS.ui.tryAgainOnclick.key };
-    const sourceWidth = action === 'replay' ? 420 : action === 'menu' ? 340 : 350;
+  private createProductionTerminalButton(
+    x: number,
+    y: number,
+    action: Exclude<TerminalAction, "continue">,
+  ): void {
+    const textures =
+      action === "menu"
+        ? {
+            off: RUNTIME_ASSETS.ui.mainMenuOff.key,
+            on: RUNTIME_ASSETS.ui.mainMenuOnclick.key,
+          }
+        : action === "replay"
+          ? {
+              off: RUNTIME_ASSETS.ui.replayOff.key,
+              on: RUNTIME_ASSETS.ui.replayOnclick.key,
+            }
+          : {
+              off: RUNTIME_ASSETS.ui.tryAgainOff.key,
+              on: RUNTIME_ASSETS.ui.tryAgainOnclick.key,
+            };
+    const sourceWidth =
+      action === "replay" ? 420 : action === "menu" ? 340 : 350;
     const width = Phaser.Math.Clamp(this.scale.width * 0.19, 144, 220);
     const height = width * (140 / sourceWidth);
-    const button = this.add.image(x, y, textures.off)
+    const button = this.add
+      .image(x, y, textures.off)
       .setDisplaySize(width, height)
       .setDepth(22)
       .setInteractive({ useHandCursor: true });
-    button.on('pointerover', () => {
+    button.on("pointerover", () => {
       button.setTexture(textures.on);
-      this.#audio.play('uiSelect');
+      this.#audio.play("uiSelect");
     });
-    button.on('pointerout', () => button.setTexture(textures.off));
-    button.on('pointerdown', () => button.setTexture(textures.on));
-    button.on('pointerup', () => {
+    button.on("pointerout", () => button.setTexture(textures.off));
+    button.on("pointerdown", () => button.setTexture(textures.on));
+    button.on("pointerup", () => {
       button.setTexture(textures.off);
       this.runTerminalAction(action);
     });
-    button.setData('qa', `terminal-${action}`);
-    this.#terminalActions.push({ action, x, y, width, height, source: 'production-asset' });
+    button.setData("qa", `terminal-${action}`);
+    this.#terminalActions.push({
+      action,
+      x,
+      y,
+      width,
+      height,
+      source: "production-asset",
+    });
   }
 
   private runTerminalAction(action: TerminalAction): void {
@@ -1053,36 +2731,117 @@ export class Level1Scene extends CombatLevelScene {
       return;
     }
     this.#terminalActionHandled = true;
-    this.#audio.play('uiConfirm');
-    if (action === 'continue') {
-      const nextSequence = this.#campaignSequence + 1;
-      if (nextSequence <= CAMPAIGN_DEFINITIONS.length) {
-        this.scene.restart({ sequence: nextSequence });
-      }
+    this.#audio.play("uiConfirm");
+    if (action === "continue") {
+      void this.continueCampaign();
       return;
     }
-    if (action === 'menu') {
-      this.scene.start('MainMenuScene');
+    if (action === "menu") {
+      this.scene.start("MainMenuScene");
       return;
     }
     this.scene.restart({ sequence: this.#campaignSequence });
   }
 
+  private async continueCampaign(): Promise<void> {
+    try {
+      const serverResult = await this.#campaignSession?.complete(
+        this.#score.value,
+        this.#lives.value,
+        this.#currentNukes,
+      );
+      const serverDefinition = serverResult?.entry?.level.definition;
+      const nextSequence = serverResult?.entry?.position;
+      if (serverDefinition && typeof serverDefinition === "object") {
+        const compiledDefinition = compileLevelDocument(
+          serverDefinition as LevelDefinition | LevelAuthoringDocument,
+        );
+        validateLevelDefinition(compiledDefinition);
+        const runtimes = this.registry.get(
+          "campaignRuntime",
+        ) as LevelRuntimeConfig[];
+        const replacement = {
+          definition: compiledDefinition,
+          version:
+            serverResult?.entry?.level.version ?? compiledDefinition.version,
+          checksum: serverResult?.entry?.level.checksum ?? "",
+          source: "remote" as const,
+        };
+        this.registry.set("campaignRuntime", [
+          ...runtimes.filter(
+            (runtime) => runtime.definition.sequence !== nextSequence,
+          ),
+          replacement,
+        ]);
+      }
+      if (
+        nextSequence &&
+        serverDefinition &&
+        typeof serverDefinition === "object"
+      ) {
+        this.registry.set("campaignState", {
+          sequence: nextSequence,
+          score: this.#score.value,
+          lives: this.#lives.value,
+          nukes: this.#currentNukes,
+        } satisfies CampaignRuntimeState);
+        this.scene.restart({ sequence: nextSequence });
+      }
+    } catch {
+      // An online server rejection must not manufacture progression. Offline
+      // mode is explicitly deterministic and may use the packaged authority.
+      if (this.#campaignSession?.offline) {
+        const nextSequence = this.#campaignSequence + 1;
+        if (nextSequence <= this.campaignLength()) {
+          this.registry.set("campaignState", {
+            sequence: nextSequence,
+            score: this.#score.value,
+            lives: this.#lives.value,
+            nukes: this.#currentNukes,
+          } satisfies CampaignRuntimeState);
+          this.scene.restart({ sequence: nextSequence });
+        }
+      } else {
+        this.#terminalActionHandled = false;
+      }
+    }
+  }
+
+  private campaignLength(): number {
+    return (
+      (this.registry.get("campaignRuntime") as LevelRuntimeConfig[] | undefined)
+        ?.length ?? CAMPAIGN_DEFINITIONS.length
+    );
+  }
+
   private installHostileQa(): void {
-    if (!this.#runtimeConfig.hostileQa || typeof window === 'undefined') {
+    if (!this.#runtimeConfig.hostileQa || typeof window === "undefined") {
       return;
     }
     window.__GALACTIC_GUNNERS_HOSTILE__ = {
       firePlayerLaserAtScout: (index = 0, offsetX = 0) => {
         const scout = this.getActiveScouts()[index];
         if (!scout) {
-          return { fired: false, reason: 'no-scout' };
+          return { fired: false, reason: "no-scout" };
         }
-        const laser = this.firePlayerLaser(Number.POSITIVE_INFINITY, scout.x + offsetX, scout.y + this.#layout.scoutSize.height * 0.95);
-        return { fired: Boolean(laser), scoutX: scout.x, laserX: laser?.x, offsetX };
+        const laser = this.firePlayerLaser(
+          Number.POSITIVE_INFINITY,
+          scout.x + offsetX,
+          scout.y + this.#layout.scoutSize.height * 0.95,
+        );
+        return {
+          fired: Boolean(laser),
+          scoutX: scout.x,
+          laserX: laser?.x,
+          offsetX,
+        };
       },
       firePlayerLaserForVisual: (offsetX = 0) => {
-        const laser = this.firePlayerLaser(Number.POSITIVE_INFINITY, this.#player.sprite.x + offsetX, this.#player.sprite.y - this.#layout.playerSize.height * 0.52);
+        const laser = this.firePlayerLaser(
+          Number.POSITIVE_INFINITY,
+          this.#player.sprite.x + offsetX,
+          this.#player.sprite.y - this.#layout.playerSize.height * 0.52,
+        );
         const body = laser?.body as Phaser.Physics.Arcade.Body | undefined;
         return {
           fired: Boolean(laser),
@@ -1090,47 +2849,103 @@ export class Level1Scene extends CombatLevelScene {
           laserX: laser?.x,
           bodyCenterX: body ? body.x + body.width / 2 : null,
           bodyCenterY: body ? body.y + body.height / 2 : null,
-          previousBodyCenterX: laser?.getData('previousBodyCenterX') ?? null,
-          previousBodyCenterY: laser?.getData('previousBodyCenterY') ?? null,
+          previousBodyCenterX: laser?.getData("previousBodyCenterX") ?? null,
+          previousBodyCenterY: laser?.getData("previousBodyCenterY") ?? null,
           offsetX,
         };
       },
       fireEnemyLaserAtPlayer: (offsetX = 0) => {
-        const laser = this.#enemyLasers.get(this.#player.sprite.x + offsetX, this.#player.sprite.y - this.#layout.playerSize.height * 0.42, RUNTIME_ASSETS.projectile.enemyLaser.key) as Phaser.Physics.Arcade.Image | null;
+        const laser = this.#enemyLasers.get(
+          this.#player.sprite.x + offsetX,
+          this.#player.sprite.y - this.#layout.playerSize.height * 0.42,
+          RUNTIME_ASSETS.projectile.enemyLaser.key,
+        ) as Phaser.Physics.Arcade.Image | null;
         if (!laser) {
-          return { fired: false, reason: 'no-laser' };
+          return { fired: false, reason: "no-laser" };
         }
-        laser.setPosition(this.#player.sprite.x + offsetX, this.#player.sprite.y - this.#layout.playerSize.height * 0.42);
-        this.configureLaser(laser, 'enemy-laser', 90, this.enemyLaserSpeed());
-        return { fired: true, playerX: this.#player.sprite.x, laserX: laser.x, offsetX };
+        laser.setPosition(
+          this.#player.sprite.x + offsetX,
+          this.#player.sprite.y - this.#layout.playerSize.height * 0.42,
+        );
+        this.configureLaser(laser, "enemy-laser", 90, this.enemyLaserSpeed());
+        const body = laser.body as Phaser.Physics.Arcade.Body;
+        return {
+          fired: true,
+          playerX: this.#player.sprite.x,
+          laserX: laser.x,
+          offsetX,
+          body: {
+            x: body.x,
+            y: body.y,
+            width: body.width,
+            height: body.height,
+            enabled: body.enable,
+          },
+        };
+      },
+      fireEnemyLaserForVisual: () => {
+        // Place the visual probe in a clear lower lane so real player/shield
+        // collision contracts cannot consume it before the body is observed.
+        const x = Math.min(
+          this.#layout.movementBounds.right -
+            this.#layout.projectileSize.height,
+          this.#player.sprite.x + this.#layout.playerBodySize.width * 3,
+        );
+        const y =
+          this.scale.height - this.#layout.projectileBodySize.height * 2 - 20;
+        const laser = this.#enemyLasers.get(
+          x,
+          y,
+          RUNTIME_ASSETS.projectile.enemyLaser.key,
+        ) as Phaser.Physics.Arcade.Image | null;
+        if (!laser) {
+          return { fired: false, reason: "no-laser" };
+        }
+        laser.setPosition(x, y);
+        this.configureLaser(laser, "enemy-laser", 90, this.enemyLaserSpeed());
+        return { fired: true, laserX: laser.x, laserY: laser.y };
       },
       fireEnemyLaserAtShield: (index = 0) => {
         const tile = this.getActiveShieldTiles()[index];
         if (!tile) {
-          return { fired: false, reason: 'no-shield' };
+          return { fired: false, reason: "no-shield" };
         }
-        const laser = this.#enemyLasers.get(tile.x, tile.y - this.#layout.projectileSize.height * 0.62, RUNTIME_ASSETS.projectile.enemyLaser.key) as Phaser.Physics.Arcade.Image | null;
+        const laser = this.#enemyLasers.get(
+          tile.x,
+          tile.y - this.#layout.projectileSize.height * 0.62,
+          RUNTIME_ASSETS.projectile.enemyLaser.key,
+        ) as Phaser.Physics.Arcade.Image | null;
         if (!laser) {
-          return { fired: false, reason: 'no-laser' };
+          return { fired: false, reason: "no-laser" };
         }
-        laser.setPosition(tile.x, tile.y - this.#layout.projectileSize.height * 0.62);
-        this.configureLaser(laser, 'enemy-laser', 90, this.enemyLaserSpeed());
+        laser.setPosition(
+          tile.x,
+          tile.y - this.#layout.projectileSize.height * 0.62,
+        );
+        this.configureLaser(laser, "enemy-laser", 90, this.enemyLaserSpeed());
         return { fired: true, tileX: tile.x, laserX: laser.x };
       },
       firePlayerLaserAtShield: (index = 0) => {
         const tile = this.getActiveShieldTiles()[index];
         if (!tile) {
-          return { fired: false, reason: 'no-shield' };
+          return { fired: false, reason: "no-shield" };
         }
-        const laser = this.firePlayerLaser(Number.POSITIVE_INFINITY, tile.x, tile.y + this.#layout.projectileSize.height * 0.62);
+        const laser = this.firePlayerLaser(
+          Number.POSITIVE_INFINITY,
+          tile.x,
+          tile.y + this.#layout.projectileSize.height * 0.62,
+        );
         return { fired: Boolean(laser), tileX: tile.x, laserX: laser?.x };
       },
       fireNukeAtScout: (index = 0) => {
         const scout = this.getActiveScouts()[index];
         if (!scout) {
-          return { fired: false, reason: 'no-scout' };
+          return { fired: false, reason: "no-scout" };
         }
-        const nuke = this.fireNuke(scout.x, scout.y + this.#layout.scoutSize.height * 1.8);
+        const nuke = this.fireNuke(
+          scout.x,
+          scout.y + this.#layout.scoutSize.height * 1.8,
+        );
         const body = nuke?.body as Phaser.Physics.Arcade.Body | undefined;
         return {
           fired: Boolean(nuke),
@@ -1138,20 +2953,28 @@ export class Level1Scene extends CombatLevelScene {
           nukeX: nuke?.x,
           bodyCenterX: body ? body.x + body.width / 2 : null,
           bodyCenterY: body ? body.y + body.height / 2 : null,
-          previousBodyCenterX: nuke?.getData('previousBodyCenterX') ?? null,
-          previousBodyCenterY: nuke?.getData('previousBodyCenterY') ?? null,
+          previousBodyCenterX: nuke?.getData("previousBodyCenterX") ?? null,
+          previousBodyCenterY: nuke?.getData("previousBodyCenterY") ?? null,
           currentNukes: this.#currentNukes,
+          textureKey: nuke?.texture.key ?? null,
+          name: nuke?.name ?? null,
         };
       },
       verifyPlayerLaserPool: () => {
         const lanes = [
-          this.#layout.movementBounds.left + this.#layout.playerSize.width * 0.5,
+          this.#layout.movementBounds.left +
+            this.#layout.playerSize.width * 0.5,
           this.scale.width / 2,
-          this.#layout.movementBounds.right - this.#layout.playerSize.width * 0.5,
+          this.#layout.movementBounds.right -
+            this.#layout.playerSize.width * 0.5,
         ];
         return Array.from({ length: 24 }, (_, index) => {
           const x = lanes[index % lanes.length];
-          const laser = this.firePlayerLaser(Number.POSITIVE_INFINITY, x, this.#player.sprite.y - this.#layout.playerSize.height * 0.52);
+          const laser = this.firePlayerLaser(
+            Number.POSITIVE_INFINITY,
+            x,
+            this.#player.sprite.y - this.#layout.playerSize.height * 0.52,
+          );
           const body = laser?.body as Phaser.Physics.Arcade.Body | undefined;
           const result = {
             cycle: index + 1,
@@ -1159,8 +2982,8 @@ export class Level1Scene extends CombatLevelScene {
             spriteX: laser?.x ?? null,
             bodyCenterX: body ? body.x + body.width / 2 : null,
             bodyCenterY: body ? body.y + body.height / 2 : null,
-            previousBodyCenterX: laser?.getData('previousBodyCenterX') ?? null,
-            previousBodyCenterY: laser?.getData('previousBodyCenterY') ?? null,
+            previousBodyCenterX: laser?.getData("previousBodyCenterX") ?? null,
+            previousBodyCenterY: laser?.getData("previousBodyCenterY") ?? null,
           };
           if (laser) {
             this.destroyProjectile(laser);
@@ -1178,9 +3001,12 @@ export class Level1Scene extends CombatLevelScene {
           this.#layout.movementBounds.right - this.#layout.playerSize.width,
         ];
         const results = lanes.map((x, index) => {
-          this.#currentNukes = LEVEL_ONE_SLICE.maxNukes;
+          this.#currentNukes = LEVEL_ONE_SLICE.initialNukes;
           this.#rearmProgress = LEVEL_ONE_SLICE.nukeRearmMax;
-          const nuke = this.fireNuke(x, this.#player.sprite.y - this.#layout.playerSize.height * 0.62);
+          const nuke = this.fireNuke(
+            x,
+            this.#player.sprite.y - this.#layout.playerSize.height * 0.62,
+          );
           const body = nuke?.body as Phaser.Physics.Arcade.Body | undefined;
           const result = {
             cycle: index + 1,
@@ -1188,8 +3014,8 @@ export class Level1Scene extends CombatLevelScene {
             spriteX: nuke?.x ?? null,
             bodyCenterX: body ? body.x + body.width / 2 : null,
             bodyCenterY: body ? body.y + body.height / 2 : null,
-            previousBodyCenterX: nuke?.getData('previousBodyCenterX') ?? null,
-            previousBodyCenterY: nuke?.getData('previousBodyCenterY') ?? null,
+            previousBodyCenterX: nuke?.getData("previousBodyCenterX") ?? null,
+            previousBodyCenterY: nuke?.getData("previousBodyCenterY") ?? null,
           };
           if (nuke) {
             this.destroyProjectile(nuke);
@@ -1206,7 +3032,7 @@ export class Level1Scene extends CombatLevelScene {
         const initialNukes = this.#currentNukes;
         const initialRearm = this.#rearmProgress;
         const initialFired = this.#nukesFired;
-        this.#currentNukes = LEVEL_ONE_SLICE.maxNukes;
+        this.#currentNukes = LEVEL_ONE_SLICE.initialNukes;
         this.#rearmProgress = LEVEL_ONE_SLICE.nukeRearmMax;
         const first = this.fireNuke();
         if (first) this.destroyProjectile(first);
@@ -1221,7 +3047,9 @@ export class Level1Scene extends CombatLevelScene {
           secondFired: Boolean(second),
           exhaustedNukes,
           thirdBlocked: blocked === null,
-          activeProjectiles: this.#nukes.getChildren().filter((child) => child.active).length,
+          activeProjectiles: this.#nukes
+            .getChildren()
+            .filter((child) => child.active).length,
         };
         this.#currentNukes = initialNukes;
         this.#rearmProgress = initialRearm;
@@ -1235,11 +3063,17 @@ export class Level1Scene extends CombatLevelScene {
         this.#currentNukes = 0;
         this.#rearmProgress = LEVEL_ONE_SLICE.nukeRearmMax - 1;
         this.updateNukeRearm(50);
-        const firstCompletion = { currentNukes: this.#currentNukes, rearmProgress: this.#rearmProgress };
-        this.#currentNukes = LEVEL_ONE_SLICE.maxNukes - 1;
+        const firstCompletion = {
+          currentNukes: this.#currentNukes,
+          rearmProgress: this.#rearmProgress,
+        };
+        this.#currentNukes = LEVEL_ONE_SLICE.initialNukes - 1;
         this.#rearmProgress = LEVEL_ONE_SLICE.nukeRearmMax - 1;
         this.updateNukeRearm(50);
-        const cappedCompletion = { currentNukes: this.#currentNukes, rearmProgress: this.#rearmProgress };
+        const cappedCompletion = {
+          currentNukes: this.#currentNukes,
+          rearmProgress: this.#rearmProgress,
+        };
         this.#currentNukes = initialNukes;
         this.#rearmProgress = initialRearm;
         this.updateNukeHud();
@@ -1248,72 +3082,218 @@ export class Level1Scene extends CombatLevelScene {
       setPlayerUnderScout: (index = 0, offsetX = 0) => {
         const scout = this.getActiveScouts()[index];
         if (!scout) {
-          return { moved: false, reason: 'no-scout' };
+          return { moved: false, reason: "no-scout" };
         }
-        const x = Phaser.Math.Clamp(scout.x + offsetX, this.#layout.movementBounds.left, this.#layout.movementBounds.right);
+        const x = Phaser.Math.Clamp(
+          scout.x + offsetX,
+          this.#layout.movementBounds.left,
+          this.#layout.movementBounds.right,
+        );
         this.#player.sprite.setPosition(x, this.#player.sprite.y);
         this.#player.clampToPlayfield(this.#layout);
-        return { moved: true, playerX: this.#player.sprite.x, scoutX: scout.x, offsetX };
+        const playerBody = this.#player.sprite
+          .body as Phaser.Physics.Arcade.Body;
+        // QA relocation must preserve the same sprite/body invariant required
+        // of pooled projectiles before an input-driven collision check begins.
+        playerBody.reset(this.#player.sprite.x, this.#player.sprite.y);
+        playerBody.prev.set(playerBody.x, playerBody.y);
+        return {
+          moved: true,
+          playerX: this.#player.sprite.x,
+          scoutX: scout.x,
+          offsetX,
+        };
+      },
+      prepareMovementBoundsProbe: () => {
+        // Bounds verification drives normal keyboard input through the live
+        // player body. It only suppresses combat interruption while crossing
+        // the hostile formation at the top of the playfield.
+        this.#playerState = "regenerating";
+        this.#invulnerableUntilMs = this.time.now + 30_000;
+        return {
+          playerState: this.#playerState,
+          invulnerableUntilMs: this.#invulnerableUntilMs,
+        };
       },
       gamepadY: () => {
         const nuke = this.fireNuke();
-        return { consumed: Boolean(nuke), currentNukes: this.#currentNukes, nukeCount: this.#nukes.getChildren().filter((child) => child.active).length };
+        return {
+          consumed: Boolean(nuke),
+          currentNukes: this.#currentNukes,
+          nukeCount: this.#nukes.getChildren().filter((child) => child.active)
+            .length,
+        };
       },
       forceComplete: () => {
-        this.getActiveScouts().forEach((scout) => scout.disableBody(true, true));
-        this.showTerminal('complete');
+        this.getActiveScouts().forEach((scout) =>
+          scout.disableBody(true, true),
+        );
+        this.showTerminal("complete");
       },
-      forceFail: () => this.showTerminal('failed'),
-      continueCampaign: () => this.runTerminalAction('continue'),
-      replay: () => this.runTerminalAction('replay'),
-      menu: () => this.runTerminalAction('menu'),
+      forceFail: () => this.showTerminal("failed"),
+      continueCampaign: () => this.runTerminalAction("continue"),
+      replay: () => this.runTerminalAction("replay"),
+      menu: () => this.runTerminalAction("menu"),
+      triggerBoarding: () => {
+        const anchor = this.#definition.boarding_anchors?.[0];
+        const scout = anchor
+          ? this.getActiveScouts().find(
+              (candidate) =>
+                candidate.getData("entityId") === anchor.source_entity_id ||
+                (Number(candidate.getData("row")) ===
+                  anchor.source_selector.row &&
+                  Number(candidate.getData("col")) ===
+                    anchor.source_selector.column),
+            )
+          : null;
+        if (!scout)
+          return { launched: false, reason: "boarding-anchor-not-available" };
+        this.destroyScoutBody(scout, true);
+        const offer = this.#boardingOffer;
+        if (!offer)
+          return { launched: false, reason: "boarding-offer-not-presented" };
+        // Diagnostic-only setup for the hostile verifier. Ordinary browser
+        // journeys must reach the envelope through normal player movement.
+        this.#player.sprite.setPosition(offer.scout.x, offer.scout.y);
+        const body = this.#player.sprite.body as Phaser.Physics.Arcade.Body;
+        body.reset(offer.scout.x, offer.scout.y);
+        this.showBoardingOfferActions();
+        this.acceptBoardingOffer();
+        return {
+          launched: false,
+          admissionRequested: true,
+          transition: this.#boardingTransition,
+          anchorId: anchor?.id ?? null,
+          gameRunId: this.#session.runId,
+        };
+      },
+      firePlayerLaserAtHazard: (index = 0) => {
+        const activeHazards = this.#hazards
+          .getChildren()
+          .filter(
+            (candidate) => candidate.active,
+          ) as Phaser.Physics.Arcade.Sprite[];
+        // The hostile contract must target an entire collision body in the live
+        // playfield. Edge-entry pooled hazards are not stable collision targets.
+        const liveHazards = activeHazards.filter((candidate) => {
+          const body = candidate.body as Phaser.Physics.Arcade.Body | undefined;
+          return Boolean(
+            body &&
+            body.left >= 0 &&
+            body.right <= this.scale.width &&
+            body.top >= 0 &&
+            body.bottom <= this.scale.height,
+          );
+        });
+        const hazard = liveHazards[index];
+        if (!hazard) return { fired: false, reason: "no-fully-live-hazard" };
+        const laser = this.firePlayerLaser(
+          Number.POSITIVE_INFINITY,
+          hazard.x,
+          hazard.y,
+        );
+        if (laser) {
+          const body = laser.body as Phaser.Physics.Arcade.Body;
+          // Hostile collision setup uses the real pooled projectile and body,
+          // positioned within the live target so runner scheduling cannot turn
+          // a collision invariant into a timing race.
+          laser.setPosition(hazard.x, hazard.y);
+          body.reset(hazard.x, hazard.y);
+          body.position.set(
+            laser.x - body.width / 2,
+            laser.y - body.height / 2,
+          );
+          body.prev.set(body.x, body.y);
+          laser.setData("previousBodyCenterX", body.x + body.width / 2);
+          laser.setData("previousBodyCenterY", body.y + body.height / 2);
+          body.setVelocity(0, 0);
+          const overlapsTarget = this.physics.world.overlap(laser, hazard);
+          if (overlapsTarget) {
+            this.handlePlayerLaserHazardOverlap(laser, hazard);
+          } else {
+            this.resolveSweptProjectileCollisions();
+          }
+          return {
+            fired: true,
+            overlapsTarget,
+            hazardX: hazard.x,
+            hazardY: hazard.y,
+            laserX: laser.x,
+          };
+        }
+        return { fired: false, reason: "laser-pool-unavailable" };
+      },
       state: () => this.buildQaState(),
     };
   }
 
   private getActiveScouts(): Phaser.Physics.Arcade.Sprite[] {
-    return this.#scouts.getChildren().filter((child) => child.active) as Phaser.Physics.Arcade.Sprite[];
+    return this.#scouts
+      .getChildren()
+      .filter((child) => child.active) as Phaser.Physics.Arcade.Sprite[];
   }
 
   private getActiveShieldTiles(): Phaser.Physics.Arcade.Image[] {
-    return this.#shieldTiles.getChildren().filter((child) => child.active) as Phaser.Physics.Arcade.Image[];
+    return this.#shieldTiles
+      .getChildren()
+      .filter((child) => child.active) as Phaser.Physics.Arcade.Image[];
   }
 
   private publishQaState(): void {
-    if (typeof window === 'undefined') {
+    // Phaser can emit a final update while a navigation is destroying scene
+    // groups. Publishing diagnostics must not dereference disposed gameplay.
+    if (
+      typeof window === "undefined" ||
+      !this.sys.isActive() ||
+      !this.#scouts ||
+      !this.#shieldTiles
+    ) {
       return;
     }
     window.__GALACTIC_GUNNERS_SLICE_QA__ = this.buildQaState();
   }
 
   private buildQaState(): Record<string, unknown> {
-    const playerBody = this.#player?.sprite.body as Phaser.Physics.Arcade.Body | undefined;
+    const playerBody = this.#player?.sprite.body as
+      Phaser.Physics.Arcade.Body | undefined;
     const visibleTexts = this.children.list
-      .filter((child): child is Phaser.GameObjects.Text => child instanceof Phaser.GameObjects.Text)
+      .filter(
+        (child): child is Phaser.GameObjects.Text =>
+          child instanceof Phaser.GameObjects.Text,
+      )
       .map((text) => text.text);
     const playerVelocity = playerBody?.velocity;
 
     return {
-      scene: 'Level1Scene',
+      scene: "Level1Scene",
       campaign: {
         sequence: this.#campaignSequence,
         levelId: this.#definition.id,
         levelName: this.#definition.name,
         checksum: this.levelRuntime?.checksum ?? null,
-        source: this.levelRuntime?.source ?? 'package',
+        source: this.levelRuntime?.source ?? "package",
         finalSequence: CAMPAIGN_DEFINITIONS.length,
+        preview: Boolean(this.registry.get("campaignPreview")),
       },
       score: this.#score.value,
       lives: this.#lives.value,
-      maxLives: this.#lives.maxLives,
+      initialLives: this.#lives.initialLives,
       activeScouts: this.getActiveScouts().length,
       activeShieldTiles: this.getActiveShieldTiles().length,
-      bunkerCount: this.#definition.shields[0].count,
-      playerLaserCount: this.#playerLasers?.getChildren().filter((child) => child.active).length ?? 0,
-      enemyLaserCount: this.#enemyLasers?.getChildren().filter((child) => child.active).length ?? 0,
-      nukeProjectileCount: this.#nukes?.getChildren().filter((child) => child.active).length ?? 0,
+      bunkerCount: this.#definition.shields.reduce(
+        (total, shield) => total + shield.count,
+        0,
+      ),
+      playerLaserCount:
+        this.#playerLasers?.getChildren().filter((child) => child.active)
+          .length ?? 0,
+      enemyLaserCount:
+        this.#enemyLasers?.getChildren().filter((child) => child.active)
+          .length ?? 0,
+      nukeProjectileCount:
+        this.#nukes?.getChildren().filter((child) => child.active).length ?? 0,
       currentNukes: this.#currentNukes,
-      maxNukes: LEVEL_ONE_SLICE.maxNukes,
+      inventoryLimit: null,
       rearmProgress: Math.floor(this.#rearmProgress),
       rearmMax: LEVEL_ONE_SLICE.nukeRearmMax,
       nukesFired: this.#nukesFired,
@@ -1322,8 +3302,19 @@ export class Level1Scene extends CombatLevelScene {
       playerState: this.#playerState,
       playerVisible: this.#player?.sprite.visible,
       playerAlpha: this.#player?.sprite.alpha,
-      playerVelocity: playerVelocity ? { x: Math.round(playerVelocity.x), y: Math.round(playerVelocity.y), speed: Math.round(Math.hypot(playerVelocity.x, playerVelocity.y)) } : null,
+      playerVelocity: playerVelocity
+        ? {
+            x: Math.round(playerVelocity.x),
+            y: Math.round(playerVelocity.y),
+            speed: Math.round(Math.hypot(playerVelocity.x, playerVelocity.y)),
+          }
+        : null,
       terminalState: this.#terminalState,
+      boarding: {
+        active: this.#boardingActive,
+        transition: this.#boardingTransition,
+        offerPresented: Boolean(this.#boardingOffer),
+      },
       terminalActions: this.#terminalActions.map((action) => ({ ...action })),
       gameRunId: this.#session.runId,
       offlineRunMode: this.#session.offline,
@@ -1339,11 +3330,32 @@ export class Level1Scene extends CombatLevelScene {
       formationTravelMargin: Math.round(this.formationTravelMargin()),
       shieldZone: this.#layout.shieldZone,
       hudPositions: {
-        score: { x: Math.round(this.#scoreText.x), y: Math.round(this.#scoreText.y) },
-        sound: { x: Math.round(this.#soundIcon.x), y: Math.round(this.#soundIcon.y), texture: this.#soundIcon.texture.key },
-        lives: this.#lifeIcons.map((icon) => ({ x: Math.round(icon.x), y: Math.round(icon.y), visible: icon.visible, texture: icon.texture.key })),
-        nukes: this.#nukeIcons.map((icon) => ({ x: Math.round(icon.x), y: Math.round(icon.y), visible: icon.visible, texture: icon.texture.key })),
-        rearm: { x: Math.round(this.#rearmText.x), y: Math.round(this.#rearmText.y), text: this.#rearmText.text },
+        score: {
+          x: Math.round(this.#scoreText.x),
+          y: Math.round(this.#scoreText.y),
+        },
+        sound: {
+          x: Math.round(this.#soundIcon.x),
+          y: Math.round(this.#soundIcon.y),
+          texture: this.#soundIcon.texture.key,
+        },
+        lives: this.#lifeIcons.map((icon) => ({
+          x: Math.round(icon.x),
+          y: Math.round(icon.y),
+          visible: icon.visible,
+          texture: icon.texture.key,
+        })),
+        nukes: this.#nukeIcons.map((icon) => ({
+          x: Math.round(icon.x),
+          y: Math.round(icon.y),
+          visible: icon.visible,
+          texture: icon.texture.key,
+        })),
+        rearm: {
+          x: Math.round(this.#rearmText.x),
+          y: Math.round(this.#rearmText.y),
+          text: this.#rearmText.text,
+        },
         rearmBar: {
           x: Math.round(this.#rearmBarBack.x),
           y: Math.round(this.#rearmBarBack.y),
@@ -1351,7 +3363,7 @@ export class Level1Scene extends CombatLevelScene {
           fillWidth: Math.round(this.#rearmBarFill.displayWidth),
         },
       },
-      playerSpawn: this.#layout.playerSpawn,
+      playerSpawn: this.#player.spawn,
       playerSize: this.#layout.playerSize,
       scoutSize: this.#layout.scoutSize,
       projectileSize: this.#layout.projectileSize,
@@ -1366,40 +3378,164 @@ export class Level1Scene extends CombatLevelScene {
         player: Math.round(this.playerLaserSpeed()),
         enemy: Math.round(this.enemyLaserSpeed()),
       },
-      shieldBottomGapPlayerHeights: (this.#layout.playerSpawn.y - (this.#layout.shieldZone.y + this.#layout.shieldZone.height)) / this.#layout.playerSize.height,
+      shieldBottomGapPlayerHeights:
+        (this.#layout.playerSpawn.y -
+          (this.#layout.shieldZone.y + this.#layout.shieldZone.height)) /
+        this.#layout.playerSize.height,
       visibleTexts,
-      playerBody: playerBody ? { x: Math.round(playerBody.x), y: Math.round(playerBody.y), width: Math.round(playerBody.width), height: Math.round(playerBody.height) } : null,
-      playerCount: this.children.list.filter((child) => child.name === 'player').length,
+      playerBody: playerBody
+        ? {
+            x: Math.round(playerBody.x),
+            y: Math.round(playerBody.y),
+            width: Math.round(playerBody.width),
+            height: Math.round(playerBody.height),
+          }
+        : null,
+      playerCount: this.children.list.filter((child) => child.name === "player")
+        .length,
       scoutBodies: this.getActiveScouts().map((scout) => {
         const body = scout.body as Phaser.Physics.Arcade.Body;
         return {
           x: Math.round(scout.x),
           y: Math.round(scout.y),
-          body: { x: Math.round(body.x), y: Math.round(body.y), width: Math.round(body.width), height: Math.round(body.height) },
+          body: {
+            x: Math.round(body.x),
+            y: Math.round(body.y),
+            width: Math.round(body.width),
+            height: Math.round(body.height),
+          },
           frame: scout.frame.name,
           angle: scout.angle,
-          row: scout.getData('row'),
-          col: scout.getData('col'),
+          row: scout.getData("row"),
+          col: scout.getData("col"),
         };
       }),
       shieldBodies: this.getActiveShieldTiles().map((tile) => {
         const body = tile.body as Phaser.Physics.Arcade.Body;
-        return { x: Math.round(tile.x), y: Math.round(tile.y), body: { x: Math.round(body.x), y: Math.round(body.y), width: Math.round(body.width), height: Math.round(body.height) } };
+        return {
+          x: Math.round(tile.x),
+          y: Math.round(tile.y),
+          body: {
+            x: Math.round(body.x),
+            y: Math.round(body.y),
+            width: Math.round(body.width),
+            height: Math.round(body.height),
+          },
+        };
       }),
-      playerLaserBodies: (this.#playerLasers?.getChildren().filter((child) => child.active) as Phaser.Physics.Arcade.Image[] ?? []).map((laser) => {
+      hazardBodies: (
+        (this.#hazards
+          ?.getChildren()
+          .filter(
+            (hazard) => hazard.active,
+          ) as Phaser.Physics.Arcade.Sprite[]) ?? []
+      ).map((hazard) => {
+        const body = hazard.body as Phaser.Physics.Arcade.Body;
+        return {
+          type: hazard.getData("hazardType"),
+          x: Math.round(hazard.x),
+          y: Math.round(hazard.y),
+          body: {
+            x: Math.round(body.x),
+            y: Math.round(body.y),
+            width: Math.round(body.width),
+            height: Math.round(body.height),
+            velocityX: Math.round(body.velocity.x),
+            velocityY: Math.round(body.velocity.y),
+          },
+        };
+      }),
+      playerLaserBodies: (
+        (this.#playerLasers
+          ?.getChildren()
+          .filter((child) => child.active) as Phaser.Physics.Arcade.Image[]) ??
+        []
+      ).map((laser) => {
         const body = laser.body as Phaser.Physics.Arcade.Body;
         const bounds = laser.getBounds();
-        return { x: Math.round(laser.x), y: Math.round(laser.y), angle: laser.angle, display: { width: Math.round(laser.displayWidth), height: Math.round(laser.displayHeight) }, worldBounds: { width: Math.round(bounds.width), height: Math.round(bounds.height) }, body: { x: Math.round(body.x), y: Math.round(body.y), width: Math.round(body.width), height: Math.round(body.height) }, previousBodyCenterX: laser.getData('previousBodyCenterX'), previousBodyCenterY: laser.getData('previousBodyCenterY') };
+        return {
+          x: Math.round(laser.x),
+          y: Math.round(laser.y),
+          angle: laser.angle,
+          display: {
+            width: Math.round(laser.displayWidth),
+            height: Math.round(laser.displayHeight),
+          },
+          worldBounds: {
+            width: Math.round(bounds.width),
+            height: Math.round(bounds.height),
+          },
+          body: {
+            x: Math.round(body.x),
+            y: Math.round(body.y),
+            width: Math.round(body.width),
+            height: Math.round(body.height),
+          },
+          previousBodyCenterX: laser.getData("previousBodyCenterX"),
+          previousBodyCenterY: laser.getData("previousBodyCenterY"),
+        };
       }),
-      enemyLaserBodies: (this.#enemyLasers?.getChildren().filter((child) => child.active) as Phaser.Physics.Arcade.Image[] ?? []).map((laser) => {
+      enemyLaserBodies: (
+        (this.#enemyLasers
+          ?.getChildren()
+          .filter((child) => child.active) as Phaser.Physics.Arcade.Image[]) ??
+        []
+      ).map((laser) => {
         const body = laser.body as Phaser.Physics.Arcade.Body;
         const bounds = laser.getBounds();
-        return { x: Math.round(laser.x), y: Math.round(laser.y), angle: laser.angle, display: { width: Math.round(laser.displayWidth), height: Math.round(laser.displayHeight) }, worldBounds: { width: Math.round(bounds.width), height: Math.round(bounds.height) }, body: { x: Math.round(body.x), y: Math.round(body.y), width: Math.round(body.width), height: Math.round(body.height) }, previousBodyCenterX: laser.getData('previousBodyCenterX'), previousBodyCenterY: laser.getData('previousBodyCenterY') };
+        return {
+          x: Math.round(laser.x),
+          y: Math.round(laser.y),
+          angle: laser.angle,
+          display: {
+            width: Math.round(laser.displayWidth),
+            height: Math.round(laser.displayHeight),
+          },
+          worldBounds: {
+            width: Math.round(bounds.width),
+            height: Math.round(bounds.height),
+          },
+          body: {
+            x: Math.round(body.x),
+            y: Math.round(body.y),
+            width: Math.round(body.width),
+            height: Math.round(body.height),
+          },
+          previousBodyCenterX: laser.getData("previousBodyCenterX"),
+          previousBodyCenterY: laser.getData("previousBodyCenterY"),
+        };
       }),
-      nukeBodies: (this.#nukes?.getChildren().filter((child) => child.active) as Phaser.Physics.Arcade.Sprite[] ?? []).map((nuke) => {
+      nukeBodies: (
+        (this.#nukes
+          ?.getChildren()
+          .filter((child) => child.active) as Phaser.Physics.Arcade.Sprite[]) ??
+        []
+      ).map((nuke) => {
         const body = nuke.body as Phaser.Physics.Arcade.Body;
         const bounds = nuke.getBounds();
-        return { x: Math.round(nuke.x), y: Math.round(nuke.y), texture: nuke.texture.key, animation: nuke.anims.currentAnim?.key ?? null, angle: nuke.angle, display: { width: Math.round(nuke.displayWidth), height: Math.round(nuke.displayHeight) }, worldBounds: { width: Math.round(bounds.width), height: Math.round(bounds.height) }, body: { x: Math.round(body.x), y: Math.round(body.y), width: Math.round(body.width), height: Math.round(body.height) }, previousBodyCenterX: nuke.getData('previousBodyCenterX'), previousBodyCenterY: nuke.getData('previousBodyCenterY') };
+        return {
+          x: Math.round(nuke.x),
+          y: Math.round(nuke.y),
+          texture: nuke.texture.key,
+          animation: nuke.anims.currentAnim?.key ?? null,
+          angle: nuke.angle,
+          display: {
+            width: Math.round(nuke.displayWidth),
+            height: Math.round(nuke.displayHeight),
+          },
+          worldBounds: {
+            width: Math.round(bounds.width),
+            height: Math.round(bounds.height),
+          },
+          body: {
+            x: Math.round(body.x),
+            y: Math.round(body.y),
+            width: Math.round(body.width),
+            height: Math.round(body.height),
+          },
+          previousBodyCenterX: nuke.getData("previousBodyCenterX"),
+          previousBodyCenterY: nuke.getData("previousBodyCenterY"),
+        };
       }),
     };
   }

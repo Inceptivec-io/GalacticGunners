@@ -1,132 +1,212 @@
-import * as Phaser from 'phaser';
+import * as Phaser from "phaser";
 
-import { FRAME_RECTS, REQUIRED_RUNTIME_ASSETS, RUNTIME_ASSETS } from '../config/assets';
-import type { GameRuntimeConfig } from '../config/gameConfig';
-import { levelChecksum } from '../levels/LevelChecksum';
-import { LevelLoader } from '../levels/LevelLoader';
-import { CAMPAIGN_DEFINITIONS } from '../levels/campaignDefinitions';
-import { LEVEL_ONE_DEFINITION } from '../levels/levelOneDefinition';
-import { validateLevelDefinition } from '../levels/LevelValidator';
+import { REQUIRED_RUNTIME_ASSETS, RUNTIME_ASSETS } from "../config/assets";
+import {
+  GENERATED_SPRITE_ASSET_KEYS,
+  GENERATED_SPRITE_BY_KEY,
+  GENERATED_SPRITE_CATALOGUE,
+} from "../config/generatedSpriteCatalogue";
+import type { GameRuntimeConfig } from "../config/gameConfig";
+import { levelChecksum } from "../levels/LevelChecksum";
+import { compileLevelDocument } from "../levels/LevelCompiler";
+import type { LevelDefinition } from "../levels/LevelDefinition";
+import type { LevelRuntimeConfig } from "../levels/LevelRuntimeConfig";
+import { CAMPAIGN_DEFINITIONS } from "../levels/campaignDefinitions";
+import { LEVEL_ONE_DEFINITION } from "../levels/levelOneDefinition";
+import { validateLevelDefinition } from "../levels/LevelValidator";
+import { GameApiClient } from "../services/GameApiClient";
+import { CampaignSession } from "../systems/CampaignSession";
 
 export class BootScene extends Phaser.Scene {
   constructor(private readonly runtimeConfig: GameRuntimeConfig = {}) {
-    super('BootScene');
+    super("BootScene");
   }
 
   preload(): void {
-    this.registry.set('runtimeConfig', this.runtimeConfig);
+    this.registry.set("runtimeConfig", this.runtimeConfig);
     for (const asset of REQUIRED_RUNTIME_ASSETS) {
-      if (asset.key === RUNTIME_ASSETS.fx.explosionSmall.key
-        || asset.key === RUNTIME_ASSETS.projectile.nuke.key
-        || asset.key === RUNTIME_ASSETS.fx.nukeBurst.key) {
+      if (GENERATED_SPRITE_ASSET_KEYS.has(asset.key)) continue;
+      if (asset.key.startsWith("audio.")) {
         continue;
-      }
-      if (asset.key.startsWith('audio.')) {
-        this.load.audio(asset.key, asset.runtimePath);
       } else {
         this.load.image(asset.key, asset.runtimePath);
       }
     }
-    this.load.spritesheet(
-      RUNTIME_ASSETS.fx.explosionSmall.key,
-      RUNTIME_ASSETS.fx.explosionSmall.runtimePath,
-      { frameWidth: FRAME_RECTS.explosionSmall.frameWidth, frameHeight: FRAME_RECTS.explosionSmall.frameHeight },
-    );
-    this.load.spritesheet(
-      RUNTIME_ASSETS.projectile.nuke.key,
-      RUNTIME_ASSETS.projectile.nuke.runtimePath,
-      { frameWidth: FRAME_RECTS.nukeProjectile.frameWidth, frameHeight: FRAME_RECTS.nukeProjectile.frameHeight },
-    );
-    this.load.spritesheet(
-      RUNTIME_ASSETS.fx.nukeBurst.key,
-      RUNTIME_ASSETS.fx.nukeBurst.runtimePath,
-      { frameWidth: FRAME_RECTS.nukeBurst.frameWidth, frameHeight: FRAME_RECTS.nukeBurst.frameHeight },
-    );
+    for (const definition of GENERATED_SPRITE_CATALOGUE) {
+      if (definition.assetKey.startsWith("boarding.")) continue;
+      if (definition.frameCount === 1) {
+        this.load.image(definition.assetKey, definition.runtimePath);
+      } else {
+        this.load.spritesheet(definition.assetKey, definition.runtimePath, {
+          frameWidth: definition.frameWidth,
+          frameHeight: definition.frameHeight,
+        });
+      }
+    }
   }
 
   async create(): Promise<void> {
-    const missing = REQUIRED_RUNTIME_ASSETS.filter((asset) => {
-      if (asset.key.startsWith('audio.')) {
-        return !this.cache.audio.exists(asset.key);
-      }
-      return !this.textures.exists(asset.key);
-    });
-    if (missing.length > 0) {
-      this.add.text(40, 40, `Missing required assets:\n${missing.map((asset) => asset.key).join('\n')}`, {
-        color: '#ff3b30',
-        fontFamily: 'monospace',
-        fontSize: '24px',
+    try {
+      const missing = REQUIRED_RUNTIME_ASSETS.filter((asset) => {
+        if (asset.key.startsWith("audio.")) {
+          return false;
+        }
+        return !this.textures.exists(asset.key);
       });
-      return;
+      if (missing.length > 0) {
+        this.add.text(
+          40,
+          40,
+          `Missing required assets:\n${missing.map((asset) => asset.key).join("\n")}`,
+          {
+            color: "#ff3b30",
+            fontFamily: "monospace",
+            fontSize: "24px",
+          },
+        );
+        return;
+      }
+
+      this.createShipAnimations();
+      this.queueOptionalAudio();
+      validateLevelDefinition(LEVEL_ONE_DEFINITION);
+      // Golden Level 1 must start without an API request. Remote resolution is an
+      // explicit campaign-loader capability, never an implicit gameplay dependency.
+      const previewRuntime = this.runtimeConfig.previewRuntime;
+      if (previewRuntime) {
+        validateLevelDefinition(previewRuntime.definition);
+        this.registry.set("campaignRuntime", [previewRuntime]);
+        this.registry.set("levelRuntime", previewRuntime);
+        this.registry.set("campaignPreview", true);
+        this.registry.set(
+          "campaignSession",
+          new CampaignSession(null, previewRuntime.definition.seed),
+        );
+        this.createRuntimeAnimations();
+        this.scene.start("Level1Scene", {
+          sequence: previewRuntime.definition.sequence,
+        });
+        return;
+      }
+      const campaignSession = new CampaignSession(
+        this.runtimeConfig.apiBaseUrl
+          ? new GameApiClient(this.runtimeConfig.apiBaseUrl)
+          : null,
+        LEVEL_ONE_DEFINITION.seed,
+      );
+      const campaign = await campaignSession.start();
+      let campaignRuntime: LevelRuntimeConfig[];
+      if (
+        campaign?.entry?.level.definition &&
+        typeof campaign.entry.level.definition === "object"
+      ) {
+        const definition = compileLevelDocument(
+          campaign.entry.level.definition as LevelDefinition,
+        );
+        validateLevelDefinition(definition);
+        campaignRuntime = [
+          {
+            definition,
+            version: campaign.entry.level.version,
+            checksum: campaign.entry.level.checksum,
+            source: "remote",
+          },
+        ];
+      } else if (
+        this.runtimeConfig.apiBaseUrl &&
+        !this.runtimeConfig.allowOfflinePackage
+      ) {
+        // Browser campaign play is server-release governed. A healthy same-origin
+        // API must never silently fall back to packaged content.
+        throw new Error("Campaign release authority is unavailable.");
+      } else {
+        validateLevelDefinition(LEVEL_ONE_DEFINITION);
+        campaignRuntime = [
+          {
+            definition: LEVEL_ONE_DEFINITION,
+            version: LEVEL_ONE_DEFINITION.version,
+            checksum: await levelChecksum(LEVEL_ONE_DEFINITION),
+            source: "package",
+          },
+        ];
+      }
+      this.registry.set("campaignRuntime", campaignRuntime);
+      this.registry.set("levelRuntime", campaignRuntime[0]);
+      this.registry.set("campaignSession", campaignSession);
+
+      this.createRuntimeAnimations();
+      // Hostile verification exercises gameplay state, not the separately tested
+      // launch presentation. Skipping the four-second splash here prevents
+      // background-tab timer throttling from turning a condition wait into noise.
+      this.scene.start(
+        this.runtimeConfig.hostileQa ? "MainMenuScene" : "SplashScene",
+      );
+    } catch (error) {
+      const runtimeError =
+        error instanceof Error ? error : new Error(String(error));
+      this.runtimeConfig.onRuntimeError?.(runtimeError);
+      this.add.text(
+        40,
+        40,
+        "Galactic Gunners could not start. Please return to the home screen and try again.",
+        {
+          color: "#ff3b30",
+          fontFamily: "monospace",
+          fontSize: "24px",
+        },
+      );
     }
-
-    this.registerTextureFrames();
-    this.createShipAnimations();
-    validateLevelDefinition(LEVEL_ONE_DEFINITION);
-    // Golden Level 1 must start without an API request. Remote resolution is an
-    // explicit campaign-loader capability, never an implicit gameplay dependency.
-    const loader = new LevelLoader(this.runtimeConfig.apiBaseUrl);
-    const campaignRuntime = await Promise.all(CAMPAIGN_DEFINITIONS.map(async (definition) => {
-      validateLevelDefinition(definition);
-      const fallback = { definition, checksum: await levelChecksum(definition), source: 'package' as const };
-      return loader.load(definition.slug, definition).catch(() => fallback);
-    }));
-    this.registry.set('campaignRuntime', campaignRuntime);
-    this.registry.set('levelRuntime', campaignRuntime[0]);
-
-    this.anims.create({
-      key: 'fx.explosionSmall.play',
-      frames: this.anims.generateFrameNumbers(RUNTIME_ASSETS.fx.explosionSmall.key, { start: 0, end: FRAME_RECTS.explosionSmall.endFrame }),
-      frameRate: 14,
-      repeat: 0,
-      hideOnComplete: true,
-    });
-    this.anims.create({
-      key: 'projectile.nuke.fly',
-      frames: this.anims.generateFrameNumbers(RUNTIME_ASSETS.projectile.nuke.key, { start: 0, end: FRAME_RECTS.nukeProjectile.endFrame }),
-      frameRate: 10,
-      repeat: -1,
-    });
-    this.anims.create({
-      key: 'fx.nukeBurst.play',
-      frames: this.anims.generateFrameNumbers(RUNTIME_ASSETS.fx.nukeBurst.key, { start: 0, end: FRAME_RECTS.nukeBurst.endFrame }),
-      frameRate: 14,
-      repeat: 0,
-      hideOnComplete: true,
-    });
-
-    this.scene.start('MainMenuScene');
   }
 
-  private registerTextureFrames(): void {
-    const playerTexture = this.textures.get(RUNTIME_ASSETS.player.ship.key);
-    for (const frame of FRAME_RECTS.player) {
-      if (!playerTexture.has(frame.name)) {
-        playerTexture.add(frame.name, 0, frame.x, frame.y, frame.width, frame.height);
-      }
-    }
+  private createRuntimeAnimations(): void {
+    this.createCatalogueAnimation(
+      "fx.explosionSmall",
+      "fx.explosionSmall.play",
+      true,
+    );
+    this.createCatalogueAnimation("projectile.nuke", "projectile.nuke.fly");
+    this.createCatalogueAnimation("fx.nukeBurst", "fx.nukeBurst.play", true);
+  }
 
-    const scoutTexture = this.textures.get(RUNTIME_ASSETS.enemy.scout.key);
-    for (const frame of FRAME_RECTS.scout) {
-      if (!scoutTexture.has(frame.name)) {
-        scoutTexture.add(frame.name, 0, frame.x, frame.y, frame.width, frame.height);
+  /**
+   * WebKit can reject the Founder-supplied WAV container even after a valid
+   * HTTP response. Audio is an enhancement, never permission for the visual
+   * game boot to stall. Successful decodes join the cache asynchronously and
+   * gameplay checks that cache before requesting a cue.
+   */
+  private queueOptionalAudio(): void {
+    for (const asset of REQUIRED_RUNTIME_ASSETS) {
+      if (asset.key.startsWith("audio.")) {
+        this.load.audio(asset.key, asset.runtimePath);
       }
     }
+    this.load.start();
   }
 
   private createShipAnimations(): void {
-    this.anims.create({
-      key: 'player.ship.idle',
-      frames: FRAME_RECTS.player.map((frame) => ({ key: RUNTIME_ASSETS.player.ship.key, frame: frame.name })),
-      frameRate: 8,
-      repeat: -1,
-    });
+    this.createCatalogueAnimation("player.ship", "player.ship.idle");
+    this.createCatalogueAnimation("enemy.scout", "enemy.scout.idle");
+    this.createCatalogueAnimation("enemy.cruiser", "enemy.cruiser.idle");
+    this.createCatalogueAnimation("enemy.destroyer", "enemy.destroyer.idle");
+    this.createCatalogueAnimation("enemy.mothership", "enemy.mothership.idle");
+  }
 
+  private createCatalogueAnimation(
+    assetKey: string,
+    animationKey: string,
+    hideOnComplete = false,
+  ): void {
+    const definition = GENERATED_SPRITE_BY_KEY.get(assetKey);
+    if (!definition || definition.static) return;
     this.anims.create({
-      key: 'enemy.scout.idle',
-      frames: FRAME_RECTS.scout.map((frame) => ({ key: RUNTIME_ASSETS.enemy.scout.key, frame: frame.name })),
-      frameRate: 6,
-      repeat: -1,
+      key: animationKey,
+      frames: this.anims.generateFrameNumbers(assetKey, {
+        start: 0,
+        end: definition.frameCount - 1,
+      }),
+      frameRate: definition.frameRate,
+      repeat: definition.repeat ? -1 : 0,
+      hideOnComplete,
     });
   }
 }

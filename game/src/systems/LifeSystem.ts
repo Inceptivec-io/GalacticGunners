@@ -1,12 +1,12 @@
 export class LifeSystem {
   #lives: number;
-  readonly maxLives: number;
+  readonly initialLives: number;
 
   constructor(initialLives: number) {
     if (!Number.isInteger(initialLives) || initialLives < 1) {
       throw new Error('LifeSystem requires a positive integer initial life count.');
     }
-    this.maxLives = initialLives;
+    this.initialLives = initialLives;
     this.#lives = initialLives;
   }
 
@@ -24,6 +24,21 @@ export class LifeSystem {
   }
 
   reset(): void {
-    this.#lives = this.maxLives;
+    this.#lives = this.initialLives;
+  }
+
+  restore(lives: number): void {
+    if (!Number.isInteger(lives) || lives < 0) {
+      throw new Error('LifeSystem restore requires a valid life count.');
+    }
+    this.#lives = lives;
+  }
+
+  collect(amount = 1): number {
+    if (!Number.isInteger(amount) || amount < 0) {
+      throw new Error('LifeSystem collect requires a non-negative integer.');
+    }
+    this.#lives += amount;
+    return this.#lives;
   }
 }

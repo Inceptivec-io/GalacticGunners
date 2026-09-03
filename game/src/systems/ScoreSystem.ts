@@ -39,6 +39,13 @@ export class ScoreSystem {
     this.#events = [];
   }
 
+  restore(score: number): void {
+    if (!Number.isFinite(score) || score < MINIMUM_SCORE) {
+      throw new Error('ScoreSystem restore requires a non-negative score.');
+    }
+    this.#score = Math.floor(score);
+  }
+
   eventSummary(): Record<string, unknown> {
     const counts = this.#events.reduce<Record<string, number>>((summary, event) => {
       summary[event.event_type] = (summary[event.event_type] ?? 0) + 1;

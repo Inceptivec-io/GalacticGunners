@@ -1,0 +1,524 @@
+openapi: 3.1.0
+info:
+  title: Galactic Gunners H015 REV1 API Delta
+  version: 1.2.0
+  description: >-
+    Exact additions and replacements to merge into the original H015 v1 API.
+    x-replaces lists original operations/components whose definitions must be
+    replaced, not duplicated. The final generated repository OpenAPI remains
+    one /api/v1 authority and must validate after merge.
+x-replaces:
+  operations:
+    - POST /auth/login/
+    - GET /auth/me/
+    - POST /campaign-runs/
+    - GET /campaign-runs/{campaign_id}/
+    - POST /campaign-runs/{campaign_id}/attempts/
+    - POST /game-runs/{run_id}/complete/
+    - GET /admin/game-projects/{project_id}/levels/
+    - POST /admin/game-projects/{project_id}/levels/
+    - GET /admin/game-projects/{project_id}/interiors/
+    - POST /admin/game-projects/{project_id}/interiors/
+    - POST /admin/levels/{level_id}/versions/{version}/{action}/
+    - POST /admin/interiors/{interior_id}/versions/{version}/{action}/
+  schemas:
+    - LoginRequest
+    - SessionResponse
+    - CampaignRun
+    - CampaignStartRequest
+    - CampaignStartResponse
+    - LevelAttemptStartRequest
+    - LevelAttemptStartResponse
+    - LevelCompletionResponse
+servers:
+  - url: /api/v1
+security:
+  - sessionCookie: []
+paths:
+  /auth/login/:
+    post:
+      security: []
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/LoginRequest'}
+      responses:
+        '200': {description: Eligible session established, headers: {Cache-Control: {$ref: '#/components/headers/NoStore'}}, content: {application/json: {schema: {$ref: '#/components/schemas/SessionResponse'}}}}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '429': {$ref: '#/components/responses/TooManyRequests'}
+  /auth/me/:
+    get:
+      operationId: getSession
+      responses:
+        '200': {description: Identity plus authorised surface grants, headers: {Cache-Control: {$ref: '#/components/headers/NoStore'}}, content: {application/json: {schema: {$ref: '#/components/schemas/SessionResponse'}}}}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+
+  /system/build/:
+    get:
+      security: []
+      operationId: getBuildState
+      responses:
+        '200': {description: Safe build provenance, content: {application/json: {schema: {$ref: '#/components/schemas/BuildState'}}}}
+
+  /admin/service-plans/:
+    get:
+      operationId: adminListServicePlans
+      responses:
+        '200': {description: Platform-authorised service plan catalogue, content: {application/json: {schema: {type: array, items: {$ref: '#/components/schemas/ServicePlan'}}}}}
+        '403': {$ref: '#/components/responses/Forbidden'}
+    post:
+      operationId: adminCreateServicePlan
+      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/ServicePlan'}}}}
+      responses:
+        '201': {description: Plan created and audited, content: {application/json: {schema: {$ref: '#/components/schemas/ServicePlan'}}}}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+  /admin/organizations/{organization_id}/plan-assignment/:
+    get:
+      operationId: adminGetOrganizationPlan
+      parameters: [{$ref: '#/components/parameters/OrganizationId'}]
+      responses:
+        '200': {description: Current plan assignment, content: {application/json: {schema: {$ref: '#/components/schemas/OrganizationPlanAssignment'}}}}
+        '404': {$ref: '#/components/responses/NotFound'}
+    put:
+      operationId: adminAssignOrganizationPlan
+      parameters: [{$ref: '#/components/parameters/OrganizationId'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/PlanAssignmentRequest'}}}}
+      responses:
+        '200': {description: Plan assignment changed and audited, content: {application/json: {schema: {$ref: '#/components/schemas/OrganizationPlanAssignment'}}}}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '409': {$ref: '#/components/responses/Conflict'}
+
+  /command-post/organizations/:
+    get:
+      operationId: listMyCommandPostOrganizations
+      responses:
+        '200': {description: Active caller memberships only, content: {application/json: {schema: {type: array, items: {$ref: '#/components/schemas/CommandPostOrganization'}}}}}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+  /command-post/organizations/{organization_id}/:
+    get:
+      operationId: getCommandPostOrganization
+      parameters: [{$ref: '#/components/parameters/OrganizationId'}]
+      responses:
+        '200': {description: Own organisation overview, content: {application/json: {schema: {$ref: '#/components/schemas/CommandPostOrganization'}}}}
+        '404': {$ref: '#/components/responses/NotFound'}
+  /command-post/organizations/{organization_id}/maps/:
+    get:
+      operationId: listCommandPostMaps
+      parameters: [{$ref: '#/components/parameters/OrganizationId'}, {$ref: '#/components/parameters/Limit'}, {$ref: '#/components/parameters/Cursor'}]
+      responses:
+        '200': {description: Own organisation maps and quota summary}
+        '404': {$ref: '#/components/responses/NotFound'}
+    post:
+      operationId: createCommandPostMap
+      parameters: [{$ref: '#/components/parameters/OrganizationId'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/MapCreateRequest'}}}}
+      responses:
+        '201': {description: Organisation map created transactionally}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '409': {$ref: '#/components/responses/Conflict'}
+  /command-post/organizations/{organization_id}/plan/:
+    get:
+      operationId: getCommandPostPlanSummary
+      parameters: [{$ref: '#/components/parameters/OrganizationId'}]
+      responses:
+        '200': {description: Own effective plan, usage, limits and availability, content: {application/json: {schema: {$ref: '#/components/schemas/PlanSummary'}}}}
+        '404': {$ref: '#/components/responses/NotFound'}
+  /command-post/organizations/{organization_id}/memberships/:
+    get:
+      operationId: listCommandPostMemberships
+      parameters: [{$ref: '#/components/parameters/OrganizationId'}]
+      responses:
+        '200': {description: Own organisation memberships only}
+        '404': {$ref: '#/components/responses/NotFound'}
+    post:
+      operationId: createCommandPostMembership
+      parameters: [{$ref: '#/components/parameters/OrganizationId'}]
+      responses:
+        '201': {description: Own membership created by Business Admin and audited}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+  /command-post/organizations/{organization_id}/projects/:
+    get:
+      operationId: listCommandPostProjects
+      parameters: [{$ref: '#/components/parameters/OrganizationId'}, {$ref: '#/components/parameters/Limit'}, {$ref: '#/components/parameters/Cursor'}]
+      responses:
+        '200': {description: Own organisation projects only}
+        '404': {$ref: '#/components/responses/NotFound'}
+    post:
+      operationId: createCommandPostProject
+      parameters: [{$ref: '#/components/parameters/OrganizationId'}]
+      responses:
+        '201': {description: Own organisation project created under entitlement}
+        '403': {$ref: '#/components/responses/Forbidden'}
+  /command-post/organizations/{organization_id}/scores/:
+    get:
+      operationId: listCommandPostScores
+      parameters: [{$ref: '#/components/parameters/OrganizationId'}, {$ref: '#/components/parameters/Limit'}, {$ref: '#/components/parameters/Cursor'}]
+      responses:
+        '200': {description: Own organisation game results and leaderboard only}
+        '404': {$ref: '#/components/responses/NotFound'}
+
+  /authoring/projects/{project_id}/context/:
+    get:
+      operationId: getAuthoringContext
+      parameters: [{$ref: '#/components/parameters/ProjectId'}]
+      responses:
+        '200': {description: Server-derived scope, permissions, limits and available actions}
+        '404': {$ref: '#/components/responses/NotFound'}
+  /authoring/projects/{project_id}/maps/:
+    get:
+      operationId: listAuthoringMaps
+      parameters: [{$ref: '#/components/parameters/ProjectId'}, {$ref: '#/components/parameters/Limit'}, {$ref: '#/components/parameters/Cursor'}]
+      responses:
+        '200': {description: Authorised CORE or organisation map catalogue}
+        '404': {$ref: '#/components/responses/NotFound'}
+    post:
+      operationId: createAuthoringMap
+      parameters: [{$ref: '#/components/parameters/ProjectId'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/MapCreateRequest'}}}}
+      responses:
+        '201': {description: Scope-authorised map created}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '409': {$ref: '#/components/responses/Conflict'}
+  /authoring/maps/{map_id}/versions/:
+    post:
+      operationId: createMapVersion
+      parameters: [{$ref: '#/components/parameters/MapId'}]
+      responses:
+        '201': {description: New draft version created from authorised source}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+  /authoring/maps/{map_id}/versions/{version}/{action}/:
+    post:
+      operationId: transitionMapVersion
+      parameters:
+        - $ref: '#/components/parameters/MapId'
+        - {name: version, in: path, required: true, schema: {type: integer, minimum: 1}}
+        - {name: action, in: path, required: true, schema: {enum: [validate, publish, rollback, archive]}}
+      responses:
+        '200': {description: Scope-authorised lifecycle transition}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+  /authoring/projects/{project_id}/interiors/:
+    get:
+      operationId: listAuthoringInteriors
+      parameters: [{$ref: '#/components/parameters/ProjectId'}]
+      responses:
+        '200': {description: Authorised Boarding interiors}
+        '404': {$ref: '#/components/responses/NotFound'}
+    post:
+      operationId: createAuthoringInterior
+      parameters: [{$ref: '#/components/parameters/ProjectId'}]
+      responses:
+        '201': {description: Scope-authorised interior draft created}
+        '403': {$ref: '#/components/responses/Forbidden'}
+  /authoring/assets/:
+    get:
+      operationId: listAuthoringAssets
+      parameters:
+        - $ref: '#/components/parameters/ProjectQueryId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - {name: category, in: query, required: false, schema: {type: string}}
+        - {name: q, in: query, required: false, schema: {type: string, maxLength: 80}}
+      responses:
+        '200': {description: CORE plus project-authorised image catalogue}
+        '404': {$ref: '#/components/responses/NotFound'}
+  /authoring/previews/:
+    post:
+      operationId: createAuthoringPreview
+      responses:
+        '201': {description: Short-lived actor/project/checksum-bound unranked preview}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+
+  /game-projects/{project_id}/campaigns/:
+    get:
+      operationId: listProjectCampaigns
+      parameters: [{$ref: '#/components/parameters/ProjectId'}]
+      responses:
+        '200': {description: Public or caller-authorised campaigns}
+        '404': {$ref: '#/components/responses/NotFound'}
+    post:
+      operationId: createProjectCampaign
+      parameters: [{$ref: '#/components/parameters/ProjectId'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/CampaignCreateRequest'}}}}
+      responses:
+        '201': {description: Authorised campaign draft created}
+        '403': {$ref: '#/components/responses/Forbidden'}
+  /game-projects/{project_id}/campaigns/{campaign_id}/versions/:
+    post:
+      operationId: createCampaignVersion
+      parameters: [{$ref: '#/components/parameters/ProjectId'}, {$ref: '#/components/parameters/CampaignId'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/CampaignVersionCreate'}}}}
+      responses:
+        '201': {description: Draft campaign version created}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+
+  /campaign-runs/:
+    post:
+      security: []
+      operationId: startCampaign
+      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/CampaignStartRequest'}}}}
+      responses:
+        '201': {description: Pinned campaign created, content: {application/json: {schema: {$ref: '#/components/schemas/CampaignStartResponse'}}}}
+        '409': {$ref: '#/components/responses/Conflict'}
+  /campaign-runs/{campaign_id}/:
+    get:
+      security: [{sessionCookie: []}, {campaignToken: []}]
+      operationId: getCampaign
+      parameters: [{$ref: '#/components/parameters/CampaignId'}, {$ref: '#/components/parameters/CampaignToken'}]
+      responses:
+        '200': {description: Authorised release-derived checkpoint, content: {application/json: {schema: {$ref: '#/components/schemas/CampaignRun'}}}}
+        '404': {$ref: '#/components/responses/NotFound'}
+  /campaign-runs/{campaign_id}/attempts/:
+    post:
+      security: [{sessionCookie: []}, {campaignToken: []}]
+      operationId: startLevelAttempt
+      parameters: [{$ref: '#/components/parameters/CampaignId'}, {$ref: '#/components/parameters/CampaignToken'}, {$ref: '#/components/parameters/IdempotencyKey'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/LevelAttemptStartRequest'}}}}
+      responses:
+        '201': {description: Exact campaign-entry attempt, content: {application/json: {schema: {$ref: '#/components/schemas/LevelAttemptStartResponse'}}}}
+        '409': {$ref: '#/components/responses/Conflict'}
+  /game-runs/{run_id}/complete/:
+    post:
+      security: [{sessionCookie: []}, {campaignToken: []}]
+      operationId: completeLevelAttempt
+      parameters: [{$ref: '#/components/parameters/RunId'}, {$ref: '#/components/parameters/CampaignToken'}, {$ref: '#/components/parameters/IdempotencyKey'}]
+      responses:
+        '200': {description: Server-derived expandable campaign checkpoint, content: {application/json: {schema: {$ref: '#/components/schemas/LevelCompletionResponse'}}}}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+
+components:
+  securitySchemes:
+    sessionCookie: {type: apiKey, in: cookie, name: sessionid}
+    campaignToken: {type: apiKey, in: header, name: X-Campaign-Token}
+  headers:
+    NoStore: {schema: {type: string, const: no-store}}
+  parameters:
+    Limit: {name: limit, in: query, required: false, schema: {type: integer, minimum: 1, maximum: 100, default: 20}}
+    Cursor: {name: cursor, in: query, required: false, schema: {type: string, maxLength: 256}}
+    ProjectId: {name: project_id, in: path, required: true, schema: {type: string, format: uuid}}
+    OrganizationId: {name: organization_id, in: path, required: true, schema: {type: string, format: uuid}}
+    CampaignId: {name: campaign_id, in: path, required: true, schema: {type: string, format: uuid}}
+    RunId: {name: run_id, in: path, required: true, schema: {type: string, format: uuid}}
+    MapId: {name: map_id, in: path, required: true, schema: {type: string, format: uuid}}
+    ProjectQueryId: {name: project_id, in: query, required: true, schema: {type: string, format: uuid}}
+    CampaignToken: {name: X-Campaign-Token, in: header, required: false, schema: {type: string, minLength: 43, maxLength: 128}}
+    IdempotencyKey: {name: Idempotency-Key, in: header, required: true, schema: {type: string, minLength: 1, maxLength: 128}}
+  schemas:
+    LoginRequest:
+      type: object
+      additionalProperties: false
+      required: [username, password, audience]
+      properties:
+        username: {type: string, minLength: 3, maxLength: 30}
+        password: {type: string, minLength: 1, maxLength: 128}
+        audience: {enum: [PLAYER_ACCOUNT, COMMAND_POST, INCEPTIVEC_ADMIN]}
+        campaign_claim_token: {type: string, minLength: 43, maxLength: 128}
+    SessionResponse:
+      type: object
+      additionalProperties: false
+      required: [authenticated, user, surface_grants]
+      properties:
+        authenticated: {const: true}
+        user: {type: object}
+        surface_grants: {type: array, uniqueItems: true, items: {enum: [PLAYER_ACCOUNT, COMMAND_POST, INCEPTIVEC_ADMIN]}}
+        claim_result: {enum: [CLAIMED, NOT_REQUESTED]}
+    BuildState:
+      type: object
+      additionalProperties: false
+      required: [application, source_sha, build_id, environment, api_version, schema_state]
+      properties:
+        application: {const: galactic-gunners}
+        source_sha: {type: string, pattern: '^[0-9a-f]{40}$'}
+        build_id: {type: string, minLength: 1, maxLength: 128}
+        environment: {enum: [local, dev, stage, production]}
+        api_version: {const: v1}
+        schema_state: {enum: [CURRENT, MIGRATIONS_PENDING, UNKNOWN]}
+    PlanLimits:
+      type: object
+      additionalProperties: false
+      required: [active_map_limit]
+      properties:
+        active_map_limit: {type: integer, minimum: 1, maximum: 100000}
+        member_limit: {type: [integer, 'null'], minimum: 1}
+        private_campaign_limit: {type: [integer, 'null'], minimum: 1}
+        storage_bytes: {type: [integer, 'null'], minimum: 0}
+    PlanCapabilities:
+      type: object
+      additionalProperties: false
+      required: [custom_maps, dual_player, connected_apps, public_sharing]
+      properties:
+        custom_maps: {const: ACTIVE}
+        dual_player: {const: RESERVED}
+        connected_apps: {enum: [ACTIVE, RESERVED, DISABLED]}
+        public_sharing: {const: RESERVED}
+    ServicePlan:
+      type: object
+      additionalProperties: false
+      required: [code, display_name, status, sort_order, limits, capabilities]
+      properties:
+        code: {enum: [SPACE_CADET, STAR_GUNNER, FLEET_COMMANDER, GALACTIC_LEGEND]}
+        display_name: {type: string, minLength: 1, maxLength: 64}
+        status: {enum: [DRAFT, ACTIVE, RETIRED]}
+        sort_order: {type: integer, minimum: 0}
+        limits: {$ref: '#/components/schemas/PlanLimits'}
+        capabilities: {$ref: '#/components/schemas/PlanCapabilities'}
+    OrganizationPlanAssignment:
+      type: object
+      additionalProperties: false
+      required: [id, organization_id, plan, status, starts_at]
+      properties:
+        id: {type: string, format: uuid}
+        organization_id: {type: string, format: uuid}
+        plan: {$ref: '#/components/schemas/ServicePlan'}
+        status: {enum: [ACTIVE, SUSPENDED, ENDED]}
+        starts_at: {type: string, format: date-time}
+        ends_at: {type: [string, 'null'], format: date-time}
+    PlanAssignmentRequest:
+      type: object
+      additionalProperties: false
+      required: [plan_code, starts_at, reason]
+      properties:
+        plan_code: {enum: [SPACE_CADET, STAR_GUNNER, FLEET_COMMANDER, GALACTIC_LEGEND]}
+        starts_at: {type: string, format: date-time}
+        ends_at: {type: [string, 'null'], format: date-time}
+        reason: {type: string, minLength: 1, maxLength: 240}
+    CommandPostOrganization:
+      type: object
+      additionalProperties: false
+      required: [id, slug, name, role, status, plan_summary]
+      properties:
+        id: {type: string, format: uuid}
+        slug: {type: string}
+        name: {type: string}
+        role: {enum: [BUSINESS_ADMIN, EDITOR, PLAYER]}
+        status: {const: ACTIVE}
+        plan_summary: {$ref: '#/components/schemas/PlanSummary'}
+    PlanSummary:
+      type: object
+      additionalProperties: false
+      required: [plan_code, plan_name, active_map_count, active_map_limit, capabilities]
+      properties:
+        plan_code: {enum: [SPACE_CADET, STAR_GUNNER, FLEET_COMMANDER, GALACTIC_LEGEND]}
+        plan_name: {type: string}
+        active_map_count: {type: integer, minimum: 0}
+        active_map_limit: {type: integer, minimum: 1}
+        capabilities: {$ref: '#/components/schemas/PlanCapabilities'}
+    MapCreateRequest:
+      type: object
+      additionalProperties: false
+      required: [slug, name]
+      properties:
+        slug: {type: string, minLength: 3, maxLength: 64}
+        name: {type: string, minLength: 1, maxLength: 128}
+        base_level_version_id: {type: [string, 'null'], format: uuid}
+    CampaignCreateRequest:
+      type: object
+      additionalProperties: false
+      required: [slug, name]
+      properties:
+        slug: {type: string, minLength: 3, maxLength: 64}
+        name: {type: string, minLength: 1, maxLength: 128}
+    CampaignEntry:
+      type: object
+      additionalProperties: false
+      required: [id, position, level_version_id, entry_kind]
+      properties:
+        id: {type: string, format: uuid}
+        position: {type: integer, minimum: 1, maximum: 10000}
+        level_version_id: {type: string, format: uuid}
+        entry_kind: {enum: [SHOOTER, BOARDING_ONLY]}
+    CampaignVersionCreate:
+      type: object
+      additionalProperties: false
+      required: [entries]
+      properties:
+        entries: {type: array, minItems: 1, maxItems: 10000, items: {$ref: '#/components/schemas/CampaignEntry'}}
+    CampaignStartRequest:
+      type: object
+      additionalProperties: false
+      required: [game_project_slug, campaign_slug, client_type, play_mode]
+      properties:
+        game_project_slug: {type: string}
+        campaign_slug: {type: string}
+        client_type: {enum: [web, windows, macos, android, ios, unknown]}
+        play_mode: {const: SOLO}
+    CampaignRun:
+      type: object
+      additionalProperties: false
+      required: [id, game_release_id, campaign_version_id, status, completed_entry_count, score, lives, nukes, ranked, next_entry]
+      properties:
+        id: {type: string, format: uuid}
+        game_release_id: {type: string, format: uuid}
+        campaign_version_id: {type: string, format: uuid}
+        status: {enum: [ACTIVE, COMPLETED, FAILED, ABANDONED, REJECTED]}
+        completed_entry_count: {type: integer, minimum: 0}
+        score: {type: integer, minimum: 0}
+        lives: {type: integer, minimum: 0, maximum: 3}
+        nukes: {type: integer, minimum: 0, maximum: 2}
+        ranked: {type: boolean}
+        current_entry: {oneOf: [{$ref: '#/components/schemas/CampaignEntry'}, {type: 'null'}]}
+        next_entry: {oneOf: [{$ref: '#/components/schemas/CampaignEntry'}, {type: 'null'}]}
+    CampaignStartResponse:
+      type: object
+      additionalProperties: false
+      required: [campaign, entry, level]
+      properties:
+        campaign: {$ref: '#/components/schemas/CampaignRun'}
+        campaign_token: {type: string, minLength: 43, maxLength: 128}
+        entry: {$ref: '#/components/schemas/CampaignEntry'}
+        level: {type: object}
+    LevelAttemptStartRequest:
+      type: object
+      additionalProperties: false
+      required: [campaign_entry_id, mode]
+      properties:
+        campaign_entry_id: {type: string, format: uuid}
+        mode: {enum: [CONTINUE, REPLAY_LEVEL]}
+    LevelAttemptStartResponse:
+      type: object
+      additionalProperties: false
+      required: [run_id, campaign_id, entry, attempt, seed, level, checkpoint]
+      properties:
+        run_id: {type: string, format: uuid}
+        campaign_id: {type: string, format: uuid}
+        entry: {$ref: '#/components/schemas/CampaignEntry'}
+        attempt: {type: integer, minimum: 1}
+        seed: {type: integer, minimum: 0, maximum: 4294967295}
+        level: {type: object}
+        checkpoint: {$ref: '#/components/schemas/CampaignRun'}
+    LevelCompletionResponse:
+      type: object
+      additionalProperties: false
+      required: [run_id, validation_state, level_score, campaign_score, lives, nukes, completed_entry, next_entry, next_action, ranked, rejection_codes]
+      properties:
+        run_id: {type: string, format: uuid}
+        validation_state: {enum: [VALIDATED, REJECTED]}
+        level_score: {type: [integer, 'null'], minimum: 0}
+        campaign_score: {type: integer, minimum: 0}
+        lives: {type: integer, minimum: 0, maximum: 3}
+        nukes: {type: integer, minimum: 0, maximum: 2}
+        completed_entry: {$ref: '#/components/schemas/CampaignEntry'}
+        next_entry: {oneOf: [{$ref: '#/components/schemas/CampaignEntry'}, {type: 'null'}]}
+        next_action: {enum: [CONTINUE, CAMPAIGN_COMPLETE, GAME_OVER, REJECTED]}
+        ranked: {type: boolean}
+        rejection_codes: {type: array, items: {type: string}}
+  responses:
+    BadRequest: {description: Malformed request}
+    Unauthorized: {description: Authentication required or invalid}
+    Forbidden: {description: Audience, CSRF, permission, membership, entitlement or ownership denied}
+    NotFound: {description: Absent or intentionally undisclosed}
+    Conflict: {description: State, quota, lifecycle or idempotency conflict}
+    Unprocessable: {description: Schema-valid but semantically invalid}
+    TooManyRequests: {description: Throttled}

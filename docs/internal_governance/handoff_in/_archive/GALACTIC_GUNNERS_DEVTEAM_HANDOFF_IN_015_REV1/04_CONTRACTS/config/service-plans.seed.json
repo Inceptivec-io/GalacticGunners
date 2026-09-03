@@ -1,0 +1,10 @@
+{
+  "schema_version": "1.0",
+  "plans": [
+    {"code":"SPACE_CADET","display_name":"Space Cadet","status":"ACTIVE","sort_order":10,"limits":{"active_map_limit":5,"member_limit":null,"private_campaign_limit":null,"storage_bytes":null},"capabilities":{"custom_maps":"ACTIVE","dual_player":"RESERVED","connected_apps":"DISABLED","public_sharing":"RESERVED"}},
+    {"code":"STAR_GUNNER","display_name":"Star Gunner","status":"ACTIVE","sort_order":20,"limits":{"active_map_limit":100,"member_limit":null,"private_campaign_limit":null,"storage_bytes":null},"capabilities":{"custom_maps":"ACTIVE","dual_player":"RESERVED","connected_apps":"RESERVED","public_sharing":"RESERVED"}},
+    {"code":"FLEET_COMMANDER","display_name":"Fleet Commander","status":"ACTIVE","sort_order":30,"limits":{"active_map_limit":250,"member_limit":null,"private_campaign_limit":null,"storage_bytes":null},"capabilities":{"custom_maps":"ACTIVE","dual_player":"RESERVED","connected_apps":"RESERVED","public_sharing":"RESERVED"}},
+    {"code":"GALACTIC_LEGEND","display_name":"Galactic Legend","status":"ACTIVE","sort_order":40,"limits":{"active_map_limit":500,"member_limit":null,"private_campaign_limit":null,"storage_bytes":null},"capabilities":{"custom_maps":"ACTIVE","dual_player":"RESERVED","connected_apps":"RESERVED","public_sharing":"RESERVED"}}
+  ]
+}
+

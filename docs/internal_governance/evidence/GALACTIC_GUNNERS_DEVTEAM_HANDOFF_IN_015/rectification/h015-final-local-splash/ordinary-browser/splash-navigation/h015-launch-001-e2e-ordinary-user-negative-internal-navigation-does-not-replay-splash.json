@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "classification": "E2E_ORDINARY_USER",
+  "gate": "splash-navigation",
+  "route": "/play",
+  "tested_sha": null,
+  "test": "H015-LAUNCH-001__e2e_ordinary_user_negative__internal_navigation_does_not_replay_splash",
+  "browser": "chromium-desktop",
+  "actions": [
+    "Opened a new independent game entry and observed its launch splash.",
+    "Started gameplay from the visible Main Menu action.",
+    "Opened Pause with P and selected Main Menu with M."
+  ],
+  "assertions": [
+    "A new independent entry remained capable of showing the splash.",
+    "Internal return to the Main Menu did not replay the launch splash."
+  ]
+}

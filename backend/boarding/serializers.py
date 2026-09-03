@@ -8,7 +8,28 @@ from .models import BoardingRun, BoardingRunEvent, BoardingSubmission, Interior,
 from .services import deterministic_seed, digest, new_capability_token, token_digest
 
 
-ANCHOR = {'anchor_id': 'level-04-alien-frigate-01', 'source_entity_id': 'level-04:formation-0:r0:c14', 'source_entity_type': 'scout', 'source_ship_type': 'ALIEN_FRIGATE', 'interior_slug': 'alien-frigate', 'interior_version': 1, 'interior_checksum': 'e9b1af65f0daef6725a7ddf4683b5f6d503e25dabc97aef1212102e6b1e994f3'}
+def authored_anchor(config, anchor_id):
+    """Resolve the supplied anchor from the pinned published level, never a global constant."""
+    for anchor in config.get('boarding_anchors', []):
+        if anchor.get('id') != anchor_id:
+            continue
+        if config.get('schema_version') == '1.1':
+            source = next((entity for entity in config.get('entities', []) if entity.get('id') == anchor.get('source_entity_id')), None)
+            if source is None:
+                return None
+            return {
+                'anchor_id': anchor['id'], 'source_entity_id': anchor['source_entity_id'],
+                'source_entity_type': str(source.get('entity_type', '')).lower(), 'source_ship_type': anchor.get('source_ship_type'),
+                'interior_slug': anchor.get('interior', {}).get('slug'), 'interior_version': anchor.get('interior', {}).get('version'),
+                'interior_checksum': anchor.get('interior', {}).get('checksum'),
+            }
+        return {
+            'anchor_id': anchor.get('id'), 'source_entity_id': anchor.get('source_entity_id'),
+            'source_entity_type': anchor.get('source_entity_type'), 'source_ship_type': anchor.get('source_ship_type'),
+            'interior_slug': anchor.get('interior', {}).get('slug'), 'interior_version': anchor.get('interior', {}).get('version'),
+            'interior_checksum': anchor.get('interior', {}).get('checksum'),
+        }
+    return None
 
 
 class StrictSerializer(serializers.Serializer):
@@ -22,13 +43,13 @@ class StrictSerializer(serializers.Serializer):
 
 
 class ResourcesStartSerializer(StrictSerializer):
-    lives = serializers.IntegerField(min_value=1, max_value=3)
-    nukes = serializers.IntegerField(min_value=0, max_value=2)
+    lives = serializers.IntegerField(min_value=1)
+    nukes = serializers.IntegerField(min_value=0)
 
 
 class ResourcesSerializer(StrictSerializer):
-    lives = serializers.IntegerField(min_value=0, max_value=3)
-    nukes = serializers.IntegerField(min_value=0, max_value=2)
+    lives = serializers.IntegerField(min_value=0)
+    nukes = serializers.IntegerField(min_value=0)
 
 
 class StartBoardingRunSerializer(StrictSerializer):
@@ -45,9 +66,6 @@ class StartBoardingRunSerializer(StrictSerializer):
     resources = ResourcesStartSerializer()
 
     def validate(self, attrs):
-        for key, value in ANCHOR.items():
-            if attrs[key] != value:
-                raise serializers.ValidationError({key: 'BOARDING_ANCHOR_MISMATCH'})
         run = self.context['game_run']
         if run.completed_at:
             raise serializers.ValidationError({'game_run': 'GAME_RUN_CLOSED'})
@@ -55,14 +73,25 @@ class StartBoardingRunSerializer(StrictSerializer):
             raise serializers.ValidationError({'level': 'LEVEL_VERSION_MISMATCH'})
         authoritative_lives = run.lives_end if run.lives_end is not None else run.lives_start
         authoritative_nukes = run.nukes_end if run.nukes_end is not None else run.nukes_start
-        if attrs['resources'] != {'lives': authoritative_lives, 'nukes': authoritative_nukes}:
+        if attrs['resources']['lives'] > authoritative_lives or attrs['resources']['nukes'] > authoritative_nukes:
             raise serializers.ValidationError({'resources': 'RESOURCE_STATE_INVALID'})
-        try:
-            level_version = run.level.versions.get(version=attrs['level_version'], checksum=attrs['level_checksum'], status=LevelVersion.Status.PUBLISHED)
-        except LevelVersion.DoesNotExist as exc:
-            raise serializers.ValidationError({'level': 'LEVEL_NOT_PUBLISHED'}) from exc
-        if not any(anchor.get('id') == attrs['anchor_id'] for anchor in level_version.config.get('boarding_anchors', [])):
+        # A campaign attempt is pinned to its immutable CampaignEntry. A later
+        # publication may supersede the project's active revision, but cannot
+        # invalidate a run that was legitimately started against the old one.
+        level_version = run.campaign_entry.level_version if run.campaign_entry_id else None
+        if level_version is None:
+            try:
+                level_version = run.level.versions.get(version=attrs['level_version'], checksum=attrs['level_checksum'], status=LevelVersion.Status.PUBLISHED)
+            except LevelVersion.DoesNotExist as exc:
+                raise serializers.ValidationError({'level': 'LEVEL_NOT_PUBLISHED'}) from exc
+        if level_version.version != attrs['level_version'] or level_version.checksum != attrs['level_checksum']:
+            raise serializers.ValidationError({'level': 'LEVEL_VERSION_MISMATCH'})
+        expected_anchor = authored_anchor(level_version.config, attrs['anchor_id'])
+        if expected_anchor is None:
             raise serializers.ValidationError({'anchor_id': 'BOARDING_ANCHOR_NOT_PRESENT'})
+        for key, value in expected_anchor.items():
+            if attrs[key] != value:
+                raise serializers.ValidationError({key: 'BOARDING_ANCHOR_MISMATCH'})
         try:
             interior = Interior.objects.select_related('active_version').get(slug=attrs['interior_slug'])
             version = interior.versions.get(version=attrs['interior_version'], checksum=attrs['interior_checksum'], status=InteriorVersion.Status.PUBLISHED)
@@ -136,10 +165,8 @@ class CompleteBoardingRunSerializer(StrictSerializer):
             if not any(event['type'] == 'EXIT_INTERACTED' and event['at_ms'] < 60000 for event in summary['events']):
                 raise serializers.ValidationError({'detail': 'SUCCESS_EXIT_REQUIRED'})
         resources_end = summary['resources_end']
-        if summary['outcome'] == BoardingRun.Outcome.PLAYER_DEAD and resources_end['lives'] != 0:
-            raise serializers.ValidationError({'detail': 'PLAYER_DEAD_LIVES_INVALID'})
-        expected_lives = min(3, run.lives_start + summary['lives_found'])
-        expected_nukes = min(2, run.nukes_start + summary['nukes_found'])
+        expected_lives = run.lives_start + summary['lives_found']
+        expected_nukes = run.nukes_start + summary['nukes_found']
         if summary['outcome'] in (BoardingRun.Outcome.TIMEOUT, BoardingRun.Outcome.PLAYER_DEAD):
             expected_lives = max(0, expected_lives - 1)
         if summary['outcome'] == BoardingRun.Outcome.ABORTED:

@@ -1,80 +1,60 @@
+# Current State
+
 Active Handoff:
-GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_014
+`GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015_FINAL` superseding the H015A closure state for final product-conformance correction.
 
 Programme:
-BOARDING MODE PLATFORM IMPLEMENTATION
+Platform Foundation and Campaign Continuity.
 
 Stage:
-H014 CLOSED - FOUNDER ACCEPTED / KNOWN PLATFORM AND RUNTIME ITEMS DEFERRED TO H015
+H015 final product-conformance, gameplay-integrity and closeout correction in progress.
 
 Branch:
-feature/v1-boarding-mode
+`feature/v1-platform-foundation-campaign-continuity`
 
-DEVTEAM_010 Entry SHA:
-051c7fc9170ae73344a0dc88214c48fc94e0bfdc
+## Exact-SHA Review Evidence
 
-DEVTEAM_010_REV1 Entry SHA:
-fd7a7e00b6ccd4683e90cff9f41676e19f04517d
+The exact tested implementation SHA is
+`5d510e373abf2e65d7c84ac05c870ec9c89d39e4`. GitHub Actions run
+[33541341033](https://github.com/Inceptivec-io/GalacticGunners/actions/runs/33541341033)
+completed successfully at that SHA with all 15 jobs passing.
 
-DEVTEAM_010_REV2 Entry SHA:
-6c1964a3148ab7743552c4f608ea8117730b499f
+- Browser evidence artifact: `9814967837`,
+  `h015-browser-evidence-5d510e373abf2e65d7c84ac05c870ec9c89d39e4`,
+  SHA-256 `d94a58ed05bc286255c7514705f55fc04e4b40dd7407e62a379f32782036a90a`.
+- Evidence manifest SHA-256:
+  `e694bf5f942d3209ad26af97397c27a4e83ea9c5f297263c879989b7d978e906`.
+- Closure audit evidence SHA-256:
+  `3d7dd57bf7992726b00e77ea65ab8a18402103efd04c49bc83fdb433528b698b`.
+- Closure attestation artifact: `9814968592`,
+  `h015-closure-attestation-5d510e373abf2e65d7c84ac05c870ec9c89d39e4`.
+- Strict closure audit: PASS; failed gates: 0; pending gates: 0; evidence
+  uniqueness: PASS.
 
-DEVTEAM_010_REV3 Entry SHA:
-771bf384ae3878e292acf8d7e53dca90576b23b3
+The prior H015A claim at `d7d2b230db18ce875d7f7a26b22fc7b027069c8b`
+and the subsequent failed run at `421197b` remain historical evidence only.
+The latter exposed a real teardown-time diagnostic access to disposed Phaser
+groups. `be41004429790f6d0a575dc17d98fbe9ec8fd2bd` guards that lifecycle
+boundary. The later exact-SHA diagnostic correction
+`5d510e373abf2e65d7c84ac05c870ec9c89d39e4` exposes complete per-case
+failure output without weakening the catalogue and is the sole current
+review-evidence SHA.
 
-DEVTEAM_010_REV4 Entry SHA:
-5d0f8d04556a51f3398192e011e8b6b41b9bd2bf
+## Current Controls
 
-Current Repository Head Authority:
-origin/feature/v1-boarding-mode
+```text
+H015_STATUS=IN_PROGRESS
+H015_F22_LOCKED_PRODUCT_MODEL_SOURCE=ADMITTED_VERBATIM
+FOUNDER_REVIEW_READY=NO
+FOUNDER_ACCEPTANCE=PENDING
+FOUNDER_TESTING_AUTHORISED=NO
+MERGE_AUTHORISED=NO
+PR_12=DRAFT_OPEN_UNMERGED
+POST_BOX_PAYLOAD=0
+INTERNAL_GOVERNANCE=CURRENT
+```
 
-Local/Remote Reconciliation At Return:
-RECORDED EXTERNALLY AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
-
-Worktree At Return:
-RECORDED EXTERNALLY AFTER FINAL PUSH, NOT SELF-REFERENCED IN THIS COMMITTED FILE
-
-POST_BOX:
-FOUNDER-RETAINED IMAGERY TRANSPORT ONLY - `GalacticGunners_Imagery_Pack_v1.0_PRODUCTION.zip`; all other transient payload absent
-
-Internal Governance:
-CURRENT
-
-Registers:
-CURRENT
-
-Evidence:
-DURABLE
-
-REV4 Remote CI:
-PASS - GitHub Actions run 32894066325 backend/client-and-game/docker-smoke/runtime-hostile all SUCCESS
-
-REV4 Local Hostile:
-PASS x3 consecutive
-
-Handoff 011 APP1 HOTFIX1:
-COMPLETE - pooled projectile spawn/body reset, collision regression, full movement bounds, 210 player speed, equal 300 laser speeds, visible pause surface, upright nuke projectile followed only by nuke burst, cooldown-only Energise and zero-ammo blocking. H012 uses this accepted Level 1 state as its golden baseline.
-
-Runtime Gameplay:
-PASS - BootScene, MainMenuScene and bounded Level1 playable runtime corrected for REV3 scale/composition, semantic PlayfieldLayout authority, 58-enemy Level1 formation, four-direction player movement, respawn/regeneration, 8-bunker / 256-tile shield zone, rotated laser geometry/body alignment, widened meaningful body envelopes, swept laser collision checks, normal real-origin laser hits/near-misses, enemy laser left/center/right player-body hits, nuke projectile/burst, bottom-left icon-only lives, bottom-right icon-only nukes with fixed `ENERGISE` bar, top-left score, top-right sound, pause/resume and hostile runtime/composition verification.
-
-Full Level 1:
-GOLDEN BASELINE PRESERVED / HOSTILE REGRESSION PASS
-
-Campaign Progression / Result UI:
-LEVELS 1-6 PLAYABLE THROUGH PRODUCTION RESULT PANELS; FOUNDER ACCEPTANCE PENDING
-
-Final Victory / Game Over:
-PRODUCTION PANELS WITH DYNAMIC RUNTIME VALUES; FOUNDER ACCEPTANCE PENDING
-
-Validated Runs / Leaderboard:
-COMPLETE / PENDING FOUNDER REVIEW
-
-Boarding:
-H014 CLOSED UNDER FOUNDER ROUTING. Known platform and runtime completion items, including the character-source geometry issue, are deferred to H015. The Campaign Designer shell is accepted in its current visual and planning direction and must not be redesigned.
-
-Founder Acceptance:
-FOUNDER ACCEPTED - KNOWN PLATFORM AND RUNTIME ITEMS DEFERRED TO H015. Development does not assert unqualified Founder manual acceptance of deferred items. PR #11 remains open for Founder merge decision.
-
-H015 Start Condition:
-FOUNDER MUST MERGE PR #11; then create a fresh H015 branch from the updated `dev` branch. No H015 development occurs on `feature/v1-boarding-mode`.
+POST_BOX is boundary controls only. Earlier rejected readiness records remain
+historical evidence and are not current proof. The non-self-referential
+Handoff-Out and the H015A evidence matrix identify the exact CI artifact that
+supports this state.

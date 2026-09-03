@@ -14,10 +14,51 @@ test('boarding simulation is deterministic at 60Hz and bounds the player', () =>
   assert.ok(first.snapshot().player.x <= BOARDING_WORLD.width - 32);
 });
 
+test('GG-BOARDING-002 positive ordinary horizontal input traverses away from the governed entry airlock', () => {
+  const simulation = new BoardingSimulation(42, { lives: 3, nukes: 2 });
+  const entryX = simulation.snapshot().player.x;
+
+  for (let tick = 0; tick < 180; tick += 1) {
+    simulation.step({ horizontal: 1, jump: false, fire: false, interact: false });
+  }
+
+  const snapshot = simulation.snapshot();
+  assert.equal(entryX, 128);
+  assert.ok(snapshot.player.x > entryX + 700);
+  assert.ok(snapshot.player.x < BOARDING_WORLD.width - 32);
+});
+
+test('GG-BOARDING-002 negative projection cannot teleport outside the physical Boarding world or exit from entry', () => {
+  const simulation = new BoardingSimulation(42, { lives: 3, nukes: 2 });
+  simulation.synchronizePlayerProjection({ x: -500, y: 10_000 });
+  let snapshot = simulation.snapshot();
+  assert.equal(snapshot.player.x, 32);
+  assert.equal(snapshot.player.y, 576);
+  assert.equal(simulation.exit(), false);
+
+  simulation.synchronizePlayerProjection({ x: BOARDING_WORLD.width + 500, y: 530 });
+  snapshot = simulation.snapshot();
+  assert.equal(snapshot.player.x, BOARDING_WORLD.width - 32);
+  assert.equal(simulation.exit(), true);
+});
+
 test('boarding simulation has no implicit score award', () => {
   const simulation = new BoardingSimulation(7, { lives: 2, nukes: 1 });
   simulation.killAlien('alien-01');
   assert.equal(simulation.snapshot().events[0].type, 'ALIEN_KILLED');
+});
+
+test('boarding resources retain an unbounded campaign inventory on entry', () => {
+  const simulation = new BoardingSimulation(42, { lives: 7, nukes: 11 });
+  const resources = simulation.snapshot().resources;
+  assert.deepEqual(resources, { lives: 7, nukes: 11 });
+});
+
+test('boarding exit accepts the validated physical projection at the airlock', () => {
+  const simulation = new BoardingSimulation(7, { lives: 2, nukes: 1 });
+  simulation.synchronizePlayerProjection({ x: BOARDING_WORLD.width - 64, y: 530 });
+  assert.equal(simulation.exit(), true);
+  assert.equal(simulation.snapshot().events.at(-1)?.type, 'EXIT_INTERACTED');
 });
 
 test('boarding snapshot canonicalization sorts nested objects and rejects non-finite values', () => {
@@ -38,6 +79,36 @@ test('boarding coordinator freezes score authority at the scene boundary', async
   assert.match(opened.shooterStateDigest, /^[0-9a-f]{64}$/);
   coordinator.accept();
   const result = coordinator.complete('SUCCESS', { lives: 4, nukes: -1 });
-  assert.deepEqual(result.resources, { lives: 3, nukes: 0 });
+  assert.deepEqual(result.resources, { lives: 4, nukes: 0 });
   assert.equal(result.offer.sourceEntityId, 'level-04:formation-0:r0:c14');
+});
+
+test('boarding coordinator rejects duplicate transitions and never creates a second active offer', async () => {
+  const simulation = new BoardingSimulation(44, { lives: 3, nukes: 2 });
+  const coordinator = new BoardingCoordinator();
+  const offer = { anchorId: 'anchor-1', sourceEntityId: 'frigate-1', resources: { lives: 3, nukes: 2 }, snapshot: simulation.snapshot() };
+  await coordinator.open(offer);
+  await assert.rejects(() => coordinator.open(offer), /already active/);
+  coordinator.accept();
+  assert.throws(() => coordinator.accept(), /Illegal Boarding transition/);
+  coordinator.complete('ABORTED', simulation.snapshot().resources);
+  assert.equal(coordinator.state, 'RETURNED');
+});
+
+test('GG-RESOURCE-INVENTORY-006 boarding pickups do not impose a two-nuke inventory cap', () => {
+  const simulation = new BoardingSimulation(1, { lives: 3, nukes: 2 });
+  const mutable = simulation as unknown as {
+    rng: { next: () => number };
+  };
+
+  // The container roll is part of the deterministic simulation. Force the
+  // admitted nuke outcome here so this test isolates the inventory rule rather
+  // than relying on an incidental seed sequence.
+  mutable.rng = { next: () => 0.2 };
+  for (const x of [1536, 2176, 2688, 3264]) {
+    simulation.synchronizePlayerProjection({ x, y: 576 });
+    simulation.step({ horizontal: 0, jump: false, fire: false, interact: true });
+  }
+
+  assert.equal(simulation.snapshot().resources.nukes, 6);
 });

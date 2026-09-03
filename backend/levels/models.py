@@ -10,9 +10,10 @@ from .validation import checksum, validate_definition
 
 class Level(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    slug = models.SlugField(max_length=64, unique=True)
+    slug = models.SlugField(max_length=64)
     name = models.CharField(max_length=128)
     campaign = models.CharField(max_length=64, default='v1')
+    game_project = models.ForeignKey('games.GameProject', null=True, blank=True, on_delete=models.PROTECT, related_name='levels')
     sequence = models.PositiveIntegerField()
     active_version = models.ForeignKey('LevelVersion', null=True, blank=True, on_delete=models.SET_NULL, related_name='+')
     archived = models.BooleanField(default=False)
@@ -21,6 +22,10 @@ class Level(models.Model):
 
     class Meta:
         ordering = ['campaign', 'sequence']
+        constraints = [
+            models.UniqueConstraint(fields=['game_project', 'slug'], name='level_project_slug_unique'),
+            models.UniqueConstraint(fields=['game_project', 'campaign', 'sequence'], condition=models.Q(archived=False), name='level_project_campaign_sequence_unique'),
+        ]
 
     def clean(self):
         if self.active_version_id and self.active_version.level_id != self.id:
@@ -42,6 +47,7 @@ class LevelVersion(models.Model):
     config = models.JSONField()
     checksum = models.CharField(max_length=64, editable=False)
     seed_policy = models.JSONField(default=dict, blank=True)
+    validation_report = models.JSONField(default=dict, blank=True)
     status = models.CharField(max_length=16, choices=Status.choices, default=Status.DRAFT)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -61,6 +67,7 @@ class LevelVersion(models.Model):
 
     def save(self, *args, **kwargs):
         validate_definition(self.config)
+        self.schema_version = self.config.get('schema_version', '1.0')
         if not self.seed_policy:
             self.seed_policy = {'mode': 'fixed'}
         self.checksum = checksum(self.config)
@@ -96,3 +103,6 @@ class LevelAuditEvent(models.Model):
         if self.pk and type(self).objects.filter(pk=self.pk).exists():
             raise ValidationError('Audit events are immutable.')
         super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        raise ValidationError('Audit events are append-only.')

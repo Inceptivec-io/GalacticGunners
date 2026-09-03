@@ -3,15 +3,24 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from games.models import OwnerScope
 from .models import Level, LevelAuditEvent, LevelVersion
 from .permissions import IsLevelAdmin
-from .serializers import LevelCreateSerializer, LevelSerializer, LevelVersionCreateSerializer, LevelVersionSerializer
+from .serializers import LevelCreateSerializer, LevelSerializer, LevelVersionCreateSerializer, LevelVersionSerializer, LevelVersionSummarySerializer
 from .validation import checksum, validate_definition
+from .authoring import blank_authoring_document
+from campaigns.publication import publish_core_level
+from campaigns.models import Campaign, CampaignVersion
+from games.models import GameRelease, Lifecycle
 
 
 class PublicLevelListView(generics.ListAPIView):
     serializer_class = LevelSerializer
-    queryset = Level.objects.filter(archived=False, active_version__status=LevelVersion.Status.PUBLISHED).select_related('active_version')
+    queryset = Level.objects.filter(
+        archived=False,
+        game_project__owner_scope=OwnerScope.CORE,
+        active_version__status=LevelVersion.Status.PUBLISHED,
+    ).select_related('active_version')
 
 
 class PublicLevelDetailView(generics.RetrieveAPIView):
@@ -24,7 +33,11 @@ class PublicVersionView(generics.RetrieveAPIView):
     serializer_class = LevelVersionSerializer
     lookup_field = 'version'
     def get_queryset(self):
-        return LevelVersion.objects.filter(level__slug=self.kwargs['slug'], status=LevelVersion.Status.PUBLISHED)
+        return LevelVersion.objects.filter(
+            level__slug=self.kwargs['slug'],
+            level__game_project__owner_scope=OwnerScope.CORE,
+            status=LevelVersion.Status.PUBLISHED,
+        )
 
 
 class AdminLevelCreateView(APIView):
@@ -34,6 +47,85 @@ class AdminLevelCreateView(APIView):
         level = serializer.save()
         audit(request, 'create', level, level.versions.first())
         return Response(LevelSerializer(level).data, status=status.HTTP_201_CREATED)
+
+
+class AdminCoreLevelAuthorityView(APIView):
+    """Complete, authenticated CORE authoring authority for the product Designer.
+
+    This deliberately differs from the public level list: administrators need the
+    immutable revision lineage and active campaign release, while players only
+    receive the active published level configuration.
+    """
+
+    permission_classes = [IsLevelAdmin]
+
+    def get(self, request):
+        levels = Level.objects.filter(
+            archived=False,
+            game_project__owner_scope=OwnerScope.CORE,
+        ).select_related('active_version').order_by('sequence')
+        selected_level_id = request.query_params.get('level_id')
+        selected_level = (
+            next((level for level in levels if str(level.id) == selected_level_id), None)
+            if selected_level_id
+            else levels.first()
+        )
+        if selected_level_id and selected_level is None:
+            return Response({'code': 'NOT_FOUND', 'detail': 'Requested CORE level is unavailable.'}, status=status.HTTP_404_NOT_FOUND)
+        project = levels.first().game_project if levels else None
+        release = None
+        if project:
+            release = GameRelease.objects.filter(
+                game_project=project,
+                status=Lifecycle.PUBLISHED,
+            ).order_by('-published_at').first()
+        payload = []
+        for level in levels:
+            # Loading every JSON configuration for every immutable revision made
+            # normal Designer reloads degrade with retained authoring history.
+            # Non-selected levels expose only revision identities; the selected
+            # level retains its complete version history and current document.
+            version_query = level.versions.order_by('-version')
+            if level != selected_level:
+                version_query = version_query.only(
+                    'id', 'level_id', 'version', 'schema_version', 'checksum',
+                    'status', 'created_at', 'published_at',
+                )
+            versions = list(version_query)
+            editable = next(
+                (version for version in versions if version.status in {LevelVersion.Status.DRAFT, LevelVersion.Status.VALIDATED}),
+                None,
+            )
+            authority_version = editable or level.active_version
+            payload.append({
+                'id': str(level.id),
+                'slug': level.slug,
+                'name': level.name,
+                'campaign': level.campaign,
+                'sequence': level.sequence,
+                'archived': level.archived,
+                'active_version': LevelVersionSummarySerializer(level.active_version).data if level.active_version else None,
+                'editable_version': LevelVersionSummarySerializer(editable).data if editable else None,
+                # Only the selected level carries a complete document. The
+                # remaining six-level list stays responsive even with a long
+                # immutable authoring history.
+                'authority_version': LevelVersionSerializer(authority_version).data if level == selected_level and authority_version else None,
+                # The editor needs the current editable document and immutable
+                # revision identities for optimistic concurrency. Sending every
+                # historical JSON configuration made normal browser reloads a
+                # multi-megabyte request and left the Designer unusable.
+                'versions': LevelVersionSummarySerializer(versions, many=True).data,
+            })
+        return Response({
+            'results': payload,
+            'active_campaign_release': ({
+                'id': str(release.id),
+                'version': release.version,
+                'campaign_version_id': release.manifest.get('campaign_version_id'),
+                'campaign_checksum': release.manifest.get('campaign_checksum'),
+                'published_at': release.published_at,
+            } if release else None),
+        })
 
 
 def audit(request, action, level=None, version=None, detail=None):
@@ -55,9 +147,16 @@ class AdminLevelActionView(APIView):
         if requested is not None:
             version = get_object_or_404(level.versions, version=requested)
         if action == 'validate':
-            validate_definition(version.config); version.status = LevelVersion.Status.VALIDATED; version.save(); audit(request, action, level, version); return Response(LevelVersionSerializer(version).data)
+            validate_definition(version.config)
+            version.status = LevelVersion.Status.VALIDATED
+            version.validation_report = {'valid': True, 'errors': [], 'warnings': []}
+            version.save()
+            audit(request, action, level, version)
+            return Response(LevelVersionSerializer(version).data)
         if action == 'publish':
-            version.publish(); audit(request, action, level, version); return Response(LevelSerializer(level).data)
+            release = publish_core_level(level=level, version=version, actor=request.user)
+            audit(request, action, level, version, {'campaign_release_id': str(release.id) if release else None})
+            return Response({**LevelSerializer(level).data, 'campaign_release_id': str(release.id) if release else None})
         if action == 'clone':
             config = request.data.get('config', version.config)
             validate_definition(config)
@@ -65,14 +164,69 @@ class AdminLevelActionView(APIView):
             audit(request, action, level, clone, {'from_version': version.version})
             return Response(LevelVersionSerializer(clone).data, status=status.HTTP_201_CREATED)
         if action == 'rollback':
-            if version.status != LevelVersion.Status.PUBLISHED:
-                return Response({'code': 'invalid_request', 'detail': 'Rollback target must be published.', 'errors': {}}, status=400)
-            level.active_version = version; level.archived = False; level.save(update_fields=['active_version', 'archived', 'updated_at'])
-            audit(request, action, level, version)
-            return Response(LevelSerializer(level).data)
+            # Release history is immutable: once a newer revision is published,
+            # the former published revision is SUPERSEDED but remains a valid
+            # restore source. Rollback always creates a new revision/release.
+            if version.status not in {LevelVersion.Status.PUBLISHED, LevelVersion.Status.SUPERSEDED}:
+                return Response({'code': 'invalid_request', 'detail': 'Rollback target must be a published release-history version.', 'errors': {}}, status=400)
+            clone = LevelVersion.objects.create(
+                level=level,
+                version=(level.versions.order_by('-version').first().version + 1),
+                config=version.config,
+                seed_policy=version.seed_policy,
+                created_by=request.user,
+                supersedes=version,
+                status=LevelVersion.Status.VALIDATED,
+            )
+            release = publish_core_level(level=level, version=clone, actor=request.user)
+            audit(request, action, level, clone, {'restored_from_version': version.version, 'campaign_release_id': str(release.id) if release else None})
+            return Response({**LevelSerializer(level).data, 'restored_version': LevelVersionSerializer(clone).data, 'campaign_release_id': str(release.id) if release else None})
         if action == 'archive':
             level.archived = True; level.save(update_fields=['archived', 'updated_at']); audit(request, action, level, version); return Response(LevelSerializer(level).data)
         return Response({'code': 'invalid_request', 'detail': 'Unsupported level action.', 'errors': {}}, status=400)
+
+
+class AdminLevelDraftView(APIView):
+    """Create a new immutable draft from a specific published or draft checksum."""
+
+    permission_classes = [IsLevelAdmin]
+
+    def post(self, request, level_id):
+        level = get_object_or_404(Level, pk=level_id, archived=False)
+        base = level.versions.order_by('-version').first()
+        expected_checksum = request.data.get('expected_checksum')
+        if not expected_checksum or base.checksum != expected_checksum:
+            return Response({'code': 'VERSION_CONFLICT', 'detail': 'Reload the latest level version before saving.', 'checksum': base.checksum}, status=409)
+        config = request.data.get('config')
+        validate_definition(config)
+        draft = LevelVersion.objects.create(
+            level=level,
+            version=base.version + 1,
+            config=config,
+            seed_policy=base.seed_policy,
+            created_by=request.user,
+            supersedes=base,
+        )
+        draft.validation_report = {'valid': True, 'errors': [], 'warnings': []}
+        draft.save(update_fields=['validation_report'])
+        audit(request, 'designer_save', level, draft, {'from_version': base.version, 'expected_checksum': expected_checksum})
+        return Response(LevelVersionSerializer(draft).data, status=status.HTTP_201_CREATED)
+
+
+class AdminLevelPreviewView(APIView):
+    """Return one immutable draft/version for same-runtime, unranked preview."""
+
+    permission_classes = [IsLevelAdmin]
+
+    def get(self, request, level_id, checksum_value):
+        level = get_object_or_404(Level, pk=level_id, archived=False)
+        # Drafts are immutable and a no-op save legitimately produces the same
+        # content checksum. Preview identity is the latest matching revision.
+        version = level.versions.filter(checksum=checksum_value).order_by('-version').first()
+        if version is None:
+            return Response({'code': 'NOT_FOUND', 'detail': 'Preview version not found.'}, status=status.HTTP_404_NOT_FOUND)
+        audit(request, 'designer_preview', level, version, {'checksum': checksum_value})
+        return Response(LevelVersionSerializer(version).data)
 
 
 class AdminLevelExportView(APIView):
@@ -100,18 +254,17 @@ class AdminLevelGenerateView(APIView):
     permission_classes = [IsLevelAdmin]
 
     def post(self, request):
-        """Create a deterministic DRAFT candidate; generation never publishes."""
+        """Create a deterministic blank schema-1.1 draft; generation never publishes."""
         seed = int(request.data.get('seed', 12001))
         sequence = int(request.data.get('sequence', 2))
         slug = request.data.get('slug', f'level-{sequence:02d}')
-        payload = {
-            'id': slug, 'slug': slug, 'name': request.data.get('name', f'Level {sequence}'), 'version': 1,
-            'schema_version': '1.0', 'status': 'DRAFT', 'sequence': sequence, 'seed': seed,
-            'player': {'x': 640, 'y': 610},
-            'enemy_formations': [{'type': 'scout', 'rows': 2 + min(sequence // 3, 1), 'columns': min(29, 16 + sequence * 2), 'origin': {'x': 50, 'y': 120}, 'spacing': {'x': 40, 'y': 50}}],
-            'shields': [{'count': 8, 'matrix': [[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,0,0,0,0,1,1],[1,1,0,0,0,0,1,1]]}],
-            'performance_budget': {'max_enemies': 58}, 'drop_tables': [],
-        }
+        payload = blank_authoring_document(
+            identifier=slug,
+            slug=slug,
+            name=request.data.get('name', f'Level {sequence}'),
+            sequence=sequence,
+            seed=seed,
+        )
         serializer = LevelCreateSerializer(data={'slug': slug, 'name': payload['name'], 'campaign': request.data.get('campaign', 'v1'), 'sequence': sequence, 'config': payload, 'seed_policy': {'seed': seed}}, context={'request': request})
         serializer.is_valid(raise_exception=True)
         level = serializer.save(); audit(request, 'generate', level, level.versions.first(), {'seed': seed})

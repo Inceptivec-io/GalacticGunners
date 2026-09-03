@@ -1,0 +1,67 @@
+from django.core.management import CommandError, call_command
+from django.test import TestCase
+
+from campaigns.services import CampaignService
+
+
+class BrowserAssuranceCampaignTests(TestCase):
+    def test_publishes_a_real_six_entry_campaign_with_time_based_objectives(self):
+        call_command("seed_browser_assurance_campaign", duration_ms=250)
+        call_command("seed_browser_assurance_campaign", duration_ms=250)
+
+        run, _ = CampaignService.start(user=None, seed_root=15150)
+        entries = list(run.campaign_version.entries.order_by("position"))
+
+        self.assertEqual([entry.position for entry in entries], [1, 2, 3, 4, 5, 6])
+        for entry in entries:
+            objective = entry.level_version.config["objectives"]
+            self.assertEqual(len(objective), 1)
+            self.assertEqual(objective[0]["type"], "SURVIVE_DURATION")
+            self.assertEqual(objective[0]["duration_ms"], 250)
+
+    def test_rejects_a_duration_that_cannot_exercise_normal_browser_frames(self):
+        with self.assertRaisesRegex(ValueError, "real browser frame sequence"):
+            call_command("seed_browser_assurance_campaign", duration_ms=249)
+
+    def test_boarding_scenario_uses_a_reachable_level_four_target_without_runtime_hooks(self):
+        call_command("seed_browser_assurance_campaign", duration_ms=250, scenario="boarding")
+
+        run, _ = CampaignService.start(user=None, seed_root=15150)
+        entries = list(run.campaign_version.entries.order_by("position"))
+        level_four = entries[3].level_version.config
+        self.assertEqual(len(level_four["entities"]), 1)
+        self.assertEqual(level_four["entities"][0]["x"], 640)
+        self.assertEqual(level_four["entities"][0]["y"], 220)
+        self.assertEqual(level_four["boarding_anchors"][0]["source_entity_id"], level_four["entities"][0]["id"])
+        self.assertEqual(level_four["shield_structures"], [])
+        self.assertEqual(level_four["hazard_emitters"], [])
+        self.assertGreaterEqual(level_four["objectives"][0]["duration_ms"], 30000)
+        self.assertEqual(entries[0].level_version.config["objectives"][0]["duration_ms"], 1500)
+
+    def test_hazards_scenario_uses_a_real_level_four_emitter_without_runtime_hooks(self):
+        call_command("seed_browser_assurance_campaign", duration_ms=250, scenario="hazards")
+
+        run, _ = CampaignService.start(user=None, seed_root=15150)
+        level_four = list(run.campaign_version.entries.order_by("position"))[3].level_version.config
+        self.assertEqual(len(level_four["entities"]), 1)
+        self.assertEqual(level_four["entities"][0]["entity_type"], "SCOUT")
+        self.assertEqual(level_four["hazard_emitters"][0]["hazard_type"], "COMET")
+        self.assertEqual(level_four["hazard_emitters"][0]["variant_ids"], ["COMET_VARIANT_02"])
+        self.assertEqual(level_four["hazard_emitters"][0]["entry_edges"], ["BOTTOM"])
+        self.assertEqual(level_four["hazard_emitters"][0]["spawn_points"], [{"x": 640, "y": 480}])
+        self.assertGreaterEqual(level_four["objectives"][0]["duration_ms"], 30000)
+
+    def test_fixture_verifier_accepts_its_declared_campaign(self):
+        call_command("seed_browser_assurance_campaign", duration_ms=250)
+
+        call_command(
+            "verify_browser_assurance_campaign", duration_ms=250, scenario="campaign"
+        )
+
+    def test_fixture_verifier_rejects_a_different_specialised_scenario(self):
+        call_command("seed_browser_assurance_campaign", duration_ms=250, scenario="boarding")
+
+        with self.assertRaisesRegex(CommandError, "duration does not match campaign"):
+            call_command(
+                "verify_browser_assurance_campaign", duration_ms=250, scenario="campaign"
+            )

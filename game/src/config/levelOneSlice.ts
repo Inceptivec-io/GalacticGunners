@@ -12,6 +12,7 @@ export const LEVEL_ONE_SLICE = {
   scoutDropDistance: 10,
   playerDamageCooldownMs: 850,
   bunkerCount: 8,
-  maxNukes: 2,
+  initialNukes: 2,
+  nukeProjectilePoolSize: 8,
   nukeRearmMax: 150,
 } as const;

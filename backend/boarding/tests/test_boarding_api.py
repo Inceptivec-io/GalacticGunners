@@ -25,7 +25,7 @@ class BoardingApiTests(TestCase):
         self.digest = 'a' * 64
 
     def payload(self):
-        return {'anchor_id': 'level-04-alien-frigate-01', 'source_entity_id': 'level-04:formation-0:r0:c14', 'source_entity_type': 'scout', 'source_ship_type': 'ALIEN_FRIGATE', 'level_version': self.game_run.level_version, 'level_checksum': self.game_run.level_checksum, 'interior_slug': 'alien-frigate', 'interior_version': 1, 'interior_checksum': 'e9b1af65f0daef6725a7ddf4683b5f6d503e25dabc97aef1212102e6b1e994f3', 'shooter_state_digest': self.digest, 'resources': {'lives': 3, 'nukes': 2}}
+        return {'anchor_id': 'level-04-alien-frigate-01', 'source_entity_id': 'level-04:formation-1:r0:c0', 'source_entity_type': 'cruiser', 'source_ship_type': 'ALIEN_FRIGATE', 'level_version': self.game_run.level_version, 'level_checksum': self.game_run.level_checksum, 'interior_slug': 'alien-frigate', 'interior_version': 1, 'interior_checksum': 'e9b1af65f0daef6725a7ddf4683b5f6d503e25dabc97aef1212102e6b1e994f3', 'shooter_state_digest': self.digest, 'resources': {'lives': 3, 'nukes': 2}}
 
     def test_start_is_idempotent_and_issues_anonymous_capability(self):
         first = self.client.post(f'/api/v1/game-runs/{self.game_run.id}/boarding-runs/start/', self.payload(), format='json')
@@ -62,6 +62,26 @@ class BoardingApiTests(TestCase):
         self.assertEqual(replay.status_code, 200)
         self.assertEqual(replay.data['return_state']['score_delta'], 0)
 
+    def test_h015a_nuke_inventory_survives_more_than_two_collections(self):
+        self.game_run.nukes_start = 5
+        self.game_run.save(update_fields=['nukes_start'])
+        payload = self.payload() | {'resources': {'lives': 3, 'nukes': 5}}
+        started = self.client.post(f'/api/v1/game-runs/{self.game_run.id}/boarding-runs/start/', payload, format='json')
+        self.assertEqual(started.status_code, 201)
+        completion = {
+            'outcome': 'SUCCESS', 'duration_ms': 1_000,
+            'resources_end': {'lives': 3, 'nukes': 7},
+            'aliens_killed': 0, 'containers_opened': 2, 'lives_found': 0, 'nukes_found': 2,
+            'score_events': [], 'shooter_state_digest': self.digest,
+            'events': [{'sequence': 0, 'at_ms': 1_000, 'type': 'EXIT_INTERACTED', 'entity_id': 'exit-main', 'target_id': 'player'}],
+        }
+        response = self.client.post(
+            f"/api/v1/boarding-runs/{started.data['id']}/complete/", completion,
+            format='json', HTTP_X_BOARDING_TOKEN=started.data['boarding_token'], HTTP_IDEMPOTENCY_KEY='unbounded-nukes',
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['return_state']['nukes'], 7)
+
     def test_rejects_success_without_exit_and_timeout_without_exact_loss(self):
         started = self.client.post(f'/api/v1/game-runs/{self.game_run.id}/boarding-runs/start/', self.payload(), format='json')
         headers = {'HTTP_X_BOARDING_TOKEN': started.data['boarding_token'], 'HTTP_IDEMPOTENCY_KEY': 'complete-2'}
@@ -83,3 +103,22 @@ class BoardingApiTests(TestCase):
         self.client.post(f"/api/v1/boarding-runs/{started.data['id']}/complete/", completion, format='json', **headers)
         self.game_run.refresh_from_db()
         self.assertEqual((self.game_run.lives_end, self.game_run.nukes_end), (1, 1))
+
+    def test_player_death_loses_one_life_and_applies_parent_return_once(self):
+        payload = self.payload() | {'resources': {'lives': 3, 'nukes': 2}}
+        started = self.client.post(f'/api/v1/game-runs/{self.game_run.id}/boarding-runs/start/', payload, format='json')
+        headers = {'HTTP_X_BOARDING_TOKEN': started.data['boarding_token'], 'HTTP_IDEMPOTENCY_KEY': 'death-1'}
+        completion = {
+            'outcome': 'PLAYER_DEAD', 'duration_ms': 1_000,
+            'resources_end': {'lives': 2, 'nukes': 2},
+            'aliens_killed': 0, 'containers_opened': 0, 'lives_found': 0, 'nukes_found': 0,
+            'score_events': [], 'shooter_state_digest': self.digest,
+            'events': [{'sequence': 0, 'at_ms': 1_000, 'type': 'PLAYER_HIT', 'entity_id': 'player'}],
+        }
+        response = self.client.post(f"/api/v1/boarding-runs/{started.data['id']}/complete/", completion, format='json', **headers)
+        self.assertEqual(response.status_code, 200)
+        self.game_run.refresh_from_db()
+        self.assertEqual((self.game_run.lives_end, self.game_run.nukes_end), (2, 2))
+        self.client.post(f"/api/v1/boarding-runs/{started.data['id']}/complete/", completion, format='json', **headers)
+        self.game_run.refresh_from_db()
+        self.assertEqual((self.game_run.lives_end, self.game_run.nukes_end), (2, 2))

@@ -7,7 +7,7 @@ export const BOARDING_WORLD = { width: 4096, height: 720, grid: 64, tickMs: 1000
 export class BoardingSimulation {
   private tick = 0;
   private state: BoardingSnapshot;
-  private nextEvent = 1;
+  private nextEvent = 0;
   private readonly rng: SeededRng;
 
   constructor(private readonly seed: number, resources: BoardingResources) {
@@ -40,7 +40,18 @@ export class BoardingSimulation {
   }
 
   hitPlayer(): void { if (this.state.player.health > 0) { this.state.player.health = 0; this.event('PLAYER_HIT', 'player'); } }
+  alienFire(id: string): void { this.event('ALIEN_FIRE', id); }
   killAlien(id: string): void { const alien = this.state.aliens.find((candidate) => candidate.id === id); if (alien?.alive) { alien.alive = false; this.event('ALIEN_KILLED', id); } }
+  synchronizePlayerProjection(position: { x: number; y: number }): void {
+    this.state.player.x = Math.max(32, Math.min(BOARDING_WORLD.width - 32, position.x));
+    this.state.player.y = Math.max(0, Math.min(576, position.y));
+  }
+  exit(): boolean {
+    if (this.state.player.x < BOARDING_WORLD.width - 128) return false;
+    this.event('EXIT_INTERACTED', 'exit-airlock');
+    return true;
+  }
+  timeout(): void { this.state.events = [{ sequence: 0, at_ms: BOARDING_WORLD.durationMs, type: 'TIMEOUT', entity_id: 'boarding-clock' }]; }
   snapshot(): BoardingSnapshot { return JSON.parse(JSON.stringify(this.state)) as BoardingSnapshot; }
   elapsedMs(): number { return Math.min(BOARDING_WORLD.durationMs, Math.round(this.tick * BOARDING_WORLD.tickMs)); }
 
@@ -51,8 +62,8 @@ export class BoardingSimulation {
     container.open = true;
     const roll = Math.floor(this.rng.next() * 100);
     container.pickup = roll < 15 ? 'LIFE' : roll < 30 ? 'NUKE' : 'EMPTY';
-    if (container.pickup === 'LIFE') this.state.resources.lives = Math.min(3, this.state.resources.lives + 1);
-    if (container.pickup === 'NUKE') this.state.resources.nukes = Math.min(2, this.state.resources.nukes + 1);
+    if (container.pickup === 'LIFE') this.state.resources.lives += 1;
+    if (container.pickup === 'NUKE') this.state.resources.nukes += 1;
     this.event('CONTAINER_OPENED', container.id, undefined, container.pickup);
   }
 

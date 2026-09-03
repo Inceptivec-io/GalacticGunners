@@ -1,0 +1,55 @@
+schema_version: '1.0'
+handoff: GALACTIC_GUNNERS_DEVTEAM_HANDOFF_IN_015
+rules:
+  require_positive: true
+  require_negative: true
+  ordinary_claim_prohibits_qa_hooks: true
+requirements:
+  - id: H015-LAUNCH-001
+    statement: Fresh ordinary play launch shows approved two-second splash before Phaser Main Menu.
+    implementation:
+      - game/src/scenes/BootScene.ts
+      - game/src/scenes/SplashScene.ts
+    positive_tests:
+      - tests/e2e/splash-menu.spec.ts::fresh_play_launch
+    negative_tests:
+      - tests/e2e/splash-menu.spec.ts::internal_navigation_no_replay
+      - tests/e2e/production-mode-negative.spec.ts::qa_parameter_cannot_bypass_production
+    ci_jobs: [e2e-chromium, e2e-firefox, e2e-webkit]
+    evidence: [playwright-trace, video]
+    status: PENDING
+  - id: H015-ENTRY-001
+    statement: Public root Play action enters the governed splash and game menu journey.
+    implementation: [apps/web/app/page.tsx, apps/web/app/play/page.tsx]
+    positive_tests: [tests/e2e/public-entry.spec.ts::root_to_play]
+    negative_tests: [tests/e2e/public-entry.spec.ts::failed_runtime_safe_error]
+    ci_jobs: [e2e-chromium]
+    evidence: [playwright-trace]
+    status: PENDING
+  - id: H015-DESIGNER-ALL-FIELDS
+    statement: Every governed Level 1-6 field family is editable, persisted, previewed and published.
+    implementation: [apps/web/app/inceptivec-gamification-admin/CampaignDesigner.tsx, backend/levels]
+    positive_tests: [tests/e2e/designer-fields.spec.ts::all_valid_field_families]
+    negative_tests: [tests/e2e/designer-fields.spec.ts::all_invalid_field_boundaries]
+    ci_jobs: [component, backend-api, e2e-chromium]
+    evidence: [junit, playwright-trace, assertion-ledger]
+    status: PENDING
+  - id: H015-CAMPAIGN-REAL-PLAY
+    statement: Levels 1-6 complete through ordinary mechanics without forced state.
+    implementation: [game/src/scenes/Level1Scene.ts, game/src/systems/CampaignSession.ts]
+    positive_tests: [tests/e2e/campaign-real-play.spec.ts::levels_1_to_6]
+    negative_tests: [tests/e2e/campaign-real-play.spec.ts::invalid_or_unwinnable_state_fails]
+    ci_jobs: [e2e-real-play]
+    evidence: [video, playwright-trace, runtime-event-ledger]
+    status: PENDING
+  - id: H015-BOARDING-REAL-PLAY
+    statement: Boarding entry, combat, physical exit and Shooter return work with ordinary input.
+    implementation: [game/src/scenes/BoardingScene.ts, game/src/boarding/BoardingSimulation.ts]
+    positive_tests: [tests/e2e/boarding-real-play.spec.ts::entry_combat_exit_return]
+    negative_tests:
+      - tests/e2e/boarding-real-play.spec.ts::premature_exit_denied
+      - tests/e2e/boarding-real-play.spec.ts::api_failure_safe
+      - tests/e2e/boarding-real-play.spec.ts::duplicate_completion_denied
+    ci_jobs: [e2e-real-play]
+    evidence: [video, playwright-trace]
+    status: PENDING
