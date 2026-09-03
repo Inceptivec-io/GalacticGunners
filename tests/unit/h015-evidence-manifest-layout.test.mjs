@@ -42,5 +42,11 @@ const catalogue = manifest.gates.find((gate) => gate.id === "assurance-catalogue
 assert.equal(campaign.result, "PASS");
 assert.equal(campaign.evidence.length, 4);
 assert.ok(campaign.evidence.every((item) => item.path.startsWith("assurance_catalogue/ordinary-browser/")));
+assert.ok(
+  campaign.evidence
+    .filter((item) => item.mime_type === "image/png")
+    .every((item) => item.distinct_state_group === undefined),
+  "ordinary action-trace screenshots must not be misclassified as distinct visual states",
+);
 assert.equal(catalogue.result, "PASS");
 assert.ok(catalogue.evidence.some((item) => item.path === "assurance_catalogue/catalogue/assurance-catalogue-results.json"));

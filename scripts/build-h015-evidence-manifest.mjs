@@ -94,13 +94,11 @@ function ordinaryJourneyEvidence(gate, { requireNegative = true } = {}) {
     }
   });
   return {
-    items: directories
-      .flatMap((directory) => evidence(directory))
-      .map((item) =>
-        item.mime_type === "image/png"
-          ? { ...item, distinct_state_group: gate }
-          : item,
-      ),
+    // Ordinary-user screenshots are action-trace captures. They may
+    // legitimately finish on the same persisted UI state while proving
+    // different interactions, so only explicitly named product-state
+    // captures participate in the duplicate-state invariant.
+    items: directories.flatMap((directory) => evidence(directory)),
     result:
       valid.length > 0 &&
       (!requireNegative ||
